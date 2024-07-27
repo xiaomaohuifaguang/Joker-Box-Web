@@ -22,7 +22,7 @@ export const SYSTEM = {
  */
 export const HTTP = {
     // 请求base路径
-    BASEURL: "http://127.0.0.1"
+    BASEURL: ""
 }
 
 export default { SYSTEM, HTTP }
