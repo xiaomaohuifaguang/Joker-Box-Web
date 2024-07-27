@@ -11,7 +11,7 @@ export const SYSTEM = {
     SERVERS:{
         AUTH: "/auth-server",
         FILE: "/file-server",
-        FIELVIEWSERVER: "/kkfileview/onlinePreview",
+        FIELVIEWSERVER: "http://192.168.3.12:8012/kkfileview/onlinePreview",
     },
     LOGIN_PAGE: "/web/login",
     USER_INFO: "USERINFO"
