@@ -1,0 +1,7 @@
+@import './base.css';
+@import './font.css';
+
+* {
+    /* font-family: 'PixelMplus10-Regular', sans-serif; */
+    font-family: 'ChillHuoFangKai_F_ConRegular', sans-serif;
+}

@@ -1,0 +1,15 @@
+@font-face {
+    /* 像素风格 */
+    font-family: 'PixelMplus10-Regular';
+    src: url('/static/font/PixelMplus10-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    /* 寒蝉活仿楷 */
+    font-family: 'ChillHuoFangKai_F_ConRegular';
+    src: url('/static/font/ChillHuoFangKai_F_ConRegular.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
