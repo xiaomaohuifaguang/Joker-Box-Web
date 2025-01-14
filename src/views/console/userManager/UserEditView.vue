@@ -46,6 +46,23 @@
                             </el-button-group>
                         </el-col>
                     </el-row>
+
+                    <el-card style="display: flex;justify-content: center;margin-top: 1rem;"
+                        v-if="props.type == 'edit'">
+                        <el-button type="primary" plain @click="dialogAddRole.open = true" size="large">选择机构</el-button>
+                    </el-card>
+                    <el-row :gutter="20">
+                        <el-col :span="8" v-for="role in roles">
+                            <el-button-group>
+                                <el-button>{{ role.name }}</el-button>
+                                <el-button type="danger" :icon="Delete" v-if="props.type == 'edit'" @click="() => {
+                                    confirm('提示', '确定删除吗', () => {
+                                        removeRole(role.id)
+                                    })
+                                }" />
+                            </el-button-group>
+                        </el-col>
+                    </el-row>
                 </div>
             </el-col>
         </el-row>
@@ -97,7 +114,6 @@ const selectorRoles = ref([])
 const dialogAddRole = ref({
     open: false,
     roleId: ''
-
 })
 
 const queryInfo = () => {

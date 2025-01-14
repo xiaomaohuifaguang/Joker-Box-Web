@@ -20,6 +20,7 @@
                         </el-button>
                     </div>
 
+
                     <el-menu-item index="/console">
                         <el-icon>
                             <Console />
@@ -27,40 +28,8 @@
                         <span>控制台主页</span>
                     </el-menu-item>
 
-                    <el-sub-menu index="/console/authority/">
-                        <template #title>
-                            <el-icon>
-                                <user />
-                            </el-icon>
-                            <span>身份与权限</span>
-                        </template>
-                        <el-menu-item index="/console/authority/user-manager">
-                            <el-icon>
-                                <UserSettings />
-                            </el-icon>
-                            <span>用户管理</span>
-                        </el-menu-item>
-                        <el-menu-item index="/console/authority/role-manager">
-                            <el-icon>
-                                <RoleSettings />
-                            </el-icon>
-                            <span>角色管理</span>
-                        </el-menu-item>
-                    </el-sub-menu>
-
-                    <el-menu-item index="/console/api-manager">
-                        <el-icon>
-                            <Api />
-                        </el-icon>
-                        <span>API管理</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/console/website-manager">
-                        <el-icon>
-                            <Website />
-                        </el-icon>
-                        <span>网址收藏</span>
-                    </el-menu-item>
+                    <ElMenuItemInit v-for="menu in menuInit" :path="menu['path']" :name="menu['name']"
+                        :children="menu['children']" :icon="menu['icon']" />
 
                     <el-sub-menu index="/console/settings">
                         <template #title>
@@ -114,17 +83,19 @@
     </el-row>
 </template>
 <script setup lang='ts'>
-import { onUpdated, ref } from 'vue'
+import { onMounted, onUpdated, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import DarkSwitch from '@/components/common/DarkSwitch.vue';
 import Avatar from '@/components/common/Avatar.vue';
-import { confirm, logout, userInfo } from '@/utils';
+import { confirm, http, logout, toPath, userInfo } from '@/utils';
 import Api from '@/components/icon/Api.vue';
 import RoleSettings from '@/components/icon/RoleSettings.vue';
 import UserSettings from '@/components/icon/UserSettings.vue';
 import SystemSettings from '@/components/icon/SystemSettings.vue';
+import Org from '@/components/icon/Org.vue';
 import Console from '@/components/icon/Console.vue';
 import Website from '@/components/icon/Website.vue';
+import ElMenuItemInit from '@/components/common/ElMenuItemInit.vue';
 const route = useRoute();
 const activeIndex = ref(route.path)
 const isCollapse = ref(false)
@@ -134,11 +105,27 @@ const handleSelect = (key: string, keyPath: string[]) => {
 const doLogout = () => {
     confirm('提示', '确定退出吗', () => {
         logout()
+        toPath('/')
     })
 }
 
-onUpdated(() => {
+onMounted(() => {
+    queryMenu()
 })
+
+
+const queryMenu = () => {
+    http.result({
+        url: '/menu/menuTree',
+        method: 'GET',
+        success(result) {
+            menuInit.value = result.data
+        }
+    })
+}
+
+
+const menuInit = ref([])
 
 </script>
 

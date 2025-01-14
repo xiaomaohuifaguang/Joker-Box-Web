@@ -2,19 +2,29 @@
     <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/console' }">控制台</el-breadcrumb-item>
         <el-breadcrumb-item>身份与权限</el-breadcrumb-item>
-        <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+        <el-breadcrumb-item>机构管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-divider />
     <el-row>
-        <!-- <el-col :span="6">
-            <el-card style="min-height: 30vh;">
-                <el-tree style="max-width: 600px;" :data="orgTree" :props="{
+        <el-col :span="6">
+            <el-card style="height: 80vh;">
+                <el-tree style="width: 600px;" :data="orgTree" :props="{
                     children: 'children',
                     label: 'name',
-                }" @node-click="(data) => { }" />
+                }" @node-click="handleNodeClick" node-key="id" :default-expanded-keys="[-1]">
+                    <template #default="{ node, data }">
+                        <span>
+                            <el-icon style="margin: 0 6px 0 2px;" size="16">
+                                <Org />
+                            </el-icon>
+                            <small @click="handleNodeClick(data)">{{ node.label }}</small>
+                        </span>
+
+                    </template>
+                </el-tree>
             </el-card>
-        </el-col> -->
-        <el-col :span="24">
+        </el-col>
+        <el-col :span="18">
             <div v-loading="loading">
                 <el-card>
                     <el-row :gutter="20">
@@ -23,24 +33,8 @@
                                 @keyup.enter="queryPage" :prefix-icon="Search">
                             </el-input>
                         </el-col>
-                        <el-col :span="4">
-                            <el-select v-model="queryParam.roleId" placeholder="角色" size="large" style="width: 100%;"
-                                clearable @change="queryPage">
-                                <el-option v-for="item in roles" :key="item.key" :label="item.value"
-                                    :value="item.key" />
-                            </el-select>
-                        </el-col>
-                        <el-col :span="4">
-                            <el-cascader :options="orgTree" :props="{
-                                children: 'children',
-                                label: 'name',
-                                value: 'id',
-                                // multiple: true,
-                                emitPath: false,
-                                checkStrictly: true,
-                            }" placeholder="机构" size="large" style="width: 100%;" clearable
-                                @change="(value) => { queryParam.orgId = value; queryPage(); }">
-                            </el-cascader>
+                        <el-col>
+                            <el-button type="primary" plain @click="dialogAdd = true">新建</el-button>
                         </el-col>
                     </el-row>
                 </el-card>
@@ -48,8 +42,11 @@
                     @selection-change="handleSelectionChange" @sort-change="handleSortChange"
                     :default-sort="{ prop: 'date', order: 'descending' }">
                     <el-table-column type="selection" />
-                    <el-table-column prop="username" label="用户名" sortable="custom" />
-                    <el-table-column prop="nickname" label="用户昵称" />
+                    <!-- <el-table-column prop="id" label="组织id" />
+                    <el-table-column prop="parentId" label="父级机构id" /> -->
+                    <el-table-column prop="parentName" label="父级机构名称" />
+                    <el-table-column prop="name" label="机构名称" />
+                    <el-table-column prop="deleted" label="逻辑删除" />
                     <el-table-column prop="createTime" label="创建时间" />
                     <el-table-column prop="updateTime" label="更新时间" />
                     <el-table-column fixed="right" label="操作" min-width="120">
@@ -61,13 +58,6 @@
                             <el-button link type="primary" size="small"
                                 @click="() => { dialogEdit.open = true; dialogEdit.title = '编辑'; dialogEdit.id = scope.row.id; dialogEdit.type = 'edit'; }">
                                 编辑
-                            </el-button>
-                            <el-button link type="warning" size="small" @click="() => {
-                                confirm('提示', '确定重置密码吗', () => {
-                                    resetPassword(scope.row.id)
-                                })
-                            }">
-                                重置密码
                             </el-button>
                             <el-button link type="danger" size="small" @click="() => {
                                 confirm('提示', '确定删除吗', () => {
@@ -87,16 +77,22 @@
 
     <el-dialog v-model="dialogEdit.open" :title="dialogEdit.title" width="800" center
         @closed="() => { dialogEdit.id = ''; queryPage() }">
-        <UserEditView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :key="dialogEdit.id" />
+        <OrgInfoView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :key="dialogEdit.id" />
+    </el-dialog>
+    <el-dialog v-model="dialogAdd" title="添加" width="400" center @closed="() => { queryPage(); }">
+        <OrgAddView @success="dialogAdd = false; queryOrgTree();" v-model:parentId="selectOrg.parentId"
+            v-model:parentName="selectOrg.parentName" :key="selectOrg.parentId" />
     </el-dialog>
 
 </template>
 
 <script setup lang='ts'>
-import { http, confirm, alert } from '@/utils';
+import { http, alert, confirm } from '@/utils';
 import { onMounted, ref } from 'vue';
 import { Search } from '@element-plus/icons-vue'
-import UserEditView from './UserEditView.vue';
+import OrgInfoView from './OrgInfoView.vue';
+import OrgAddView from './OrgAddView.vue';
+import Org from '@/components/icon/Org.vue';
 
 const loading = ref(false)
 
@@ -106,9 +102,7 @@ const tableData = ref([])
 
 const queryParam = ref({
     search: '',
-    roleId: '',
-    orgId: '',
-    type: ''
+    parentId: ''
 })
 const pageInfo = ref({
     current: 1,
@@ -124,9 +118,21 @@ const dialogEdit = ref({
     type: 'view',
 })
 
-const roles = ref([])
+const dialogAdd = ref(false)
+
 
 const orgTree = ref([])
+
+const selectOrg = ref({ parentId: '', parentName: '' })
+
+const handleNodeClick = (data: any) => {
+    selectOrg.value.parentId = data.id
+    selectOrg.value.parentName = data.name
+    queryParam.value.parentId = data.id
+    queryPage()
+    // console.log(data)
+}
+
 
 const handleSelectionChange = (val: any) => {
     multipleSelection.value = val
@@ -141,18 +147,32 @@ const handleCurrentChange = (val: number) => {
     queryPage()
 }
 
+
+const queryOrgTree = () => {
+    http.result({
+        url: '/org/getOrgTree',
+        method: 'POST',
+        success(result) {
+            orgTree.value = []
+            orgTree.value.push(result.data);
+            selectOrg.value.parentId = orgTree.value[0]['id']
+            selectOrg.value.parentName = orgTree.value[0]['name']
+            queryPage();
+        }
+    })
+}
+
+
 const queryPage = () => {
     loading.value = true
     http.result({
-        url: '/user/queryPage',
+        url: '/org/queryPage',
         method: 'POST',
         data: {
             current: pageInfo.value.current,
             size: pageInfo.value.size,
             search: queryParam.value.search,
-            roleId: queryParam.value.roleId,
-            orgId: queryParam.value.orgId,
-            type: queryParam.value.type
+            parentId: queryParam.value.parentId
         },
         success(result) {
             tableData.value = result.data.records
@@ -165,33 +185,18 @@ const queryPage = () => {
     })
 }
 
-const selectorRole = () => {
-    http.result({
-        url: '/role/selector',
-        method: 'POST',
-        success(result) {
-            roles.value = result.data
-        }
-    })
-}
 
-const queryOrgTree = () => {
-    http.result({
-        url: '/org/getOrgTree',
-        method: 'POST',
-        success(result) {
-            orgTree.value = []
-            orgTree.value.push(result.data);
-        }
-    })
-}
+onMounted(() => {
+    queryOrgTree();
+    // queryPage();
+})
 
-const remove = (userId: any) => {
+const remove = (id: any) => {
     http.result({
-        url: '/user/delete',
+        url: '/org/remove',
         method: 'POST',
-        params: {
-            userId: userId
+        data: {
+            id: id
         },
         success(result) {
             if (result.code == '200') {
@@ -201,28 +206,6 @@ const remove = (userId: any) => {
         }
     })
 }
-
-const resetPassword = (userId: any) => {
-    http.result({
-        url: '/user/resetPassword',
-        method: 'POST',
-        params: {
-            userId: userId
-        },
-        success(result) {
-            if (result.code == '200') {
-                alert('重置成功', 'success')
-            }
-            queryPage()
-        }
-    })
-}
-
-onMounted(() => {
-    selectorRole()
-    queryOrgTree()
-    queryPage()
-})
 
 </script>
 

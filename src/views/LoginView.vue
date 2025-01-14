@@ -11,7 +11,8 @@
                 style="margin-top: 1rem;" />
             <template #footer>
                 <div class="div-child-x-center">
-                    <el-button type="primary" size="large" @click="login" plain style="width: 60%;">登录</el-button>
+                    <el-button type="primary" size="large" @click="login" plain
+                        style="width: 60%;font-size: 2rem;height: 4rem;">登录</el-button>
                 </div>
                 <!-- <a href="/register" style="margin-top: 1rem;display: flex;float: right;">去注册</a> -->
             </template>
@@ -77,6 +78,7 @@ async function getUserInfo() {
 .div-child-x-center {
     display: flex;
     justify-content: center;
+    font-size: 3rem;
 }
 
 .div-child-y-center {
@@ -88,5 +90,9 @@ async function getUserInfo() {
 .el-input {
     height: 4rem;
     font-size: 2rem;
+}
+
+.el-input__inner {
+    /* min-height: 3rem; */
 }
 </style>

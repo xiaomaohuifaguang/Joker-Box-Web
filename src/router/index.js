@@ -52,10 +52,16 @@ const router = createRouter({
           meta: { title: '码头', requiresAuth: true, },
         },
         {
+          path: 'code-maker',
+          name: 'code-maker',
+          component: () => import('@/views/main/codeMaker/CodeMakerView.vue'),
+          meta: { title: '代码生成器', requiresAuth: true, },
+        },
+        {
           path: 'person-space',
           name: 'person-space',
           component: () => import('@/views/main/personSpace/IndexView.vue'),
-          meta: { title: '码头', requiresAuth: true, },
+          meta: { title: '个人空间', requiresAuth: true, },
         },
         {
           path: '403',
@@ -84,6 +90,12 @@ const router = createRouter({
           meta: { title: '控制台' },
         },
         {
+          path: 'displayBoard',
+          name: 'displayBoard-index',
+          component: () => import('@/views/console/displayBoard/IndexView.vue'),
+          meta: { title: '展板' },
+        },
+        {
           path: 'authority/user-manager',
           name: 'user-manager',
           component: () => import('@/views/console/userManager/IndexView.vue'),
@@ -96,10 +108,22 @@ const router = createRouter({
           meta: { title: '角色管理' },
         },
         {
+          path: 'authority/org-manager',
+          name: 'org-manager',
+          component: () => import('@/views/console/orgManager/IndexView.vue'),
+          meta: { title: '机构管理' },
+        },
+        {
           path: 'api-manager',
           name: 'api-manager',
           component: () => import('@/views/console/apiManager/IndexView.vue'),
           meta: { title: 'API管理' },
+        },
+        {
+          path: 'menu-manager',
+          name: 'menu-manager',
+          component: () => import('@/views/console/menuManager/IndexView.vue'),
+          meta: { title: '菜单管理' },
         },
         {
           path: 'website-manager',

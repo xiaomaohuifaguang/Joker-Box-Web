@@ -40,6 +40,9 @@ class Http {
             message: error.response.data.msg == undefined ? '后台服务器噶啦' : error.response.data.msg,
             type: 'warning',
           })
+          if (error.response.data.msg == undefined) {
+            logout()
+          }
         }
         if (error.response.status == 401) {
           logout()

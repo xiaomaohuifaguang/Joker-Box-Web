@@ -1,0 +1,46 @@
+/* 菜单样式修改 el-tree */
+/* el-tree */
+.el-tree-node {
+    position: relative;
+    padding-left: 16px;
+}
+
+.el-tree-node::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: -26px;
+    bottom: 0;
+    border-left: 1px dashed #1389BC;
+}
+
+.el-tree-node::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 12px;
+    width: 23px;
+    border-top: 1px solid #1389BC;
+}
+
+.el-tree-node:last-child::before {
+    height: 48px;
+}
+
+.el-tree-node__content {
+    color: var(--el-table-text-color);
+    font-size: 14px;
+    padding-left: 0 !important;
+}
+
+.el-tree-node.is-current .el-tree-node__content {
+    /* background-color: #eff2fc; */
+}
+
+
+/* el-button */
+
+/* 全局样式 */
+.el-button {
+    border: none;
+}

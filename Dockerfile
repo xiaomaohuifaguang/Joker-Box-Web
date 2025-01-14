@@ -12,5 +12,5 @@ EXPOSE 80
 # 启动nginx服务
 CMD ["nginx", "-g", "daemon off;"]
 
-# docker build -t 192.168.1.4:7002/joker-box/web:1.0.0-beta .
-# docker push 192.168.1.4:7002/joker-box/web:1.0.0-beta
+# docker build -t 192.168.1.3:7002/joker-box/web:1.0.0-beta .
+# docker push 192.168.1.3:7002/joker-box/web:1.0.0-beta

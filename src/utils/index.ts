@@ -19,7 +19,8 @@ export const setToken = (token: string) => {
 export const logout = () => {
     localStorage.removeItem(CONSTANTS.SYSTEM.TOKEN)
     localStorage.removeItem(CONSTANTS.SYSTEM.USER_INFO)
-    window.location.href = CONSTANTS.SYSTEM.LOGIN_PAGE
+    // window.location.href = CONSTANTS.SYSTEM.LOGIN_PAGE
+    window.location.reload()
 }
 
 export const saveUserInfo = (data: any) => {
