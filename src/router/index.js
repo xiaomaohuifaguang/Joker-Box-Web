@@ -61,7 +61,13 @@ const router = createRouter({
           path: 'person-space',
           name: 'person-space',
           component: () => import('@/views/main/personSpace/IndexView.vue'),
-          meta: { title: '个人空间', requiresAuth: true, },
+          meta: { title: '个人空间', requiresAuth: true, onlyLogin: true },
+        },
+        {
+          path: 'process',
+          name: 'process',
+          component: () => import('@/views/main/process/IndexView.vue'),
+          meta: { title: '流程审批', requiresAuth: true, onlyLogin: true },
         },
         {
           path: '403',
@@ -80,14 +86,20 @@ const router = createRouter({
         {
           path: '/:pathMatch(console.*)*',
           name: 'console-notfound',
-          component: () => import('@/views/common/NotFound.vue'),
-          meta: { title: 'NotFound' },
+          component: () => import('@/views/common/Doing.vue'),
+          meta: { title: 'NotFound', requiresAuth: false },
+        },
+        {
+          path: '403',
+          name: 'console-403',
+          component: () => import('@/views/common/403.vue'),
+          meta: { title: '403', requiresAuth: false },
         },
         {
           path: '',
           name: 'console-index',
           component: () => import('@/views/console/IndeView.vue'),
-          meta: { title: '控制台' },
+          meta: { title: '控制台', requiresAuth: false },
         },
         {
           path: 'displayBoard',
@@ -132,10 +144,28 @@ const router = createRouter({
           meta: { title: '网站管理' },
         },
         {
+          path: 'process-manager',
+          name: 'process-manager',
+          component: () => import('@/views/console/processManager/IndexView.vue'),
+          meta: { title: '流程管理' },
+        },
+        {
           path: 'settings/system-manager',
           name: 'system-manager',
           component: () => import('@/views/common/Doing.vue'),
-          meta: { title: '系统设置' },
+          meta: { title: '系统设置', requiresAuth: false },
+        },
+        {
+          path: 'system/system-prompt',
+          name: 'system-prompt',
+          component: () => import('@/views/console/system/prompt/IndexView.vue'),
+          meta: { title: '系统提示' },
+        },
+        {
+          path: 'mail-manager',
+          name: 'mail-manager',
+          component: () => import('@/views/console/mail/IndexView.vue'),
+          meta: { title: '邮件记录' },
         }
       ]
     }
@@ -161,7 +191,8 @@ router.beforeEach((to, from) => {
   let token = localStorage.getItem(CONSTANTS.SYSTEM.TOKEN)
   if (token && token != null) {
     console.log('getUserInfo')
-    getUserInfo()
+    // getUserInfo()
+    // userInfo()
   }
 
   if (to.meta.requiresAuth) {
@@ -169,13 +200,21 @@ router.beforeEach((to, from) => {
     let token = localStorage.getItem(CONSTANTS.SYSTEM.TOKEN)
     if (token && token != null) {
       // return true;
+      if (!to.meta.onlyLogin && !userInfo().authPaths.includes(to.path)) {
+        if (to.path !== '/console') {
+          return '/404'
+        } else {
+          return '/console/404'
+        }
+      }
     } else {
       // 如果没有，则重定向到登录页面
-      return {
-        path: '/login',
-        // 保存我们所在的位置，以便以后再来
-        query: { redirect: to.fullPath },
-      }
+      return '/404'
+      // return {
+      //   path: '/login',
+      //   // 保存我们所在的位置，以便以后再来
+      //   query: { redirect: to.fullPath },
+      // }
     }
   }
 
@@ -186,6 +225,8 @@ router.beforeEach((to, from) => {
       if (!userInfo().admin) {
         return '/403';
       }
+    } else {
+      return '/404'
     }
   }
 

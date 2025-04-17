@@ -62,7 +62,16 @@ export const toPath = (path: string) => {
     })
 }
 
+export const randomId = (preStr: string) => {
+    const hexDigits = '0123456789abcdefghijklmnopqrstuvwxyz';
+    let id = '';
+    for (let i = 0; i < 8; i++) {
+        id += hexDigits[Math.floor(Math.random() * 16)];
+    }
+    return preStr + id;
+}
 
 
 
-export default { CONSTANTS, http, getToken, logout, saveUserInfo, userInfo, alert, confirm, regTest, toPath }
+
+export default { CONSTANTS, http, getToken, logout, saveUserInfo, userInfo, alert, confirm, regTest, toPath, randomId }

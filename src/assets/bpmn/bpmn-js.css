@@ -1,0 +1,9 @@
+.bpmn-js-active:not(.djs-connection) .djs-visual> :nth-child(1) {
+    fill: var(--el-color-success) !important;
+}
+
+
+
+/**
+ * color definitions
+ */

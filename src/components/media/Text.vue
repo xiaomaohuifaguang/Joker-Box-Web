@@ -8,6 +8,7 @@
 <script setup lang='ts'>
 import { ref } from 'vue';
 import axios from 'axios';
+import { CONSTANTS, getToken } from '@/utils';
 
 
 const props = defineProps({
@@ -16,6 +17,9 @@ const props = defineProps({
 });
 const txtContent = ref('');
 axios.get(props.src, {
+    headers: {
+        'Authorization': `${CONSTANTS.SYSTEM.TOKEN_TYPE} ${getToken()}`, // 自定义 header，如认证token
+    },
     responseType: 'text',
 }).then(res => {
     txtContent.value = res.data;

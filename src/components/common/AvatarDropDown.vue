@@ -1,191 +1,297 @@
 <template>
     <!-- 登录和注册按钮 -->
-    <el-button link @click="toPath('/login')" v-if="userInfo() == null" class="auth-button">登录</el-button>
-    <el-button link @click="toPath('/register')" v-if="userInfo() == null" class="auth-button"
-        style="margin-left: 1rem;">注册</el-button>
+    <div v-if="userInfo() == null" class="auth-buttons">
+        <el-button text @click="toPath('/login')" class="login-button">
+            <el-icon>
+                <User />
+            </el-icon>
+            <span>登录</span>
+        </el-button>
+        <el-button type="primary" @click="toPath('/register')" class="register-button">
+            <el-icon>
+                <EditPen />
+            </el-icon>
+            <span>注册</span>
+        </el-button>
+    </div>
 
     <!-- 用户信息下拉菜单 -->
-    <el-dropdown placement="bottom" v-if="userInfo() != null">
-        <Avatar style="cursor: pointer;outline: none" class="avatar" />
+    <el-dropdown v-else placement="bottom-end" trigger="click" class="user-dropdown">
+        <div class="avatar-wrapper">
+            <Avatar class="avatar" />
+            <el-icon class="dropdown-arrow">
+                <ArrowDown />
+            </el-icon>
+        </div>
+
         <template #dropdown>
-            <div class="dropdown-content">
-                <!-- 用户信息 -->
-                <div class="user-info">
-                    <div class="nickname">{{ userInfo().nickname }}</div>
-                    <div class="vip-status">VIP8</div>
-                    <div class="sex">性别：{{ userInfo().sex }}</div>
+            <div class="dropdown-card">
+                <!-- 用户信息头部 -->
+                <div class="user-header">
+                    <Avatar class="header-avatar" />
+                    <div class="user-meta">
+                        <div class="nickname">{{ userInfo().nickname }}</div>
+                        <div class="vip-badge">
+                            <el-icon>
+                                <StarFilled />
+                            </el-icon>
+                            <span>VIP8</span>
+                        </div>
+                        <div class="user-id">账号: {{ userInfo().username }}</div>
+                    </div>
                 </div>
 
                 <!-- 组织信息 -->
-                <el-row :gutter="20" class="org-row">
-                    <el-col v-for="org in userInfo().orgs" :span="12" :key="org.id">
-                        <el-button type="success" class="org-button">
+                <div class="org-section">
+                    <div class="section-title">所属组织</div>
+                    <div class="org-tags">
+                        <el-tag v-for="org in userInfo().orgs" :key="org.id" type="success" class="org-tag">
                             <el-icon>
-                                <Org />
+                                <OfficeBuilding />
                             </el-icon>
                             {{ org.name }}
-                        </el-button>
-                    </el-col>
-                </el-row>
+                        </el-tag>
+                    </div>
+                </div>
 
                 <!-- 角色信息 -->
-                <el-row :gutter="20" class="role-row">
-                    <el-col v-for="role in userInfo().roles" :span="12" :key="role.id">
-                        <el-button type="warning" class="role-button">
+                <div class="role-section">
+                    <div class="section-title">拥有角色</div>
+                    <div class="role-tags">
+                        <el-tag v-for="role in userInfo().roles" :key="role.id" type="warning" class="role-tag">
                             <el-icon>
-                                <RoleSettings />
+                                <UserFilled />
                             </el-icon>
                             {{ role.name }}
-                        </el-button>
-                    </el-col>
-                </el-row>
+                        </el-tag>
+                    </div>
+                </div>
 
-                <!-- 下拉菜单项 -->
-                <el-dropdown-menu>
-                    <el-dropdown-item @click="toPath('/person-space')" class="menu-item">
+                <!-- 菜单项 -->
+                <el-menu class="dropdown-menu">
+                    <el-menu-item @click="toPath('/person-space')" class="menu-item">
                         <el-icon>
-                            <user />
+                            <User />
                         </el-icon>
                         <span>个人空间</span>
-                    </el-dropdown-item>
+                    </el-menu-item>
 
-                    <el-dropdown-item v-if="userInfo().admin" @click="toPath('/console')" class="menu-item">
+                    <el-menu-item v-if="userInfo().admin" @click="toPath('/console')" class="menu-item">
                         <el-icon>
-                            <Console />
+                            <Monitor />
                         </el-icon>
                         <span>控制台</span>
-                    </el-dropdown-item>
+                    </el-menu-item>
 
-                    <el-dropdown-item @click="logout" class="menu-item">
+                    <el-menu-item @click="logout" class="menu-item logout-item">
                         <el-icon>
-                            <switch-button />
+                            <SwitchButton />
                         </el-icon>
                         <span>退出登录</span>
-                    </el-dropdown-item>
-                </el-dropdown-menu>
+                    </el-menu-item>
+                </el-menu>
             </div>
         </template>
     </el-dropdown>
 </template>
 
-<script setup lang='ts'>
-import Console from '../icon/Console.vue';
-import RoleSettings from '../icon/RoleSettings.vue';
-import Avatar from './Avatar.vue';
-import { userInfo, logout, toPath } from '@/utils';
+<script setup lang="ts">
+import { User, EditPen, ArrowDown, StarFilled, OfficeBuilding, UserFilled, Monitor, SwitchButton } from '@element-plus/icons-vue'
+import Avatar from './Avatar.vue'
+import { userInfo, logout, toPath } from '@/utils'
 </script>
 
-<style scoped>
-/* 通用按钮样式 */
-.auth-button {
-    font-size: 14px;
-    /* color: #409EFF; */
-    padding: 8px 16px;
-    transition: background-color 0.3s ease;
-}
-
-.auth-button:hover {
-    /* background-color: #f5f7fa; */
-}
-
-/* 头像样式 */
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-
-/* 下拉菜单内容 */
-.dropdown-content {
-    padding: 1rem;
-    min-width: 300px;
-    /* background-color: #fff; */
-    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
-    border-radius: 8px;
-}
-
-/* 用户信息区域 */
-.user-info {
-    text-align: center;
-    font-family: '华文新魏', sans-serif;
-    margin-bottom: 1rem;
-}
-
-.nickname {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.vip-status {
-    color: red;
-    margin-top: 5px;
-}
-
-.sex {
-    font-size: 14px;
-    /* color: #888; */
-    margin-top: 5px;
-}
-
-/* 组织信息行 */
-.org-row {
-    margin-bottom: 1rem;
-}
-
-.org-button {
-    width: 100%;
-    padding: 8px 0;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.org-button:hover {
-    /* background-color: #f5f7fa; */
-}
-
-/* 角色信息行 */
-.role-row {
-    margin-bottom: 1rem;
-}
-
-.role-button {
-    width: 100%;
-    padding: 8px 0;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.role-button:hover {
-    /* background-color: #f5f7fa; */
-}
-
-/* 下拉菜单项 */
-.menu-item {
+<style scoped lang="scss">
+.auth-buttons {
     display: flex;
     align-items: center;
-    padding: 0.5rem 1rem;
-    font-size: 14px;
-    /* color: #333; */
-    transition: background-color 0.2s ease;
-}
+    gap: 12px;
 
-.menu-item:hover {
-    /* background-color: #f5f7fa; */
-}
+    .login-button {
+        color: var(--el-text-color-primary);
+        font-weight: 500;
+        padding: 8px 16px;
+        transition: all 0.3s ease;
 
-.menu-item el-icon {
-    font-size: 18px;
-    margin-right: 8px;
-}
+        &:hover {
+            color: var(--el-color-primary);
+            background-color: var(--el-color-primary-light-9);
+        }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-    .dropdown-content {
-        min-width: 250px;
+        .el-icon {
+            margin-right: 6px;
+        }
     }
 
-    .auth-button {
+    .register-button {
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+
+        .el-icon {
+            margin-right: 6px;
+        }
+    }
+}
+
+.user-dropdown {
+    cursor: pointer;
+
+    .avatar-wrapper {
+        display: flex;
+        align-items: center;
+        padding: 4px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background-color: var(--el-color-primary-light-9);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--el-color-primary-light-5);
+        }
+
+        .dropdown-arrow {
+            margin-left: 4px;
+            font-size: 12px;
+            color: var(--el-text-color-secondary);
+        }
+    }
+}
+
+.dropdown-card {
+    width: 280px;
+    padding: 16px;
+    background-color: var(--el-bg-color-overlay);
+    border-radius: 8px;
+    box-shadow: var(--el-box-shadow-light);
+
+    .user-header {
+        display: flex;
+        align-items: center;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--el-border-color-light);
+
+        .header-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 2px solid var(--el-color-primary);
+        }
+
+        .user-meta {
+            flex: 1;
+
+            .nickname {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 4px;
+                color: var(--el-text-color-primary);
+            }
+
+            .vip-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 2px 8px;
+                background-color: var(--el-color-warning-light-9);
+                border-radius: 4px;
+                color: var(--el-color-warning-dark-2);
+                font-size: 12px;
+                margin-bottom: 4px;
+
+                .el-icon {
+                    font-size: 14px;
+                    margin-right: 4px;
+                }
+            }
+
+            .user-id {
+                font-size: 12px;
+                color: var(--el-text-color-secondary);
+            }
+        }
+    }
+
+    .section-title {
         font-size: 12px;
+        color: var(--el-text-color-secondary);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .org-section,
+    .role-section {
+        margin-bottom: 16px;
+
+        .org-tags,
+        .role-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            .org-tag,
+            .role-tag {
+                margin: 0;
+
+                .el-icon {
+                    margin-right: 4px;
+                }
+            }
+        }
+    }
+
+    .dropdown-menu {
+        border: none;
+
+        .menu-item {
+            height: 40px;
+            line-height: 40px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: var(--el-color-primary-light-9);
+                color: var(--el-color-primary);
+            }
+
+            .el-icon {
+                margin-right: 8px;
+                font-size: 16px;
+            }
+        }
+
+        .logout-item {
+            color: var(--el-color-danger);
+
+            &:hover {
+                background-color: var(--el-color-danger-light-9);
+                color: var(--el-color-danger);
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-buttons {
+        gap: 8px;
+
+        .login-button,
+        .register-button {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+    }
+
+    .dropdown-card {
+        width: 240px;
     }
 }
 </style>

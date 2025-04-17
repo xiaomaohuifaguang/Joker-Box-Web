@@ -1,5 +1,5 @@
 <template>
-    <VuePdfApp :page-scale="pageScale" :theme="theme" :style="`width: 100%; height: 60vh;`" :pdf="src"
+    <VuePdfApp :page-scale="pageScale" :theme="theme" :style="`width: 100%; height: 60vh;`" :pdf="fileUrl"
         :fileName="fileName" @pages-rendered="pagesRendered" v-bind="$attrs" :config="config"></VuePdfApp>
 </template>
 
@@ -109,6 +109,20 @@ function pagesRendered(pdfApp: any) {
     // console.log('pdfApp页码渲染完成:', pdfApp)
     emit('loaded', pdfApp)
 }
+
+import { useFileFetch } from '@/utils/fileServer/fileFetch';
+
+import { onMounted } from 'vue';
+
+
+
+const { fileUrl, fetchFile } = useFileFetch();
+
+onMounted(() => {
+    if (props.src) {
+        fetchFile(props.src.toString());  // 传递 src 参数请求文件
+    }
+});
 </script>
 
 

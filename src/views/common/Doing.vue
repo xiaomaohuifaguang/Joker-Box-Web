@@ -1,8 +1,16 @@
 <template>
-    <div class="container xy-center">
+    <div class="container">
         <el-card class="card xy-center" @click="utils.toPath('#')">
-            敬请期待
+            <div>敬请期待</div>
         </el-card>
+        <!-- <iframe
+            src="//player.bilibili.com/player.html?isOutside=true&aid=113458355899117&bvid=BV1Tcm6YHESv&cid=26699435144&p=1"
+            scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" width="800"
+            height="600"></iframe> -->
+        <iframe style="width: 700px;height: 400px;"
+            src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=26135263&quality=0"
+            frameborder="no" framespacing="0" scrolling="no" allow="autoplay; encrypted-media"
+            allowfullscreen="true"></iframe>
     </div>
 </template>
 
@@ -16,9 +24,11 @@ import utils from '@/utils';
     display: flex;
     /* 垂直居中 */
     align-items: center;
+    /* margin-top: 20vh; */
     /* 水平居中 */
     justify-content: center;
 }
+
 
 .container {
     min-height: 100vh;
@@ -27,6 +37,9 @@ import utils from '@/utils';
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    padding-top: 20vh;
 }
 
 .container .card {

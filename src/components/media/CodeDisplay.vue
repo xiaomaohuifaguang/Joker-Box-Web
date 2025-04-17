@@ -4,18 +4,18 @@
         <code ref="code" :class="`language-${language}`">{{ code }}</code>
       </pre>
         <el-button v-clipboard:copy="code" v-clipboard:success="onCopySuccess" class="copy-btn" type="primary"
-            title="Copy to clipboard">
+            title="Copy to clipboard" :key="tmpCopyButtonKey">
             复制
         </el-button>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, nextTick, watch } from "vue";
+import { onMounted, nextTick, watch, ref } from "vue";
 import Prism from "prismjs";
 import "prismjs/components/prism-java.min.js"; // 引入 Java 语言支持
 import "prismjs/themes/prism-tomorrow.css"; // 可选：选择不同的主题
-import { alert } from "@/utils";
+import { alert, randomId } from "@/utils";
 
 const props = defineProps({
     code: String,
@@ -24,6 +24,9 @@ const props = defineProps({
         default: "java",  // 默认语言为 Java
     },
 });
+
+const tmpCopyButtonKey = ref(randomId("tmpCopyButtonKey"))
+
 
 // Clipboard success handler
 const onCopySuccess = () => {
@@ -40,6 +43,10 @@ const highlightCode = () => {
 watch(() => props.language, () => {
     highlightCode(); // 语言变化时重新高亮
 }, { immediate: true }); // 立即应用首次高亮
+
+watch(() => props.code, () => {
+    tmpCopyButtonKey.value = randomId("tmpCopyButtonKey");
+});
 
 onMounted(() => {
     highlightCode(); // 组件加载时，高亮代码

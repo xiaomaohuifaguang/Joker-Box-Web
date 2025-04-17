@@ -1,0 +1,11 @@
+{
+    "name": "Flowable",
+    "uri": "http://flowable.org/bpmn",
+    "prefix": "flowable",
+    "xml": {
+        "tagAlias": "lowerCase"
+    },
+    "associations": [],
+    "types": [],
+    "emumerations": []
+}

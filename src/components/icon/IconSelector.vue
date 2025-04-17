@@ -61,7 +61,7 @@ const elIconList = ref(Object.keys(ElementPlusIconsVue))
 
 // 自定义图标列表
 const diyIconList = ref([
-    "Api", "CloudDisk", "Console", "Document", "Folder", "Joker", "JokerMan", "JokerWoman", "Org", "RoleSettings", "SystemSettings", "UserSettings", "Website"
+    "Api", "CloudDisk", "Console", "Document", "Folder", "Joker", "JokerMan", "JokerWoman", "Org", "RoleSettings", "SystemSettings", "UserSettings", "Website", 'Process'
 ])
 
 </script>
