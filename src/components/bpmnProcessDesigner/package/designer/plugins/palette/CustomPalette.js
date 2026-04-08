@@ -183,36 +183,36 @@ F.prototype.getPaletteEntries = function () {
       'bpmn-icon-data-object',
       translate('Create DataObjectReference')
     ),
-    'create.data-store': createAction(
-      'bpmn:DataStoreReference',
-      'data-store',
-      'bpmn-icon-data-store',
-      translate('Create DataStoreReference')
-    ),
-    'create.subprocess-expanded': {
-      group: 'activity',
-      className: 'bpmn-icon-subprocess-expanded',
-      title: translate('Create expanded SubProcess'),
-      action: {
-        dragstart: createSubprocess,
-        click: createSubprocess
-      }
-    },
-    'create.participant-expanded': {
-      group: 'collaboration',
-      className: 'bpmn-icon-participant',
-      title: translate('Create Pool/Participant'),
-      action: {
-        dragstart: createParticipant,
-        click: createParticipant
-      }
-    },
-    'create.group': createAction(
-      'bpmn:Group',
-      'artifact',
-      'bpmn-icon-group',
-      translate('Create Group')
-    )
+    // 'create.data-store': createAction(
+    //   'bpmn:DataStoreReference',
+    //   'data-store',
+    //   'bpmn-icon-data-store',
+    //   translate('Create DataStoreReference')
+    // ),
+    // 'create.subprocess-expanded': {
+    //   group: 'activity',
+    //   className: 'bpmn-icon-subprocess-expanded',
+    //   title: translate('Create expanded SubProcess'),
+    //   action: {
+    //     dragstart: createSubprocess,
+    //     click: createSubprocess
+    //   }
+    // },
+    // 'create.participant-expanded': {
+    //   group: 'collaboration',
+    //   className: 'bpmn-icon-participant',
+    //   title: translate('Create Pool/Participant'),
+    //   action: {
+    //     dragstart: createParticipant,
+    //     click: createParticipant
+    //   }
+    // },
+    // 'create.group': createAction(
+    //   'bpmn:Group',
+    //   'artifact',
+    //   'bpmn-icon-group',
+    //   translate('Create Group')
+    // )
   })
 
   return actions

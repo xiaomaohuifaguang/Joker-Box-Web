@@ -20,7 +20,7 @@ export const logout = () => {
     localStorage.removeItem(CONSTANTS.SYSTEM.TOKEN)
     localStorage.removeItem(CONSTANTS.SYSTEM.USER_INFO)
     // window.location.href = CONSTANTS.SYSTEM.LOGIN_PAGE
-    window.location.reload()
+    // window.location.reload()
 }
 
 export const saveUserInfo = (data: any) => {
@@ -33,11 +33,18 @@ export const userInfo = () => {
 }
 
 export const alert = (msg: string, type: 'info' | 'success' | 'warning' | 'error') => {
-    ElNotification({
-        title: '提示',
+    // ElNotification({
+    //     title: '提示',
+    //     message: msg,
+    //     type: type
+    // })
+
+
+    ElMessage({
         message: msg,
-        type: type
+        type: type,
     })
+
 }
 export const confirm = (title: string, content: string, confirm?: () => void, cancel?: () => void) => {
     ElMessageBox.confirm(content, title, {

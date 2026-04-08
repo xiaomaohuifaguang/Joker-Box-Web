@@ -9,7 +9,7 @@
 
         <!-- 主菜单项 -->
         <ElMenuItemInit v-for="menu in menuInit" :key="menu.path" :path="menu.path" :name="menu.name"
-            :children="menu.children" :icon="menu.icon" class="nav-item" />
+            :children="menu.children" :icon="menu.icon" />
 
         <!-- 功能页下拉菜单 -->
         <el-sub-menu index="功能页" class="more-menu">

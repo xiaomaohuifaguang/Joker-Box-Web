@@ -101,7 +101,7 @@ const menuTree = ref([])
 const add = () => {
     console.log(info.value.parentId)
     info.value.menuType = menuType.value
-    info.value.parentId = info.value.parentId == '' || info.value.parentId == undefined ? menuType.value : ''
+    info.value.parentId = info.value.parentId == '' || info.value.parentId == undefined ? menuType.value : info.value.parentId
     http.result({
         url: '/menu/add',
         method: 'POST',

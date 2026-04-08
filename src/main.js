@@ -12,6 +12,9 @@ import registerComponents from './registerComponents';
 
 import Clipboard from 'v-clipboard';
 
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs' // 引入中文语言包
+
+
 
 
 const app = createApp(App)
@@ -21,7 +24,9 @@ app.use(router)
 app.use(Clipboard)
 
 
-app.use(ElementPlus)
+app.use(ElementPlus, {
+    locale: zhCn,
+})
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }

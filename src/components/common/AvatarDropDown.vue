@@ -83,7 +83,7 @@
                         <span>控制台</span>
                     </el-menu-item>
 
-                    <el-menu-item @click="logout" class="menu-item logout-item">
+                    <el-menu-item @click="clickLogout" class="menu-item logout-item">
                         <el-icon>
                             <SwitchButton />
                         </el-icon>
@@ -93,12 +93,28 @@
             </div>
         </template>
     </el-dropdown>
+
+    <el-badge value="99" :offset="[-15, 0]">
+        <el-button>
+            <el-icon :size="25">
+                <Message />
+            </el-icon>
+        </el-button>
+    </el-badge>
+
+
 </template>
 
 <script setup lang="ts">
 import { User, EditPen, ArrowDown, StarFilled, OfficeBuilding, UserFilled, Monitor, SwitchButton } from '@element-plus/icons-vue'
 import Avatar from './Avatar.vue'
 import { userInfo, logout, toPath } from '@/utils'
+
+const clickLogout = () => {
+    logout()
+    window.location.reload()
+}
+
 </script>
 
 <style scoped lang="scss">

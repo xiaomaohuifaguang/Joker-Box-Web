@@ -34,7 +34,7 @@
                                 <span class="filter-icon apply">
                                     <i class="el-icon-time"></i>
                                 </span>
-                                <span>本人已申请</span>
+                                <span>已申请</span>
                             </div>
                         </el-card>
                     </el-col>
@@ -114,12 +114,12 @@
                     <el-table-column fixed="right" label="操作" align="center">
                         <template #default="scope">
                             <!-- 保持原有操作按钮不变 -->
-                            <el-button type="text" v-if="scope.row.status == '0'"
+                            <el-button type="primary" link v-if="scope.row.status == '0'"
                                 @click="dialogEdit.type = 'draft'; dialogEdit.workOrderId = scope.row.id; dialogEdit.show = true;">编辑</el-button>
-                            <el-button type="text"
+                            <el-button type="primary" link
                                 v-if="scope.row.status == '1' && scope.row.processStatus == '21' && scope.row.taskId != null"
                                 @click="dialogEdit.type = 'handle'; dialogEdit.workOrderId = scope.row.id; dialogEdit.show = true;">审批</el-button>
-                            <el-button type="text"
+                            <el-button type="primary" link
                                 @click="dialogEdit.type = 'view'; dialogEdit.workOrderId = scope.row.id; dialogEdit.show = true;">查看</el-button>
                         </template>
                     </el-table-column>

@@ -89,6 +89,15 @@ const apiReqTotalChartData = ref({
     },
     xAxis: {
         type: 'category',
+        axisLabel: {
+            rotate: 30, // 旋转角度，正值表示逆时针旋转
+            interval: 0, // 强制显示所有标签
+            fontSize: 12,
+            // 如果标签仍然过长可以截断
+            formatter: function (value) {
+                return value.length > 6 ? value.substring(0, 6) + '...' : value;
+            }
+        },
         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
     yAxis: {

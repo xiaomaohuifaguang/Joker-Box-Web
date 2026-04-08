@@ -17,7 +17,7 @@
             <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" status-icon label-position="top"
                 label-width="auto">
                 <el-form-item label="用户名" prop="username">
-                    <el-input v-model="ruleForm.username" size="large" placeholder="请输入4-18位用户名"
+                    <el-input v-model="ruleForm.username" size="large" placeholder="请输入4-18位英文字符或数字"
                         autocomplete="new-password" clearable />
                 </el-form-item>
 
@@ -315,20 +315,21 @@ const toHome = () => {
     width: 100px;
     height: 100%;
     font-size: 14px;
-    background: linear-gradient(to right, #909399, #a6a9ad);
-    color: white;
+    background: linear-gradient(to right, #739df3, #4691f5);
+    color: white !important;
     border: none;
     border-radius: 0 8px 8px 0;
     transition: all 0.3s ease;
 }
 
 .code-button:hover {
-    background: linear-gradient(to right, #a6a9ad, #909399);
+    background: linear-gradient(to right, #4691f5, #739df3);
 }
 
 .code-button:disabled {
     background: #dcdfe6;
     cursor: not-allowed;
+    color: #000 !important;
 }
 
 .home-button {

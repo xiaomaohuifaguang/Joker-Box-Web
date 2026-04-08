@@ -9,7 +9,7 @@
                     </el-icon>
                     <span>控制台</span>
                 </el-breadcrumb-item>
-                <el-breadcrumb-item>MailInfo管理</el-breadcrumb-item>
+                <el-breadcrumb-item>邮件管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
 
@@ -191,7 +191,7 @@ const remove = (id: any) => {
 const openDialog = (id: string, type: string) => {
     dialogEdit.value = {
         open: true,
-        title: type === 'view' ? 'MailInfo详情' : '编辑MailInfo',
+        title: type === 'view' ? '邮件详情' : '编辑邮件',
         id,
         type
     }

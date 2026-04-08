@@ -39,7 +39,7 @@
 
                         <!-- 动态菜单 -->
                         <ElMenuItemInit v-for="menu in menuInit" :key="menu.path" :path="menu.path" :name="menu.name"
-                            :children="menu.children" :icon="menu.icon" class="menu-item" />
+                            :children="menu.children" :icon="menu.icon" />
 
                         <!-- 设置菜单 -->
                         <el-sub-menu index="/console/settings" class="menu-item">
@@ -111,13 +111,8 @@ import DarkSwitch from '@/components/common/DarkSwitch.vue'
 import Avatar from '@/components/common/Avatar.vue'
 import ElMenuItemInit from '@/components/common/ElMenuItemInit.vue'
 import { HomeFilled, Expand, Fold, SwitchButton } from '@element-plus/icons-vue'
-import Api from '@/components/icon/Api.vue';
-import RoleSettings from '@/components/icon/RoleSettings.vue';
-import UserSettings from '@/components/icon/UserSettings.vue';
-import SystemSettings from '@/components/icon/SystemSettings.vue';
-import Org from '@/components/icon/Org.vue';
-import Console from '@/components/icon/Console.vue';
-import Website from '@/components/icon/Website.vue';
+
+
 
 const route = useRoute()
 const activeIndex = ref(route.path)

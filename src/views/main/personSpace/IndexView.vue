@@ -1,5 +1,5 @@
 <template>
-    <el-row :gutter="20">
+    <el-row>
         <el-col :span="18" :offset="3">
             <el-container>
                 <el-aside width="200px"><el-menu :default-active="menuActive" @select="(

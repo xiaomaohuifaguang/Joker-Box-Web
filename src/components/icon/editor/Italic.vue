@@ -1,0 +1,13 @@
+<template>
+    <svg t="1745043053987" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+        p-id="1929" width="200" height="200">
+        <path d="M779.71 129.73V44.17H523.03v85.56h70.83L362.89 898.61h-96.54v85.56h256.68v-85.56H452.2l230.98-768.88z"
+            p-id="1930"></path>
+    </svg>
+</template>
+
+<script setup lang='ts'>
+
+</script>
+
+<style></style>

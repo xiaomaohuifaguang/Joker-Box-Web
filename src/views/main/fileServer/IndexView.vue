@@ -1,6 +1,6 @@
 <template>
     <div class="file-manager-container">
-        <el-row :gutter="20">
+        <el-row>
             <el-col :span="20" :offset="2">
                 <!-- 文件上传区域 -->
                 <el-card shadow="hover" class="upload-card">

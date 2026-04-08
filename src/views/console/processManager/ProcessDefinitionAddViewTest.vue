@@ -144,8 +144,4 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
-/* .el-col {
-    margin-top: 1rem;
-} */
-</style>
+<style></style>

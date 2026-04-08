@@ -23,6 +23,12 @@ const router = createRouter({
       meta: { title: '注册' },
     },
     {
+      path: '/dynamicForm/:id/:version',
+      name: 'dynamicForm_edit',
+      component: () => import('@/views/main/dynamicForm/IndexView.vue'),
+      meta: { title: '动态表单', requiresAuth: true, onlyLogin: true },
+    },
+    {
       path: '/',
       name: 'main',
       component: () => import('@/views/MainView.vue'),
@@ -70,10 +76,40 @@ const router = createRouter({
           meta: { title: '流程审批', requiresAuth: true, onlyLogin: true },
         },
         {
+          path: 'ganDaShi',
+          name: 'ganDaShi',
+          component: () => import('@/views/main/ganDaShi/IndexView.vue'),
+          meta: { title: '干大事论坛', requiresAuth: true, onlyLogin: true },
+        },
+        {
+          path: 'ganDaShi/:username',
+          name: 'ganDaShi_by_username',
+          component: () => import('@/views/main/ganDaShi/IndexView.vue'),
+          meta: { title: '干大事论坛', requiresAuth: true, onlyLogin: true },
+        },
+        {
+          path: 'ganDaShi/:username/:id',
+          name: 'ganDaShi_view',
+          component: () => import('@/views/main/ganDaShi/PostViewView.vue'),
+          meta: { title: '干大事论坛', requiresAuth: true, onlyLogin: true },
+        },
+        {
           path: '403',
           name: 'main-403',
           component: () => import('@/views/common/403.vue'),
           meta: { title: '403' },
+        },
+        {
+          path: 'tools/jsonFormat',
+          name: 'tools-jsonFormat',
+          component: () => import('@/views/main/tools/JsonFormatView.vue'),
+          meta: { title: '工具箱|JSON', requiresAuth: true, onlyLogin: true },
+        },
+        {
+          path: 'tools/signInCard',
+          name: 'tools-signInCard',
+          component: () => import('@/views/common/Doing.vue'),
+          meta: { title: '工具箱|签到卡', requiresAuth: true, onlyLogin: true },
         }
       ]
     },
@@ -144,6 +180,12 @@ const router = createRouter({
           meta: { title: '网站管理' },
         },
         {
+          path: 'dynamicForm-manager',
+          name: 'dynamicForm-manager',
+          component: () => import('@/views/console/dynamicForm/IndexView.vue'),
+          meta: { title: '表单管理' },
+        },
+        {
           path: 'process-manager',
           name: 'process-manager',
           component: () => import('@/views/console/processManager/IndexView.vue'),
@@ -166,6 +208,18 @@ const router = createRouter({
           name: 'mail-manager',
           component: () => import('@/views/console/mail/IndexView.vue'),
           meta: { title: '邮件记录' },
+        },
+        {
+          path: 'crawler-task-manager',
+          name: 'crawler-task-manager',
+          component: () => import('@/views/console/crawlerTask/IndexView.vue'),
+          meta: { title: '爬虫任务' },
+        },
+        {
+          path: 'ai/model-manager',
+          name: 'ai-model-manager',
+          component: () => import('@/views/console/ai/model/IndexView.vue'),
+          meta: { title: '模型管理' },
         }
       ]
     }
@@ -189,10 +243,8 @@ router.beforeEach((to, from) => {
   }
 
   let token = localStorage.getItem(CONSTANTS.SYSTEM.TOKEN)
-  if (token && token != null) {
-    console.log('getUserInfo')
-    // getUserInfo()
-    // userInfo()
+  if (token == null) {
+    // return "/";
   }
 
   if (to.meta.requiresAuth) {

@@ -215,6 +215,8 @@ import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue'
 // })
 
 import CodeDisplay from '@/components/media/CodeDisplay.vue'
+import { useDark } from '@vueuse/core'
+
 
 defineOptions({ name: 'MyProcessDesigner' })
 
@@ -378,6 +380,7 @@ const moddleExtensions = computed(() => {
 console.log(additionalModules, 'additionalModules()')
 console.log(moddleExtensions, 'moddleExtensions()')
 const initBpmnModeler = () => {
+  const isDark = useDark()
   if (bpmnModeler) return
   let data = document.getElementById('bpmnCanvas')
   // console.log(data, 'data')
@@ -399,7 +402,11 @@ const initBpmnModeler = () => {
     // keyboard: props.keyboard ? { bindTo: document } : null,
     // additionalModules: additionalModules.value,
     additionalModules: Array.isArray(additionalModules.value) ? additionalModules.value : [],
-    moddleExtensions: moddleExtensions.value
+    moddleExtensions: moddleExtensions.value,
+    bpmnRenderer: isDark.value ? {
+      defaultFillColor: '#333',
+      defaultStrokeColor: '#fff'
+    } : {}
 
     // additionalModules: [
     // additionalModules.value
@@ -684,6 +691,7 @@ onBeforeUnmount(() => {
   flex: 1;
   height: calc(100% - 52px);
   overflow: hidden;
+
 }
 
 .preview-dialog {
@@ -709,5 +717,20 @@ onBeforeUnmount(() => {
       justify-content: center;
     }
   }
+}
+
+/* 面板容器 - 整体样式 */
+.djs-palette-entries {
+  background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+  /* 浅色渐变背景 */
+  border-radius: 12px;
+  /* 圆角 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  /* 柔和阴影 */
+  padding: 12px;
+  width: 48px;
+  /* 紧凑宽度 */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 </style>

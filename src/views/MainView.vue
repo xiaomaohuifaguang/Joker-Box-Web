@@ -1,52 +1,58 @@
 <template>
-    <el-row>
-        <el-col :span="24" :offset="0">
-            <el-container style="min-height: 100vh;">
-                <el-header class="padding-lr-0">
-                    <Header />
-                </el-header>
+    <div class="app-layout">
+        <!-- 顶部导航栏 -->
+        <el-header class="app-header">
+            <Header />
+        </el-header>
 
-                <el-main class="padding-lr-0 main-container">
-                    <!-- 悬浮提示区域 -->
-                    <div class="floating-prompts" v-if="prompts.length > 0">
-                        <div class="prompt-item" v-for="(item, index) in prompts" :key="index">
-                            <div class="prompt-icon">
-                                <el-icon>
-                                    <Warning />
-                                </el-icon>
-                            </div>
-                            <div class="prompt-content">
-                                <div class="prompt-title">系统提示</div>
-                                <div class="prompt-message">{{ item.prompt }}</div>
-                            </div>
-                            <div class="prompt-close" @click="removePrompt(index)">
-                                <el-icon>
-                                    <Close />
-                                </el-icon>
-                            </div>
-                        </div>
+        <!-- 主内容区域 -->
+        <main class="app-main">
+            <!-- 悬浮提示区域 -->
+            <transition-group name="prompt" tag="div" class="floating-prompts" v-if="prompts.length > 0">
+                <div class="prompt-item" v-for="(item, index) in prompts" :key="item.id || index"
+                    :style="{ 'z-index': 2000 + index }">
+                    <div class="prompt-icon">
+                        <el-icon>
+                            <Warning />
+                        </el-icon>
                     </div>
+                    <div class="prompt-content">
+                        <div class="prompt-title">系统提示</div>
+                        <div class="prompt-message">{{ item.prompt }}</div>
+                    </div>
+                    <div class="prompt-close" @click="removePrompt(index)">
+                        <el-icon>
+                            <Close />
+                        </el-icon>
+                    </div>
+                </div>
+            </transition-group>
 
-                    <RouterView />
-                </el-main>
-            </el-container>
-        </el-col>
-    </el-row>
-    <Footer v-if="route.path != '/login' && route.path != '/register' && route.path != '/start'" />
+            <!-- 路由视图 -->
+            <div class="router-view-container">
+                <RouterView />
+            </div>
+        </main>
+        <!-- 页脚 -->
+        <Footer v-if="!['/login', '/register', '/start'].includes(route.path)" />
+    </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { Warning, Close } from '@element-plus/icons-vue'
 import Header from '@/components/common/Header.vue';
+import Footer from '@/components/common/Footer.vue';
 import { http } from '@/utils';
 import { ref } from 'vue';
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
-const route = useRoute()
-const prompts = ref([])
 
-const removePrompt = (index) => {
+
+const route = useRoute()
+const prompts = ref<Array<{ id?: string, prompt: string }>>([])
+
+const removePrompt = (index: number) => {
     prompts.value.splice(index, 1)
 }
 
@@ -55,26 +61,43 @@ onMounted(() => {
         url: '/system/prompt',
         method: 'POST',
         success(result) {
-            prompts.value = result.data
+            prompts.value = result.data.map((item: any, index: number) => ({
+                ...item,
+                id: item.id || `prompt-${index}-${Date.now()}`
+            }))
         }
     })
 })
 </script>
 
 <style scoped lang="scss">
-.padding-lr-0 {
-    padding-left: 0;
-    padding-right: 0;
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--el-bg-color-page);
 }
 
-.el-main {
-    padding-top: 0;
-    padding-bottom: 0;
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 0;
+    height: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.app-main {
+    flex: 1;
     position: relative;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
-.main-container {
-    padding-top: 20px;
+.router-view-container {
+    // max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .floating-prompts {
@@ -94,74 +117,126 @@ onMounted(() => {
     align-items: center;
     width: 80%;
     max-width: 800px;
-    padding: 12px 16px;
-    margin-bottom: 10px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-left: 4px solid #e6a23c;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    background-color: var(--el-bg-color);
+    border-radius: 10px;
+    box-shadow: var(--el-box-shadow-light);
+    border-left: 4px solid var(--el-color-warning);
     pointer-events: auto;
-    animation: slideDown 0.3s ease-out;
     transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
 
     &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--el-box-shadow);
     }
 }
 
 .prompt-icon {
-    margin-right: 12px;
-    color: #e6a23c;
-    font-size: 20px;
+    margin-right: 14px;
+    color: var(--el-color-warning);
+    font-size: 22px;
 }
 
 .prompt-content {
     flex: 1;
+    min-width: 0;
 }
 
 .prompt-title {
     font-weight: 600;
-    color: #e6a23c;
-    margin-bottom: 4px;
+    color: var(--el-color-warning);
+    margin-bottom: 6px;
+    font-size: 15px;
 }
 
 .prompt-message {
-    color: #606266;
+    color: var(--el-text-color-regular);
     font-size: 14px;
+    line-height: 1.5;
+    word-break: break-word;
 }
 
 .prompt-close {
-    margin-left: 12px;
-    color: #c0c4cc;
+    margin-left: 16px;
+    color: var(--el-text-color-placeholder);
     cursor: pointer;
     transition: color 0.2s;
+    flex-shrink: 0;
 
     &:hover {
-        color: #909399;
+        color: var(--el-text-color-secondary);
     }
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
+/* 动画效果 */
+.prompt-enter-active,
+.prompt-leave-active {
+    transition: all 0.3s ease;
+}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.prompt-enter-from,
+.prompt-leave-to {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.prompt-move {
+    transition: transform 0.3s ease;
+}
+
+.app-footer {
+    margin-top: auto;
 }
 
 @media (max-width: 768px) {
-    .prompt-item {
-        width: 95%;
-        padding: 10px 12px;
+    .app-main {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    .router-view-container {
+        padding: 0 15px;
     }
 
     .floating-prompts {
         top: 70px;
+    }
+
+    .prompt-item {
+        width: calc(100% - 30px);
+        padding: 12px 15px;
+        margin-bottom: 10px;
+    }
+
+    .prompt-icon {
+        font-size: 20px;
+        margin-right: 12px;
+    }
+
+    .prompt-close {
+        margin-left: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-main {
+        padding-top: 10px;
+    }
+
+    .prompt-item {
+        width: calc(100% - 20px);
+        padding: 10px 12px;
+    }
+
+    .prompt-title {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .prompt-message {
+        font-size: 13px;
     }
 }
 </style>
