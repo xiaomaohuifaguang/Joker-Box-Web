@@ -1,94 +1,79 @@
 <template>
-    <div class="add-container">
-        <el-card class="add-card" shadow="never">
-            <template #header>
-                <div class="card-header">
-                    <span>添加表单</span>
-                </div>
-            </template>
+    <div class="add-form-container">
+        <div class="form-header">
+            <div class="header-icon">
+                <el-icon><Plus /></el-icon>
+            </div>
+            <div class="header-content">
+                <h3>添加表单</h3>
+                <p>配置新表单的基本信息和字段</p>
+            </div>
+        </div>
 
+        <div class="form-content">
             <el-row :gutter="20">
-                <el-col :span="6">
-                    <el-form label-position="top" class="add-form">
-                        <el-row :gutter="24">
-                            <!-- <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                        <el-form-item label="表单id" prop="id">
-                            <el-input v-model="info.id" :placeholder="`请输入表单id`" clearable />
+                <el-col :xs="24" :sm="24" :md="6" :lg="6">
+                    <el-form label-position="top" class="info-form">
+                        <el-form-item label="表单名称" required>
+                            <el-input
+                                v-model="info.name"
+                                :placeholder="`请输入表单名称`"
+                                clearable
+                                size="large">
+                                <template #prefix>
+                                    <el-icon><Document /></el-icon>
+                                </template>
+                            </el-input>
                         </el-form-item>
-                    </el-col> -->
-                            <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                                <el-form-item label="表单名称" prop="name">
-                                    <el-input v-model="info.name" :placeholder="`请输入表单名称`" clearable />
-                                </el-form-item>
-                            </el-col>
-                            <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                                <el-form-item label="描述" prop="description">
-                                    <el-input v-model="info.description" :placeholder="`请输入描述`" clearable />
-                                </el-form-item>
-                            </el-col>
-                            <!-- <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                        <el-form-item label="版本" prop="version">
-                            <el-input v-model="info.version" :placeholder="`请输入版本`" clearable />
+                        <el-form-item label="描述">
+                            <el-input
+                                v-model="info.description"
+                                :placeholder="`请输入描述`"
+                                clearable
+                                type="textarea"
+                                :rows="4"
+                                size="large" />
                         </el-form-item>
-                    </el-col>
-                    <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                        <el-form-item label="状态 0 草稿 1 发布" prop="status">
-                            <el-input v-model="info.status" :placeholder="`请输入状态 0 草稿 1 发布`" clearable />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                        <el-form-item label="逻辑删除" prop="deleted">
-                            <el-input v-model="info.deleted" :placeholder="`请输入逻辑删除`" clearable />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                        <el-form-item label="创建人" prop="createBy">
-                            <el-input v-model="info.createBy" :placeholder="`请输入创建人`" clearable />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                        <el-form-item label="创建时间" prop="createTime">
-                            <el-input v-model="info.createTime" :placeholder="`请输入创建时间`" clearable />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                        <el-form-item label="更新时间" prop="updateTime">
-                            <el-input v-model="info.updateTime" :placeholder="`请输入更新时间`" clearable />
-                        </el-form-item>
-                    </el-col> -->
-                        </el-row>
                     </el-form>
                 </el-col>
-                <el-col :span="12">
-                    <FormMaker :form-fields="info.formFields" @update:fields="info.formFields = $event;" type="create"
-                        v-model="formData" />
+                <el-col :xs="24" :sm="24" :md="18" :lg="18">
+                    <div class="form-maker-wrapper">
+                        <div class="form-maker-header">
+                            <div class="header-icon small">
+                                <el-icon><Setting /></el-icon>
+                            </div>
+                            <span class="header-title">表单字段配置</span>
+                        </div>
+                        <FormMaker
+                            :form-fields="info.formFields"
+                            @update:fields="info.formFields = $event;"
+                            type="create"
+                            v-model="formData" />
+                    </div>
                 </el-col>
             </el-row>
+        </div>
 
-            <el-divider class="form-divider" />
-
-            <div class="action-bar">
-                <el-button type="primary" size="large" @click="add" class="add-button">
-                    <el-icon>
-                        <Plus />
-                    </el-icon>
-                    <span>确认添加</span>
-                </el-button>
-                <el-button type="info" size="large" @click="emit('success')" class="add-button">
-                    <span>取消</span>
-                </el-button>
-            </div>
-        </el-card>
+        <div class="action-bar">
+            <el-button type="primary" size="large" @click="add" class="save-button" :loading="loading">
+                <el-icon><Check /></el-icon>
+                <span>确认添加</span>
+            </el-button>
+            <el-button type="info" size="large" @click="emit('success')" class="cancel-button">
+                <span>取消</span>
+            </el-button>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Document, Setting, Check } from '@element-plus/icons-vue'
 import { alert, http } from '@/utils';
 import { ref } from 'vue';
 import FormMaker from '@/components/dynamicForm/FormMaker.vue';
 
 const emit = defineEmits(['success']);
+const loading = ref(false)
 
 const info = ref({
     id: -1,
@@ -106,6 +91,12 @@ const info = ref({
 const formData = ref({})
 
 const add = () => {
+    if (!info.value.name.trim()) {
+        alert('请输入表单名称', 'warning')
+        return
+    }
+
+    loading.value = true
     http.result({
         url: '/dynamicForm/add',
         method: 'POST',
@@ -113,74 +104,156 @@ const add = () => {
         success(result) {
             alert(result.msg, 'success')
             emit('success');
+            loading.value = false
+        },
+        error() {
+            loading.value = false
         }
     })
 }
 </script>
 
 <style scoped lang="scss">
-.add-container {
-    padding: 20px;
-    background-color: var(--el-bg-color-page);
-}
+.add-form-container {
+    padding: 24px;
+    background: var(--el-bg-color-page);
+    min-height: 500px;
 
-.add-card {
-    border-radius: 8px;
+    .form-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 28px;
 
-    :deep(.el-card__header) {
-        border-bottom: 1px solid var(--el-border-color-light);
-        padding: 16px 20px;
+        .header-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
 
-        .card-header {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--el-text-color-primary);
+            .el-icon {
+                font-size: 26px;
+                color: white;
+            }
+        }
+
+        .header-content {
+            flex: 1;
+
+            h3 {
+                margin: 0 0 6px 0;
+                font-size: 20px;
+                font-weight: 600;
+                color: var(--el-text-color-primary);
+            }
+
+            p {
+                margin: 0;
+                font-size: 14px;
+                color: var(--el-text-color-secondary);
+            }
         }
     }
-}
 
-.add-form {
-    :deep(.el-form-item__label) {
-        font-weight: 500;
-        color: var(--el-text-color-regular);
-        margin-bottom: 6px;
-    }
+    .form-content {
+        .info-form {
+            :deep(.el-form-item__label) {
+                font-weight: 500;
+                color: var(--el-text-color-regular);
+                padding-bottom: 8px;
+            }
 
-    :deep(.el-input__inner) {
-        height: 40px;
-        line-height: 40px;
-        border-radius: 8px;
-    }
-}
+            :deep(.el-input__wrapper) {
+                border-radius: 10px;
+            }
+        }
 
-.form-divider {
-    margin: 20px 0;
-}
+        .form-maker-wrapper {
+            background: var(--el-bg-color);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--el-border-color-lighter);
 
-.action-bar {
-    display: flex;
-    justify-content: center;
+            .form-maker-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 20px;
 
-    .add-button {
-        width: 200px;
-        height: 40px;
-        font-size: 16px;
-        font-weight: 500;
-        border-radius: 8px;
-    }
-}
+                .header-icon {
+                    width: 36px;
+                    height: 36px;
+                    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
 
-@media (max-width: 768px) {
-    .add-form {
-        :deep(.el-col) {
-            width: 100%;
-            margin-bottom: 0;
+                    .el-icon {
+                        font-size: 18px;
+                        color: white;
+                    }
+                }
+
+                .header-title {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: var(--el-text-color-primary);
+                }
+            }
         }
     }
 
     .action-bar {
-        .add-button {
-            width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid var(--el-border-color-lighter);
+
+        .save-button,
+        .cancel-button {
+            min-width: 180px;
+            height: 46px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 12px;
+        }
+
+        .save-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .add-form-container {
+        padding: 16px;
+
+        .form-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .action-bar {
+            flex-direction: column;
+
+            .save-button,
+            .cancel-button {
+                width: 100%;
+            }
         }
     }
 }

@@ -1,33 +1,81 @@
 <template>
-    <div v-loading="loading" class="website-form-container">
-        <el-row :gutter="20">
-            <el-col :span="24">
-                <el-form label-position="left" label-width="auto" class="website-form">
-                    <el-form-item label="名称">
-                        <el-input v-model="info.title" autocomplete="off" />
+    <div class="website-add-container">
+        <div v-loading="loading" element-loading-text="加载中...">
+            <div class="content-wrapper">
+                <div class="form-header">
+                    <div class="header-icon">
+                        <el-icon><Plus /></el-icon>
+                    </div>
+                    <div class="header-content">
+                        <h3>添加网站收藏</h3>
+                        <p>添加新的网站收藏并填写信息</p>
+                    </div>
+                </div>
+
+                <el-form label-position="top" class="website-form">
+                    <el-form-item label="网站名称" required>
+                        <el-input
+                            v-model="info.title"
+                            autocomplete="off"
+                            size="large"
+                            placeholder="请输入网站名称">
+                            <template #prefix>
+                                <el-icon><Document /></el-icon>
+                            </template>
+                        </el-input>
                     </el-form-item>
                     <el-form-item label="分组名称">
-                        <el-input v-model="info.groupName" autocomplete="off" />
+                        <el-input
+                            v-model="info.groupName"
+                            autocomplete="off"
+                            size="large"
+                            placeholder="请输入分组名称（可选）">
+                            <template #prefix>
+                                <el-icon><Folder /></el-icon>
+                            </template>
+                        </el-input>
                     </el-form-item>
-                    <el-form-item label="url">
-                        <el-input v-model="info.url" autocomplete="off" />
+                    <el-form-item label="网站地址" required>
+                        <el-input
+                            v-model="info.url"
+                            autocomplete="off"
+                            size="large"
+                            placeholder="请输入网站地址（如：https://example.com）">
+                            <template #prefix>
+                                <el-icon><Link /></el-icon>
+                            </template>
+                        </el-input>
                     </el-form-item>
                     <el-form-item label="简介">
-                        <el-input v-model="info.description" type="textarea" autocomplete="off" />
+                        <el-input
+                            v-model="info.description"
+                            type="textarea"
+                            :rows="4"
+                            autocomplete="off"
+                            size="large"
+                            placeholder="请输入网站简介（可选）" />
                     </el-form-item>
                 </el-form>
-            </el-col>
-        </el-row>
+            </div>
 
-        <el-divider />
-
-        <div class="form-footer">
-            <el-button type="primary" plain @click="add" size="large" style="width: 100%;">保存</el-button>
+            <div class="form-footer">
+                <el-button type="primary" size="large" @click="add" class="save-button" :loading="loading">
+                    <el-icon><Check /></el-icon>
+                    <span>保存添加</span>
+                </el-button>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
+import {
+    Plus,
+    Document,
+    Folder,
+    Link,
+    Check
+} from '@element-plus/icons-vue'
 import { alert, http } from '@/utils';
 import { ref } from 'vue';
 
@@ -45,6 +93,17 @@ const info = ref({
 const emit = defineEmits(['success']);
 
 const add = () => {
+    if (!info.value.title.trim()) {
+        alert('请输入网站名称', 'warning')
+        return
+    }
+
+    if (!info.value.url.trim()) {
+        alert('请输入网站地址', 'warning')
+        return
+    }
+
+    loading.value = true
     http.result({
         url: '/website/add',
         method: 'POST',
@@ -63,30 +122,116 @@ const add = () => {
                 alert('添加成功', 'success')
                 emit('success');
             }
+            loading.value = false
+        },
+        error() {
+            loading.value = false
         }
     })
 }
 </script>
 
-<style scoped>
-.website-form-container {
-    padding: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
+<style scoped lang="scss">
+.website-add-container {
+    padding: 24px;
+    background: var(--el-bg-color-page);
+
+    .content-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 28px;
+
+        .header-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            .el-icon {
+                font-size: 26px;
+                color: white;
+            }
+        }
+
+        .header-content {
+            flex: 1;
+
+            h3 {
+                margin: 0 0 6px 0;
+                font-size: 20px;
+                font-weight: 600;
+                color: var(--el-text-color-primary);
+            }
+
+            p {
+                margin: 0;
+                font-size: 14px;
+                color: var(--el-text-color-secondary);
+            }
+        }
+    }
+
+    .website-form {
+        :deep(.el-form-item__label) {
+            font-weight: 500;
+            color: var(--el-text-color-regular);
+            padding-bottom: 8px;
+        }
+
+        :deep(.el-input__wrapper) {
+            border-radius: 10px;
+        }
+    }
+
+    .form-footer {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid var(--el-border-color-lighter);
+
+        .save-button {
+            min-width: 200px;
+            height: 46px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+        }
+    }
 }
 
-.website-form .el-form-item {
-    margin-bottom: 1.5rem;
-}
+@media (max-width: 768px) {
+    .website-add-container {
+        padding: 16px;
 
-.form-footer {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-}
+        .form-header {
+            flex-direction: column;
+            text-align: center;
+        }
 
-.el-button {
-    width: 100%;
-    max-width: 200px;
+        .form-footer {
+            .save-button {
+                width: 100%;
+            }
+        }
+    }
 }
 </style>

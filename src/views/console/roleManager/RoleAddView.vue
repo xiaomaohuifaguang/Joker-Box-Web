@@ -1,23 +1,58 @@
 <template>
-    <div class="container">
-        <el-select v-model="withRole" placeholder="选择复制角色" size="large" style="width: 100%;" clearable>
-            <template #prefix>选择复制角色 非必选</template>
-            <el-option v-for="item in selectorRoles" :key="item.key" :label="item.value" :value="item.key" />
-        </el-select>
+    <div class="add-role-container">
+        <div class="form-header">
+            <div class="header-icon">
+                <el-icon><Plus /></el-icon>
+            </div>
+            <div class="header-content">
+                <h3>创建新角色</h3>
+                <p>填写角色信息，快速创建系统角色</p>
+            </div>
+        </div>
 
-        <el-divider />
+        <div class="form-content">
+            <el-select
+                v-model="withRole"
+                placeholder="选择复制角色（可选）"
+                class="form-select"
+                clearable>
+                <template #prefix>
+                    <el-icon><CopyDocument /></el-icon>
+                </template>
+                <el-option
+                    v-for="item in selectorRoles"
+                    :key="item.key"
+                    :label="item.value"
+                    :value="item.key" />
+            </el-select>
 
-        <el-input v-model="roleName" autocomplete="off" size="large" placeholder="请输入角色名称" class="input-field">
-            <template #prepend>名称</template>
-        </el-input>
+            <div class="divider-wrapper">
+                <span class="divider-text">角色信息</span>
+            </div>
 
-        <div class="button-container">
-            <el-button type="primary" plain @click="addRole" size="large" class="save-button">保存</el-button>
+            <el-input
+                v-model="roleName"
+                autocomplete="off"
+                placeholder="请输入角色名称"
+                class="form-input"
+                @keyup.enter="addRole">
+                <template #prefix>
+                    <el-icon><User /></el-icon>
+                </template>
+            </el-input>
+        </div>
+
+        <div class="form-footer">
+            <el-button type="primary" @click="addRole" class="save-button" :loading="loading">
+                <el-icon><Check /></el-icon>
+                <span>保存角色</span>
+            </el-button>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
+import { Plus, User, Check, CopyDocument } from '@element-plus/icons-vue'
 import { alert, http } from '@/utils';
 import { onMounted, ref } from 'vue';
 
@@ -40,6 +75,12 @@ const selectorRole = () => {
 }
 
 const addRole = () => {
+    if (!roleName.value.trim()) {
+        alert('请输入角色名称', 'warning')
+        return
+    }
+
+    loading.value = true
     http.result({
         url: '/role/add',
         method: 'POST',
@@ -54,6 +95,10 @@ const addRole = () => {
                 alert('添加成功', 'success')
                 emit('success');
             }
+            loading.value = false
+        },
+        error() {
+            loading.value = false
         }
     })
 }
@@ -63,53 +108,118 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.container {
-    padding: 20px;
-    background-color: var(--el-background-color);
-    /* 使用 ElementPlus 的背景色 */
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+<style scoped lang="scss">
+.add-role-container {
+    padding: 32px 24px;
 
-.el-select,
-.el-input {
-    margin-bottom: 20px;
-    border-radius: 6px;
-}
+    .form-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
 
-.input-field {
-    width: 100%;
-    height: 40px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-color: var(--el-input-background-color);
-    /* 使用 ElementPlus 的输入框背景色 */
-}
+        .header-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
 
-.button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-}
+            .el-icon {
+                font-size: 26px;
+                color: white;
+            }
+        }
 
-.save-button {
-    width: 100%;
-    height: 44px;
-    font-size: 16px;
-    border-radius: 6px;
-    background-color: var(--el-button-primary-bg-color);
-    /* 使用 ElementPlus 的按钮背景色 */
-    border-color: var(--el-button-primary-border-color);
-    /* 使用 ElementPlus 的按钮边框颜色 */
-    color: var(--el-button-primary-text-color);
-    /* 使用 ElementPlus 的按钮文字颜色 */
-}
+        .header-content {
+            flex: 1;
 
-.save-button:hover {
-    background-color: var(--el-button-primary-hover-bg-color);
-    /* 使用 ElementPlus 的按钮 hover 背景色 */
-    color: var(--el-button-primary-hover-text-color);
-    /* 使用 ElementPlus 的按钮 hover 文字颜色 */
+            h3 {
+                margin: 0 0 6px 0;
+                font-size: 20px;
+                font-weight: 600;
+                color: var(--el-text-color-primary);
+            }
+
+            p {
+                margin: 0;
+                font-size: 14px;
+                color: var(--el-text-color-secondary);
+            }
+        }
+    }
+
+    .form-content {
+        .form-select,
+        .form-input {
+            margin-bottom: 24px;
+
+            :deep(.el-input__wrapper) {
+                border-radius: 12px;
+                padding: 8px 16px;
+                transition: all 0.3s;
+
+                &:hover {
+                    box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+                }
+
+                &.is-focus {
+                    box-shadow: 0 0 0 2px var(--el-color-primary) inset;
+                }
+            }
+        }
+
+        .divider-wrapper {
+            display: flex;
+            align-items: center;
+            margin: 28px 0;
+
+            .divider-text {
+                font-size: 13px;
+                color: var(--el-text-color-secondary);
+                padding: 0 16px;
+                position: relative;
+                font-weight: 500;
+
+                &::before,
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    width: 40px;
+                    height: 1px;
+                    background: var(--el-border-color-lighter);
+                }
+
+                &::before {
+                    right: 100%;
+                }
+
+                &::after {
+                    left: 100%;
+                }
+            }
+        }
+    }
+
+    .form-footer {
+        .save-button {
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+        }
+    }
 }
 </style>

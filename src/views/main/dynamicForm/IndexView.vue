@@ -1,25 +1,49 @@
 <template>
-    <el-row>
-        <el-col :span="18" :offset="3">
-            <FormMaker v-model="formData" v-bind:form-fields="info.formFields" type="edit" ref="formMakerRef" />
-        </el-col>
-        <el-col>
-            <div style="text-align: center;">
-                <el-button type="primary" @click="submit">提交</el-button>
+    <div class="dynamic-form-page">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <div class="title-icon">
+                        <el-icon><Document /></el-icon>
+                    </div>
+                    <div class="title-text">
+                        <h1>{{ info.name || '动态表单' }}</h1>
+                        <p>{{ info.description || '请填写以下信息' }}</p>
+                    </div>
+                </div>
             </div>
-        </el-col>
-    </el-row>
+        </div>
+
+        <div class="page-container">
+            <div class="form-wrapper">
+                <div class="form-card">
+                    <FormMaker
+                        v-model="formData"
+                        v-bind:form-fields="info.formFields"
+                        type="edit"
+                        ref="formMakerRef" />
+                </div>
+                <div class="action-bar">
+                    <el-button type="primary" size="large" @click="submit" class="submit-button" :loading="loading">
+                        <el-icon><Check /></el-icon>
+                        <span>提交表单</span>
+                    </el-button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup lang='ts'>
 import { http, toPath } from '@/utils'
-import { ref } from 'vue'
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { Document, Check } from '@element-plus/icons-vue'
 import FormMaker from '@/components/dynamicForm/FormMaker.vue'
 
-
 const route = useRoute()
+const loading = ref(false)
 
 const info = ref({
     id: -1,
@@ -34,8 +58,10 @@ const info = ref({
     formFields: []
 })
 const formData = ref({})
+const formMakerRef = ref(null)
 
 const queryFields = () => {
+    loading.value = true
     http.result({
         url: '/dynamicForm/info',
         method: 'POST',
@@ -48,21 +74,21 @@ const queryFields = () => {
             if (!info.value.formFields || info.value.formFields.length == 0) {
                 toPath('/404')
             }
+            loading.value = false
+        },
+        error() {
+            loading.value = false
         }
     })
 }
-const formMakerRef = ref(null)
+
 const submit = async () => {
     const verifyFlag = await formMakerRef.value.verify();
     if (!verifyFlag) {
         return
     }
 
-    const fieldListIn = Object.entries(formData.value).map(([formFieldId, val]) => ({
-        formFieldId,
-        val
-    }));
-
+    loading.value = true
     http.result({
         url: "/dynamicForm/submit",
         method: "POST",
@@ -73,20 +99,151 @@ const submit = async () => {
             data: formData.value
         },
         success(result) {
+            loading.value = false
             if (result.code == 200) {
+                http.alert('提交成功', 'success')
             }
+        },
+        error() {
+            loading.value = false
         }
     })
-
-
-
-
 }
 
 onMounted(() => {
     queryFields()
 })
-
 </script>
 
-<style scope></style>
+<style scoped lang="scss">
+.dynamic-form-page {
+    min-height: calc(100vh - 60px);
+    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 32px 0;
+        margin-bottom: 24px;
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            .title-icon {
+                width: 64px;
+                height: 64px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(10px);
+
+                .el-icon {
+                    font-size: 32px;
+                    color: white;
+                }
+            }
+
+            .title-text {
+                h1 {
+                    margin: 0 0 8px 0;
+                    font-size: 28px;
+                    font-weight: 600;
+                    color: white;
+                }
+
+                p {
+                    margin: 0;
+                    font-size: 15px;
+                    color: rgba(255, 255, 255, 0.85);
+                }
+            }
+        }
+    }
+
+    .page-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 24px 40px;
+    }
+
+    .form-wrapper {
+        .form-card {
+            background: var(--el-bg-color);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--el-box-shadow-light);
+            border: 1px solid var(--el-border-color-lighter);
+            margin-bottom: 24px;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: center;
+
+            .submit-button {
+                min-width: 200px;
+                height: 48px;
+                font-size: 16px;
+                font-weight: 500;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                transition: all 0.3s;
+
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .dynamic-form-page {
+        .page-header {
+            padding: 24px 0;
+
+            .header-content {
+                padding: 0 16px;
+            }
+
+            .header-title {
+                flex-direction: column;
+                text-align: center;
+
+                .title-text {
+                    h1 {
+                        font-size: 22px;
+                    }
+                }
+            }
+        }
+
+        .page-container {
+            padding: 0 16px 24px;
+        }
+
+        .form-wrapper {
+            .form-card {
+                padding: 20px;
+            }
+
+            .action-bar {
+                .submit-button {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+</style>

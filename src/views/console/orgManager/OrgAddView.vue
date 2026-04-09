@@ -1,41 +1,51 @@
 <template>
-    <div>
-        <el-row :gutter="20">
-            <el-col :span="24">
-                <el-form label-position="left" label-width="auto">
-                    <!-- <el-form-item label="组织id">
-                        <el-input v-model="info.id" autocomplete="off" />
-                    </el-form-item> -->
-                    <!-- <el-form-item label="父级机构id">
-                        <el-input v-model="info.parentId" autocomplete="off" disabled />
-                    </el-form-item> -->
-                    <el-form-item label="父级机构">
-                        <el-input v-model="info.parentName" autocomplete="off" disabled />
-                    </el-form-item>
-                    <el-form-item label="机构名称">
-                        <el-input v-model="info.name" autocomplete="off" />
-                    </el-form-item>
-                    <!-- <el-form-item label="逻辑删除">
-                        <el-input v-model="info.deleted" autocomplete="off" />
-                    </el-form-item> -->
-                    <!-- <el-form-item label="创建时间">
-                        <el-input v-model="info.createTime" autocomplete="off" />
-                    </el-form-item>
-                    <el-form-item label="更新时间">
-                        <el-input v-model="info.updateTime" autocomplete="off" />
-                    </el-form-item> -->
-                </el-form>
-            </el-col>
-        </el-row>
-        <el-divider />
-        <div style="display: flex;justify-content: center;">
-            <el-button type="primary" plain @click="add" size="large">添加</el-button>
+    <div class="add-org-container">
+        <div class="form-header">
+            <div class="header-icon">
+                <el-icon><Plus /></el-icon>
+            </div>
+            <div class="header-content">
+                <h3>添加机构</h3>
+                <p>在选定父级机构下创建新机构</p>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <el-form label-position="top" class="org-form">
+                <el-form-item label="父级机构">
+                    <el-input v-model="info.parentName" disabled class="disabled-input">
+                        <template #prefix>
+                            <el-icon><Connection /></el-icon>
+                        </template>
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item label="机构名称" required>
+                    <el-input
+                        v-model="info.name"
+                        autocomplete="off"
+                        placeholder="请输入机构名称"
+                        @keyup.enter="add"
+                        class="form-input">
+                        <template #prefix>
+                            <el-icon><OfficeBuilding /></el-icon>
+                        </template>
+                    </el-input>
+                </el-form-item>
+            </el-form>
+        </div>
+
+        <div class="form-footer">
+            <el-button type="primary" @click="add" class="save-button" :loading="loading">
+                <el-icon><Check /></el-icon>
+                <span>添加机构</span>
+            </el-button>
         </div>
     </div>
-
 </template>
 
 <script setup lang='ts'>
+import { Plus, Connection, OfficeBuilding, Check } from '@element-plus/icons-vue'
 import { alert, http } from '@/utils';
 import { onMounted, ref } from 'vue';
 
@@ -45,6 +55,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['success']);
+
+const loading = ref(false)
 
 const info = ref({
     id: '',
@@ -56,31 +68,130 @@ const info = ref({
     updateTime: '',
 })
 
-
 const add = () => {
+    if (!info.value.name.trim()) {
+        alert('请输入机构名称', 'warning')
+        return
+    }
+
+    loading.value = true
     http.result({
         url: '/org/add',
         method: 'POST',
         data: info.value,
         success(result) {
-            alert(result.msg, 'success')
-            emit('success');
-            info.value.name = ''
-            info.value.parentId = ''
-            // queryInfo()
+            if (result.code === '200') {
+                alert(result.msg, 'success')
+                emit('success');
+                info.value.name = ''
+            }
+            loading.value = false
+        },
+        error() {
+            loading.value = false
         }
     })
 }
 
 onMounted(() => {
-    info.value.parentId = props.parentId
-    info.value.parentName = props.parentName
+    info.value.parentId = props.parentId || ''
+    info.value.parentName = props.parentName || ''
 })
-
 </script>
 
-<style scoped>
-.el-col {
-    margin-top: 1rem;
+<style scoped lang="scss">
+.add-org-container {
+    padding: 32px 24px;
+
+    .form-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+
+        .header-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            .el-icon {
+                font-size: 26px;
+                color: white;
+            }
+        }
+
+        .header-content {
+            flex: 1;
+
+            h3 {
+                margin: 0 0 6px 0;
+                font-size: 20px;
+                font-weight: 600;
+                color: var(--el-text-color-primary);
+            }
+
+            p {
+                margin: 0;
+                font-size: 14px;
+                color: var(--el-text-color-secondary);
+            }
+        }
+    }
+
+    .form-content {
+        .org-form {
+            :deep(.el-form-item__label) {
+                font-weight: 500;
+                color: var(--el-text-color-regular);
+                padding-bottom: 8px;
+            }
+
+            .disabled-input {
+                :deep(.el-input__wrapper) {
+                    background: var(--el-fill-color-light);
+                }
+            }
+
+            .form-input {
+                :deep(.el-input__wrapper) {
+                    border-radius: 12px;
+                    padding: 8px 16px;
+                    transition: all 0.3s;
+
+                    &:hover {
+                        box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+                    }
+
+                    &.is-focus {
+                        box-shadow: 0 0 0 2px var(--el-color-primary) inset;
+                    }
+                }
+            }
+        }
+    }
+
+    .form-footer {
+        margin-top: 32px;
+
+        .save-button {
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            transition: all 0.3s;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+        }
+    }
 }
 </style>

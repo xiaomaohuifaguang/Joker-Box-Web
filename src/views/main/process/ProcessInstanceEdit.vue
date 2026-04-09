@@ -1,193 +1,259 @@
 <template>
     <div v-loading="loading" class="process-detail-container">
-        <!-- 流程信息卡片 -->
-        <el-card shadow="hover" class="process-info-card">
-            <template #header>
-                <div class="card-header">
-                    <el-icon>
-                        <Document />
-                    </el-icon>
-                    <span>流程信息</span>
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <div class="title-icon">
+                        <el-icon><DocumentChecked /></el-icon>
+                    </div>
+                    <div class="title-text">
+                        <h1>{{ getPageTitle() }}</h1>
+                        <p>查看和处理流程审批详情</p>
+                    </div>
                 </div>
-            </template>
-            <el-row :gutter="20">
-                <el-col :xs="24" :sm="12" :md="8">
-                    <div class="info-item">
-                        <span class="info-label">流程ID</span>
-                        <el-tag type="info" class="info-value" effect="light">
-                            {{ processDefinitionInfo['id'] }}
-                        </el-tag>
-                    </div>
-                </el-col>
-                <el-col :xs="24" :sm="12" :md="8">
-                    <div class="info-item">
-                        <span class="info-label">流程Key</span>
-                        <el-tag type="warning" class="info-value" effect="light">
-                            {{ processDefinitionInfo['processKey'] }}
-                        </el-tag>
-                    </div>
-                </el-col>
-                <el-col :xs="24" :sm="12" :md="8">
-                    <div class="info-item">
-                        <span class="info-label">流程名称</span>
-                        <el-tag type="success" class="info-value" effect="light">
-                            {{ processDefinitionInfo['processName'] }}
-                        </el-tag>
-                    </div>
-                </el-col>
-            </el-row>
-        </el-card>
+                <div class="header-status" v-if="workOrder.status">
+                    <el-tag :type="getStatusTagType(workOrder.status)" size="large" effect="dark">
+                        {{ getStatusText(workOrder.status) }}
+                    </el-tag>
+                </div>
+            </div>
+        </div>
 
-        <!-- 流程处理记录卡片（已添加收起/展开功能） -->
-        <el-card shadow="hover" class="process-info-card" v-if="workOrder.status == '1'">
-            <template #header>
-                <div class="card-header" @click="toggleProcessRecord">
-                    <el-icon>
-                        <Clock />
-                    </el-icon>
-                    <span>流程处理记录</span>
+        <!-- 流程信息卡片 -->
+        <div class="info-section">
+            <div class="section-header">
+                <div class="section-icon info">
+                    <el-icon><Document /></el-icon>
+                </div>
+                <span class="section-title">流程信息</span>
+            </div>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon id">
+                        <el-icon><Key /></el-icon>
+                    </div>
+                    <div class="info-content">
+                        <span class="info-label">流程ID</span>
+                        <span class="info-value">{{ processDefinitionInfo['id'] || '-' }}</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon key">
+                        <el-icon><Connection /></el-icon>
+                    </div>
+                    <div class="info-content">
+                        <span class="info-label">流程Key</span>
+                        <span class="info-value">{{ processDefinitionInfo['processKey'] || '-' }}</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon name">
+                        <el-icon><Collection /></el-icon>
+                    </div>
+                    <div class="info-content">
+                        <span class="info-label">流程名称</span>
+                        <span class="info-value">{{ processDefinitionInfo['processName'] || '-' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 流程处理记录卡片 -->
+        <div class="timeline-section" v-if="workOrder.status == '1'">
+            <div class="section-header clickable" @click="toggleProcessRecord">
+                <div class="section-icon timeline">
+                    <el-icon><Clock /></el-icon>
+                </div>
+                <span class="section-title">流程处理记录</span>
+                <div class="section-actions">
                     <el-icon class="collapse-icon" :class="{ 'is-collapsed': isProcessRecordCollapsed }">
                         <ArrowDown />
                     </el-icon>
                 </div>
-            </template>
+            </div>
             <el-collapse-transition>
-                <div v-show="!isProcessRecordCollapsed">
-                    <el-timeline>
-                        <el-timeline-item v-for="(item, index) in workOrder.processInfo.handleInfos" :key="item.id"
-                            :type="getTimelineType(item.handleType)" :timestamp="item.handleTime" placement="top">
-                            <el-card shadow="never" class="timeline-card">
+                <div v-show="!isProcessRecordCollapsed" class="timeline-content-wrapper">
+                    <el-timeline v-if="workOrder.processInfo.handleInfos?.length">
+                        <el-timeline-item 
+                            v-for="(item, index) in workOrder.processInfo.handleInfos" 
+                            :key="item.id"
+                            :type="getTimelineType(item.handleType)" 
+                            :timestamp="item.handleTime" 
+                            placement="top">
+                            <div class="timeline-card">
                                 <div class="timeline-header">
-                                    <span class="task-name">{{ item.taskName }}</span>
-                                    <el-tag :type="getTagType(item.handleType)" size="small">
+                                    <div class="task-info">
+                                        <div class="task-icon" :class="getTimelineIconClass(item.handleType)">
+                                            <el-icon>
+                                                <component :is="getTimelineIcon(item.handleType)" />
+                                            </el-icon>
+                                        </div>
+                                        <span class="task-name">{{ item.taskName }}</span>
+                                    </div>
+                                    <el-tag :type="getTagType(item.handleType)" size="small" effect="light">
                                         {{ getHandleTypeText(item.handleType) }}
                                     </el-tag>
                                 </div>
-                                <div class="timeline-content">
-                                    <div class="content-item">
-                                        <span class="item-label">处理人:</span>
-                                        <span class="item-value">{{ item.handleUserName }}</span>
+                                <div class="timeline-body">
+                                    <div class="timeline-row">
+                                        <span class="row-label">
+                                            <el-icon><User /></el-icon>
+                                            处理人
+                                        </span>
+                                        <span class="row-value">{{ item.handleUserName }}</span>
                                     </div>
-                                    <div class="content-item" v-if="item.remark">
-                                        <span class="item-label">备注:</span>
-                                        <span class="item-value">{{ item.remark }}</span>
+                                    <div class="timeline-row" v-if="item.remark">
+                                        <span class="row-label">
+                                            <el-icon><ChatDotRound /></el-icon>
+                                            备注
+                                        </span>
+                                        <span class="row-value remark">{{ item.remark }}</span>
                                     </div>
                                 </div>
-                            </el-card>
+                            </div>
                         </el-timeline-item>
                     </el-timeline>
+                    <div v-else class="empty-timeline">
+                        <el-icon><InfoFilled /></el-icon>
+                        <span>暂无处理记录</span>
+                    </div>
                 </div>
             </el-collapse-transition>
-        </el-card>
+        </div>
 
         <!-- 工单信息卡片 -->
-        <el-card shadow="hover" class="work-order-card">
-            <template #header>
-                <div class="card-header">
-                    <el-icon>
-                        <Tickets />
-                    </el-icon>
-                    <span>工单信息</span>
+        <div class="workorder-section">
+            <div class="section-header">
+                <div class="section-icon workorder">
+                    <el-icon><Tickets /></el-icon>
                 </div>
-            </template>
-            <el-descriptions :column="2" border>
-                <el-descriptions-item label="工单ID">{{ workOrder.id }}</el-descriptions-item>
-                <el-descriptions-item label="工单编号">{{ workOrder.orderNo }}</el-descriptions-item>
-                <el-descriptions-item label="状态">
-                    <el-tag :type="getStatusTagType(workOrder.status)">
+                <span class="section-title">工单信息</span>
+            </div>
+            <div class="workorder-grid">
+                <div class="workorder-item">
+                    <span class="item-label">工单ID</span>
+                    <span class="item-value">{{ workOrder.id || '-' }}</span>
+                </div>
+                <div class="workorder-item">
+                    <span class="item-label">工单编号</span>
+                    <span class="item-value">{{ workOrder.orderNo || '-' }}</span>
+                </div>
+                <div class="workorder-item">
+                    <span class="item-label">状态</span>
+                    <el-tag :type="getStatusTagType(workOrder.status)" size="small" effect="light">
                         {{ getStatusText(workOrder.status) }}
                     </el-tag>
-                </el-descriptions-item>
-                <el-descriptions-item label="创建人">{{ workOrder.createByName }}</el-descriptions-item>
-                <el-descriptions-item label="创建时间">{{ workOrder.createTime }}</el-descriptions-item>
-                <el-descriptions-item label="更新时间">{{ workOrder.updateTime }}</el-descriptions-item>
-                <el-descriptions-item label="备注" :span="2">
-                    {{ workOrder.remark || '无' }}
-                </el-descriptions-item>
-            </el-descriptions>
-        </el-card>
+                </div>
+                <div class="workorder-item">
+                    <span class="item-label">创建人</span>
+                    <span class="item-value">{{ workOrder.createByName || '-' }}</span>
+                </div>
+                <div class="workorder-item">
+                    <span class="item-label">创建时间</span>
+                    <span class="item-value">{{ workOrder.createTime || '-' }}</span>
+                </div>
+                <div class="workorder-item">
+                    <span class="item-label">更新时间</span>
+                    <span class="item-value">{{ workOrder.updateTime || '-' }}</span>
+                </div>
+                <div class="workorder-item full-width">
+                    <span class="item-label">备注</span>
+                    <span class="item-value remark-text">{{ workOrder.remark || '无' }}</span>
+                </div>
+            </div>
+        </div>
 
         <!-- 操作按钮区域 -->
-        <div class="action-buttons">
+        <div class="action-section">
             <template v-if="props.type == 'apply' || props.type == 'draft'">
-                <el-button type="primary" @click="startApi" plain>
-                    <el-icon>
-                        <Promotion />
-                    </el-icon>
+                <el-button type="primary" @click="startApi" class="action-btn primary">
+                    <el-icon><Promotion /></el-icon>
                     <span>发起流程</span>
                 </el-button>
-                <el-button type="warning" @click="draftApi" plain>
-                    <el-icon>
-                        <Document />
-                    </el-icon>
+                <el-button type="warning" @click="draftApi" class="action-btn warning">
+                    <el-icon><Document /></el-icon>
                     <span>保存草稿</span>
                 </el-button>
-                <el-button @click="emit('success')" plain>
-                    <el-icon>
-                        <Close />
-                    </el-icon>
+                <el-button @click="emit('success')" class="action-btn">
+                    <el-icon><Close /></el-icon>
                     <span>{{ props.type == 'apply' ? '关闭' : '取消' }}</span>
                 </el-button>
             </template>
 
             <template v-if="props.type == 'handle'">
-                <el-button type="success" @click="pass" v-if="workOrder['processInfo']['handleButton'].includes('1')"
-                    plain>
-                    <el-icon>
-                        <CircleCheck />
-                    </el-icon>
+                <el-button type="success" @click="pass" v-if="workOrder['processInfo']['handleButton'].includes('1')" class="action-btn success">
+                    <el-icon><CircleCheck /></el-icon>
                     <span>通过</span>
                 </el-button>
-                <el-button type="danger" @click="reject" v-if="workOrder['processInfo']['handleButton'].includes('2')"
-                    plain>
-                    <el-icon>
-                        <CircleClose />
-                    </el-icon>
+                <el-button type="danger" @click="reject" v-if="workOrder['processInfo']['handleButton'].includes('2')" class="action-btn danger">
+                    <el-icon><CircleClose /></el-icon>
                     <span>拒绝</span>
                 </el-button>
-                <el-button type="primary" @click="transferDialog.show = true"
-                    v-if="workOrder['processInfo']['handleButton'].includes('3')" plain>
-                    <el-icon>
-                        <Share />
-                    </el-icon>
+                <el-button type="primary" @click="transferDialog.show = true" v-if="workOrder['processInfo']['handleButton'].includes('3')" class="action-btn primary">
+                    <el-icon><Share /></el-icon>
                     <span>转办</span>
                 </el-button>
-                <el-button @click="emit('success')" plain>
-                    <el-icon>
-                        <ArrowLeft />
-                    </el-icon>
+                <el-button @click="emit('success')" class="action-btn">
+                    <el-icon><ArrowLeft /></el-icon>
                     <span>返回</span>
                 </el-button>
             </template>
 
             <template v-if="props.type != 'handle' && props.type != 'apply' && props.type != 'draft'">
-                <el-button @click="emit('success')" plain>
-                    <el-icon>
-                        <Close />
-                    </el-icon>
+                <el-button @click="emit('success')" class="action-btn">
+                    <el-icon><Close /></el-icon>
                     <span>关闭</span>
                 </el-button>
             </template>
         </div>
 
         <!-- 转办对话框 -->
-        <el-dialog v-model="transferDialog.show" title="选择转办人" width="400px" center>
-            <el-card shadow="never">
+        <el-dialog v-model="transferDialog.show" title="选择转办人" width="450px" center class="transfer-dialog" destroy-on-close>
+            <div class="transfer-content">
+                <div class="transfer-tip">
+                    <el-icon><InfoFilled /></el-icon>
+                    <span>请选择要转办给的用户</span>
+                </div>
                 <UserSelectorSingle @update:id="(newId) => { transferDialog.userId = newId }" />
-            </el-card>
+            </div>
             <template #footer>
-                <el-button @click="transferDialog.show = false">取消</el-button>
-                <el-button type="primary" @click="transfer(transferDialog.userId)">确定</el-button>
+                <div class="dialog-footer">
+                    <el-button @click="transferDialog.show = false">取消</el-button>
+                    <el-button type="primary" @click="transfer(transferDialog.userId)">确定转办</el-button>
+                </div>
             </template>
         </el-dialog>
     </div>
 </template>
 
 <script setup lang="ts">
-import { Document, Clock, Tickets, Promotion, Close, CircleCheck, CircleClose, Share, ArrowLeft, ArrowDown } from '@element-plus/icons-vue'
+import { 
+    Document, 
+    Clock, 
+    Tickets, 
+    Promotion, 
+    Close, 
+    CircleCheck, 
+    CircleClose, 
+    Share, 
+    ArrowLeft, 
+    ArrowDown,
+    DocumentChecked,
+    Key,
+    Connection,
+    Collection,
+    User,
+    ChatDotRound,
+    InfoFilled,
+    Check,
+    CloseBold,
+    RefreshRight,
+    Opportunity
+} from '@element-plus/icons-vue'
 import UserSelectorSingle from '@/components/common/user/UserSelectorSingle.vue';
 import { alert, http } from '@/utils';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 
 const emit = defineEmits(['success'])
 
@@ -234,9 +300,44 @@ const workOrder = ref({
 
 const processDefinitionInfo = ref({})
 
+// 获取页面标题
+const getPageTitle = () => {
+    const titles = {
+        'apply': '发起流程',
+        'handle': '处理审批',
+        'view': '查看详情',
+        'draft': '编辑草稿'
+    }
+    return titles[props.type] || '流程详情'
+}
+
 // 切换流程记录收起/展开状态
 const toggleProcessRecord = () => {
     isProcessRecordCollapsed.value = !isProcessRecordCollapsed.value
+}
+
+// 获取时间线图标
+const getTimelineIcon = (type) => {
+    const icons = {
+        '0': Document,
+        '1': Check,
+        '2': CloseBold,
+        '3': RefreshRight,
+        '8': Opportunity
+    }
+    return icons[type] || Document
+}
+
+// 获取时间线图标样式类
+const getTimelineIconClass = (type) => {
+    const classes = {
+        '0': 'apply',
+        '1': 'pass',
+        '2': 'reject',
+        '3': 'transfer',
+        '8': 'system'
+    }
+    return classes[type] || 'default'
 }
 
 // 获取处理类型文本
@@ -288,9 +389,7 @@ const getStatusText = (status) => {
 const getStatusTagType = (status) => {
     const types = {
         '0': 'info',
-        // '1': 'warning',
         '1': 'success',
-        // '3': 'danger'
     }
     return types[status] || 'info'
 }
@@ -417,182 +516,697 @@ const reject = () => {
 
 <style scoped lang="scss">
 .process-detail-container {
-    padding: 20px;
-    background-color: var(--el-bg-color);
-    max-width: 1200px;
+    padding: 32px;
+    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    min-height: 100%;
+    max-width: 1400px;
     margin: 0 auto;
 
-    .card-header {
-        display: flex;
-        align-items: center;
-        font-weight: 500;
+    // 页面头部
+    .page-header {
+        margin-bottom: 28px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 36px;
+        color: white;
+        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.35);
         position: relative;
-        cursor: pointer;
+        overflow: hidden;
 
-        .el-icon {
-            margin-right: 8px;
-            font-size: 18px;
-        }
-
-        .collapse-icon {
+        &::before {
+            content: '';
             position: absolute;
-            right: 20px;
-            transition: transform 0.3s ease;
-
-            &.is-collapsed {
-                transform: rotate(-90deg);
-            }
-        }
-    }
-
-    .process-info-card,
-    .work-order-card {
-        margin-bottom: 24px;
-        border-radius: 8px;
-        border: 1px solid var(--el-border-color-light);
-        transition: all 0.3s ease;
-
-        &:hover {
-            box-shadow: var(--el-box-shadow-light);
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
         }
 
-        :deep(.el-card__header) {
-            padding: 12px 20px;
-            border-bottom: 1px solid var(--el-border-color-light);
-        }
-
-        :deep(.el-card__body) {
-            padding: 20px;
-        }
-
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-
-            .info-label {
-                margin-bottom: 8px;
-                color: var(--el-text-color-secondary);
-                font-size: 14px;
-            }
-
-            .info-value {
-                width: 100%;
-                text-align: left;
-                padding: 4px 12px;
-                font-size: 14px;
-                border-radius: 4px;
-            }
-        }
-    }
-
-    .timeline-card {
-        margin: 10px 0;
-        padding: 12px;
-        border-radius: 6px;
-        background-color: var(--el-bg-color-overlay);
-        box-shadow: var(--el-box-shadow-light);
-
-        .timeline-header {
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-
-            .task-name {
-                font-weight: 500;
-                font-size: 15px;
-            }
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        .timeline-content {
-            .content-item {
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+
+            .title-icon {
+                width: 72px;
+                height: 72px;
+                background: rgba(255, 255, 255, 0.25);
+                border-radius: 18px;
                 display: flex;
-                margin-bottom: 8px;
-                font-size: 14px;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(12px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 
-                .item-label {
-                    color: var(--el-text-color-secondary);
-                    margin-right: 8px;
-                    min-width: 40px;
+                .el-icon {
+                    font-size: 36px;
+                }
+            }
+
+            .title-text {
+                h1 {
+                    margin: 0 0 8px 0;
+                    font-size: 30px;
+                    font-weight: 700;
+                    letter-spacing: -0.5px;
                 }
 
-                .item-value {
-                    color: var(--el-text-color-regular);
+                p {
+                    margin: 0;
+                    opacity: 0.92;
+                    font-size: 16px;
+                }
+            }
+        }
+
+        .header-status {
+            :deep(.el-tag) {
+                font-size: 15px;
+                padding: 10px 20px;
+                border-radius: 24px;
+                border: none;
+                font-weight: 600;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+        }
+    }
+
+    // 区块通用样式
+    .info-section,
+    .timeline-section,
+    .workorder-section {
+        background: var(--el-bg-color);
+        border-radius: 16px;
+        margin-bottom: 28px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--el-border-color-lighter);
+        overflow: hidden;
+        transition: all 0.3s ease;
+
+        &:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 24px 28px;
+        border-bottom: 1px solid var(--el-border-color-lighter);
+        background: linear-gradient(180deg, var(--el-bg-color-overlay) 0%, var(--el-bg-color) 100%);
+
+        &.clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background: linear-gradient(180deg, var(--el-fill-color-light) 0%, var(--el-bg-color) 100%);
+            }
+        }
+
+        .section-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+            &.info {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+
+            &.timeline {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                color: white;
+            }
+
+            &.workorder {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                color: white;
+            }
+
+            .el-icon {
+                font-size: 22px;
+            }
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--el-text-color-primary);
+            flex: 1;
+        }
+
+        .section-actions {
+            .collapse-icon {
+                font-size: 20px;
+                color: var(--el-text-color-secondary);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                padding: 8px;
+                border-radius: 8px;
+
+                &:hover {
+                    background: var(--el-fill-color-light);
+                }
+
+                &.is-collapsed {
+                    transform: rotate(-90deg);
                 }
             }
         }
     }
 
-    .el-timeline {
-        padding-left: 10px;
+    // 流程信息网格
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 28px;
 
-        :deep(.el-timeline-item__node) {
-            background-color: var(--el-color-primary);
-            width: 12px;
-            height: 12px;
-        }
+        .info-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 24px;
+            background: linear-gradient(135deg, var(--el-fill-color-light) 0%, var(--el-bg-color) 100%);
+            border-radius: 16px;
+            border: 1px solid var(--el-border-color-lighter);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
 
-        :deep(.el-timeline-item__timestamp) {
-            color: var(--el-text-color-secondary);
-            font-size: 13px;
-            margin-bottom: 4px;
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+                border-color: var(--el-color-primary-light-3);
+
+                &::before {
+                    opacity: 1;
+                }
+            }
+
+            .info-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+                &.id {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                }
+
+                &.key {
+                    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                    color: white;
+                }
+
+                &.name {
+                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                    color: white;
+                }
+
+                .el-icon {
+                    font-size: 28px;
+                }
+            }
+
+            .info-content {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                min-width: 0;
+
+                .info-label {
+                    font-size: 13px;
+                    color: var(--el-text-color-secondary);
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .info-value {
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: var(--el-text-color-primary);
+                    word-break: break-all;
+                }
+            }
         }
     }
 
-    .action-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 16px;
-        padding: 24px 0;
-        margin-top: 20px;
+    // 时间线区域
+    .timeline-content-wrapper {
+        padding: 28px;
 
-        .el-button {
-            min-width: 120px;
-            border-radius: 6px;
+        .el-timeline {
+            padding-left: 12px;
+
+            :deep(.el-timeline-item__node) {
+                width: 16px;
+                height: 16px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            :deep(.el-timeline-item__timestamp) {
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+                margin-bottom: 12px;
+                font-weight: 500;
+            }
+
+            :deep(.el-timeline-item__tail) {
+                border-left: 2px solid var(--el-border-color-lighter);
+            }
+        }
+
+        .timeline-card {
+            background: linear-gradient(135deg, var(--el-fill-color-light) 0%, var(--el-bg-color) 100%);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--el-border-color-lighter);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+
+            &:hover {
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+                border-color: var(--el-border-color);
+            }
+
+            .timeline-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+                border-bottom: 1px solid var(--el-border-color-lighter);
+
+                .task-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 14px;
+
+                    .task-icon {
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+                        &.apply {
+                            background: linear-gradient(135deg, var(--el-color-info-light-9) 0%, var(--el-color-info-light-8) 100%);
+                            color: var(--el-color-info);
+                        }
+
+                        &.pass {
+                            background: linear-gradient(135deg, var(--el-color-success-light-9) 0%, var(--el-color-success-light-8) 100%);
+                            color: var(--el-color-success);
+                        }
+
+                        &.reject {
+                            background: linear-gradient(135deg, var(--el-color-danger-light-9) 0%, var(--el-color-danger-light-8) 100%);
+                            color: var(--el-color-danger);
+                        }
+
+                        &.transfer {
+                            background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-color-primary-light-8) 100%);
+                            color: var(--el-color-primary);
+                        }
+
+                        &.system {
+                            background: linear-gradient(135deg, var(--el-color-warning-light-9) 0%, var(--el-color-warning-light-8) 100%);
+                            color: var(--el-color-warning);
+                        }
+
+                        .el-icon {
+                            font-size: 20px;
+                        }
+                    }
+
+                    .task-name {
+                        font-weight: 700;
+                        font-size: 16px;
+                        color: var(--el-text-color-primary);
+                    }
+                }
+            }
+
+            .timeline-body {
+                .timeline-row {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 14px;
+                    margin-bottom: 10px;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    .row-label {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-size: 14px;
+                        color: var(--el-text-color-secondary);
+                        min-width: 80px;
+                        flex-shrink: 0;
+                        font-weight: 500;
+
+                        .el-icon {
+                            font-size: 16px;
+                        }
+                    }
+
+                    .row-value {
+                        font-size: 15px;
+                        color: var(--el-text-color-regular);
+                        flex: 1;
+                        line-height: 1.6;
+
+                        &.remark {
+                            background: var(--el-bg-color);
+                            padding: 12px 16px;
+                            border-radius: 10px;
+                            border-left: 4px solid var(--el-color-primary);
+                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+                        }
+                    }
+                }
+            }
+        }
+
+        .empty-timeline {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 48px;
+            color: var(--el-text-color-secondary);
+            gap: 16px;
+
+            .el-icon {
+                font-size: 64px;
+                opacity: 0.4;
+            }
+
+            span {
+                font-size: 15px;
+                font-weight: 500;
+            }
+        }
+    }
+
+    // 工单信息网格
+    .workorder-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+        padding: 28px;
+
+        .workorder-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--el-fill-color-light) 0%, var(--el-bg-color) 100%);
+            border-radius: 14px;
+            border: 1px solid var(--el-border-color-lighter);
             transition: all 0.3s ease;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: var(--el-box-shadow-light);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+                border-color: var(--el-border-color);
+            }
+
+            &.full-width {
+                grid-column: 1 / -1;
+            }
+
+            .item-label {
+                font-size: 12px;
+                color: var(--el-text-color-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                font-weight: 600;
+            }
+
+            .item-value {
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--el-text-color-primary);
+
+                &.remark-text {
+                    line-height: 1.7;
+                    color: var(--el-text-color-regular);
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+
+    // 操作按钮区域
+    .action-section {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        padding: 36px 28px;
+        flex-wrap: wrap;
+        background: var(--el-bg-color);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--el-border-color-lighter);
+
+        .action-btn {
+            min-width: 160px;
+            height: 50px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.3px;
+
+            &:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            }
+
+            &:active {
+                transform: translateY(-1px);
             }
 
             .el-icon {
-                margin-right: 6px;
+                margin-right: 8px;
+                font-size: 18px;
             }
+
+            &.primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+
+                &:hover {
+                    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+                }
+            }
+
+            &.success {
+                background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                border: none;
+                box-shadow: 0 4px 12px rgba(17, 153, 142, 0.25);
+
+                &:hover {
+                    box-shadow: 0 8px 24px rgba(17, 153, 142, 0.4);
+                }
+            }
+
+            &.danger {
+                background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+                border: none;
+                box-shadow: 0 4px 12px rgba(235, 51, 73, 0.25);
+
+                &:hover {
+                    box-shadow: 0 8px 24px rgba(235, 51, 73, 0.4);
+                }
+            }
+
+            &.warning {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                border: none;
+                box-shadow: 0 4px 12px rgba(240, 147, 251, 0.25);
+
+                &:hover {
+                    box-shadow: 0 8px 24px rgba(240, 147, 251, 0.4);
+                }
+            }
+        }
+    }
+}
+
+// 转办对话框样式
+.transfer-dialog {
+    :deep(.el-dialog__header) {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 24px 28px;
+
+        .el-dialog__title {
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .el-dialog__headerbtn .el-dialog__close {
+            color: white;
+            font-size: 20px;
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: rotate(90deg);
+            }
+        }
+    }
+
+    :deep(.el-dialog__body) {
+        padding: 28px;
+    }
+
+    .transfer-content {
+        .transfer-tip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-color-primary-light-8) 100%);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            color: var(--el-color-primary);
+            font-size: 15px;
+            font-weight: 500;
+
+            .el-icon {
+                font-size: 20px;
+            }
+        }
+    }
+
+    .dialog-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        padding-top: 8px;
+    }
+}
+
+// 响应式适配
+@media (max-width: 1200px) {
+    .process-detail-container {
+        padding: 24px;
+
+        .info-grid,
+        .workorder-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 }
 
 @media (max-width: 768px) {
     .process-detail-container {
-        padding: 12px;
+        padding: 16px;
 
-        .process-info-card,
-        .work-order-card {
-            margin-bottom: 16px;
+        .page-header {
+            padding: 28px 24px;
+            border-radius: 16px;
 
-            :deep(.el-card__body) {
-                padding: 16px;
+            .header-content {
+                flex-direction: column;
+                text-align: center;
             }
 
-            .el-col {
-                margin-bottom: 16px;
+            .header-title {
+                flex-direction: column;
+                gap: 16px;
 
-                &:last-child {
-                    margin-bottom: 0;
+                .title-icon {
+                    width: 64px;
+                    height: 64px;
+                    border-radius: 16px;
+
+                    .el-icon {
+                        font-size: 32px;
+                    }
+                }
+
+                .title-text {
+                    h1 {
+                        font-size: 24px;
+                    }
+
+                    p {
+                        font-size: 14px;
+                    }
                 }
             }
         }
 
-        .action-buttons {
-            flex-wrap: wrap;
-            gap: 12px;
+        .info-grid,
+        .workorder-grid {
+            grid-template-columns: 1fr;
+            padding: 20px;
+            gap: 16px;
+        }
 
-            .el-button {
+        .timeline-content-wrapper {
+            padding: 20px;
+        }
+
+        .action-section {
+            flex-direction: column;
+            padding: 28px 20px;
+
+            .action-btn {
                 width: 100%;
-                margin: 0;
+                min-width: auto;
             }
+        }
+
+        .section-header {
+            padding: 20px;
         }
     }
 }

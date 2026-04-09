@@ -113,24 +113,30 @@ onBeforeUnmount(() => {
 .bpmn-editor-container {
     display: flex;
     flex-direction: column;
-    // height: calc(100vh - 60px);
-    background-color: var(--el-bg-color-page);
-    padding: 20px;
+    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    padding: 24px;
+    min-height: calc(100vh - 80px);
 }
 
 .editor-wrapper {
     display: flex;
     flex: 1;
-    gap: 16px;
-    margin-bottom: 20px;
-    height: calc(100% - 72px);
+    gap: 20px;
+    margin-bottom: 24px;
+    height: calc(100% - 80px);
 }
 
 .designer-card {
     flex: 3;
-    border-radius: 8px;
-    border: 1px solid var(--el-border-color);
+    border-radius: 16px;
+    border: 1px solid var(--el-border-color-lighter);
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
 
     :deep(.el-card__body) {
         padding: 0;
@@ -140,9 +146,15 @@ onBeforeUnmount(() => {
 
 .panel-card {
     flex: 1;
-    border-radius: 8px;
-    border: 1px solid var(--el-border-color);
+    border-radius: 16px;
+    border: 1px solid var(--el-border-color-lighter);
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
 
     :deep(.el-card__body) {
         padding: 0;
@@ -164,25 +176,51 @@ onBeforeUnmount(() => {
 .action-buttons {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding: 16px 0;
-    border-top: 1px solid var(--el-border-color-light);
+    gap: 24px;
+    padding: 24px 0;
+    border-top: 1px solid var(--el-border-color-lighter);
+    background: var(--el-bg-color);
+    border-radius: 0 0 16px 16px;
+    margin: 0 -24px -24px;
+    padding: 24px;
 
     .save-btn {
-        padding: 0 32px;
-        height: 40px;
+        min-width: 160px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+        }
 
         .el-icon {
             margin-right: 8px;
+            font-size: 18px;
         }
     }
 
     .cancel-btn {
-        padding: 0 32px;
-        height: 40px;
+        min-width: 160px;
+        height: 48px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+            transform: translateY(-2px);
+        }
 
         .el-icon {
             margin-right: 8px;
+            font-size: 18px;
         }
     }
 }
@@ -190,12 +228,31 @@ onBeforeUnmount(() => {
 @media (max-width: 1200px) {
     .editor-wrapper {
         flex-direction: column;
+        height: auto;
     }
 
     .designer-card,
     .panel-card {
         flex: none;
-        height: 50%;
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .bpmn-editor-container {
+        padding: 16px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        margin: 0 -16px -16px;
+        padding: 20px 16px;
+
+        .save-btn,
+        .cancel-btn {
+            width: 100%;
+            min-width: auto;
+        }
     }
 }
 </style>

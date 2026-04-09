@@ -43,6 +43,13 @@ export const alert = (msg: string, type: 'info' | 'success' | 'warning' | 'error
     ElMessage({
         message: msg,
         type: type,
+        // duration: 3000,
+        // showClose: true,
+        // offset: 80,
+        center: false,
+        customClass: 'custom-message',
+        // grouping: true,
+        appendTo: document.body
     })
 
 }
@@ -50,6 +57,10 @@ export const confirm = (title: string, content: string, confirm?: () => void, ca
     ElMessageBox.confirm(content, title, {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
+        customClass: 'custom-message-box',
+        closeOnClickModal: false,
+        closeOnPressEscape: true,
+        center: true,
     }).then(() => {
         if (confirm) {
             confirm()

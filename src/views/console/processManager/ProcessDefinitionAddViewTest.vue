@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="process-editor-test-container">
         <el-row :gutter="20">
             <el-col :span="24">
                 <el-row v-if="init">
-                    <el-col :span="18" style="border: 1px solid var(--el-border-color)">
+                    <el-col :span="18">
                         <!-- 流程设计器，负责绘制流程等 -->
                         <MyProcessDesigner key="designer" v-model="info.xmlStr" :value="info.xmlStr"
                             v-bind="controlForm" ref="processDesigner" @init-finished="initModeler"
@@ -19,7 +19,7 @@
             </el-col>
         </el-row>
         <el-divider />
-        <div style="display: flex;justify-content: center;">
+        <div class="action-buttons-wrapper">
             <el-button type="primary" plain @click="save" size="large">保存</el-button>
             <el-button type="primary" plain @click="emit('success')" size="large">取消</el-button>
         </div>
@@ -144,4 +144,95 @@ onMounted(() => {
 
 </script>
 
-<style></style>
+<style scoped lang="scss">
+.process-editor-test-container {
+    padding: 24px;
+    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    min-height: calc(100vh - 80px);
+}
+
+.el-row {
+    margin-bottom: 24px;
+
+    .el-col {
+        &:first-child {
+            border-radius: 16px 0 0 16px;
+            overflow: hidden;
+            border: 1px solid var(--el-border-color-lighter);
+            border-right: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        &:last-child {
+            border-radius: 0 16px 16px 0;
+            overflow: hidden;
+            border: 1px solid var(--el-border-color-lighter);
+            border-left: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+    }
+}
+
+.el-divider {
+    margin: 24px 0;
+    border-color: var(--el-border-color-lighter);
+}
+
+.action-buttons-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 8px;
+
+    .el-button {
+        min-width: 160px;
+        height: 48px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+            transform: translateY(-2px);
+        }
+
+        &.el-button--primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+
+            &:hover {
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+            }
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .el-row {
+        .el-col {
+            &:first-child,
+            &:last-child {
+                border-radius: 16px;
+                border: 1px solid var(--el-border-color-lighter);
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .process-editor-test-container {
+        padding: 16px;
+    }
+
+    .action-buttons-wrapper {
+        flex-direction: column;
+
+        .el-button {
+            width: 100%;
+            min-width: auto;
+        }
+    }
+}
+</style>

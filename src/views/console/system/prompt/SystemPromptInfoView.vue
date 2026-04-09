@@ -1,71 +1,68 @@
 <template>
-    <div class="detail-container">
-        <div v-loading="loading" element-loading-text="加载中..." element-loading-background="rgba(255, 255, 255, 0.7)">
-            <el-card class="detail-card" shadow="never">
-                <template #header>
-                    <div class="card-header">
-                        <span>{{ props.type === 'view' ? 'SystemPrompt详情' : '编辑SystemPrompt' }}</span>
-                    </div>
-                </template>
-
-                <el-form label-position="top" class="detail-form">
-                    <el-row :gutter="24">
-                        <!-- <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                            <el-form-item label="系统提示id">
-                                <el-input v-model="info.id" :disabled="props.type !== 'edit'"
-                                    :placeholder="`请输入系统提示id`" />
-                            </el-form-item>
-                        </el-col> -->
-                        <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                            <el-form-item label="系统提示消息">
-                                <el-input v-model="info.prompt" :disabled="props.type !== 'edit'"
-                                    :placeholder="`请输入系统提示消息`" type="textarea" />
-                            </el-form-item>
-                        </el-col>
-                        <!-- <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                            <el-form-item label="逻辑删除">
-                                <el-input v-model="info.deleted" :disabled="props.type !== 'edit'"
-                                    :placeholder="`请输入逻辑删除`" />
-                            </el-form-item>
-                        </el-col> -->
-                        <el-col :xs="24" :sm="24" :md="8" :lg="24">
-                            <el-form-item label="创建人id">
-                                <el-input v-model="info.createBy" :disabled="props.type !== 'edit'"
-                                    :placeholder="`请输入创建人id`" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                            <el-form-item label="创建时间">
-                                <el-input v-model="info.createTime" :disabled="props.type !== 'edit'"
-                                    :placeholder="`请输入创建时间`" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :xs="24" :sm="24" :md="24" :lg="24">
-                            <el-form-item label="截止时间">
-                                <el-input v-model="info.deadTime" :disabled="props.type !== 'edit'"
-                                    :placeholder="`请输入截止时间`" />
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                </el-form>
-
-                <el-divider class="form-divider" />
-
-                <div class="action-bar" v-if="props.type === 'edit'">
-                    <el-button type="primary" size="large" @click="save" class="save-button">
-                        <el-icon>
-                            <Check />
-                        </el-icon>
-                        <span>保存修改</span>
-                    </el-button>
-                </div>
-            </el-card>
+  <div class="detail-prompt-container">
+    <div v-loading="loading" element-loading-text="加载中..." element-loading-background="rgba(255, 255, 255, 0.7)">
+      <div class="form-wrapper">
+        <div class="form-header">
+          <div class="header-icon">
+            <el-icon><ChatLineRound /></el-icon>
+          </div>
+          <h3>{{ props.type === 'view' ? '系统提示详情' : '编辑系统提示' }}</h3>
+          <p>{{ props.type === 'view' ? '查看系统提示词详细信息' : '修改系统提示词配置' }}</p>
         </div>
+
+        <el-form label-position="top" class="detail-form">
+          <el-row :gutter="24">
+            <el-col :xs="24" :sm="24" :md="24" :lg="24">
+              <el-form-item label="系统提示消息">
+                <el-input
+                  v-model="info.prompt"
+                  :disabled="props.type !== 'edit'"
+                  :placeholder="`请输入系统提示消息`"
+                  type="textarea"
+                  :rows="4">
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="24" :lg="24">
+              <el-form-item label="创建人ID">
+                <el-input
+                  v-model="info.createBy"
+                  :disabled="props.type !== 'edit'"
+                  :placeholder="`请输入创建人ID`" />
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="24" :lg="24">
+              <el-form-item label="创建时间">
+                <el-input
+                  v-model="info.createTime"
+                  :disabled="true"
+                  :placeholder="`请输入创建时间`" />
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="24" :lg="24">
+              <el-form-item label="截止时间">
+                <el-input
+                  v-model="info.deadTime"
+                  :disabled="props.type !== 'edit'"
+                  :placeholder="`请输入截止时间`" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+
+        <div class="action-bar" v-if="props.type === 'edit'">
+          <el-button type="primary" @click="save" class="save-button">
+            <el-icon><Check /></el-icon>
+            <span>保存修改</span>
+          </el-button>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { Check } from '@element-plus/icons-vue'
+import { Check, ChatLineRound } from '@element-plus/icons-vue'
 import { alert, http } from '@/utils';
 import { onMounted, ref } from 'vue';
 
@@ -120,70 +117,136 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.detail-container {
-    padding: 20px;
-    background-color: var(--el-bg-color-page);
+.detail-prompt-container {
+  padding: 24px;
+  background: var(--el-bg-color);
 }
 
-.detail-card {
-    border-radius: 8px;
+.form-wrapper {
+  background: var(--el-bg-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--el-border-color-lighter);
+}
 
-    :deep(.el-card__header) {
-        border-bottom: 1px solid var(--el-border-color-light);
-        padding: 16px 20px;
+.form-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
 
-        .card-header {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--el-text-color-primary);
-        }
-    }
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--el-text-color-secondary);
+    text-align: center;
+  }
 }
 
 .detail-form {
-    :deep(.el-form-item__label) {
-        font-weight: 500;
-        color: var(--el-text-color-regular);
-        margin-bottom: 6px;
-    }
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+  }
 
-    :deep(.el-input__inner) {
-        height: 40px;
-        line-height: 40px;
-        border-radius: 8px;
-    }
-}
+  :deep(.el-form-item__label) {
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
 
-.form-divider {
-    margin: 20px 0;
+  :deep(.el-input__wrapper) {
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+    padding: 0 16px;
+  }
+
+  :deep(.el-input__wrapper:hover),
+  :deep(.el-input__wrapper.is-focus) {
+    box-shadow: 0 0 0 1px #667eea inset;
+  }
+
+  :deep(.el-input__inner) {
+    height: 40px;
+  }
+
+  :deep(.el-textarea__inner) {
+    min-height: 120px;
+    border-radius: 8px;
+    line-height: 1.5;
+  }
+
+  :deep(.el-input.is-disabled .el-input__wrapper) {
+    background-color: var(--el-fill-color-light);
+    cursor: not-allowed;
+  }
 }
 
 .action-bar {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
 
-    .save-button {
-        width: 200px;
-        height: 40px;
-        font-size: 16px;
-        font-weight: 500;
-        border-radius: 8px;
+  .save-button {
+    width: 200px;
+    height: 44px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
+  }
 }
 
 @media (max-width: 768px) {
-    .detail-form {
-        :deep(.el-col) {
-            width: 100%;
-            margin-bottom: 0;
-        }
-    }
+  .detail-prompt-container {
+    padding: 16px;
+  }
 
-    .action-bar {
-        .save-button {
-            width: 100%;
-        }
+  .form-wrapper {
+    padding: 16px;
+  }
+
+  .form-header {
+    h3 {
+      font-size: 18px;
     }
+  }
+
+  .action-bar {
+    .save-button {
+      width: 100%;
+    }
+  }
 }
 </style>

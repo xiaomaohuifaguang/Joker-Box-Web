@@ -1,54 +1,69 @@
 <template>
-    <el-menu :default-active="activeIndex" class="custom-navbar" mode="horizontal" :ellipsis="false" router
-        @select="handleSelect">
-        <!-- Logo 区域 -->
-        <el-menu-item index="/" class="logo-item">
-            <Logo class="logo-text" />
-            <!-- <span class="logo-text">Your Brand</span> -->
-        </el-menu-item>
-
-        <!-- 主菜单项 -->
-        <ElMenuItemInit v-for="menu in menuInit" :key="menu.path" :path="menu.path" :name="menu.name"
-            :children="menu.children" :icon="menu.icon" />
-
-        <!-- 功能页下拉菜单 -->
-        <el-sub-menu index="功能页" class="more-menu">
-            <template #title>
-                <el-icon class="menu-icon">
-                    <MoreFilled />
-                </el-icon>
-                <span class="menu-text">功能页</span>
-            </template>
-            <el-menu-item index="/test" class="submenu-item">测试</el-menu-item>
-            <el-menu-item index="/403" class="submenu-item">403</el-menu-item>
-            <el-menu-item index="/404" class="submenu-item">404</el-menu-item>
-        </el-sub-menu>
-
-        <!-- 右侧功能区 -->
-        <div class="right-actions">
-            <div class="action-item">
-                <AvatarDropDown />
+    <header class="app-header">
+        <div class="header-container">
+            <!-- Logo 区域 -->
+            <div class="logo-section" @click="toHome">
+                <div class="logo-icon">
+                    <img src="@/assets/img/joker-1.png" alt="Logo" />
+                </div>
+                <span class="logo-text">Joker Box</span>
             </div>
-            <div class="action-item">
-                <DarkSwitch />
-            </div>
-            <div class="action-item">
-                <ThemeSelector />
+
+            <!-- 导航菜单 -->
+            <nav class="nav-menu">
+                <el-menu :default-active="activeIndex" mode="horizontal" :ellipsis="false" router
+                    class="custom-menu" @select="handleSelect">
+                    <ElMenuItemInit v-for="menu in menuInit" :key="menu.path" :path="menu.path" :name="menu.name"
+                        :children="menu.children" :icon="menu.icon" />
+                    
+                    <!-- 功能页下拉菜单 -->
+                    <el-sub-menu index="功能页" class="more-menu">
+                        <template #title>
+                            <el-icon class="menu-icon"><Grid /></el-icon>
+                            <span class="menu-text">功能页</span>
+                        </template>
+                        <el-menu-item index="/test" class="submenu-item">
+                            <el-icon><Tools /></el-icon>
+                            <span>测试</span>
+                        </el-menu-item>
+                        <el-menu-item index="/403" class="submenu-item">
+                            <el-icon><Warning /></el-icon>
+                            <span>403</span>
+                        </el-menu-item>
+                        <el-menu-item index="/404" class="submenu-item">
+                            <el-icon><CircleClose /></el-icon>
+                            <span>404</span>
+                        </el-menu-item>
+                    </el-sub-menu>
+                </el-menu>
+            </nav>
+
+            <!-- 右侧功能区 -->
+            <div class="header-actions">
+                <!-- 主题切换 -->
+                <div class="action-btn theme-btn">
+                    <DarkSwitch />
+                </div>
+
+                <!-- 用户区域 -->
+                <div class="user-section">
+                    <AvatarDropDown />
+                </div>
             </div>
         </div>
-    </el-menu>
+    </header>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getToken, http } from '@/utils'
-import { MoreFilled } from '@element-plus/icons-vue'
-import ThemeSelector from '@/components/common/ThemeSelector.vue'
+import { getToken, http, toPath } from '@/utils'
+import { 
+    Grid, Tools, Warning, CircleClose
+} from '@element-plus/icons-vue'
 import AvatarDropDown from './AvatarDropDown.vue'
 import DarkSwitch from './DarkSwitch.vue'
 import ElMenuItemInit from '@/components/common/ElMenuItemInit.vue'
-import Logo from './Logo.vue'
 
 const route = useRoute()
 const activeIndex = ref(route.path)
@@ -69,6 +84,10 @@ const queryMenu = () => {
     })
 }
 
+const toHome = () => {
+    toPath('/')
+}
+
 onMounted(() => {
     queryMenu()
     if (getToken()) {
@@ -78,123 +97,225 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.custom-navbar {
-    height: 64px;
-    padding: 0 24px;
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     background-color: var(--el-bg-color-overlay);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border-bottom: none;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--el-border-color-light);
+    transition: all 0.3s ease;
+}
+
+.header-container {
     display: flex;
     align-items: center;
-    position: relative;
-    z-index: 1000;
+    justify-content: space-between;
+    height: 70px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
 
+/* Logo Section */
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 12px;
+
+    &:hover {
+        background-color: var(--el-fill-color-light);
+    }
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+    }
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'PixelMplus10-Regular', sans-serif;
+}
+
+/* Navigation Menu */
+.nav-menu {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 40px;
+}
+
+.custom-menu {
+    background: transparent;
+    border: none;
+    
     :deep(.el-menu-item),
     :deep(.el-sub-menu__title) {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        padding: 0 16px;
+        height: 50px;
+        line-height: 50px;
+        padding: 0 20px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--el-text-color-regular);
+        border-radius: 10px;
+        margin: 0 4px;
         transition: all 0.3s ease;
 
         &:hover {
-            background-color: var(--el-color-primary-light-9);
+            background-color: var(--el-fill-color-light);
             color: var(--el-color-primary);
         }
 
         &.is-active {
-            color: var(--el-color-primary);
-            border-bottom: 2px solid var(--el-color-primary);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            color: #667eea;
         }
     }
-}
 
-.logo-item {
-    margin-right: auto;
-    padding: 0 24px 0 0 !important;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--el-text-color-primary) !important;
-
-    &:hover {
-        background-color: transparent !important;
+    :deep(.el-sub-menu__title) {
+        border-bottom: none !important;
     }
 
-    .logo {
-        width: 32px;
-        height: 32px;
-        margin-right: 12px;
+    :deep(.el-menu-item.is-active) {
+        border-bottom: none;
     }
-
-    .logo-text {
-        font-style: italic;
-        background: linear-gradient(135deg, var(--el-color-primary), #6a11cb);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-}
-
-.nav-item {
-    font-weight: 500;
-    color: var(--el-text-color-primary);
 }
 
 .more-menu {
-    margin-left: auto;
-
     .menu-icon {
-        font-size: 1.2rem;
-        margin-right: 8px;
-    }
-
-    .menu-text {
-        font-weight: 500;
+        margin-right: 6px;
+        font-size: 16px;
     }
 }
 
 .submenu-item {
-    min-width: 160px;
-    padding: 0 20px !important;
-}
-
-.right-actions {
     display: flex;
     align-items: center;
-    margin-left: auto;
-    height: 100%;
+    gap: 8px;
+    padding: 0 20px !important;
+    
+    .el-icon {
+        font-size: 16px;
+    }
+}
 
-    .action-item {
-        padding: 0 12px;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
+/* Header Actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        &:hover {
-            background-color: var(--el-color-primary-light-9);
+.action-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--el-text-color-regular);
+
+    &:hover {
+        background-color: var(--el-fill-color-light);
+        color: var(--el-color-primary);
+        transform: translateY(-2px);
+    }
+
+    .el-icon {
+        font-size: 20px;
+    }
+}
+
+.user-section {
+    margin-left: 8px;
+    padding: 4px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: var(--el-fill-color-light);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .header-container {
+        padding: 0 16px;
+    }
+
+    .logo-text {
+        display: none;
+    }
+
+    .nav-menu {
+        margin: 0 20px;
+    }
+
+    .custom-menu {
+        :deep(.el-menu-item),
+        :deep(.el-sub-menu__title) {
+            padding: 0 12px;
+            font-size: 14px;
         }
     }
 }
 
-@media (max-width: 992px) {
-    .custom-navbar {
+@media (max-width: 768px) {
+    .header-container {
+        height: 60px;
+    }
+
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+
+        img {
+            width: 28px;
+            height: 28px;
+        }
+    }
+
+    .nav-menu {
+        display: none;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+
+        .el-icon {
+            font-size: 18px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .header-container {
         padding: 0 12px;
-
-        :deep(.el-menu-item),
-        :deep(.el-sub-menu__title) {
-            padding: 0 8px;
-            font-size: 0.9rem;
-        }
-
-        .logo-item {
-            padding-right: 0 !important;
-
-            .logo-text {
-                display: none;
-            }
-        }
     }
 }
 </style>

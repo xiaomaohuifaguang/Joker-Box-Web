@@ -1,288 +1,515 @@
 <template>
-    <div class="user-profile-container">
-        <el-card shadow="hover" class="profile-card">
-            <el-descriptions title="个人信息" direction="vertical" border size="small" :column="2">
-                <el-descriptions-item :rowspan="3" :width="120" label="头像" align="center" class="avatar-item">
-                    <el-upload class="avatar-uploader" :action="CONSTANTS.HTTP.BASEURL + '/auth/avatarUpload'"
-                        accept="image/png, image/jpeg"
-                        :headers="{ authorization: CONSTANTS.SYSTEM.TOKEN_TYPE + ' ' + getToken() }" name="uploadFile"
-                        :on-success="(response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-                            alert('上传成功', 'success');
-                            avatarFlag = !avatarFlag;
-                        }"
-                        :on-progress="(evt: UploadProgressEvent, uploadFile: UploadFile, uploadFiles: UploadFiles) => { }"
-                        :on-error="(error: Error, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-                            alert('上传失败', 'error')
-                        }" :show-file-list="false">
-                        <el-image :src="CONSTANTS.HTTP.BASEURL + '/auth/avatar/' + userInfo().userId" fit="cover"
-                            :key="avatarFlag" class="avatar-image">
-                            <template #error>
-                                <div class="avatar-error">
-                                    <el-icon class="avatar-uploader-icon">
-                                        <Plus />
-                                    </el-icon>
-                                    <span class="upload-text">上传头像</span>
-                                </div>
-                            </template>
-                        </el-image>
-                    </el-upload>
-                    <div class="avatar-hint">支持 JPG/PNG 格式</div>
-                </el-descriptions-item>
+  <div class="person-info-page">
+    <!-- 个人信息卡片 -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon">
+          <el-icon><UserFilled /></el-icon>
+        </div>
+        <span class="header-title">基本信息</span>
+      </div>
 
-                <el-descriptions-item label="用户名">
-                    <el-input v-model="userInfoTmp.username" placeholder="填写用户名" clearable />
-                </el-descriptions-item>
-
-                <el-descriptions-item label="昵称">
-                    <el-input v-model="userInfoTmp.nickname" placeholder="填写昵称" clearable />
-                </el-descriptions-item>
-
-                <el-descriptions-item label="性别">
-                    <el-select v-model="userInfoTmp.sex" placeholder="选择性别" style="width: 100%">
-                        <el-option label="男" value="男" />
-                        <el-option label="女" value="女" />
-                        <el-option label="未知" value="未知" />
-                    </el-select>
-                </el-descriptions-item>
-
-                <el-descriptions-item label="手机号">
-                    <el-input v-model="userInfoTmp.phone" placeholder="填写手机号" clearable />
-                </el-descriptions-item>
-
-                <el-descriptions-item label="邮箱">
-                    <el-input v-model="userInfoTmp.mail" placeholder="填写邮箱" clearable />
-                </el-descriptions-item>
-
-                <el-descriptions-item :span="2" class="action-item">
-                    <el-button type="primary" @click="updateUserInfo" size="medium" round>
-                        <el-icon>
-                            <Check />
-                        </el-icon>
-                        保存修改
-                    </el-button>
-                </el-descriptions-item>
-            </el-descriptions>
-        </el-card>
-
-        <!-- 双因子认证部分（隐藏） -->
-        <el-card shadow="hover" class="two-factor-card" v-if="false">
-            <el-descriptions title="双因子认证" direction="vertical" border>
-                <el-descriptions-item label="安全提示">
-                    <div class="two-factor-desc">
-                        身份验证器应用程序和浏览器扩展程序（例如 1Password、Authy、Microsoft Authenticator等）会生成一次性密码，
-                        该密码可在登录期间提示时用作验证您身份的第二个因素。
+      <div class="card-body">
+        <div class="avatar-section">
+          <div class="avatar-wrapper">
+            <el-upload
+              class="avatar-uploader"
+              :action="CONSTANTS.HTTP.BASEURL + '/auth/avatarUpload'"
+              accept="image/png, image/jpeg"
+              :headers="{ authorization: CONSTANTS.SYSTEM.TOKEN_TYPE + ' ' + getToken() }"
+              name="uploadFile"
+              :on-success="handleAvatarSuccess"
+              :on-error="handleAvatarError"
+              :show-file-list="false">
+              <div class="avatar-container">
+                <el-image
+                  :src="CONSTANTS.HTTP.BASEURL + '/auth/avatar/' + userInfo().userId"
+                  fit="cover"
+                  :key="avatarFlag"
+                  class="avatar-image">
+                  <template #error>
+                    <div class="avatar-placeholder">
+                      <el-icon class="placeholder-icon"><Plus /></el-icon>
+                      <span class="placeholder-text">上传头像</span>
                     </div>
-                    <div class="qr-code-section">
-                        <div class="qr-code-title">扫描二维码</div>
-                        <div class="qr-code-hint">
-                            使用身份验证器应用或浏览器扩展程序进行扫描。了解有关启用 2FA 的更多信息。
-                        </div>
-                        <el-row class="qr-code-container">
-                            <el-col :span="8">
-                                <el-image :src="'data:image/png;base64,' + qrCode.base64" alt="QR Code" fit="fill"
-                                    class="qr-code-image" />
-                                <el-row class="verify-section">
-                                    <el-col :span="18">
-                                        <el-input placeholder="验证动态码" />
-                                    </el-col>
-                                    <el-col :span="6">
-                                        <el-button type="primary" class="save-btn">保存</el-button>
-                                    </el-col>
-                                </el-row>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </el-descriptions-item>
-            </el-descriptions>
-        </el-card>
+                  </template>
+                </el-image>
+                <div class="avatar-overlay">
+                  <el-icon><Camera /></el-icon>
+                  <span>更换头像</span>
+                </div>
+              </div>
+            </el-upload>
+          </div>
+          <div class="avatar-hint">
+            <el-icon><InfoFilled /></el-icon>
+            <span>支持 JPG、PNG 格式，建议尺寸 200x200</span>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <el-form :model="userInfoTmp" label-position="top" class="info-form">
+            <el-row :gutter="24">
+              <el-col :xs="24" :sm="12">
+                <el-form-item label="用户名">
+                  <el-input
+                    v-model="userInfoTmp.username"
+                    placeholder="请输入用户名"
+                    :prefix-icon="User"
+                    size="large" />
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item label="昵称">
+                  <el-input
+                    v-model="userInfoTmp.nickname"
+                    placeholder="请输入昵称"
+                    :prefix-icon="Star"
+                    size="large" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row :gutter="24">
+              <el-col :xs="24" :sm="12">
+                <el-form-item label="性别">
+                  <el-select
+                    v-model="userInfoTmp.sex"
+                    placeholder="请选择性别"
+                    size="large"
+                    class="gender-select">
+                    <el-option label="男" value="男">
+                      <el-icon><Male /></el-icon>
+                      <span>男</span>
+                    </el-option>
+                    <el-option label="女" value="女">
+                      <el-icon><Female /></el-icon>
+                      <span>女</span>
+                    </el-option>
+                    <el-option label="保密" value="保密">
+                      <el-icon><Hide /></el-icon>
+                      <span>保密</span>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="12">
+                <el-form-item label="手机号">
+                  <el-input
+                    v-model="userInfoTmp.phone"
+                    placeholder="请输入手机号"
+                    :prefix-icon="Phone"
+                    size="large" />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-form-item label="邮箱">
+              <el-input
+                v-model="userInfoTmp.mail"
+                placeholder="请输入邮箱地址"
+                :prefix-icon="Message"
+                size="large" />
+            </el-form-item>
+
+            <el-form-item class="submit-item">
+              <el-button
+                type="primary"
+                size="large"
+                @click="updateUserInfo"
+                class="submit-btn">
+                <el-icon><Check /></el-icon>
+                <span>保存修改</span>
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
     </div>
+
+    <!-- 账号安全卡片 -->
+    <div class="security-card">
+      <div class="card-header">
+        <div class="header-icon security">
+            <el-icon><Lock /></el-icon>
+          </div>
+        <span class="header-title">账号安全</span>
+      </div>
+      <div class="card-body">
+        <div class="security-item">
+          <div class="item-info">
+            <div class="item-icon">
+              <el-icon><Lock /></el-icon>
+            </div>
+            <div class="item-text">
+              <span class="item-title">登录密码</span>
+              <span class="item-desc">定期修改密码可以保护账号安全</span>
+            </div>
+          </div>
+          <el-button type="primary" link @click="$emit('switch-tab', '2')">
+            修改密码
+            <el-icon><ArrowRight /></el-icon>
+          </el-button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { alert, CONSTANTS, getToken, http, saveUserInfo, userInfo } from '@/utils';
 import { onMounted, ref } from 'vue';
-import { Plus, Check } from '@element-plus/icons-vue'
-import { UploadFile, UploadFiles, UploadProgressEvent } from 'element-plus';
+import {
+  Plus,
+  UserFilled,
+  User,
+  Star,
+  Male,
+  Female,
+  Hide,
+  Phone,
+  Message,
+  Check,
+  Camera,
+  InfoFilled,
+  Lock,
+  ArrowRight
+} from '@element-plus/icons-vue'
+import type { UploadFile, UploadFiles } from 'element-plus';
+
+defineEmits(['switch-tab'])
 
 const userInfoTmp = ref({
-    "username": "",
-    "nickname": "",
-    "admin": false,
-    "sex": "",
-    "mail": null,
-    "phone": null
-})
-
-const qrCode = ref({
-    secret: '',
-    base64: ''
+  "username": "",
+  "nickname": "",
+  "admin": false,
+  "sex": "",
+  "mail": null,
+  "phone": null
 })
 
 const avatarFlag = ref(true)
 
-async function getUserInfo() {
-    http.result({
-        url: '/auth/userInfo',
-        method: 'POST',
-        success(result) {
-            saveUserInfo(result.data)
-            userInfoTmp.value = result.data
-        }
-    })
+const handleAvatarSuccess = (response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  alert('头像上传成功', 'success');
+  avatarFlag.value = !avatarFlag.value;
 }
 
-async function qrCodeImage() {
-    http.result({
-        url: '/auth/qrCodeImage',
-        method: 'POST',
-        success(result) {
-            qrCode.value.base64 = result.data.base64
-            qrCode.value.secret = result.data.secret
-        }
-    })
+const handleAvatarError = (error: Error, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  alert('头像上传失败', 'error')
+}
+
+async function getUserInfo() {
+  http.result({
+    url: '/auth/userInfo',
+    method: 'POST',
+    success(result) {
+      saveUserInfo(result.data)
+      userInfoTmp.value = result.data
+    }
+  })
 }
 
 const updateUserInfo = () => {
-    http.result({
-        url: '/auth/updateUserInfo',
-        method: 'POST',
-        data: userInfoTmp.value,
-        success(result) {
-            if (result.code == 200) {
-                alert(result.msg, 'success')
-                getUserInfo()
-            }
-        }
-    })
+  http.result({
+    url: '/auth/updateUserInfo',
+    method: 'POST',
+    data: userInfoTmp.value,
+    success(result) {
+      if (result.code == 200) {
+        alert(result.msg, 'success')
+        getUserInfo()
+      }
+    }
+  })
 }
 
 onMounted(() => {
-    getUserInfo()
-    // qrCodeImage()
+  getUserInfo()
 })
 </script>
 
-<style scoped>
-.user-profile-container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 0 15px;
-}
+<style scoped lang="scss">
+.person-info-page {
+  .info-card,
+  .security-card {
+    background: var(--el-bg-color);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--el-box-shadow-light);
+    border: 1px solid var(--el-border-color-lighter);
+    margin-bottom: 24px;
 
-.profile-card {
-    margin-bottom: 20px;
-}
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--el-border-color-lighter);
 
-.two-factor-card {
-    margin-top: 20px;
-}
+      .header-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-.avatar-item {
-    padding: 15px;
-    text-align: center;
-}
+        &.security {
+          background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
 
-.avatar-uploader {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-}
+        .el-icon {
+          font-size: 20px;
+          color: white;
+        }
+      }
 
-.avatar-image {
-    width: 120px;
-    height: 120px;
-    border-radius: 6px;
-    border: 1px dashed var(--el-border-color);
-    transition: all 0.3s;
-}
+      .header-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--el-text-color-primary);
+      }
+    }
+  }
 
-.avatar-image:hover {
-    border-color: var(--el-color-primary);
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
-
-.avatar-error {
+  .avatar-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 120px;
-    height: 120px;
-    color: var(--el-text-color-secondary);
+    margin-bottom: 32px;
+
+    .avatar-wrapper {
+      position: relative;
+      margin-bottom: 12px;
+
+      .avatar-uploader {
+        cursor: pointer;
+
+        .avatar-container {
+          position: relative;
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          overflow: hidden;
+          border: 3px solid var(--el-border-color-lighter);
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+
+            .avatar-overlay {
+              opacity: 1;
+            }
+          }
+
+          .avatar-image {
+            width: 100%;
+            height: 100%;
+          }
+
+          .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--el-fill-color-light);
+            color: var(--el-text-color-secondary);
+
+            .placeholder-icon {
+              font-size: 32px;
+              margin-bottom: 8px;
+            }
+
+            .placeholder-text {
+              font-size: 12px;
+            }
+          }
+
+          .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+
+            .el-icon {
+              font-size: 24px;
+              margin-bottom: 4px;
+            }
+
+            span {
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+
+    .avatar-hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--el-text-color-secondary);
+
+      .el-icon {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .form-section {
+    .info-form {
+      :deep(.el-form-item__label) {
+        font-weight: 500;
+        color: var(--el-text-color-regular);
+        padding-bottom: 8px;
+      }
+
+      :deep(.el-input__wrapper) {
+        border-radius: 10px;
+        padding: 4px 16px;
+      }
+
+      .gender-select {
+        width: 100%;
+
+        :deep(.el-option) {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+      }
+
+      .submit-item {
+        margin-top: 32px;
+        margin-bottom: 0;
+
+        .submit-btn {
+          height: 48px;
+          padding: 0 32px;
+          border-radius: 10px;
+          font-size: 15px;
+          font-weight: 500;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: none;
+          transition: all 0.3s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+          }
+
+          .el-icon {
+            margin-right: 8px;
+            font-size: 18px;
+          }
+        }
+      }
+    }
+  }
+
+  .security-card {
+    .security-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: var(--el-fill-color-light);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: var(--el-fill-color);
+      }
+
+      .item-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .item-icon {
+          width: 48px;
+          height: 48px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .el-icon {
+            font-size: 24px;
+            color: white;
+          }
+        }
+
+        .item-text {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .item-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--el-text-color-primary);
+          }
+
+          .item-desc {
+            font-size: 13px;
+            color: var(--el-text-color-secondary);
+          }
+        }
+      }
+
+      .el-button {
+        font-weight: 500;
+
+        .el-icon {
+          margin-left: 4px;
+        }
+      }
+    }
+  }
 }
 
-.avatar-uploader-icon {
-    font-size: 32px;
-    margin-bottom: 8px;
-}
+@media (max-width: 768px) {
+  .person-info-page {
+    .info-card,
+    .security-card {
+      padding: 20px;
 
-.upload-text {
-    font-size: 14px;
-}
+      .card-header {
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+      }
+    }
 
-.avatar-hint {
-    font-size: 12px;
-    color: var(--el-text-color-secondary);
-    margin-top: 5px;
-}
+    .security-card {
+      .security-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
 
-.action-item {
-    text-align: center;
-    padding: 15px 0;
-}
-
-.two-factor-desc {
-    font-size: 14px;
-    color: var(--el-text-color-regular);
-    margin-bottom: 15px;
-    line-height: 1.6;
-}
-
-.qr-code-section {
-    margin-top: 20px;
-}
-
-.qr-code-title {
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.qr-code-hint {
-    font-size: 13px;
-    color: var(--el-text-color-secondary);
-    margin-bottom: 15px;
-}
-
-.qr-code-container {
-    margin-top: 15px;
-}
-
-.qr-code-image {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 15px;
-}
-
-.verify-section {
-    display: flex;
-    align-items: center;
-}
-
-.save-btn {
-    width: 100%;
-}
-
-:deep(.el-descriptions__title) {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-:deep(.el-descriptions__body) {
-    background-color: var(--el-bg-color);
-}
-
-:deep(.el-descriptions-item__label) {
-    font-weight: 500;
+        .el-button {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+  }
 }
 </style>

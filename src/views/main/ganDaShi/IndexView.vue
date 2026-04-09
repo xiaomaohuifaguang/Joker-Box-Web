@@ -1,92 +1,129 @@
 <template>
-    <div class="post-container">
+    <div class="gandashi-page">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <div class="title-icon">
+                        <el-icon><ChatDotRound /></el-icon>
+                    </div>
+                    <div class="title-text">
+                        <h1>干大事社区</h1>
+                        <p>分享想法，交流经验，共同成长</p>
+                    </div>
+                </div>
+                <el-button type="primary" class="post-btn" @click="dialogAdd = true">
+                    <el-icon><EditPen /></el-icon>
+                    <span>发布帖子</span>
+                </el-button>
+            </div>
+        </div>
+
         <el-row>
             <el-col :span="18" :offset="3">
-                <!-- 搜索和发帖区域 -->
-                <div class="post-header">
-                    <el-input v-model="queryParam.search" placeholder="搜索帖子..." clearable class="search-input"
-                        @clear="handleSearch" @keyup.enter="handleSearch" size="large">
-                        <template #append>
-                            <el-button :icon="Search" @click="handleSearch" />
-                        </template>
-                    </el-input>
-                    <el-button type="primary" :icon="Edit" @click="dialogAdd = true" size="large" class="post-button">
-                        发帖
-                    </el-button>
+                <!-- 搜索区域 -->
+                <div class="search-section">
+                    <div class="search-box">
+                        <el-icon class="search-icon"><Search /></el-icon>
+                        <el-input 
+                            v-model="queryParam.search" 
+                            placeholder="搜索感兴趣的帖子..." 
+                            clearable 
+                            class="search-input"
+                            @clear="handleSearch" 
+                            @keyup.enter="handleSearch">
+                        </el-input>
+                        <el-button type="primary" class="search-btn" @click="handleSearch">
+                            搜索
+                        </el-button>
+                    </div>
                 </div>
 
                 <!-- 帖子列表 -->
-                <div class="post-list">
-                    <div v-for="item in list" :key="item.id" class="post-item" @click="handleViewPost(item)">
-                        <div class="post-content">
-                            <div class="post-title-container">
-                                <span class="post-title" :title="item.title">
-                                    {{ truncateText(item.title, 30) }}
-                                </span>
-                                <el-tag v-if="item.isTop" type="warning" size="small" class="top-tag">
-                                    置顶
-                                </el-tag>
+                <div class="post-list-container">
+                    <div v-for="item in list" :key="item.id" class="post-card" @click="handleViewPost(item)">
+                        <div class="post-main">
+                            <div class="post-header-row">
+                                <h3 class="post-title" :title="item.title">
+                                    <el-tag v-if="item.isTop" type="warning" size="small" effect="dark" class="top-tag">
+                                        <el-icon><Top /></el-icon>
+                                        置顶
+                                    </el-tag>
+                                    {{ truncateText(item.title, 40) }}
+                                </h3>
                             </div>
-                            <div class="post-digest-container">
-                                <span v-if="item.digest" class="post-digest" :title="item.digest">
-                                    {{ truncateText(item.digest, 50) }}
-                                </span>
-                            </div>
-                            <div class="post-meta-container">
-                                <div class="post-author">
-                                    <!-- <el-avatar :size="24" :src="getAvatar(item.createByName)" class="author-avatar" /> -->
-                                    <span :title="item.createByName" class="author-name">
+                            <p v-if="item.digest" class="post-digest" :title="item.digest">
+                                {{ truncateText(item.digest, 80) }}
+                            </p>
+                            <div class="post-meta">
+                                <div class="meta-item author">
+                                    <div class="author-avatar" :style="{ background: getAvatarColor(item.createByName) }">
+                                        {{ item.createByName ? item.createByName.charAt(0).toUpperCase() : '?' }}
+                                    </div>
+                                    <span class="author-name" :title="item.createByName">
                                         {{ truncateText(item.createByName, 8) }}
                                     </span>
                                 </div>
-                                <div class="post-time">
-                                    <el-icon>
-                                        <Clock />
-                                    </el-icon>
+                                <div class="meta-item time">
+                                    <el-icon><Clock /></el-icon>
                                     <span :title="formatFullTime(item.createTime)">
                                         {{ formatTime(item.createTime) }}
                                     </span>
                                 </div>
-                                <div class="post-stats">
-                                    <span class="stat-item">
-                                        <el-icon>
-                                            <View />
-                                        </el-icon>
+                                <div class="meta-item stats">
+                                    <span class="stat">
+                                        <el-icon><View /></el-icon>
                                         {{ item.viewCount || 0 }}
                                     </span>
-                                    <!-- <span class="stat-item">
-                                        <el-icon>
-                                            <ChatDotRound />
-                                        </el-icon>
-                                        {{ item.commentCount || 0 }}
-                                    </span>
-                                    <span class="stat-item">
-                                        <el-icon>
-                                            <Star />
-                                        </el-icon>
-                                        {{ item.likeCount || 0 }}
-                                    </span> -->
                                 </div>
                             </div>
+                        </div>
+                        <div class="post-arrow">
+                            <el-icon><ArrowRight /></el-icon>
                         </div>
                     </div>
 
                     <!-- 空状态 -->
-                    <el-empty v-if="list.length === 0" description="暂无帖子" class="empty-post" />
+                    <div v-if="list.length === 0" class="empty-state">
+                        <div class="empty-icon">
+                            <el-icon><DocumentDelete /></el-icon>
+                        </div>
+                        <h3>暂无帖子</h3>
+                        <p>快来发布第一条帖子吧！</p>
+                    </div>
 
                     <!-- 分页 -->
-                    <el-pagination v-model:current-page="pageInfo.current" v-model:page-size="pageInfo.size"
-                        :page-sizes="[10, 20, 30, 50]" :total="pageInfo.total"
-                        layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange" class="post-pagination" v-if="list.length > 0" />
+                    <div v-if="list.length > 0" class="pagination-wrapper">
+                        <el-pagination 
+                            v-model:current-page="pageInfo.current" 
+                            v-model:page-size="pageInfo.size"
+                            :page-sizes="[10, 20, 30, 50]" 
+                            :total="pageInfo.total"
+                            layout="total, sizes, prev, pager, next, jumper" 
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange" />
+                    </div>
                 </div>
 
                 <!-- 发帖对话框 -->
-                <el-dialog v-model="dialogAdd" width="800px" :close-on-click-modal="false"
-                    :close-on-press-escape="false" v-if="dialogAdd" :show-close="false" class="post-dialog">
+                <el-dialog 
+                    v-model="dialogAdd" 
+                    width="850px" 
+                    :close-on-click-modal="false"
+                    :close-on-press-escape="false" 
+                    v-if="dialogAdd" 
+                    :show-close="false"
+                    destroy-on-close
+                    class="post-dialog">
                     <template #header>
                         <div class="dialog-header">
-                            <span>发表新帖</span>
+                            <div class="dialog-title">
+                                <el-icon><EditPen /></el-icon>
+                                <span>发表新帖</span>
+                            </div>
+                            <el-button class="close-btn" circle @click="dialogAdd = false">
+                                <el-icon><Close /></el-icon>
+                            </el-button>
                         </div>
                     </template>
                     <PostAddView @success="handlePostSuccess" />
@@ -98,7 +135,7 @@
 
 <script setup>
 import { onMounted, ref, watch } from 'vue';
-import { Search, Edit, User, Clock, View, ChatDotRound, Star } from '@element-plus/icons-vue';
+import { Search, EditPen, Clock, View, ChatDotRound, ArrowRight, Top, Close, DocumentDelete } from '@element-plus/icons-vue';
 import PostAddView from './PostAddView.vue';
 import { http } from '@/utils';
 import { useRoute } from 'vue-router'
@@ -119,11 +156,12 @@ const pageInfo = ref({
     pages: 0
 });
 
-// 获取用户头像（模拟）
-const getAvatar = (name) => {
-    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#A38CF9', '#FFA07A']
-    const index = name.length % colors.length
-    return `https://via.placeholder.com/40/${colors[index].substring(1)}/FFFFFF?text=${name.charAt(0)}`
+// 获取头像颜色
+const getAvatarColor = (name) => {
+    if (!name) return '#909399'
+    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a']
+    const index = name.charCodeAt(0) % colors.length
+    return colors[index]
 }
 
 // 格式化时间（简洁版）
@@ -134,27 +172,21 @@ const formatTime = (time) => {
     const date = new Date(time);
     const diffInSeconds = Math.floor((now - date) / 1000);
 
-    // 1分钟内的显示"刚刚"
     if (diffInSeconds < 60 * 3) {
         return '刚刚';
     }
 
-    // 获取各时间组件（确保两位数显示）
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
 
-    // 判断是否今天
     if (date.toDateString() === now.toDateString()) {
         return `${hours}:${minutes}`;
     } else if (year === now.getFullYear()) {
-        // 今年显示：月日
         return `${month}月${day}日`;
     } else {
-        // 非今年显示：年月日
         return `${year}-${month}-${day}`;
     }
 };
@@ -238,186 +270,425 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.post-container {
-    padding: 24px 0;
-    background-color: var(--el-bg-color-page);
-    min-height: calc(100vh - 120px);
-}
+.gandashi-page {
+    min-height: calc(100vh - 60px);
+    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    padding-bottom: 40px;
 
-.post-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    gap: 16px;
+    // 页面头部
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px 0;
+        margin-bottom: 32px;
 
-    .search-input {
-        flex: 1;
-        max-width: 500px;
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
 
-        :deep(.el-input-group__append) {
-            background-color: var(--el-color-primary);
-            color: white;
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
 
-            .el-button {
-                color: inherit;
+            .title-icon {
+                width: 64px;
+                height: 64px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(10px);
+
+                .el-icon {
+                    font-size: 32px;
+                    color: white;
+                }
+            }
+
+            .title-text {
+                h1 {
+                    margin: 0 0 8px 0;
+                    font-size: 32px;
+                    font-weight: 600;
+                    color: white;
+                }
+
+                p {
+                    margin: 0;
+                    font-size: 15px;
+                    color: rgba(255, 255, 255, 0.85);
+                }
+            }
+        }
+
+        .post-btn {
+            height: 48px;
+            padding: 0 28px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 12px;
+            background: white;
+            color: #667eea;
+            border: none;
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            }
+
+            .el-icon {
+                margin-right: 8px;
+                font-size: 18px;
             }
         }
     }
 
-    .post-button {
-        font-weight: 500;
-        padding: 0 24px;
-    }
-}
+    // 搜索区域
+    .search-section {
+        margin-bottom: 24px;
 
-.post-list {
-    margin-top: 16px;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: var(--el-bg-color);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--el-bg-color);
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: var(--el-box-shadow-light);
+            border: 1px solid var(--el-border-color-lighter);
 
-    .empty-post {
-        padding: 60px 0;
-    }
-}
+            .search-icon {
+                font-size: 20px;
+                color: var(--el-text-color-secondary);
+                margin-left: 12px;
+            }
 
-.post-item {
-    display: flex;
-    align-items: center;
-    padding: 16px 24px;
-    background-color: var(--el-bg-color);
-    border-bottom: 1px solid var(--el-border-color-light);
-    transition: all 0.3s ease;
-    cursor: pointer;
+            .search-input {
+                flex: 1;
 
-    &:hover {
-        background-color: var(--el-color-primary-light-9);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
+                :deep(.el-input__inner) {
+                    border: none;
+                    background: transparent;
+                    font-size: 15px;
+                    padding-left: 8px;
 
-    &:last-child {
-        border-bottom: none;
-    }
-}
+                    &::placeholder {
+                        color: var(--el-text-color-placeholder);
+                    }
+                }
+            }
 
-.post-content {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    gap: 16px;
-}
-
-.post-title-container {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .post-title {
-        font-size: 16px;
-        font-weight: 500;
-        color: var(--el-text-color-primary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+            .search-btn {
+                height: 44px;
+                padding: 0 24px;
+                border-radius: 10px;
+                font-size: 15px;
+                font-weight: 500;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+            }
+        }
     }
 
-    .top-tag {
-        flex-shrink: 0;
-    }
-}
+    // 帖子列表容器
+    .post-list-container {
+        .post-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--el-bg-color);
+            padding: 24px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            box-shadow: var(--el-box-shadow-light);
+            border: 1px solid var(--el-border-color-lighter);
+            cursor: pointer;
+            transition: all 0.3s ease;
 
-.post-digest-container {
-    flex: 2;
-    min-width: 0;
+            &:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+                border-color: var(--el-color-primary-light-5);
 
-    .post-digest {
-        font-size: 14px;
-        color: var(--el-text-color-secondary);
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
+                .post-arrow {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    transform: translateX(4px);
+                }
+            }
 
-.post-meta-container {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
+            .post-main {
+                flex: 1;
+                min-width: 0;
 
-.post-author {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
+                .post-header-row {
+                    margin-bottom: 10px;
 
-    .author-avatar {
-        flex-shrink: 0;
-    }
+                    .post-title {
+                        margin: 0;
+                        font-size: 17px;
+                        font-weight: 600;
+                        color: var(--el-text-color-primary);
+                        line-height: 1.5;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
 
-    .author-name {
-        font-size: 14px;
-        color: var(--el-text-color-regular);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
+                        .top-tag {
+                            flex-shrink: 0;
+                            font-weight: 500;
 
-.post-time {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 13px;
-    color: var(--el-text-color-secondary);
-    white-space: nowrap;
-}
+                            .el-icon {
+                                margin-right: 4px;
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
 
-.post-stats {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: auto;
+                .post-digest {
+                    margin: 0 0 14px 0;
+                    font-size: 14px;
+                    color: var(--el-text-color-secondary);
+                    line-height: 1.6;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
 
-    .stat-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 13px;
-        color: var(--el-text-color-secondary);
+                .post-meta {
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                    flex-wrap: wrap;
 
-        .el-icon {
-            font-size: 14px;
+                    .meta-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-size: 13px;
+                        color: var(--el-text-color-secondary);
+
+                        &.author {
+                            .author-avatar {
+                                width: 28px;
+                                height: 28px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 12px;
+                                font-weight: 600;
+                                color: white;
+                            }
+
+                            .author-name {
+                                color: var(--el-text-color-regular);
+                                font-weight: 500;
+                            }
+                        }
+
+                        &.time {
+                            .el-icon {
+                                font-size: 14px;
+                            }
+                        }
+
+                        &.stats {
+                            margin-left: auto;
+
+                            .stat {
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+                                padding: 4px 10px;
+                                background: var(--el-fill-color-light);
+                                border-radius: 20px;
+
+                                .el-icon {
+                                    font-size: 14px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .post-arrow {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--el-fill-color-light);
+                color: var(--el-text-color-secondary);
+                transition: all 0.3s ease;
+                flex-shrink: 0;
+
+                .el-icon {
+                    font-size: 18px;
+                }
+            }
+        }
+
+        // 空状态
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 24px;
+            background: var(--el-bg-color);
+            border-radius: 16px;
+            box-shadow: var(--el-box-shadow-light);
+
+            .empty-icon {
+                width: 100px;
+                height: 100px;
+                background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 24px;
+
+                .el-icon {
+                    font-size: 48px;
+                    color: #667eea;
+                }
+            }
+
+            h3 {
+                margin: 0 0 8px 0;
+                font-size: 20px;
+                color: var(--el-text-color-primary);
+            }
+
+            p {
+                margin: 0;
+                font-size: 14px;
+                color: var(--el-text-color-secondary);
+            }
+        }
+
+        // 分页
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 32px;
+            padding: 20px;
+            background: var(--el-bg-color);
+            border-radius: 12px;
+            box-shadow: var(--el-box-shadow-light);
         }
     }
 }
 
-.post-pagination {
-    margin-top: 24px;
-    justify-content: center;
-    padding: 16px 0;
-    background-color: var(--el-bg-color);
-    border-radius: 8px;
+// 发帖对话框
+.post-dialog {
+    :deep(.el-dialog__header) {
+        margin: 0;
+        padding: 0;
+    }
+
+    :deep(.el-dialog__body) {
+        padding: 0;
+    }
+
+    .dialog-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        .dialog-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+
+            .el-icon {
+                font-size: 22px;
+            }
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+        }
+    }
 }
 
-.dialog-header {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--el-text-color-primary);
-    padding: 16px 0;
-    border-bottom: 1px solid var(--el-border-color-light);
-}
+// 响应式适配
+@media (max-width: 768px) {
+    .gandashi-page {
+        .page-header {
+            padding: 24px 0;
 
-.el-icon {
-    flex-shrink: 0;
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-title {
+                flex-direction: column;
+
+                .title-text {
+                    h1 {
+                        font-size: 24px;
+                    }
+                }
+            }
+        }
+
+        .search-section {
+            .search-box {
+                flex-wrap: wrap;
+
+                .search-input {
+                    width: 100%;
+                }
+
+                .search-btn {
+                    width: 100%;
+                }
+            }
+        }
+
+        .post-list-container {
+            .post-card {
+                padding: 16px;
+
+                .post-main {
+                    .post-meta {
+                        .meta-item.stats {
+                            margin-left: 0;
+                            width: 100%;
+                            margin-top: 8px;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 </style>

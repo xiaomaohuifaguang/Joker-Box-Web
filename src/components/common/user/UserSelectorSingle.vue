@@ -91,39 +91,74 @@ const remoteMethod = (query: string) => {
 
 <style scoped lang="scss">
 .user-selector {
+    :deep(.el-input__wrapper) {
+        border-radius: 12px;
+        box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+        transition: all 0.3s ease;
+        padding: 4px 16px;
+
+        &:hover,
+        &.is-focus {
+            box-shadow: 0 0 0 2px #667eea inset;
+        }
+    }
+
     :deep(.el-input__inner) {
-        padding-left: 36px;
+        padding-left: 4px;
+        height: 44px;
     }
 
     :deep(.el-input__prefix) {
         display: flex;
         align-items: center;
-        padding-left: 10px;
+        padding-right: 8px;
+
+        .el-icon {
+            font-size: 18px;
+            color: var(--el-text-color-secondary);
+            transition: color 0.3s ease;
+        }
+    }
+
+    &:focus-within {
+        :deep(.el-input__prefix .el-icon) {
+            color: #667eea;
+        }
     }
 }
 
 .user-option {
     display: flex;
     align-items: center;
-    padding: 8px 0;
+    padding: 12px 8px;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+
+    &:hover {
+        background: var(--el-fill-color-light);
+    }
 
     .user-avatar {
-        margin-right: 12px;
-        background-color: var(--el-color-primary);
+        margin-right: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
     }
 
     .user-info {
         display: flex;
         flex-direction: column;
+        gap: 2px;
 
         .username {
-            font-size: 14px;
-            color: var(--el-text-color-regular);
+            font-size: 15px;
+            color: var(--el-text-color-primary);
+            font-weight: 600;
         }
 
         .nickname {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--el-text-color-secondary);
         }
     }
@@ -132,22 +167,50 @@ const remoteMethod = (query: string) => {
 
 <style lang="scss">
 .user-selector-popper {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid var(--el-border-color-lighter) !important;
+    overflow: hidden;
+
     .empty-tip {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 10px 0;
+        padding: 24px 16px;
         color: var(--el-text-color-secondary);
+        gap: 10px;
 
         .el-icon {
-            margin-right: 8px;
-            font-size: 16px;
+            font-size: 20px;
+            opacity: 0.6;
+        }
+
+        span {
+            font-size: 14px;
+            font-weight: 500;
         }
     }
 
     .el-select-dropdown__item {
         height: auto;
         padding: 0 12px;
+        margin: 4px 8px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+        }
+
+        &.selected {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+            color: #667eea;
+            font-weight: 600;
+        }
+    }
+
+    .el-select-dropdown__wrap {
+        padding: 8px 0;
     }
 }
 </style>

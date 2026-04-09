@@ -44,3 +44,374 @@
 .el-button {
     border: none;
 }
+
+
+/* 菜单样式修改 el-tree */
+/* el-tree */
+.el-tree-node {
+    position: relative;
+    padding-left: 16px;
+}
+
+.el-tree-node::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: -26px;
+    bottom: 0;
+    border-left: 1px dashed #1389BC;
+}
+
+.el-tree-node::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 12px;
+    width: 23px;
+    border-top: 1px solid #1389BC;
+}
+
+.el-tree-node:last-child::before {
+    height: 48px;
+}
+
+.el-tree-node__content {
+    color: var(--el-table-text-color);
+    font-size: 14px;
+    padding-left: 0 !important;
+}
+
+.el-tree-node.is-current .el-tree-node__content {
+    /* background-color: #eff2fc; */
+}
+
+
+/* el-button */
+
+/* 全局样式 */
+.el-button {
+    border: none;
+}
+
+/* 消息提示美化 */
+.custom-message {
+    border-radius: 10px;
+    /* box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); */
+    /* transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
+    padding: 16px 20px;
+    /* position: relative; */
+    /* overflow: hidden; */
+    /* background-color: #ffffff; */
+}
+
+.custom-message::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 10px 0 0 10px;
+}
+
+.custom-message:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    transform: translateY(-2px);
+}
+
+.custom-message .el-message__content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #303133;
+    font-weight: 400;
+    padding-left: 8px;
+}
+
+.custom-message .el-message__closeBtn {
+    color: #909399;
+    transition: all 0.3s ease;
+    margin-left: 16px;
+    font-size: 16px;
+    opacity: 0.7;
+}
+
+.custom-message .el-message__closeBtn:hover {
+    color: #606266;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* 消息类型颜色区分 */
+.custom-message.el-message--success {
+    background-color: #f0f9eb;
+    border: 1px solid #e1f3d8;
+}
+
+.custom-message.el-message--success::before {
+    background: linear-gradient(135deg, #67c23a 0%, #85ce61 100%);
+}
+
+.custom-message.el-message--warning {
+    background-color: #fdf6ec;
+    border: 1px solid #faecd8;
+}
+
+.custom-message.el-message--warning::before {
+    background: linear-gradient(135deg, #e6a23c 0%, #ebb563 100%);
+}
+
+.custom-message.el-message--error {
+    background-color: #fef0f0;
+    border: 1px solid #fbc4c4;
+}
+
+.custom-message.el-message--error::before {
+    background: linear-gradient(135deg, #f56c6c 0%, #f78989 100%);
+}
+
+.custom-message.el-message--info {
+    background-color: #f4f4f5;
+    border: 1px solid #ebeef5;
+}
+
+.custom-message.el-message--info::before {
+    background: linear-gradient(135deg, #909399 0%, #a6a9ad 100%);
+}
+
+/* 消息图标样式 */
+.custom-message .el-message__icon {
+    font-size: 18px;
+    margin-right: 12px;
+}
+
+.custom-message.el-message--success .el-message__icon {
+    color: #67c23a;
+}
+
+.custom-message.el-message--warning .el-message__icon {
+    color: #e6a23c;
+}
+
+.custom-message.el-message--error .el-message__icon {
+    color: #f56c6c;
+}
+
+.custom-message.el-message--info .el-message__icon {
+    color: #909399;
+}
+
+/* 消息队列样式 */
+.el-message {
+    margin-top: 12px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: messageSlideIn 0.3s ease-out;
+}
+
+.el-message:first-child {
+    margin-top: 80px !important;
+}
+
+/* 消息滑入动画 */
+@keyframes messageSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.8) rotate(-5deg);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: translateY(-15px) scale(1.1) rotate(2deg);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    75% {
+        opacity: 1;
+        transform: translateY(-5px) scale(1.05) rotate(-1deg);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+}
+
+/* 消息淡出动画 */
+.el-message-fade-enter-active,
+.el-message-fade-leave-active {
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.el-message-fade-enter-from,
+.el-message-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.8) rotate(5deg);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 消息出现时的弹跳效果 */
+@keyframes messageBounce {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+
+    30% {
+        transform: translateY(-8px) scale(1.05);
+    }
+
+    60% {
+        transform: translateY(4px) scale(0.98);
+    }
+
+    80% {
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 消息类型特效 */
+@keyframes messageGlow {
+    0% {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    50% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 0 20px rgba(103, 194, 58, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.custom-message {
+    animation: messageSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+        messageBounce 1.2s ease-in-out 0.8s,
+        messageGlow 2s ease-in-out 1.5s infinite;
+}
+
+/* 不同类型的消息特效 */
+.custom-message.el-message--success {
+    animation: messageSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+        messageBounce 1.2s ease-in-out 0.8s,
+        messageGlow 2s ease-in-out 1.5s infinite;
+}
+
+.custom-message.el-message--warning {
+    animation: messageSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+        messageBounce 1.2s ease-in-out 0.8s,
+        messageGlow 2s ease-in-out 1.5s infinite;
+}
+
+.custom-message.el-message--error {
+    animation: messageSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+        messageBounce 1.2s ease-in-out 0.8s,
+        messageGlow 2s ease-in-out 1.5s infinite;
+}
+
+.custom-message.el-message--info {
+    animation: messageSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+        messageBounce 1.2s ease-in-out 0.8s,
+        messageGlow 2s ease-in-out 1.5s infinite;
+}
+
+/* 确认框美化 */
+.custom-message-box {
+    border-radius: 24px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    overflow: hidden !important;
+    background: white !important;
+    border: none !important;
+}
+
+.custom-message-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%) !important;
+}
+
+.custom-message-box .el-message-box__header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    padding: 28px 32px 24px !important;
+    border-bottom: none !important;
+}
+
+.custom-message-box .el-message-box__title {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: white !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.custom-message-box .el-message-box__content {
+    padding: 32px !important;
+    font-size: 16px !important;
+    color: #303133 !important;
+    line-height: 1.8 !important;
+    background: linear-gradient(135deg, #f8f9ff 0%, #fff5f8 100%) !important;
+}
+
+.custom-message-box .el-message-box__btns {
+    padding: 0 32px 32px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 20px !important;
+}
+
+.custom-message-box .el-button {
+    border-radius: 16px !important;
+    padding: 14px 32px !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    letter-spacing: 1px !important;
+}
+
+.custom-message-box .el-button--primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+}
+
+.custom-message-box .el-button--primary:hover {
+    transform: translateY(-4px) scale(1.05) !important;
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6) !important;
+}
+
+.custom-message-box .el-button--default {
+    background: white !important;
+    border: 3px solid #667eea !important;
+    color: #667eea !important;
+}
+
+.custom-message-box .el-button--default:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-color: transparent !important;
+    transform: translateY(-4px) scale(1.05) !important;
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6) !important;
+}
+
+.custom-message-box .el-message-box__close {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 24px !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    right: 20px !important;
+    top: 20px !important;
+}
+
+.custom-message-box .el-message-box__close:hover {
+    color: white !important;
+    transform: rotate(180deg) scale(1.2) !important;
+}
