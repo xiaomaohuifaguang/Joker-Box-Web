@@ -116,7 +116,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
                     <span>编辑</span>
                   </el-button>
                   <el-button type="danger" link size="small" @click="confirmDelete(scope.row.id)"
-                    v-if="scope.row.status == '0' || scope.row.status == '-1'">
+                    v-if="scope.row.status == '0'">
                     <el-icon>
                       <Delete />
                     </el-icon>
@@ -125,7 +125,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
                   <el-button type="primary" link size="small" @click="confirmDeploy(scope.row.id)"
                     v-if="scope.row.status == '0' || scope.row.status == '-1'">
                     <el-icon>
-                      <Delete />
+                      <Promotion />
                     </el-icon>
                     <span>部署</span>
                   </el-button>
@@ -166,7 +166,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
 </template>
 
 <script setup lang="ts">
-import { House, Search, Plus, View, Edit, Delete, Document, List } from '@element-plus/icons-vue'
+import { House, Search, Plus, View, Edit, Delete, Document, List, Promotion } from '@element-plus/icons-vue'
 import { http, alert, confirm } from '@/utils';
 import { onMounted, ref } from 'vue';
 import ProcessDefinitionInfoView from './ProcessDefinitionInfoView.vue';

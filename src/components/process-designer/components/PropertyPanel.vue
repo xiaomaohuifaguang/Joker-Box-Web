@@ -39,20 +39,32 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="候选人">
-                        <el-select v-model="candidateUsersArray" multiple filterable allow-create default-first-option
-                            placeholder="输入候选人后回车" style="width: 100%" />
+                        <el-select v-model="candidateUsersArray" multiple filterable remote reserve-keyword
+                            :remote-method="searchUsers" :loading="userLoading" placeholder="请输入用户名/昵称搜索"
+                            style="width: 100%">
+                            <el-option v-for="item in userDisplayOptions" :key="item.id" :label="item.label"
+                                :value="item.id" />
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="候选角色">
-                        <el-select v-model="candidateRolesArray" multiple filterable allow-create default-first-option
-                            placeholder="输入候选角色后回车" style="width: 100%" />
+                        <el-select v-model="candidateRolesArray" multiple filterable remote reserve-keyword
+                            :remote-method="searchRoles" :loading="roleLoading" placeholder="请输入角色名搜索"
+                            style="width: 100%">
+                            <el-option v-for="item in roleDisplayOptions" :key="item.id" :label="item.label"
+                                :value="item.id" />
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="候选组">
                         <el-select v-model="candidateGroupsArray" multiple filterable allow-create default-first-option
                             placeholder="输入候选组后回车" style="width: 100%" />
                     </el-form-item>
                     <el-form-item label="候选部门">
-                        <el-select v-model="candidateDeptsArray" multiple filterable allow-create default-first-option
-                            placeholder="输入候选部门后回车" style="width: 100%" />
+                        <el-select v-model="candidateDeptsArray" multiple filterable remote reserve-keyword
+                            :remote-method="searchOrgs" :loading="orgLoading" placeholder="请输入部门名搜索"
+                            style="width: 100%">
+                            <el-option v-for="item in orgDisplayOptions" :key="item.id" :label="item.label"
+                                :value="item.id" />
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="通过率" v-if="data.properties?.approvalType === 1">
                         <el-input-number :model-value="data.properties?.passRate"
@@ -74,8 +86,8 @@
 </template>
 
 <script setup lang='ts'>
-import { computed } from 'vue';
-import CodeDisplay from '@/components/media/CodeDisplay.vue';
+import { computed, ref, watch } from 'vue';
+import { http } from '@/utils';
 import { setProcessMeta } from '../core/adapter/CatBPMNAdapter';
 
 const props = defineProps<{
@@ -151,6 +163,95 @@ const candidateUsersArray = makeArrayProp('candidateUsers')
 const candidateRolesArray = makeArrayProp('candidateRoles')
 const candidateGroupsArray = makeArrayProp('candidateGroups')
 const candidateDeptsArray = makeArrayProp('candidateDepts')
+
+type Option = { id: string, label: string }
+
+const userCache = ref<Map<string, string>>(new Map())
+const roleCache = ref<Map<string, string>>(new Map())
+const orgCache = ref<Map<string, string>>(new Map())
+
+const userOptions = ref<Option[]>([])
+const roleOptions = ref<Option[]>([])
+const orgOptions = ref<Option[]>([])
+
+const userLoading = ref(false)
+const roleLoading = ref(false)
+const orgLoading = ref(false)
+
+const mergeSelected = (opts: Option[], selected: string[], cache: Map<string, string>): Option[] => {
+    const ids = new Set(opts.map(o => o.id))
+    const merged = [...opts]
+    for (const id of selected) {
+        if (id && !ids.has(id)) {
+            merged.push({ id, label: cache.get(id) ?? id })
+        }
+    }
+    return merged
+}
+
+const userDisplayOptions = computed(() => mergeSelected(userOptions.value, candidateUsersArray.value, userCache.value))
+const roleDisplayOptions = computed(() => mergeSelected(roleOptions.value, candidateRolesArray.value, roleCache.value))
+const orgDisplayOptions = computed(() => mergeSelected(orgOptions.value, candidateDeptsArray.value, orgCache.value))
+
+const searchUsers = async (query: string) => {
+    userLoading.value = true
+    try {
+        const result = await http.post('/user/queryPage', { current: 1, size: 50, search: query || '' })
+        const records: any[] = result?.records || []
+        userOptions.value = records.map((u: any) => {
+            const id = String(u.id)
+            const label = u.nickname ? `${u.nickname}(${u.username})` : u.username
+            userCache.value.set(id, label)
+            return { id, label }
+        })
+    } finally {
+        userLoading.value = false
+    }
+}
+
+const searchRoles = async (query: string) => {
+    roleLoading.value = true
+    try {
+        const result = await http.post('/role/queryPage', { current: 1, size: 50, search: query || '' })
+        const records: any[] = result?.records || []
+        roleOptions.value = records.map((r: any) => {
+            const id = String(r.id)
+            const label = r.name
+            roleCache.value.set(id, label)
+            return { id, label }
+        })
+    } finally {
+        roleLoading.value = false
+    }
+}
+
+const searchOrgs = async (query: string) => {
+    orgLoading.value = true
+    try {
+        const result = await http.post('/org/queryPage', { current: 1, size: 50, search: query || '' })
+        const records: any[] = result?.records || []
+        orgOptions.value = records.map((o: any) => {
+            const id = String(o.id)
+            const label = o.name
+            orgCache.value.set(id, label)
+            return { id, label }
+        })
+    } finally {
+        orgLoading.value = false
+    }
+}
+
+watch(
+    () => [props.itemType, props.data?.type],
+    ([itemType, type]) => {
+        if (itemType === 'node' && type === 'bpmn:userTask') {
+            if (userOptions.value.length === 0) searchUsers('')
+            if (roleOptions.value.length === 0) searchRoles('')
+            if (orgOptions.value.length === 0) searchOrgs('')
+        }
+    },
+    { immediate: true }
+)
 
 const syncProcessMeta = () => {
     if (!props.data) return
