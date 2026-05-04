@@ -211,52 +211,40 @@ const hasNextPage = () => {
 }
 
 // 查询回复列表
-const queryComment = () => {
+const queryComment = async () => {
     if (loading.value) return
 
     loading.value = true
     commmentAll.value.pageInfo.pageCurrent++
 
-    http.result({
-        url: '/ganDaShiComment/queryPage',
-        method: 'POST',
-        data: {
-            postId: props.postId,
-            parentId: props.parentId,
-            current: commmentAll.value.pageInfo.pageCurrent,
-            size: commmentAll.value.pageInfo.pageSize
-        },
-        success(result) {
-            commmentAll.value.list = [...commmentAll.value.list, ...result.data.records]
-            commmentAll.value.pageInfo.total = result.data.total
-            hasNextPage()
-            loading.value = false
-            open.value = true
-        }
+    const data = await http.post('/ganDaShiComment/queryPage', {
+        postId: props.postId,
+        parentId: props.parentId,
+        current: commmentAll.value.pageInfo.pageCurrent,
+        size: commmentAll.value.pageInfo.pageSize
     })
+    commmentAll.value.list = [...commmentAll.value.list, ...data.records]
+    commmentAll.value.pageInfo.total = data.total
+    hasNextPage()
+    loading.value = false
+    open.value = true
 }
 
 // 添加评论
-const addComment = () => {
-    http.result({
-        url: '/ganDaShiComment/add',
-        method: 'POST',
-        data: {
-            postId: replayInfo.value.postId,
-            comment: replayInfo.value.comment,
-            parentId: replayInfo.value.parentId,
-            replayId: replayInfo.value.replayId,
-        },
-        success(result) {
-            alert('评论成功', 'success')
-            commmentAll.value.list.push(result.data)
-            replayInfo.value.comment = ''
-            replayInfo.value.parentId = props.parentId
-            replayInfo.value.replayId = props.parentId
-            replayInfoDialog.value = false
-            commmentAll.value.pageInfo.total++
-        }
+const addComment = async () => {
+    const data = await http.post('/ganDaShiComment/add', {
+        postId: replayInfo.value.postId,
+        comment: replayInfo.value.comment,
+        parentId: replayInfo.value.parentId,
+        replayId: replayInfo.value.replayId,
     })
+    alert('评论成功', 'success')
+    commmentAll.value.list.push(data)
+    replayInfo.value.comment = ''
+    replayInfo.value.parentId = props.parentId
+    replayInfo.value.replayId = props.parentId
+    replayInfoDialog.value = false
+    commmentAll.value.pageInfo.total++
 }
 
 // 初始化

@@ -111,7 +111,7 @@ const info = ref({
     sendTime: '',
 })
 
-const add = () => {
+const add = async () => {
     if (!info.value.id.trim()) {
         alert('请输入邮件ID', 'warning')
         return
@@ -128,19 +128,13 @@ const add = () => {
     }
 
     loading.value = true
-    http.result({
-        url: '/mailInfo/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            emit('success');
-            loading.value = false
-        },
-        error() {
-            loading.value = false
-        }
-    })
+    try {
+        const result = await http.post('/mailInfo/add', info.value, { raw: true })
+        alert(result.msg, 'success')
+        emit('success');
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 

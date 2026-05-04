@@ -82,32 +82,18 @@ const info = ref({
     deadTime: '',
 })
 
-const queryInfo = () => {
+const queryInfo = async () => {
     loading.value = true
-    http.result({
-        url: '/systemPrompt/info',
-        method: 'POST',
-        data: {
-            id: props.id
-        },
-        success(result) {
-            info.value = result.data
-            loading.value = false
-        }
-    })
+    info.value = await http.post('/systemPrompt/info', { id: props.id })
+    loading.value = false
 }
 
-const save = () => {
+const save = async () => {
     loading.value = true
-    http.result({
-        url: '/systemPrompt/update',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            queryInfo()
-        }
-    })
+    const result = await http.post('/systemPrompt/update', info.value, { raw: true })
+    alert(result.msg, 'success')
+    await queryInfo()
+    loading.value = false
 }
 
 onMounted(() => {

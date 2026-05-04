@@ -73,15 +73,8 @@ const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)
 }
 
-const queryMenu = () => {
-    http.result({
-        url: '/menu/menuTree',
-        method: 'GET',
-        params: { menuType: '-2' },
-        success(result) {
-            menuInit.value = result.data
-        }
-    })
+const queryMenu = async () => {
+    menuInit.value = await http.get('/menu/menuTree', { params: { menuType: '-2' } })
 }
 
 const toHome = () => {

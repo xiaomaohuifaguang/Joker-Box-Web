@@ -137,30 +137,18 @@ const info = ref({
     updateTime: null
 })
 
-const queryInfo = () => {
+const queryInfo = async () => {
     loading.value = true
-    http.result({
-        url: '/website/info',
-        method: 'POST',
-        params: { id: props.id },
-        success(result) {
-            info.value = result.data
-            loading.value = false
-        }
-    })
+    info.value = await http.post('/website/info', undefined, { params: { id: props.id } })
+    loading.value = false
 }
 
-const save = () => {
+const save = async () => {
     loading.value = true
-    http.result({
-        url: '/website/save',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            queryInfo()
-        }
-    })
+    const result = await http.post('/website/save', info.value, { raw: true })
+    alert(result.msg, 'success')
+    await queryInfo()
+    loading.value = false
 }
 
 onMounted(() => {

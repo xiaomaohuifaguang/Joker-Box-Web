@@ -307,28 +307,20 @@ onMounted(() => {
     path.value = route.query.redirect?.toString() || '/'
 })
 
-const sndCode = () => {
+const sndCode = async () => {
     if (!ruleForm.mail) {
         alert('请填写邮箱', 'warning')
         return
     }
 
     isSendingCode.value = true
-    http.result({
-        url: "/auth/mailCode",
-        method: 'POST',
-        params: { mail: ruleForm.mail },
-        success(result) {
-            if (result.code === 200) {
-                alert('验证码已发送', 'success')
-                startCountdown()
-            }
-            isSendingCode.value = false
-        },
-        error() {
-            isSendingCode.value = false
-        }
-    })
+    try {
+        await http.post('/auth/mailCode', undefined, { params: { mail: ruleForm.mail } })
+        alert('验证码已发送', 'success')
+        startCountdown()
+    } finally {
+        isSendingCode.value = false
+    }
 }
 
 const startCountdown = () => {
@@ -355,52 +347,31 @@ const register = async (formEl: FormInstance | undefined) => {
     try {
         await formEl.validate()
         isRegistering.value = true
-        http.result({
-            url: "/auth/register",
-            method: 'POST',
-            data: ruleForm,
-            success(result) {
-                if (result.code === 200) {
-                    setToken(result.data)
-                    login()
-                } else {
-                    isRegistering.value = false
-                }
-            },
-            error(error) {
-                alert(error.msg, 'error')
-                isRegistering.value = false
-            }
-        })
+        try {
+            const token = await http.post('/auth/register', ruleForm)
+            setToken(token)
+            login()
+        } finally {
+            isRegistering.value = false
+        }
     } catch {
         alert('请按要求填写表单', 'warning')
     }
 }
 
-const login = () => {
-    http.result({
-        url: "/auth/getToken",
-        method: 'POST',
-        data: {
-            username: ruleForm.username,
-            password: ruleForm.password
-        },
-        success(result) {
-            setToken(result.data)
-            getUserInfo()
-        }
+const login = async () => {
+    const token = await http.post('/auth/getToken', {
+        username: ruleForm.username,
+        password: ruleForm.password
     })
+    setToken(token)
+    getUserInfo()
 }
 
 async function getUserInfo() {
-    http.result({
-        url: '/auth/userInfo',
-        method: 'POST',
-        success(result) {
-            saveUserInfo(result.data)
-            toPath(path.value)
-        }
-    })
+    const data = await http.post('/auth/userInfo')
+    saveUserInfo(data)
+    toPath(path.value)
 }
 
 const toHome = () => {

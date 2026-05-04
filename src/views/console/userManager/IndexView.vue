@@ -279,81 +279,55 @@ const resetQuery = () => {
   queryPage()
 }
 
-const queryPage = () => {
+const queryPage = async () => {
   loading.value = true
-  http.result({
-    url: '/user/queryPage',
-    method: 'POST',
-    data: {
+  try {
+    const result = await http.post('/user/queryPage', {
       current: pageInfo.value.current,
       size: pageInfo.value.size,
       search: queryParam.value.search,
       roleId: queryParam.value.roleId,
       orgId: queryParam.value.orgId,
       type: queryParam.value.type
-    },
-    success(result) {
-      tableData.value = result.data.records
-      pageInfo.value.current = result.data.current
-      pageInfo.value.size = result.data.size
-      pageInfo.value.total = result.data.total
-      pageInfo.value.pages = result.data.pages
-      loading.value = false
-    }
-  })
+    })
+    tableData.value = result.records
+    pageInfo.value.current = result.current
+    pageInfo.value.size = result.size
+    pageInfo.value.total = result.total
+    pageInfo.value.pages = result.pages
+  } finally {
+    loading.value = false
+  }
 }
 
-const selectorRole = () => {
-  http.result({
-    url: '/role/selector',
-    method: 'POST',
-    success(result) {
-      roles.value = result.data
-    }
-  })
+const selectorRole = async () => {
+  roles.value = await http.post('/role/selector')
 }
 
-const queryOrgTree = () => {
-  http.result({
-    url: '/org/getOrgTree',
-    method: 'POST',
-    success(result) {
-      orgTree.value = []
-      orgTree.value.push(result.data);
-    }
-  })
+const queryOrgTree = async () => {
+  const result = await http.post('/org/getOrgTree')
+  orgTree.value = []
+  orgTree.value.push(result);
 }
 
-const remove = (userId: any) => {
-  http.result({
-    url: '/user/delete',
-    method: 'POST',
+const remove = async (userId: any) => {
+  await http.post('/user/delete', undefined, {
     params: {
       userId: userId
-    },
-    success(result) {
-      if (result.code == '200') {
-        alert('删除成功', 'success')
-      }
-      queryPage()
     }
   })
+  alert('删除成功', 'success')
+  queryPage()
 }
 
-const resetPassword = (userId: any) => {
-  http.result({
-    url: '/user/resetPassword',
-    method: 'POST',
+const resetPassword = async (userId: any) => {
+  await http.post('/user/resetPassword', undefined, {
     params: {
       userId: userId
-    },
-    success(result) {
-      if (result.code == '200') {
-        alert('重置成功', 'success')
-      }
-      queryPage()
     }
   })
+  alert('重置成功', 'success')
+  queryPage()
 }
 
 const openDialog = (id: string | number, type: string) => {

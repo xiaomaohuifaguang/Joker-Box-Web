@@ -56,17 +56,12 @@ const removePrompt = (index: number) => {
     prompts.value.splice(index, 1)
 }
 
-onMounted(() => {
-    http.result({
-        url: '/system/prompt',
-        method: 'POST',
-        success(result) {
-            prompts.value = result.data.map((item: any, index: number) => ({
-                ...item,
-                id: item.id || `prompt-${index}-${Date.now()}`
-            }))
-        }
-    })
+onMounted(async () => {
+    const data = await http.post('/system/prompt')
+    prompts.value = data.map((item: any, index: number) => ({
+        ...item,
+        id: item.id || `prompt-${index}-${Date.now()}`
+    }))
 })
 </script>
 

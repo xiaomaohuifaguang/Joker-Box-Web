@@ -288,14 +288,9 @@ router.beforeEach((to, from) => {
 })
 
 async function getUserInfo() {
-  http.result({
-    url: '/auth/userInfo',
-    method: 'POST',
-    success(result) {
-      saveUserInfo(result.data)
-      return userInfo()
-    }
-  })
+  const data = await http.post('/auth/userInfo')
+  saveUserInfo(data)
+  return userInfo()
 }
 
 export default router

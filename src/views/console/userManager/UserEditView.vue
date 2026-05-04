@@ -208,141 +208,80 @@ const dialogAddOrg = ref({
   orgId: ''
 })
 
-const queryInfo = () => {
+const queryInfo = async () => {
   if (!props.id) return;
 
   loading.value = true
-  http.result({
-    url: '/user/userInfo',
-    method: 'POST',
-    params: { userId: props.id },
-    success(result) {
-      info.value = result.data
-      queryRoles()
-      selectorRole()
-      queryOrgs()
-      queryOrgTree()
-      loading.value = false
-    }
-  })
+  try {
+    info.value = await http.post('/user/userInfo', undefined, { params: { userId: props.id } })
+    queryRoles()
+    selectorRole()
+    queryOrgs()
+    queryOrgTree()
+  } finally {
+    loading.value = false
+  }
 }
 
-const queryRoles = () => {
-  http.result({
-    url: '/user/roles',
-    method: 'POST',
-    params: { userId: props.id },
-    success(result) {
-      roles.value = result.data
-    }
-  })
+const queryRoles = async () => {
+  roles.value = await http.post('/user/roles', undefined, { params: { userId: props.id } })
 }
 
-const queryOrgs = () => {
-  http.result({
-    url: '/user/orgs',
-    method: 'POST',
-    params: { userId: props.id },
-    success(result) {
-      orgs.value = result.data
-    }
-  })
+const queryOrgs = async () => {
+  orgs.value = await http.post('/user/orgs', undefined, { params: { userId: props.id } })
 }
 
-const selectorRole = () => {
-  http.result({
-    url: '/role/selector',
-    method: 'POST',
-    success(result) {
-      selectorRoles.value = result.data
-    }
-  })
+const selectorRole = async () => {
+  selectorRoles.value = await http.post('/role/selector')
 }
 
-const queryOrgTree = () => {
-  http.result({
-    url: '/org/getOrgTree',
-    method: 'POST',
-    success(result) {
-      orgTree.value = [result['data']]
-    }
-  })
+const queryOrgTree = async () => {
+  const result = await http.post('/org/getOrgTree')
+  orgTree.value = [result]
 }
 
 const confirmRemoveRole = (roleId: string) => {
-  confirm('提示', '确定删除该角色吗？', () => removeRole(roleId))
+  confirm('提示', '确定删除该角色吗？', async () => await removeRole(roleId))
 }
 
-const removeRole = (roleId: string) => {
-  http.result({
-    url: '/user/deleteRole',
-    method: 'POST',
-    params: { userId: props.id, roleId },
-    success(result) {
-      if (result.code == 200) {
-        alert('删除成功', 'success')
-      }
-      queryInfo()
-    }
-  })
+const removeRole = async (roleId: string) => {
+  await http.post('/user/deleteRole', undefined, { params: { userId: props.id, roleId } })
+  alert('删除成功', 'success')
+  queryInfo()
 }
 
 const confirmRemoveOrg = (orgId: string) => {
-  confirm('提示', '确定删除该机构吗？', () => removeOrg(orgId))
+  confirm('提示', '确定删除该机构吗？', async () => await removeOrg(orgId))
 }
 
-const removeOrg = (orgId: string) => {
-  http.result({
-    url: '/user/deleteOrg',
-    method: 'POST',
-    params: { userId: props.id, orgId },
-    success(result) {
-      if (result.code == 200) {
-        alert('删除成功', 'success')
-      }
-      queryInfo()
-    }
-  })
+const removeOrg = async (orgId: string) => {
+  await http.post('/user/deleteOrg', undefined, { params: { userId: props.id, orgId } })
+  alert('删除成功', 'success')
+  queryInfo()
 }
 
-const addRole = () => {
+const addRole = async () => {
   if (!dialogAddRole.value.roleId) {
     alert('请选择角色', 'warning')
     return
   }
 
-  http.result({
-    url: '/user/addRole',
-    method: 'POST',
-    params: { userId: props.id, roleId: dialogAddRole.value.roleId },
-    success(result) {
-      if (result.code == 200) {
-        alert('关联成功', 'success')
-        dialogAddRole.value.open = false
-        queryInfo()
-      }
-    }
-  })
+  await http.post('/user/addRole', undefined, { params: { userId: props.id, roleId: dialogAddRole.value.roleId } })
+  alert('关联成功', 'success')
+  dialogAddRole.value.open = false
+  queryInfo()
 }
 
-const addOrg = () => {
+const addOrg = async () => {
   if (!dialogAddOrg.value.orgId) {
     alert('请选择机构', 'warning')
     return
   }
 
-  http.result({
-    url: '/user/addOrg',
-    method: 'POST',
-    params: { userId: props.id, orgId: dialogAddOrg.value.orgId },
-    success(result) {
-      if (result.code == 200) {
-        alert('关联成功', 'success')
-        dialogAddOrg.value.open = false
-        queryInfo()
-      }
-    }
-  })
+  await http.post('/user/addOrg', undefined, { params: { userId: props.id, orgId: dialogAddOrg.value.orgId } })
+  alert('关联成功', 'success')
+  dialogAddOrg.value.open = false
+  queryInfo()
 }
 
 onMounted(() => {

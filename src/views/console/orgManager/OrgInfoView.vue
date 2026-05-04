@@ -85,45 +85,33 @@ const info = ref({
     updateTime: '',
 })
 
-const queryInfo = () => {
+const queryInfo = async () => {
     if (!props.id) return
 
     loading.value = true
-    http.result({
-        url: '/org/info',
-        method: 'POST',
-        data: {
+    try {
+        info.value = await http.post('/org/info', {
             id: props.id
-        },
-        success(result) {
-            info.value = result.data
-            loading.value = false
-        },
-        error() {
-            loading.value = false
-        }
-    })
+        })
+    } finally {
+        loading.value = false
+    }
 }
 
-const save = () => {
+const save = async () => {
     if (!info.value.name.trim()) {
         alert('请输入机构名称', 'warning')
         return
     }
 
     loading.value = true
-    http.result({
-        url: '/org/update',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            queryInfo()
-        },
-        error() {
-            loading.value = false
-        }
-    })
+    try {
+        const result = await http.post('/org/update', info.value, { raw: true })
+        alert(result.msg, 'success')
+        queryInfo()
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

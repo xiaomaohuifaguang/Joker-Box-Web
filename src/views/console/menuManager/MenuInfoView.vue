@@ -229,55 +229,42 @@ const updateApiPathRoleBind = () => {
     })
 }
 
-const queryInfo = () => {
+const queryInfo = async () => {
     if (!props.id) return;
 
     loading.value = true
-    http.result({
-        url: '/menu/info',
-        method: 'POST',
-        data: { id: props.id },
-        success(result) {
-            info.value = result.data
-            loading.value = false
-        }
-    })
+    try {
+        info.value = await http.post('/menu/info', { id: props.id })
+    } finally {
+        loading.value = false
+    }
 }
 
-const queryApiTree = () => {
-    http.result({
-        url: '/menu/apiPathTreeWithMenu',
-        method: 'POST',
-        params: { menuId: props.id },
-        success(result) {
-            apiPathTree.value = result.data
-            if (apiPathTree.value.length > 0) {
-                activeServerTab.value = apiPathTree.value[0].server
-                if (apiPathTree.value[0].groups.length > 0) {
-                    activeGroupTab.value = apiPathTree.value[0].groups[0].groupName
-                }
-            }
-            initApiPathSelection()
+const queryApiTree = async () => {
+    apiPathTree.value = await http.post('/menu/apiPathTreeWithMenu', undefined, { params: { menuId: props.id } })
+    if (apiPathTree.value.length > 0) {
+        activeServerTab.value = apiPathTree.value[0].server
+        if (apiPathTree.value[0].groups.length > 0) {
+            activeGroupTab.value = apiPathTree.value[0].groups[0].groupName
         }
-    })
+    }
+    initApiPathSelection()
 }
 
-const save = () => {
+const save = async () => {
     loading.value = true
     updateApiPathRoleBind()
 
-    http.result({
-        url: '/menu/save',
-        method: 'POST',
-        data: {
+    try {
+        const result = await http.post('/menu/save', {
             menu: info.value,
             apiPathTree: apiPathTree.value
-        },
-        success(result) {
-            alert(result.msg, 'success')
-            queryInfo()
-        }
-    })
+        }, { raw: true })
+        alert(result.msg, 'success')
+        queryInfo()
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

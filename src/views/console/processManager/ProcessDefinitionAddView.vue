@@ -46,16 +46,10 @@ const info = ref({
 })
 
 const add = () => {
-    confirm("提示", "确认添加？", () => {
-        http.result({
-            url: '/processDefinition/add',
-            method: 'POST',
-            data: info.value,
-            success(result) {
-                alert(result.msg, 'success')
-                emit('success');
-            }
-        })
+    confirm("提示", "确认添加？", async () => {
+        const result = await http.post('/processDefinition/add', info.value, { raw: true })
+        alert(result.msg, 'success')
+        emit('success');
     })
 
 }

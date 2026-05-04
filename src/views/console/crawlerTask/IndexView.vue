@@ -214,41 +214,25 @@ const handleCurrentChange = (val: number) => {
     queryPage()
 }
 
-const queryPage = () => {
+const queryPage = async () => {
     loading.value = true
-    http.result({
-        url: '/crawlerTask/queryPage',
-        method: 'POST',
-        data: {
-            current: pageInfo.value.current,
-            size: pageInfo.value.size,
-            search: queryParam.value.search,
-        },
-        success(result) {
-            tableData.value = result.data.records
-            pageInfo.value.current = result.data.current
-            pageInfo.value.size = result.data.size
-            pageInfo.value.total = result.data.total
-            pageInfo.value.pages = result.data.pages
-            loading.value = false
-        }
+    const result = await http.post('/crawlerTask/queryPage', {
+        current: pageInfo.value.current,
+        size: pageInfo.value.size,
+        search: queryParam.value.search,
     })
+    tableData.value = result.records
+    pageInfo.value.current = result.current
+    pageInfo.value.size = result.size
+    pageInfo.value.total = result.total
+    pageInfo.value.pages = result.pages
+    loading.value = false
 }
 
-const remove = (id: any) => {
-    http.result({
-        url: '/crawlerTask/remove',
-        method: 'POST',
-        data: {
-            id: id
-        },
-        success(result) {
-            if (result.code == '200') {
-                alert('删除成功', 'success')
-            }
-            queryPage()
-        }
-    })
+const remove = async (id: any) => {
+    await http.post('/crawlerTask/remove', { id })
+    alert('删除成功', 'success')
+    queryPage()
 }
 
 const openDialog = (id: string | number, type: string) => {
@@ -276,8 +260,8 @@ const handleAddSuccess = () => {
 }
 
 const confirmDelete = (id: string) => {
-    confirm('提示', '确定删除该CrawlerTask吗？', () => {
-        remove(id)
+    confirm('提示', '确定删除该CrawlerTask吗？', async () => {
+        await remove(id)
     })
 }
 

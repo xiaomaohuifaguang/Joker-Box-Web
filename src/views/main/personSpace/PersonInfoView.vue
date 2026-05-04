@@ -200,28 +200,15 @@ const handleAvatarError = (error: Error, uploadFile: UploadFile, uploadFiles: Up
 }
 
 async function getUserInfo() {
-  http.result({
-    url: '/auth/userInfo',
-    method: 'POST',
-    success(result) {
-      saveUserInfo(result.data)
-      userInfoTmp.value = result.data
-    }
-  })
+  const data = await http.post('/auth/userInfo')
+  saveUserInfo(data)
+  userInfoTmp.value = data
 }
 
-const updateUserInfo = () => {
-  http.result({
-    url: '/auth/updateUserInfo',
-    method: 'POST',
-    data: userInfoTmp.value,
-    success(result) {
-      if (result.code == 200) {
-        alert(result.msg, 'success')
-        getUserInfo()
-      }
-    }
-  })
+const updateUserInfo = async () => {
+  const result = await http.post('/auth/updateUserInfo', userInfoTmp.value, { raw: true })
+  alert(result.msg, 'success')
+  getUserInfo()
 }
 
 onMounted(() => {

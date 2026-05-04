@@ -167,18 +167,11 @@ const dialogIcon = ref({
 
 const emit = defineEmits(['success']);
 
-const queryMenuTree = () => {
-    http.result({
-        url: '/menu/menuTreeAll',
-        method: 'GET',
-        params: { menuType: info.value.menuType },
-        success(result) {
-            menuTree.value = result.data
-        }
-    })
+const queryMenuTree = async () => {
+    menuTree.value = await http.get('/menu/menuTreeAll', { params: { menuType: info.value.menuType } })
 }
 
-const add = () => {
+const add = async () => {
     if (!info.value.name.trim()) {
         alert('请输入菜单名称', 'warning')
         return
@@ -190,31 +183,25 @@ const add = () => {
     }
 
     loading.value = true
-    http.result({
-        url: '/menu/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            if (result.code === '200') {
-                alert(result.msg, 'success')
-                emit('success');
-                // 重置表单
-                info.value = {
-                    menuType: '-1',
-                    parentId: '',
-                    name: '',
-                    path: '',
-                    icon: '',
-                    sort: 0,
-                    whiteList: '0'
-                }
+    try {
+        const result = await http.post('/menu/add', info.value, { raw: true })
+        if (result.code === '200') {
+            alert(result.msg, 'success')
+            emit('success');
+            // 重置表单
+            info.value = {
+                menuType: '-1',
+                parentId: '',
+                name: '',
+                path: '',
+                icon: '',
+                sort: 0,
+                whiteList: '0'
             }
-            loading.value = false
-        },
-        error() {
-            loading.value = false
         }
-    })
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

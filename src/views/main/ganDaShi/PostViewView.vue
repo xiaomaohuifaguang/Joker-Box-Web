@@ -165,41 +165,28 @@ const formatFullTime = (time) => {
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 };
 
-const queryInfo = () => {
-    http.result({
-        url: '/ganDaShiPost/info',
-        method: 'POST',
-        data: { id: route.params.id },
-        success(result) {
-            info.value = result.data
-            mainComment.value.postId = info.value.id
-            queryComment()
-        }
-    })
+const queryInfo = async () => {
+    info.value = await http.post('/ganDaShiPost/info', { id: route.params.id })
+    mainComment.value.postId = info.value.id
+    queryComment()
 }
 
-const addComment = () => {
+const addComment = async () => {
     if (!mainComment.value.comment.trim()) return
 
     commentLoading.value = true
-    http.result({
-        url: '/ganDaShiComment/add',
-        method: 'POST',
-        data: {
+    try {
+        const data = await http.post('/ganDaShiComment/add', {
             postId: mainComment.value.postId,
             comment: mainComment.value.comment,
-        },
-        success(result) {
-            alert('评论成功', 'success')
-            commmentAll.value.list.unshift(result.data);
-            mainComment.value.comment = ''
-            commmentAll.value.pageInfo.total++
-            commentLoading.value = false
-        },
-        error() {
-            commentLoading.value = false
-        }
-    })
+        })
+        alert('评论成功', 'success')
+        commmentAll.value.list.unshift(data);
+        mainComment.value.comment = ''
+        commmentAll.value.pageInfo.total++
+    } finally {
+        commentLoading.value = false
+    }
 }
 
 const hasNextPage = () => {
@@ -212,30 +199,24 @@ const hasNextPage = () => {
     hasNextPageTag.value = commmentAll.value.pageInfo.pageCurrent < totalPages
 }
 
-const queryComment = () => {
+const queryComment = async () => {
     if (loading.value) return
 
     loading.value = true
     commmentAll.value.pageInfo.pageCurrent++
 
-    http.result({
-        url: '/ganDaShiComment/queryPage',
-        method: 'POST',
-        data: {
+    try {
+        const data = await http.post('/ganDaShiComment/queryPage', {
             postId: mainComment.value.postId,
             current: commmentAll.value.pageInfo.pageCurrent,
             size: commmentAll.value.pageInfo.pageSize
-        },
-        success(result) {
-            commmentAll.value.list = [...commmentAll.value.list, ...result.data.records]
-            commmentAll.value.pageInfo.total = result.data.total
-            hasNextPage()
-            loading.value = false
-        },
-        error() {
-            loading.value = false
-        }
-    })
+        })
+        commmentAll.value.list = [...commmentAll.value.list, ...data.records]
+        commmentAll.value.pageInfo.total = data.total
+        hasNextPage()
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

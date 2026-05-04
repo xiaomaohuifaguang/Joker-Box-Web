@@ -61,36 +61,21 @@ const info = ref({
     rawData: {},
 })
 
-const queryInfo = () => {
+const queryInfo = async () => {
     loading.value = true
     loaded.value = false
-    http.result({
-        url: '/processDefinition/info',
-        method: 'POST',
-        data: {
-            id: props.id
-        },
-        success(result) {
-            info.value = result.data
-            loading.value = false
-            loaded.value = true
-            reloadKey.value++
-        }
-    })
+    info.value = await http.post('/processDefinition/info', { id: props.id })
+    loading.value = false
+    loaded.value = true
+    reloadKey.value++
 }
 
 const save = () => {
-    confirm("提示", "确认保存？", () => {
+    confirm("提示", "确认保存？", async () => {
         loading.value = true
-        http.result({
-            url: '/processDefinition/save',
-            method: 'POST',
-            data: info.value,
-            success(result) {
-                alert(result.msg, 'success')
-                queryInfo()
-            }
-        })
+        const result = await http.post('/processDefinition/save', info.value, { raw: true })
+        alert(result.msg, 'success')
+        queryInfo()
     })
 
 }

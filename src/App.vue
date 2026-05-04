@@ -20,14 +20,9 @@ async function getUserInfo() {
   if (userInfo() == null) {
     return;
   }
-  http.result({
-    url: '/auth/userInfo',
-    method: 'POST',
-    success(result) {
-      saveUserInfo(result.data)
-      return userInfo()
-    }
-  })
+  const data = await http.post('/auth/userInfo')
+  saveUserInfo(data)
+  return userInfo()
 }
 const font = reactive({
   color: 'rgba(0, 0, 0, .15)',

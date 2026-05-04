@@ -193,71 +193,50 @@ const initApiPathSelection = () => {
     })
 }
 
-const queryInfo = () => {
+const queryInfo = async () => {
     if (!props.id) return;
 
     loading.value = true
-    http.result({
-        url: '/role/info',
-        method: 'POST',
-        params: { roleId: props.id },
-        success(result) {
-            info.value = result.data
-            queryApiTree()
-            loading.value = false
-        }
-    })
+    try {
+        info.value = await http.post('/role/info', undefined, { params: { roleId: props.id } })
+        queryApiTree()
+    } finally {
+        loading.value = false
+    }
 }
 
-const queryApiTree = () => {
-    http.result({
-        url: '/role/apiPathTreeWithRole',
-        method: 'POST',
-        params: { roleId: props.id },
-        success(result) {
-            apiPathTree.value = result.data
-            if (apiPathTree.value.length > 0) {
-                apiServerTab.value = apiPathTree.value[0].server
-                if (apiPathTree.value[0].groups.length > 0) {
-                    apiGroupTab.value = apiPathTree.value[0].groups[0].groupName
-                }
-            }
-            initApiPathSelection()
+const queryApiTree = async () => {
+    apiPathTree.value = await http.post('/role/apiPathTreeWithRole', undefined, { params: { roleId: props.id } })
+    if (apiPathTree.value.length > 0) {
+        apiServerTab.value = apiPathTree.value[0].server
+        if (apiPathTree.value[0].groups.length > 0) {
+            apiGroupTab.value = apiPathTree.value[0].groups[0].groupName
         }
-    })
+    }
+    initApiPathSelection()
 }
 
-const queryMenuTree = (menuType: string) => {
-    http.result({
-        url: '/menu/menuTreeAll',
-        method: 'GET',
-        params: { menuType },
-        success(result) {
-            if (menuType === "-1") {
-                consoleMenuTree.value = result.data
-            } else if (menuType === "-2") {
-                indexMenuTree.value = result.data
-            }
-        }
-    })
+const queryMenuTree = async (menuType: string) => {
+    const result = await http.get('/menu/menuTreeAll', { params: { menuType } })
+    if (menuType === "-1") {
+        consoleMenuTree.value = result
+    } else if (menuType === "-2") {
+        indexMenuTree.value = result
+    }
 }
 
-const queryMenuChoose = (menuType: string) => {
-    http.result({
-        url: '/menu/menuChoose',
-        method: 'GET',
+const queryMenuChoose = async (menuType: string) => {
+    const result = await http.get('/menu/menuChoose', {
         params: {
             roleId: props.id,
             menuType
-        },
-        success(result) {
-            if (menuType === "-1") {
-                consoleMenuChoose.value = result.data
-            } else if (menuType === "-2") {
-                indexMenuChoose.value = result.data
-            }
         }
     })
+    if (menuType === "-1") {
+        consoleMenuChoose.value = result
+    } else if (menuType === "-2") {
+        indexMenuChoose.value = result
+    }
 }
 
 const updateApiPathRoleBind = () => {
@@ -270,27 +249,21 @@ const updateApiPathRoleBind = () => {
     })
 }
 
-const saveRole = () => {
+const saveRole = async () => {
     loading.value = true
     updateApiPathRoleBind()
 
-    http.result({
-        url: '/role/save',
-        method: 'POST',
-        data: {
+    try {
+        const result = await http.post('/role/save', {
             role: info.value,
             apiPathTree: apiPathTree.value,
             menuChoose: [...consoleMenuChoose.value, ...indexMenuChoose.value]
-        },
-        success(result) {
-            alert(result.msg, 'success')
-            queryInfo()
-            loading.value = false
-        },
-        error() {
-            loading.value = false
-        }
-    })
+        }, { raw: true })
+        alert(result.msg, 'success')
+        queryInfo()
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

@@ -229,7 +229,7 @@ const getTabIcon = (name: string) => {
     return iconMap[name] || Document;
 };
 
-const make = () => {
+const make = async () => {
     if (!tableName.value.trim()) {
         alert("请输入表名", "warning");
         return;
@@ -256,19 +256,12 @@ const make = () => {
         xml: "",
     };
 
-    http.result({
-        url: "/rapidDevelopmentController/generate",
-        method: "POST",
-        params: { tableName: tableName.value },
-        success(result) {
-            data.value = result.data;
-            loading.value = false;
-            alert("代码生成成功", "success");
-        },
-        error() {
-            loading.value = false;
-        },
-    });
+    try {
+        data.value = await http.post("/rapidDevelopmentController/generate", undefined, { params: { tableName: tableName.value } });
+        alert("代码生成成功", "success");
+    } finally {
+        loading.value = false;
+    }
 };
 
 const getFilename = (item: any) => {

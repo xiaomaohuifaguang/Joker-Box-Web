@@ -415,102 +415,60 @@ onMounted(() => {
     }
 })
 
-const processDefinitionInfoApi = (processDefinitionId) => {
-    http.result({
-        url: '/processDefinition/info',
-        method: 'POST',
-        data: {
-            id: processDefinitionId
-        },
-        success: (result) => {
-            processDefinitionInfo.value = result.data
-            loading.value = false;
-        }
+const processDefinitionInfoApi = async (processDefinitionId) => {
+    processDefinitionInfo.value = await http.post('/processDefinition/info', {
+        id: processDefinitionId
     })
+    loading.value = false;
 }
 
-const startApi = () => {
-    http.result({
-        url: '/workOrder/start',
-        method: 'POST',
-        data: workOrder.value,
-        success: (result) => {
-            alert(result.msg, 'success')
-            emit('success')
-        }
-    })
+const startApi = async () => {
+    const result = await http.post('/workOrder/start', workOrder.value, { raw: true })
+    alert(result.msg, 'success')
+    emit('success')
 }
 
-const draftApi = () => {
-    http.result({
-        url: '/workOrder/draft',
-        method: 'POST',
-        data: workOrder.value,
-        success: (result) => {
-            alert(result.msg, 'success')
-            emit('success')
-        }
-    })
+const draftApi = async () => {
+    const result = await http.post('/workOrder/draft', workOrder.value, { raw: true })
+    alert(result.msg, 'success')
+    emit('success')
 }
 
-const workOrderInfoApi = (workOrderId) => {
-    http.result({
-        url: '/workOrder/info',
-        method: 'POST',
-        data: {
-            id: workOrderId
-        },
-        success: (result) => {
-            workOrder.value = result.data;
-            processDefinitionInfoApi(workOrder.value['processDefinitionId'])
-        }
+const workOrderInfoApi = async (workOrderId) => {
+    workOrder.value = await http.post('/workOrder/info', {
+        id: workOrderId
     })
+    processDefinitionInfoApi(workOrder.value['processDefinitionId'])
 }
 
-const pass = () => {
-    http.result({
-        url: '/workOrder/pass',
-        method: 'POST',
-        data: {
-            id: props.workOrderId
-        },
-        success: (result) => {
-            alert(result.msg, 'success')
-            emit('success')
-        }
-    })
+const pass = async () => {
+    const result = await http.post('/workOrder/pass', {
+        id: props.workOrderId
+    }, { raw: true })
+    alert(result.msg, 'success')
+    emit('success')
 }
 
-const transfer = (userId) => {
-    http.result({
-        url: '/workOrder/transfer',
-        method: 'POST',
+const transfer = async (userId) => {
+    const result = await http.post('/workOrder/transfer', {
+        id: props.workOrderId
+    }, {
         params: {
             userId: userId
         },
-        data: {
-            id: props.workOrderId
-        },
-        success: (result) => {
-            alert(result.msg, 'success');
-            transferDialog.value.show = false;
-            emit('success')
-        }
+        raw: true
     })
+    alert(result.msg, 'success');
+    transferDialog.value.show = false;
+    emit('success')
 }
 
-const reject = () => {
-    http.result({
-        url: '/workOrder/reject',
-        method: 'POST',
-        data: {
-            id: props.workOrderId
-        },
-        success: (result) => {
-            alert(result.msg, 'success');
-            emit('success')
-        }
-    })
+const reject = async () => {
+    const result = await http.post('/workOrder/reject', {
+        id: props.workOrderId
+    }, { raw: true })
+    alert(result.msg, 'success');
+    emit('success')
 }
 </script>
 

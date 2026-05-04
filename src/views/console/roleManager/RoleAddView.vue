@@ -64,43 +64,34 @@ const selectorRoles = ref<any[]>([])
 
 const emit = defineEmits(['success']);
 
-const selectorRole = () => {
-    http.result({
-        url: '/role/selector',
-        method: 'POST',
-        success(result) {
-            selectorRoles.value = result.data
-        }
-    })
+const selectorRole = async () => {
+    selectorRoles.value = await http.post('/role/selector')
 }
 
-const addRole = () => {
+const addRole = async () => {
     if (!roleName.value.trim()) {
         alert('请输入角色名称', 'warning')
         return
     }
 
     loading.value = true
-    http.result({
-        url: '/role/add',
-        method: 'POST',
-        params: {
-            roleName: roleName.value,
-            withRole: withRole.value
-        },
-        success(result) {
-            if (result.code === '200') {
-                roleName.value = ''
-                withRole.value = ''
-                alert('添加成功', 'success')
-                emit('success');
-            }
-            loading.value = false
-        },
-        error() {
-            loading.value = false
+    try {
+        const result = await http.post('/role/add', undefined, {
+            params: {
+                roleName: roleName.value,
+                withRole: withRole.value
+            },
+            raw: true
+        })
+        if (result.code === '200') {
+            roleName.value = ''
+            withRole.value = ''
+            alert('添加成功', 'success')
+            emit('success');
         }
-    })
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

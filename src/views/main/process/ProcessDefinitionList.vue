@@ -37,16 +37,10 @@ const processDefinitionList = ref<any[]>([]);
 const loading = ref(false);
 const emit = defineEmits(['choose']);
 
-const deployListApi = () => {
+const deployListApi = async () => {
     loading.value = true;
-    http.result({
-        url: '/processDefinition/deployList',
-        method: 'POST',
-        success: (result) => {
-            processDefinitionList.value = result.data;
-            loading.value = false;
-        }
-    });
+    processDefinitionList.value = await http.post('/processDefinition/deployList');
+    loading.value = false;
 };
 
 const chooseOne = (processDefinitionId: number) => {

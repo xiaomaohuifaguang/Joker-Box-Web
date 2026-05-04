@@ -51,16 +51,10 @@ const info = ref({
     updateTime: '',
 })
 
-const add = () => {
-    http.result({
-        url: '/crawlerTask/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            emit('success');
-        }
-    })
+const add = async () => {
+    const result = await http.post('/crawlerTask/add', info.value, { raw: true })
+    alert(result.msg, 'success')
+    emit('success');
 }
 </script>
 

@@ -213,73 +213,37 @@ const handleCurrentChange = (val: number) => {
   queryPage()
 }
 
-const queryPage = () => {
+const queryPage = async () => {
   loading.value = true
-  http.result({
-    url: '/processDefinition/queryPage',
-    method: 'POST',
-    data: {
-      current: pageInfo.value.current,
-      size: pageInfo.value.size,
-      search: queryParam.value.search,
-    },
-    success(result) {
-      tableData.value = result.data.records
-      pageInfo.value.current = result.data.current
-      pageInfo.value.size = result.data.size
-      pageInfo.value.total = result.data.total
-      pageInfo.value.pages = result.data.pages
-      loading.value = false
-    }
+  const result = await http.post('/processDefinition/queryPage', {
+    current: pageInfo.value.current,
+    size: pageInfo.value.size,
+    search: queryParam.value.search,
   })
+  tableData.value = result.records
+  pageInfo.value.current = result.current
+  pageInfo.value.size = result.size
+  pageInfo.value.total = result.total
+  pageInfo.value.pages = result.pages
+  loading.value = false
 }
 
-const remove = (id: any) => {
-  http.result({
-    url: '/processDefinition/remove',
-    method: 'POST',
-    data: {
-      id: id
-    },
-    success(result) {
-      if (result.code == '200') {
-        alert('删除成功', 'success')
-      }
-      queryPage()
-    }
-  })
+const remove = async (id: any) => {
+  await http.post('/processDefinition/remove', { id })
+  alert('删除成功', 'success')
+  queryPage()
 }
 
-const deploy = (id: any) => {
-  http.result({
-    url: '/processDefinition/deploy',
-    method: 'POST',
-    params: {
-      id: id
-    },
-    success(result) {
-      if (result.code == '200') {
-        alert('部署成功', 'success')
-      }
-      queryPage()
-    }
-  })
+const deploy = async (id: any) => {
+  await http.post('/processDefinition/deploy', undefined, { params: { id } })
+  alert('部署成功', 'success')
+  queryPage()
 }
 
-const stop = (id: any) => {
-  http.result({
-    url: '/processDefinition/stop',
-    method: 'POST',
-    data: {
-      id: id
-    },
-    success(result) {
-      if (result.code == '200') {
-        alert('部署成功', 'success')
-      }
-      queryPage()
-    }
-  })
+const stop = async (id: any) => {
+  await http.post('/processDefinition/stop', { id })
+  alert('停用成功', 'success')
+  queryPage()
 }
 
 const openDialog = (id: string | number, type: string) => {

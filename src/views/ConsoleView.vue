@@ -118,14 +118,8 @@ const toggleCollapse = () => {
     isCollapse.value = !isCollapse.value
 }
 
-const queryMenu = () => {
-    http.result({
-        url: '/menu/menuTree',
-        method: 'GET',
-        success(result) {
-            menuInit.value = result.data
-        }
-    })
+const queryMenu = async () => {
+    menuInit.value = await http.get('/menu/menuTree')
 }
 
 onMounted(() => {

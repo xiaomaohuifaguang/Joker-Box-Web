@@ -246,20 +246,13 @@ const dialogView = ref({
     contentType: ''
 });
 
-const query = () => {
+const query = async () => {
     loading.value = true;
-    http.result({
-        url: '/file/list',
-        method: 'POST',
-        params: { parentId: parentId.value },
-        success(result) {
-            list.value = result.data;
-            loading.value = false;
-        },
-        error() {
-            loading.value = false;
-        }
-    });
+    try {
+        list.value = await http.post('/file/list', undefined, { params: { parentId: parentId.value } });
+    } finally {
+        loading.value = false;
+    }
 };
 
 const handleUploadSuccess = (response: any, file: UploadFile, files: UploadFiles) => {
@@ -324,43 +317,29 @@ const chooseFolder = (id: string) => {
     }
 };
 
-const add = () => {
+const add = async () => {
     if (!dialogAddFolder.value.value.trim()) {
         alert('请输入文件夹名称', 'warning');
         return;
     }
 
-    http.result({
-        url: '/file/createFolder',
-        method: 'POST',
+    await http.post('/file/createFolder', undefined, {
         params: {
             parentId: parentId.value,
             fileName: dialogAddFolder.value.value
-        },
-        success(result) {
-            if (result.code == 200) {
-                alert('创建成功', 'success');
-                dialogAddFolder.value.flag = false;
-                dialogAddFolder.value.value = '';
-                query();
-            }
         }
     });
+    alert('创建成功', 'success');
+    dialogAddFolder.value.flag = false;
+    dialogAddFolder.value.value = '';
+    query();
 };
 
 const remove = (fileId: string) => {
-    confirm('删除确认', '确定要删除这个文件吗？删除后无法恢复。', () => {
-        http.result({
-            url: '/file/delete',
-            method: 'POST',
-            params: { fileId: fileId },
-            success(result) {
-                if (result.code == 200) {
-                    alert('删除成功', 'success');
-                    query();
-                }
-            }
-        });
+    confirm('删除确认', '确定要删除这个文件吗？删除后无法恢复。', async () => {
+        await http.post('/file/delete', undefined, { params: { fileId: fileId } });
+        alert('删除成功', 'success');
+        query();
     });
 };
 
@@ -370,29 +349,23 @@ const openRenameDialog = (item: any) => {
     dialogEdit.value.value = item.filename;
 };
 
-const rename = () => {
+const rename = async () => {
     if (!dialogEdit.value.value.trim()) {
         alert('请输入新名称', 'warning');
         return;
     }
 
-    http.result({
-        url: '/file/rename',
-        method: 'POST',
+    await http.post('/file/rename', undefined, {
         params: {
             fileId: dialogEdit.value.id,
             filename: dialogEdit.value.value
-        },
-        success(result) {
-            if (result.code == 200) {
-                alert('重命名成功', 'success');
-                dialogEdit.value.flag = false;
-                dialogEdit.value.value = '';
-                dialogEdit.value.id = '';
-                query();
-            }
         }
     });
+    alert('重命名成功', 'success');
+    dialogEdit.value.flag = false;
+    dialogEdit.value.value = '';
+    dialogEdit.value.id = '';
+    query();
 };
 
 const downloadFile = (file: any) => {

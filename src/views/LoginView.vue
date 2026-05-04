@@ -156,7 +156,7 @@ const loginVerify = () => {
     }
 };
 
-const login = () => {
+const login = async () => {
     if (!loginInfo.value.username || !loginInfo.value.password) {
         alert('请输入账号和密码', 'warning');
         return;
@@ -164,55 +164,26 @@ const login = () => {
 
     isLoading.value = true;
     loginVerify();
-    http.result({
-        url: "/auth/getToken",
-        method: 'POST',
-        data: loginInfo.value,
-        success(result) {
-            if (result.code === 200) {
-                setToken(result.data);
-                getUserInfo();
-            } else {
-                alert(result.msg, 'error');
-                isLoading.value = false;
-            }
-        },
-        error(error) {
-            alert(error.msg, 'error');
-            isLoading.value = false;
-        }
-    });
+    try {
+        const token = await http.post('/auth/getToken', loginInfo.value);
+        setToken(token);
+        getUserInfo();
+    } finally {
+        isLoading.value = false;
+    }
 };
 
-const loginSSO = () => {
+const loginSSO = async () => {
     loginVerify();
-    http.result({
-        url: "/auth/getTokenSSO",
-        method: 'POST',
-        params: ssoInfo.value,
-        success(result) {
-            if (result.code === 200) {
-                setToken(result.data);
-                getUserInfo();
-            } else {
-                alert(result.msg, 'error');
-            }
-        },
-        error(error) {
-            alert(error.msg, 'error');
-        }
-    });
+    const token = await http.post('/auth/getTokenSSO', undefined, { params: ssoInfo.value });
+    setToken(token);
+    getUserInfo();
 };
 
 async function getUserInfo() {
-    http.result({
-        url: '/auth/userInfo',
-        method: 'POST',
-        success(result) {
-            saveUserInfo(result.data);
-            toPath(path.value);
-        }
-    });
+    const data = await http.post('/auth/userInfo');
+    saveUserInfo(data);
+    toPath(path.value);
 }
 
 const ssoPath = (sys: string) => {

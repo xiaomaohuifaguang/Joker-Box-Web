@@ -200,24 +200,18 @@ const handleCurrentChange = () => {
     queryPage()
 }
 
-const queryPage = () => {
+const queryPage = async () => {
     loading.value = true
-    http.result({
-        url: '/workOrder/queryPage',
-        method: 'POST',
-        data: {
-            current: pageInfo.value.current,
-            size: pageInfo.value.size,
-            search: queryParam.value.search,
-            type: queryParam.value.type
-        },
-        success(result) {
-            tableData.value = result.data.records
-            pageInfo.value.total = result.data.total
-            pageInfo.value.pages = result.data.pages
-            loading.value = false
-        }
+    const result = await http.post('/workOrder/queryPage', {
+        current: pageInfo.value.current,
+        size: pageInfo.value.size,
+        search: queryParam.value.search,
+        type: queryParam.value.type
     })
+    tableData.value = result.records
+    pageInfo.value.total = result.total
+    pageInfo.value.pages = result.pages
+    loading.value = false
 }
 
 const openEdit = (type: string, workOrderId: number) => {

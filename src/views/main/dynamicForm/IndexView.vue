@@ -60,26 +60,21 @@ const info = ref({
 const formData = ref({})
 const formMakerRef = ref(null)
 
-const queryFields = () => {
+const queryFields = async () => {
     loading.value = true
-    http.result({
-        url: '/dynamicForm/info',
-        method: 'POST',
-        data: {
+    try {
+        info.value = await http.post('/dynamicForm/info', {
             id: route.params.id,
             version: route.params.version
-        },
-        success(result) {
-            info.value = result.data
-            if (!info.value.formFields || info.value.formFields.length == 0) {
-                toPath('/404')
-            }
-            loading.value = false
-        },
-        error() {
-            loading.value = false
+        })
+        if (!info.value.formFields || info.value.formFields.length == 0) {
+            toPath('/404')
         }
-    })
+    } catch (e: any) {
+        // error handled by interceptor
+    } finally {
+        loading.value = false
+    }
 }
 
 const submit = async () => {
@@ -89,25 +84,19 @@ const submit = async () => {
     }
 
     loading.value = true
-    http.result({
-        url: "/dynamicForm/submit",
-        method: "POST",
-        data: {
+    try {
+        await http.post("/dynamicForm/submit", {
             formId: info.value.id,
             version: route.params.version,
             formInstanceId: null,
             data: formData.value
-        },
-        success(result) {
-            loading.value = false
-            if (result.code == 200) {
-                http.alert('提交成功', 'success')
-            }
-        },
-        error() {
-            loading.value = false
-        }
-    })
+        })
+        http.alert('提交成功', 'success')
+    } catch (e: any) {
+        // error handled by interceptor
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

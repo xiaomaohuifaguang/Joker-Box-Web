@@ -90,26 +90,22 @@ const info = ref({
 
 const formData = ref({})
 
-const add = () => {
+const add = async () => {
     if (!info.value.name.trim()) {
         alert('请输入表单名称', 'warning')
         return
     }
 
     loading.value = true
-    http.result({
-        url: '/dynamicForm/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            emit('success');
-            loading.value = false
-        },
-        error() {
-            loading.value = false
-        }
-    })
+    try {
+        const result = await http.post('/dynamicForm/add', info.value, { raw: true })
+        alert(result.msg, 'success')
+        emit('success');
+    } catch (e: any) {
+        // error handled by interceptor
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 

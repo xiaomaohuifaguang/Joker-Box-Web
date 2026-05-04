@@ -68,29 +68,23 @@ const info = ref({
     updateTime: '',
 })
 
-const add = () => {
+const add = async () => {
     if (!info.value.name.trim()) {
         alert('请输入机构名称', 'warning')
         return
     }
 
     loading.value = true
-    http.result({
-        url: '/org/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            if (result.code === '200') {
-                alert(result.msg, 'success')
-                emit('success');
-                info.value.name = ''
-            }
-            loading.value = false
-        },
-        error() {
-            loading.value = false
+    try {
+        const result = await http.post('/org/add', info.value, { raw: true })
+        if (result.code === '200') {
+            alert(result.msg, 'success')
+            emit('success');
+            info.value.name = ''
         }
-    })
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

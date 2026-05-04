@@ -293,45 +293,26 @@ const apiReqTotalChartData = ref({
 
 
 
-const peopleCountFun = () => {
-    http.result({
-        url: '/statisticalCenter/peopleCount',
-        method: 'POST',
-        success(result) {
-            peopleCount.value = result.data
-        }
-    })
+const peopleCountFun = async () => {
+    peopleCount.value = await http.post('/statisticalCenter/peopleCount')
 }
 
-const peopleCreateByDayFun = () => {
-    http.result({
-        url: '/statisticalCenter/peopleCreateByDay',
-        method: 'POST',
-        success(result) {
-            var chartDom = document.getElementById('peopleCreateByDayChartDataDiv');
-            var myChart = echarts.init(chartDom);
-            peopleCreateByDayChartData.value.xAxis.data = result.data.xdata
-            peopleCreateByDayChartData.value.series[0].data = result.data.ydata
-            myChart.setOption(peopleCreateByDayChartData.value);
-
-        }
-    })
+const peopleCreateByDayFun = async () => {
+    const result = await http.post('/statisticalCenter/peopleCreateByDay')
+    var chartDom = document.getElementById('peopleCreateByDayChartDataDiv');
+    var myChart = echarts.init(chartDom);
+    peopleCreateByDayChartData.value.xAxis.data = result.xdata
+    peopleCreateByDayChartData.value.series[0].data = result.ydata
+    myChart.setOption(peopleCreateByDayChartData.value);
 }
 
-
-const apiReqTotalFun = () => {
-    http.result({
-        url: '/statisticalCenter/apiReqTotal',
-        method: 'POST',
-        success(result) {
-            var chartDom = document.getElementById('apiReqTotalChartDataDiv');
-            var myChart = echarts.init(chartDom);
-            apiReqTotalChartData.value.xAxis.data = result.data.xdata
-            apiReqTotalChartData.value.series[0].data = result.data.ydata
-            myChart.setOption(apiReqTotalChartData.value);
-
-        }
-    })
+const apiReqTotalFun = async () => {
+    const result = await http.post('/statisticalCenter/apiReqTotal')
+    var chartDom = document.getElementById('apiReqTotalChartDataDiv');
+    var myChart = echarts.init(chartDom);
+    apiReqTotalChartData.value.xAxis.data = result.xdata
+    apiReqTotalChartData.value.series[0].data = result.ydata
+    myChart.setOption(apiReqTotalChartData.value);
 }
 
 onMounted(() => {

@@ -61,16 +61,10 @@ const info = ref({
     createTime: '',
 })
 
-const add = () => {
-    http.result({
-        url: '/ai/model/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            emit('success');
-        }
-    })
+const add = async () => {
+    const result = await http.post('/ai/model/add', info.value, { raw: true })
+    alert(result.msg, 'success')
+    emit('success');
 }
 </script>
 

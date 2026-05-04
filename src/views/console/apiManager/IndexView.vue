@@ -309,48 +309,33 @@ const resetQuery = () => {
     queryPage()
 }
 
-const queryPage = () => {
+const queryPage = async () => {
     loading.value = true
-    http.result({
-        url: '/apiPath/queryPage',
-        method: 'POST',
-        data: {
+    try {
+        const result = await http.post('/apiPath/queryPage', {
             current: pageInfo.value.current,
             size: pageInfo.value.size,
             search: queryParam.value.search,
             roleId: queryParam.value.roleId,
             server: queryParam.value.server,
             groupName: queryParam.value.groupName
-        },
-        success(result) {
-            tableData.value = result.data.records
-            pageInfo.value.current = result.data.current
-            pageInfo.value.size = result.data.size
-            pageInfo.value.total = result.data.total
-            pageInfo.value.pages = result.data.pages
-            loading.value = false
-        }
-    })
+        })
+        tableData.value = result.records
+        pageInfo.value.current = result.current
+        pageInfo.value.size = result.size
+        pageInfo.value.total = result.total
+        pageInfo.value.pages = result.pages
+    } finally {
+        loading.value = false
+    }
 }
 
-const selectorRole = () => {
-    http.result({
-        url: '/role/selector',
-        method: 'POST',
-        success(result) {
-            roles.value = result.data
-        }
-    })
+const selectorRole = async () => {
+    roles.value = await http.post('/role/selector')
 }
 
-const cascadeServerGroup = () => {
-    http.result({
-        url: '/apiPath/cascadeServerGroup',
-        method: 'POST',
-        success(result) {
-            cascade.value = result.data
-        }
-    })
+const cascadeServerGroup = async () => {
+    cascade.value = await http.post('/apiPath/cascadeServerGroup')
 }
 
 const openDialog = (row: any, type: string) => {

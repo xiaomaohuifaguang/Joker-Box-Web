@@ -45,7 +45,7 @@ watch(value, (newValue) => {
     emit('update:id', newValue)
 })
 
-const handleChange = (val) => {
+const handleChange = (val: any) => {
     emit('update:id', val)
 }
 
@@ -53,36 +53,25 @@ onMounted(() => {
     init()
 })
 
-const init = () => {
+const init = async () => {
     if (value.value.length > 0 || true) {
         loading.value = true
-        http.result({
-            url: '/user/selectorInitByIds',
-            method: 'POST',
-            data: [value.value],
-            success(result) {
-                options.value = result.data
-                loading.value = false
-            }
-        })
+        try {
+            options.value = await http.post('/user/selectorInitByIds', [value.value])
+        } finally {
+            loading.value = false
+        }
     }
 }
 
-const remoteMethod = (query: string) => {
+const remoteMethod = async (query: string) => {
     if (query) {
         loading.value = true
-
-        http.result({
-            url: '/user/selectorUserWithInfo',
-            method: 'POST',
-            params: {
-                search: query
-            },
-            success(result) {
-                loading.value = false
-                options.value = result.data
-            }
-        })
+        try {
+            options.value = await http.post('/user/selectorUserWithInfo', undefined, { params: { search: query } })
+        } finally {
+            loading.value = false
+        }
     } else {
         options.value = []
     }

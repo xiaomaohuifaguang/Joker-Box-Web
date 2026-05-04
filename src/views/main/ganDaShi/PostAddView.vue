@@ -74,7 +74,7 @@ const isValid = computed(() => {
     return info.value.title.trim().length > 0 && info.value.content.trim().length > 0
 })
 
-const push = () => {
+const push = async () => {
     if (!info.value.title.trim()) {
         alert('请输入标题', 'warning')
         return
@@ -83,16 +83,10 @@ const push = () => {
         alert('请输入内容', 'warning')
         return
     }
-    
-    http.result({
-        url: '/ganDaShiPost/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert('发帖成功', 'success')
-            emit('success')
-        }
-    })
+
+    await http.post('/ganDaShiPost/add', info.value)
+    alert('发帖成功', 'success')
+    emit('success')
 }
 </script>
 

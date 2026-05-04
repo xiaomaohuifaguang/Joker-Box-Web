@@ -230,24 +230,18 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
   try {
     loading.value = true;
-    await formEl.validate((valid, fields) => {
+    await formEl.validate(async (valid, fields) => {
       if (valid) {
-        http.result({
-          url: '/auth/changePassword',
-          method: 'POST',
+        await http.post('/auth/changePassword', undefined, {
           params: {
             oldPassword: passwordInfo.value.oldPassword,
             newPassword: passwordInfo.value.newPassword
-          },
-          success(result) {
-            if (result.code == '200') {
-              confirm("密码修改成功", "请使用新密码重新登录", () => {
-                toPath('/');
-              }, () => {
-                toPath('/');
-              });
-            }
           }
+        });
+        confirm("密码修改成功", "请使用新密码重新登录", () => {
+          toPath('/');
+        }, () => {
+          toPath('/');
         });
       }
     });

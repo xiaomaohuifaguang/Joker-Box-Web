@@ -153,41 +153,31 @@ const info = ref({
     "whiteListStr": "否"
 })
 
-const queryInfo = () => {
+const queryInfo = async () => {
     if (!props.server || !props.path) return
 
     loading.value = true
-    http.result({
-        url: '/apiPath/info',
-        method: 'POST',
-        params: {
-            server: props.server,
-            path: props.path
-        },
-        success(result) {
-            info.value = result.data
-            loading.value = false
-        },
-        error() {
-            loading.value = false
-        }
-    })
+    try {
+        info.value = await http.post('/apiPath/info', undefined, {
+            params: {
+                server: props.server,
+                path: props.path
+            }
+        })
+    } finally {
+        loading.value = false
+    }
 }
 
-const saveApiPath = () => {
+const saveApiPath = async () => {
     loading.value = true
-    http.result({
-        url: '/apiPath/update',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            queryInfo()
-        },
-        error() {
-            loading.value = false
-        }
-    })
+    try {
+        const result = await http.post('/apiPath/update', info.value, { raw: true })
+        alert(result.msg, 'success')
+        queryInfo()
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

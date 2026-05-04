@@ -299,57 +299,41 @@ const handleCurrentChange = (val: number) => {
     queryPage()
 }
 
-const queryOrgTree = () => {
-    http.result({
-        url: '/org/getOrgTree',
-        method: 'POST',
-        success(result) {
-            orgTree.value = []
-            orgTree.value.push(result.data);
-            selectOrg.value.parentId = orgTree.value[0]['id']
-            selectOrg.value.parentName = orgTree.value[0]['name']
-            queryPage();
-        }
-    })
+const queryOrgTree = async () => {
+    const result = await http.post('/org/getOrgTree')
+    orgTree.value = []
+    orgTree.value.push(result);
+    selectOrg.value.parentId = orgTree.value[0]['id']
+    selectOrg.value.parentName = orgTree.value[0]['name']
+    queryPage();
 }
 
-const queryPage = () => {
+const queryPage = async () => {
     loading.value = true
-    http.result({
-        url: '/org/queryPage',
-        method: 'POST',
-        data: {
+    try {
+        const result = await http.post('/org/queryPage', {
             current: pageInfo.value.current,
             size: pageInfo.value.size,
             search: queryParam.value.search,
             parentId: queryParam.value.parentId
-        },
-        success(result) {
-            tableData.value = result.data.records
-            pageInfo.value.current = result.data.current
-            pageInfo.value.size = result.data.size
-            pageInfo.value.total = result.data.total
-            pageInfo.value.pages = result.data.pages
-            loading.value = false
-        }
-    })
+        })
+        tableData.value = result.records
+        pageInfo.value.current = result.current
+        pageInfo.value.size = result.size
+        pageInfo.value.total = result.total
+        pageInfo.value.pages = result.pages
+    } finally {
+        loading.value = false
+    }
 }
 
-const remove = (id: any) => {
-    http.result({
-        url: '/org/remove',
-        method: 'POST',
-        data: {
-            id: id
-        },
-        success(result) {
-            if (result.code == '200') {
-                alert('删除成功', 'success')
-            }
-            queryPage()
-            queryOrgTree()
-        }
+const remove = async (id: any) => {
+    await http.post('/org/remove', {
+        id: id
     })
+    alert('删除成功', 'success')
+    queryPage()
+    queryOrgTree()
 }
 
 const openDialog = (id: string | number, type: string) => {

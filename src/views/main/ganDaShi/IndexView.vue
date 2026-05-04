@@ -243,24 +243,18 @@ watch(() => route.params.username, (newVal) => {
 });
 
 // 查询帖子列表
-const queryPage = () => {
-    http.result({
-        url: '/ganDaShiPost/queryPage',
-        method: 'POST',
-        data: {
-            current: pageInfo.value.current,
-            size: pageInfo.value.size,
-            search: queryParam.value.search,
-            createUsername: queryParam.value.createUsername
-        },
-        success(result) {
-            list.value = result.data.records;
-            pageInfo.value.current = result.data.current;
-            pageInfo.value.size = result.data.size;
-            pageInfo.value.total = result.data.total;
-            pageInfo.value.pages = result.data.pages;
-        }
+const queryPage = async () => {
+    const data = await http.post('/ganDaShiPost/queryPage', {
+        current: pageInfo.value.current,
+        size: pageInfo.value.size,
+        search: queryParam.value.search,
+        createUsername: queryParam.value.createUsername
     });
+    list.value = data.records;
+    pageInfo.value.current = data.current;
+    pageInfo.value.size = data.size;
+    pageInfo.value.total = data.total;
+    pageInfo.value.pages = data.pages;
 };
 
 onMounted(() => {

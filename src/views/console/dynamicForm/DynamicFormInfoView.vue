@@ -141,33 +141,18 @@ const info = ref({
     formFields: []
 })
 
-const queryInfo = () => {
+const queryInfo = async () => {
     loading.value = true
-    http.result({
-        url: '/dynamicForm/info',
-        method: 'POST',
-        data: {
-            id: props.id
-        },
-        success(result) {
-            info.value = result.data
-            loading.value = false
-        }
-    })
+    info.value = await http.post('/dynamicForm/info', { id: props.id })
+    loading.value = false
 }
 
-const save = () => {
+const save = async () => {
     loading.value = true
-    http.result({
-        url: '/dynamicForm/update',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            queryInfo()
-            loading.value = false
-        }
-    })
+    const result = await http.post('/dynamicForm/update', info.value, { raw: true })
+    alert(result.msg, 'success')
+    queryInfo()
+    loading.value = false
 }
 
 onMounted(() => {

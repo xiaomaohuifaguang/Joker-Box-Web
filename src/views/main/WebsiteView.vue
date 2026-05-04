@@ -94,17 +94,12 @@ const getSiteColor = (name: string) => {
     return colors[index]
 }
 
-const queryList = () => {
-    http.result({
-        url: '/website/group',
-        method: 'POST',
-        success(result) {
-            groups.value = result.data;
-            if (groups.value.length > 0) {
-                activeGroup.value = groups.value[0].groupName;
-            }
-        }
-    });
+const queryList = async () => {
+    const data = await http.post('/website/group');
+    groups.value = data;
+    if (groups.value.length > 0) {
+        activeGroup.value = groups.value[0].groupName;
+    }
 };
 
 const formatUrl = (url: string) => {

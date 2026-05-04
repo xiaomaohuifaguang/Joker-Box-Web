@@ -92,7 +92,7 @@ const info = ref({
 
 const emit = defineEmits(['success']);
 
-const add = () => {
+const add = async () => {
     if (!info.value.title.trim()) {
         alert('请输入网站名称', 'warning')
         return
@@ -104,30 +104,22 @@ const add = () => {
     }
 
     loading.value = true
-    http.result({
-        url: '/website/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            if (result.code == '200') {
-                info.value = {
-                    id: null,
-                    groupName: "",
-                    url: "",
-                    title: "",
-                    description: "",
-                    createTime: null,
-                    updateTime: null
-                }
-                alert('添加成功', 'success')
-                emit('success');
-            }
-            loading.value = false
-        },
-        error() {
-            loading.value = false
+    try {
+        await http.post('/website/add', info.value)
+        info.value = {
+            id: null,
+            groupName: "",
+            url: "",
+            title: "",
+            description: "",
+            createTime: null,
+            updateTime: null
         }
-    })
+        alert('添加成功', 'success')
+        emit('success');
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 
