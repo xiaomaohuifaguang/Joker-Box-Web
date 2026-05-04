@@ -12,18 +12,18 @@ export const THEMES = {
     INK: 'ink',
     JOKER: 'joker',
     OBSIDIAN: 'obsidian',
-    OCEAN: 'ocean',
+    CYAN: 'cyan',
 }
 
 export const THEME_LIST = [
     { key: THEMES.INK, label: '墨韵紫', icon: 'Sunny' },
     { key: THEMES.JOKER, label: '霓虹小丑', icon: 'Moon' },
     { key: THEMES.OBSIDIAN, label: '曜石黑', icon: 'MoonNight' },
-    { key: THEMES.OCEAN, label: '沧海蓝', icon: 'PartlyCloudy' },
+    { key: THEMES.CYAN, label: '青色', icon: 'PartlyCloudy' },
 ]
 
 const DEFAULT_THEME = THEMES.JOKER
-const VALID_THEMES = new Set([THEMES.INK, THEMES.JOKER, THEMES.OBSIDIAN, THEMES.OCEAN])
+const VALID_THEMES = new Set([THEMES.INK, THEMES.JOKER, THEMES.OBSIDIAN, THEMES.CYAN])
 const DARK_THEMES = new Set([THEMES.JOKER, THEMES.OBSIDIAN])
 
 const isDarkTheme = (theme) => DARK_THEMES.has(theme)

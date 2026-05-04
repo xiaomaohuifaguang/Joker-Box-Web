@@ -6,7 +6,7 @@
 @use './theme-ink' as ink;
 @use './theme-joker' as joker;
 @use './theme-obsidian' as obsidian;
-@use './theme-ocean' as ocean;
+@use './theme-cyan' as cyan;
 
 /* 默认（无 data-theme 或未识别）= joker */
 :root {
@@ -28,9 +28,9 @@
     @include obsidian.theme-obsidian;
 }
 
-/* 显式 ocean 主题（蓝色系纯色） */
-:root[data-theme='ocean'] {
-    @include ocean.theme-ocean;
+/* 显式 cyan 主题（青色纯色） */
+:root[data-theme='cyan'] {
+    @include cyan.theme-cyan;
 }
 
 /* ============================================================

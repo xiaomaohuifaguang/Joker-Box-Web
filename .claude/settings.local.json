@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/theme-migrate.cjs src/views/main/WebsiteView.vue src/views/main/IndeView.vue src/views/main/ganDaShi/PostAddView.vue src/views/main/tools/JsonFormatView.vue src/views/main/fileServer/IndexView.vue src/views/main/personSpace/PersonInfoView.vue src/views/main/codeMaker/CodeMakerView.vue src/views/main/process/IndexView.vue src/views/main/process/ProcessInstanceEdit.vue src/views/main/personSpace/IndexView.vue src/views/main/dynamicForm/IndexView.vue src/views/main/ganDaShi/PostReplayComment.vue src/views/main/ganDaShi/IndexView.vue)",
+      "Bash(npm run *)",
+      "Bash(grep -v \"\\\\.svg$\")",
+      "Bash(grep -v \"\\\\.ts$\")",
+      "Bash(node scripts/theme-migrate.cjs src/components/common/user/UserSelectorSingle.vue)",
+      "Bash(node scripts/theme-migrate.cjs src/views/common/403.vue src/views/common/Doing.vue)"
+    ]
+  }
+}
