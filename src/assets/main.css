@@ -1,7 +1,7 @@
 @import './base.css';
 @import './font.css';
 @import './el-plus.css';
-@import './bpmn//bpmn-js.css';
+@import '../assets/logicFlow/custom/icon/iconClass.css';
 
 * {
     /* font-family: 'PixelMplus10-Regular', sans-serif; */

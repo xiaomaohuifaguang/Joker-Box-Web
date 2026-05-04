@@ -7,7 +7,9 @@
           <div class="info-card">
             <div class="card-header">
               <div class="header-icon">
-                <el-icon><UserFilled /></el-icon>
+                <el-icon>
+                  <UserFilled />
+                </el-icon>
               </div>
               <span class="header-title">基本信息</span>
             </div>
@@ -29,7 +31,8 @@
                   <el-input v-model="info.updateTime" disabled :prefix-icon="Timer" />
                 </el-form-item>
                 <el-form-item label="性别">
-                  <el-input v-model="info.userExtend.sex" disabled :prefix-icon="info.userExtend.sex === '男' ? Male : (info.userExtend.sex === '女' ? Female : User)" />
+                  <el-input v-model="info.userExtend.sex" disabled
+                    :prefix-icon="info.userExtend.sex === '男' ? Male : (info.userExtend.sex === '女' ? Female : User)" />
                 </el-form-item>
                 <el-form-item label="邮箱">
                   <el-input v-model="info.userExtend.mail" disabled :prefix-icon="Message" />
@@ -48,29 +51,31 @@
           <div class="role-card">
             <div class="card-header">
               <div class="header-icon role">
-                <el-icon><User /></el-icon>
+                <el-icon>
+                  <User />
+                </el-icon>
               </div>
               <span class="header-title">角色信息</span>
               <el-button v-if="props.type === 'edit'" type="primary" size="small" @click="dialogAddRole.open = true">
-                <el-icon><Plus /></el-icon>
+                <el-icon>
+                  <Plus />
+                </el-icon>
                 <span>添加角色</span>
               </el-button>
             </div>
             <div class="card-body">
               <div v-if="roles.length === 0" class="empty-state">
-                <el-icon><User /></el-icon>
+                <el-icon>
+                  <User />
+                </el-icon>
                 <span>暂无角色</span>
               </div>
               <div v-else class="tag-list">
-                <el-tag
-                  v-for="role in roles"
-                  :key="role.id"
-                  :closable="props.type === 'edit'"
-                  :disable-transitions="false"
-                  @close="confirmRemoveRole(role.id)"
-                  size="large"
-                  class="role-tag">
-                  <el-icon><User /></el-icon>
+                <el-tag v-for="role in roles" :key="role.id" :closable="props.type === 'edit'"
+                  :disable-transitions="false" @close="confirmRemoveRole(role.id)" size="large" class="role-tag">
+                  <el-icon>
+                    <User />
+                  </el-icon>
                   <span>{{ role.name }}</span>
                 </el-tag>
               </div>
@@ -81,29 +86,31 @@
           <div class="org-card">
             <div class="card-header">
               <div class="header-icon org">
-                <el-icon><OfficeBuilding /></el-icon>
+                <el-icon>
+                  <OfficeBuilding />
+                </el-icon>
               </div>
               <span class="header-title">机构信息</span>
               <el-button v-if="props.type === 'edit'" type="primary" size="small" @click="dialogAddOrg.open = true">
-                <el-icon><Plus /></el-icon>
+                <el-icon>
+                  <Plus />
+                </el-icon>
                 <span>选择机构</span>
               </el-button>
             </div>
             <div class="card-body">
               <div v-if="orgs.length === 0" class="empty-state">
-                <el-icon><OfficeBuilding /></el-icon>
+                <el-icon>
+                  <OfficeBuilding />
+                </el-icon>
                 <span>暂无机构</span>
               </div>
               <div v-else class="tag-list">
-                <el-tag
-                  v-for="org in orgs"
-                  :key="org.id"
-                  :closable="props.type === 'edit'"
-                  :disable-transitions="false"
-                  @close="confirmRemoveOrg(org.id)"
-                  size="large"
-                  class="org-tag">
-                  <el-icon><OfficeBuilding /></el-icon>
+                <el-tag v-for="org in orgs" :key="org.id" :closable="props.type === 'edit'" :disable-transitions="false"
+                  @close="confirmRemoveOrg(org.id)" size="large" class="org-tag">
+                  <el-icon>
+                    <OfficeBuilding />
+                  </el-icon>
                   <span>{{ org.name }}</span>
                 </el-tag>
               </div>
@@ -114,25 +121,10 @@
     </div>
 
     <!-- 添加角色对话框 -->
-    <el-dialog
-      v-model="dialogAddRole.open"
-      title="关联角色"
-      width="500px"
-      center
-      destroy-on-close
-      @closed="dialogAddRole.roleId = ''"
-      class="add-dialog">
-      <el-select
-        v-model="dialogAddRole.roleId"
-        placeholder="请选择角色"
-        size="large"
-        style="width: 100%"
-        clearable>
-        <el-option
-          v-for="item in selectorRoles"
-          :key="item.key"
-          :label="item.value"
-          :value="item.key" />
+    <el-dialog v-model="dialogAddRole.open" title="关联角色" width="500px" center destroy-on-close
+      @closed="dialogAddRole.roleId = ''" class="add-dialog">
+      <el-select v-model="dialogAddRole.roleId" placeholder="请选择角色" size="large" style="width: 100%" clearable>
+        <el-option v-for="item in selectorRoles" :key="item.key" :label="item.value" :value="item.key" />
       </el-select>
       <template #footer>
         <el-button @click="dialogAddRole.open = false">取消</el-button>
@@ -141,28 +133,15 @@
     </el-dialog>
 
     <!-- 添加机构对话框 -->
-    <el-dialog
-      v-model="dialogAddOrg.open"
-      title="关联机构"
-      width="500px"
-      center
-      destroy-on-close
-      @closed="dialogAddOrg.orgId = ''"
-      class="add-dialog">
-      <el-cascader
-        v-model="dialogAddOrg.orgId"
-        :options="orgTree"
-        :props="{
-          children: 'children',
-          label: 'name',
-          value: 'id',
-          emitPath: false,
-          checkStrictly: true,
-        }"
-        placeholder="请选择机构"
-        size="large"
-        style="width: 100%"
-        clearable />
+    <el-dialog v-model="dialogAddOrg.open" title="关联机构" width="500px" center destroy-on-close
+      @closed="dialogAddOrg.orgId = ''" class="add-dialog">
+      <el-cascader v-model="dialogAddOrg.orgId" :options="orgTree" :props="{
+        children: 'children',
+        label: 'name',
+        value: 'id',
+        emitPath: false,
+        checkStrictly: true,
+      }" placeholder="请选择机构" size="large" style="width: 100%" clearable />
       <template #footer>
         <el-button @click="dialogAddOrg.open = false">取消</el-button>
         <el-button type="primary" @click="addOrg">关联</el-button>
@@ -214,10 +193,10 @@ const info = ref({
   "idStr": ""
 })
 
-const roles = ref([])
-const selectorRoles = ref([])
-const orgs = ref([])
-const orgTree = ref([])
+const roles = ref<any[]>([])
+const selectorRoles = ref<any[]>([])
+const orgs = ref<any[]>([])
+const orgTree = ref<any[]>([])
 
 const dialogAddRole = ref({
   open: false,
@@ -285,7 +264,7 @@ const queryOrgTree = () => {
     url: '/org/getOrgTree',
     method: 'POST',
     success(result) {
-      orgTree.value = [result.data]
+      orgTree.value = [result['data']]
     }
   })
 }

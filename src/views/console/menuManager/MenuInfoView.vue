@@ -39,11 +39,11 @@
                                 <el-form-item label="白名单状态">
                                     <div class="whitelist-section">
                                         <el-radio-group v-model="info.whiteList" :disabled="props.type !== 'edit'">
-                                            <el-radio-button label="1">
+                                            <el-radio-button value="1">
                                                 <el-icon><Unlock /></el-icon>
                                                 <span>开启</span>
                                             </el-radio-button>
-                                            <el-radio-button label="0">
+                                            <el-radio-button value="0">
                                                 <el-icon><Lock /></el-icon>
                                                 <span>关闭</span>
                                             </el-radio-button>
@@ -109,7 +109,7 @@
                                                             <el-checkbox
                                                                 v-for="apiPath in group.apiPaths"
                                                                 :key="apiPath.path"
-                                                                :label="apiPath.path"
+                                                                :value="apiPath.path"
                                                                 :disabled="props.id === '1' || props.type !== 'edit' || apiPath.whiteList === '1'"
                                                                 class="api-checkbox">
                                                                 <span :class="{ 'whitelist-api': apiPath.whiteList === '1' }">
@@ -196,20 +196,20 @@ const info = ref({
     userId: '',
     icon: '',
     whiteList: '',
-    sort: ''
+    sort: 0
 })
 
-const apiPathTree = ref([])
+const apiPathTree = ref<any[]>([])
 const activeServerTab = ref('')
 const activeGroupTab = ref('')
-const apiPathSelection = ref([])
+const apiPathSelection = ref<any[]>([])
 
 // 初始化API权限选择
 const initApiPathSelection = () => {
     apiPathSelection.value = []
-    apiPathTree.value.forEach(server => {
-        server.groups.forEach(group => {
-            group.apiPaths.forEach(apiPath => {
+    apiPathTree.value.forEach((server: any) => {
+        server.groups.forEach((group: any) => {
+            group.apiPaths.forEach((apiPath: any) => {
                 if (apiPath.roleBind) {
                     apiPathSelection.value.push(apiPath.path)
                 }
@@ -220,9 +220,9 @@ const initApiPathSelection = () => {
 
 // 更新API权限绑定状态
 const updateApiPathRoleBind = () => {
-    apiPathTree.value.forEach(server => {
-        server.groups.forEach(group => {
-            group.apiPaths.forEach(apiPath => {
+    apiPathTree.value.forEach((server: any) => {
+        server.groups.forEach((group: any) => {
+            group.apiPaths.forEach((apiPath: any) => {
                 apiPath.roleBind = apiPathSelection.value.includes(apiPath.path)
             })
         })

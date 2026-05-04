@@ -1,68 +1,120 @@
 <template>
     <div class="code-container">
-        <pre class="prism-container">
-        <code ref="code" :class="`language-${language}`">{{ code }}</code>
+        <div class="code-header">
+            <span class="language-badge">{{ language.toUpperCase() }}</span>
+            <el-button v-clipboard:copy="displayCode" v-clipboard:success="onCopySuccess" class="copy-btn"
+                :icon="copied ? Check : DocumentCopy" :type="copied ? 'success' : 'primary'" title="Copy to clipboard"
+                :key="tmpCopyButtonKey">
+                {{ copied ? '已复制' : '复制' }}
+            </el-button>
+        </div>
+        <pre class="prism-container line-numbers">
+        <code ref="code" :class="`language-${language}`">{{ displayCode }}</code>
       </pre>
-        <el-button v-clipboard:copy="code" v-clipboard:success="onCopySuccess" class="copy-btn" type="primary"
-            title="Copy to clipboard" :key="tmpCopyButtonKey">
-            复制
-        </el-button>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, nextTick, watch, ref } from "vue";
+import { onMounted, nextTick, watch, ref, computed } from "vue";
 import Prism from "prismjs";
-import "prismjs/components/prism-java.min.js"; // 引入 Java 语言支持
-import "prismjs/themes/prism-tomorrow.css"; // 可选：选择不同的主题
+import "prismjs/components/prism-java.min.js";
+import "prismjs/components/prism-javascript.min.js";
+import "prismjs/components/prism-python.min.js";
+import "prismjs/components/prism-css.min.js";
+import "prismjs/components/prism-json.min.js";
+import "prismjs/components/prism-typescript.min.js";
+import "prismjs/plugins/line-numbers/prism-line-numbers.js";
+import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+import "prismjs/themes/prism-tomorrow.css";
 import { alert, randomId } from "@/utils";
+import { DocumentCopy, Check } from "@element-plus/icons-vue";
 
 const props = defineProps({
-    code: String,
+    code: {
+        type: [String, Object, Array],
+        required: true,
+    },
     language: {
         type: String,
-        default: "java",  // 默认语言为 Java
+        default: "java",
     },
+});
+
+const copied = ref(false);
+
+const displayCode = computed(() => {
+    if (typeof props.code === 'string') return props.code;
+    try {
+        return JSON.stringify(props.code, null, 2);
+    } catch (e) {
+        return String(props.code);
+    }
 });
 
 const tmpCopyButtonKey = ref(randomId("tmpCopyButtonKey"))
 
-
-// Clipboard success handler
 const onCopySuccess = () => {
+    copied.value = true;
     alert('复制成功！', 'success');
+    setTimeout(() => {
+        copied.value = false;
+    }, 2000);
 };
 
 const highlightCode = () => {
     nextTick(() => {
-        Prism.highlightAll(); // 高亮所有代码块
+        Prism.highlightAll();
     });
 };
 
-// 监听 language 变化并重新高亮代码
 watch(() => props.language, () => {
-    highlightCode(); // 语言变化时重新高亮
-}, { immediate: true }); // 立即应用首次高亮
+    highlightCode();
+}, { immediate: true });
 
 watch(() => props.code, () => {
     tmpCopyButtonKey.value = randomId("tmpCopyButtonKey");
 });
 
+watch(displayCode, () => {
+    highlightCode();
+}, { immediate: true });
+
 onMounted(() => {
-    highlightCode(); // 组件加载时，高亮代码
+    highlightCode();
 });
 </script>
 
 <style scoped>
 .code-container {
     position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    background: #1e1e1e;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: #2d2d2d;
+    border-bottom: 1px solid #3e3e3e;
+}
+
+.language-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .prism-container {
-    /* background-color: antiquewhite; */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    padding: 16px;
+    border-radius: 0;
+    background: #1e1e1e;
 }
 
 pre {
@@ -71,26 +123,45 @@ pre {
     padding: 0;
 }
 
+pre::-webkit-scrollbar {
+    height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+    background: #2d2d2d;
+    border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+}
+
 code {
     display: block;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
 .copy-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    /* background-color: #fff; */
-    /* border: 1px solid #ccc; */
-    border-radius: 4px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
+    font-size: 12px;
+    padding: 4px 12px;
+    height: auto;
+    border-radius: 6px;
 }
 
-.copy-btn:hover {
-    background-color: #f0f0f0;
+:deep(.line-numbers .line-numbers-rows) {
+    border-right: 1px solid #3e3e3e !important;
+}
+
+:deep(.line-numbers-rows > span) {
+    color: #666 !important;
+    pointer-events: none;
 }
 </style>

@@ -1,77 +1,69 @@
 <template>
-    <div class="process-info-container" v-loading="loading">
-        <el-row :gutter="20">
-            <el-col :span="24">
-                <el-form label-position="left" label-width="auto">
-                    <el-form-item label="流程id">
-                        <el-input v-model="info.id" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="流程定义key">
-                        <el-input v-model="info.processKey" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="流程定义名称">
-                        <el-input v-model="info.processName" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="流程描述">
-                        <el-input v-model="info.processDescription" autocomplete="off"
-                            :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="使用版本">
-                        <el-input v-model="info.version" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="流程状态">
-                        <el-input v-model="info.status" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="创建人userid">
-                        <el-input v-model="info.createUserId" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="创建时间">
-                        <el-input v-model="info.createTime" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="更新时间">
-                        <el-input v-model="info.updateTime" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                    <el-form-item label="逻辑删除">
-                        <el-input v-model="info.deleted" autocomplete="off" :disabled="props.type != 'edit'" />
-                    </el-form-item>
-                </el-form>
-            </el-col>
-        </el-row>
-        <el-divider />
-        <div class="save-button-wrapper" v-if="props.type == 'edit'">
-            <el-button type="primary" plain @click="save" size="large">保存</el-button>
+    <div class="add-process-view" v-loading="loading" element-loading-text="加载中...">
+        <div class="editor-area">
+            <ProcessEditor v-if="loaded" :key="reloadKey" :info="info" :readonly="type === 'view'"
+                @update:graphRawData="(data: any) => info.rawData = data"
+                @update:graphData="(data: any) => info.xmlStr = data" />
+            <div v-else class="editor-placeholder">
+                <el-icon class="placeholder-icon">
+                    <Document />
+                </el-icon>
+                <span>正在加载流程数据...</span>
+            </div>
+        </div>
+        <div class="action-bar">
+            <div class="action-tip">
+                <el-icon>
+                    <InfoFilled />
+                </el-icon>
+                <span>请完成流程设计后点击右侧按钮确认保存</span>
+            </div>
+            <el-button type="primary" size="large" @click="save" class="confirm-button" v-if="type === 'edit'"
+                :disabled="!loaded">
+                <el-icon>
+                    <Check />
+                </el-icon>
+                <span>确认保存</span>
+            </el-button>
         </div>
     </div>
-
 </template>
 
-<script setup lang='ts'>
-import { alert, http } from '@/utils';
+<script setup lang="ts">
+import { Document, Check, InfoFilled } from '@element-plus/icons-vue'
+import { alert, confirm, http } from '@/utils';
 import { onMounted, ref } from 'vue';
+import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
+
 
 const props = defineProps({
-    id: String,
-    type: String
+    id: { type: [String, Number], default: '' },
+    type: { type: String, default: '' }
 })
 
 const loading = ref(false)
+const loaded = ref(false)
+const reloadKey = ref(0)
 
 const info = ref({
     id: '',
-    processKey: '',
-    processName: '',
+    processKey: 'Process_' + Math.random().toString(36).substring(2, 16),
+    processName: '流程名称',
+    processCategory: '',
     processDescription: '',
     version: '',
     status: '',
-    createUserId: '',
+    createBy: '',
     createTime: '',
     updateTime: '',
     deleted: '',
+    xmlStr: '',
+    rawData: {},
 })
 
 const queryInfo = () => {
     loading.value = true
-    console.log(props.id)
+    loaded.value = false
     http.result({
         url: '/processDefinition/info',
         method: 'POST',
@@ -81,132 +73,160 @@ const queryInfo = () => {
         success(result) {
             info.value = result.data
             loading.value = false
+            loaded.value = true
+            reloadKey.value++
         }
     })
 }
 
 const save = () => {
-    loading.value = true
-    http.result({
-        url: '/processDefinition/update',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            queryInfo()
-        }
+    confirm("提示", "确认保存？", () => {
+        loading.value = true
+        http.result({
+            url: '/processDefinition/save',
+            method: 'POST',
+            data: info.value,
+            success(result) {
+                alert(result.msg, 'success')
+                queryInfo()
+            }
+        })
     })
+
 }
 
 onMounted(() => {
-    if (props.id == '') return;
+    if (!props.id) return;
     queryInfo()
 })
-
 </script>
 
 <style scoped lang="scss">
-.process-info-container {
-    padding: 24px;
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
-    min-height: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.el-row {
-    .el-col {
-        margin-top: 16px;
-    }
-}
-
-.el-form {
-    background: var(--el-bg-color);
-    border-radius: 16px;
-    padding: 28px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--el-border-color-lighter);
-
-    :deep(.el-form-item) {
-        margin-bottom: 24px;
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-
-    :deep(.el-form-item__label) {
-        font-weight: 600;
-        color: var(--el-text-color-primary);
-        font-size: 14px;
-    }
-
-    :deep(.el-input__wrapper) {
-        border-radius: 10px;
-        box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
-        transition: all 0.3s ease;
-
-        &:hover {
-            box-shadow: 0 0 0 1px #667eea inset;
-        }
-
-        &.is-focus {
-            box-shadow: 0 0 0 2px #667eea inset;
-        }
-    }
-
-    :deep(.el-input__inner) {
-        height: 44px;
-    }
-
-    :deep(.el-input.is-disabled .el-input__wrapper) {
-        background: var(--el-fill-color-light);
-
-        .el-input__inner {
-            color: var(--el-text-color-regular);
-            -webkit-text-fill-color: var(--el-text-color-regular);
-        }
-    }
-}
-
-.el-divider {
-    margin: 28px 0;
-    border-color: var(--el-border-color-lighter);
-}
-
-.save-button-wrapper {
+.add-process-view {
     display: flex;
-    justify-content: center;
-    padding-top: 8px;
+    flex-direction: column;
+    height: calc(100vh - 64px);
+    width: 100%;
+    background: var(--el-bg-color-page);
+    overflow: hidden;
 
-    .el-button {
-        min-width: 160px;
-        height: 48px;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .editor-area {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+        overflow: auto;
+        background: var(--el-bg-color);
 
-        &:hover {
-            transform: translateY(-2px);
+        .editor-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--el-text-color-secondary);
+            font-size: 14px;
+
+            .placeholder-icon {
+                font-size: 40px;
+                color: #667eea;
+                opacity: 0.6;
+            }
+        }
+
+        :deep(> div) {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+
+            >.el-row:first-child {
+                flex-shrink: 0;
+            }
+
+            >.el-row:last-child {
+                flex: 1;
+                min-height: 0;
+
+                .el-col {
+                    height: 100%;
+                }
+
+                .diagram,
+                .container {
+                    height: 100% !important;
+                }
+
+                .diagram-panel {
+                    height: 100%;
+                    overflow-y: auto;
+                }
+            }
+        }
+    }
+
+    .action-bar {
+        flex-shrink: 0;
+        height: 72px;
+        padding: 0 24px;
+        background: var(--el-bg-color);
+        border-top: 1px solid var(--el-border-color-lighter);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+        z-index: 10;
+
+        .action-tip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--el-text-color-secondary);
+
+            .el-icon {
+                font-size: 16px;
+                color: #667eea;
+            }
+        }
+
+        .confirm-button {
+            min-width: 160px;
+            height: 44px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background: linear-gradient(135deg, #5a6fd8 0%, #6a4292 100%);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 14px rgba(102, 126, 234, 0.45);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+
+            .el-icon {
+                margin-right: 4px;
+            }
         }
     }
 }
 
 @media (max-width: 768px) {
-    .process-info-container {
-        padding: 16px;
-    }
+    .add-process-view {
+        .action-bar {
+            padding: 0 16px;
 
-    .el-form {
-        padding: 20px;
-        border-radius: 12px;
-    }
+            .action-tip {
+                display: none;
+            }
 
-    .save-button-wrapper {
-        .el-button {
-            width: 100%;
-            min-width: auto;
+            .confirm-button {
+                width: 100%;
+            }
         }
     }
 }

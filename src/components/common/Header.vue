@@ -67,7 +67,7 @@ import ElMenuItemInit from '@/components/common/ElMenuItemInit.vue'
 
 const route = useRoute()
 const activeIndex = ref(route.path)
-const menuInit = ref([])
+const menuInit = ref<any[]>([])
 
 const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)

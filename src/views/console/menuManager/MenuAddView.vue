@@ -14,11 +14,11 @@
             <el-form label-position="top" class="menu-form">
                 <el-form-item label="菜单类型" required>
                     <el-radio-group v-model="info.menuType" size="large">
-                        <el-radio-button label="-1">
+                        <el-radio-button value="-1">
                             <el-icon><Monitor /></el-icon>
                             <span>后台菜单</span>
                         </el-radio-button>
-                        <el-radio-button label="-2">
+                        <el-radio-button value="-2">
                             <el-icon><HomeFilled /></el-icon>
                             <span>前台菜单</span>
                         </el-radio-button>
@@ -93,11 +93,11 @@
 
                 <el-form-item label="白名单">
                     <el-radio-group v-model="info.whiteList" size="large">
-                        <el-radio-button label="1">
+                        <el-radio-button value="1">
                             <el-icon><Unlock /></el-icon>
                             <span>开启</span>
                         </el-radio-button>
-                        <el-radio-button label="0">
+                        <el-radio-button value="0">
                             <el-icon><Lock /></el-icon>
                             <span>关闭</span>
                         </el-radio-button>
@@ -158,7 +158,7 @@ const info = ref({
     whiteList: '0'
 })
 
-const menuTree = ref([])
+const menuTree = ref<any[]>([])
 
 const dialogIcon = ref({
     open: false,

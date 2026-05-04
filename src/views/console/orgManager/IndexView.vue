@@ -237,8 +237,8 @@ import OrgInfoView from './OrgInfoView.vue';
 import OrgAddView from './OrgAddView.vue';
 
 const loading = ref(false)
-const multipleSelection = ref([])
-const tableData = ref([])
+const multipleSelection = ref<any[]>([])
+const tableData = ref<any[]>([])
 
 const queryParam = ref({
     search: '',
@@ -260,7 +260,7 @@ const dialogEdit = ref({
 })
 
 const dialogAdd = ref(false)
-const orgTree = ref([])
+const orgTree = ref<any[]>([])
 const selectOrg = ref({ parentId: '', parentName: '' })
 
 const getNodeColor = (level: number) => {
@@ -352,11 +352,11 @@ const remove = (id: any) => {
     })
 }
 
-const openDialog = (id: string, type: string) => {
+const openDialog = (id: string | number, type: string) => {
     dialogEdit.value = {
         open: true,
         title: type === 'view' ? '机构详情' : '编辑机构',
-        id,
+        id: String(id),
         type
     }
 }

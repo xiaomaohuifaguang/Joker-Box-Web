@@ -39,7 +39,7 @@ const props = defineProps<{
     ids: any[]
 }>()
 
-const options = ref([])
+const options = ref<any[]>([])
 const value = ref<any[]>([])
 const loading = ref(false)
 

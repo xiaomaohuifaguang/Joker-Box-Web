@@ -57,7 +57,7 @@
                                     <el-checkbox-group v-else-if="element.type === 'CHECKBOX'"
                                         v-model="modelValue[element.fieldId]" style="width: 100%;">
                                         <el-checkbox v-for="item in element.options || []" :key="item.value"
-                                            :value="item.value" :label="item.label">
+                                            :value="item.value">
                                             {{ item.label }}
                                         </el-checkbox>
                                     </el-checkbox-group>
@@ -171,8 +171,7 @@
                             <!-- 多选框 -->
                             <el-checkbox-group v-else-if="field.type === 'CHECKBOX'" v-model="modelValue[field.fieldId]"
                                 style="width: 100%;" :min="field.min" :max="field.max">
-                                <el-checkbox v-for="item in field.options || []" :key="item.value" :value="item.value"
-                                    :label="item.label">
+                                <el-checkbox v-for="item in field.options || []" :key="item.value" :value="item.value">
                                     {{ item.label }}
                                 </el-checkbox>
                             </el-checkbox-group>
@@ -535,7 +534,7 @@ const verify = async () => {
 
 // 添加修改表单项 
 const addFiledDialog = ref(false)
-const newFieldFormRef = ref(null)
+const newFieldFormRef = ref<FormInstance>()
 const newFieldLoading = ref(false)
 const fieldTypes = [
     { label: '文本输入', value: 'INPUT' },
@@ -626,7 +625,7 @@ const addFieldOpen = () => {
 
 const addFieldFun = async () => {
     newFieldLoading.value = true
-    if (!formRef.value) return
+    if (!formRef.value || !newFieldFormRef.value) return
     try {
         await newFieldFormRef.value.validate();
         const field: FormField = {
@@ -635,14 +634,14 @@ const addFieldFun = async () => {
             title: newFieldParams.value.title,
             required: newFieldParams.value.required,
             defaultValue: newFieldParams.value.defaultValue,
-            placeholder: newFieldParams.value.placeholder,
-            options: newFieldParams.value.options,
-            minLength: newFieldParams.value.minLength,
-            maxLength: newFieldParams.value.maxLength,
-            min: newFieldParams.value.min,
-            max: newFieldParams.value.max,
-            pattern: newFieldParams.value.pattern,
-            patternTips: newFieldParams.value.patternTips,
+            placeholder: newFieldParams.value.placeholder ?? undefined,
+            options: newFieldParams.value.options ?? undefined,
+            minLength: newFieldParams.value.minLength ?? undefined,
+            maxLength: newFieldParams.value.maxLength ?? undefined,
+            min: newFieldParams.value.min ?? undefined,
+            max: newFieldParams.value.max ?? undefined,
+            pattern: newFieldParams.value.pattern ?? undefined,
+            patternTips: newFieldParams.value.patternTips ?? undefined,
             span: newFieldParams.value.span
         }
         // 创建新数组并触发更新

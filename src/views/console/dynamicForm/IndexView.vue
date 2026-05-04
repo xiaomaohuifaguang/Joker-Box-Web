@@ -243,8 +243,8 @@ import DynamicFormInfoView from './DynamicFormInfoView.vue';
 import DynamicFormAddView from './DynamicFormAddView.vue';
 
 const loading = ref(false)
-const multipleSelection = ref([])
-const tableData = ref([])
+const multipleSelection = ref<any[]>([])
+const tableData = ref<any[]>([])
 
 const queryParam = ref({
     search: '',

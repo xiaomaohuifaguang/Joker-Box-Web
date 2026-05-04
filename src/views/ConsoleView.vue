@@ -101,7 +101,7 @@ import { HomeFilled, Expand, Fold, SwitchButton, Setting, Tools } from '@element
 const route = useRoute()
 const activeIndex = ref(route.path)
 const isCollapse = ref(false)
-const menuInit = ref([])
+const menuInit = ref<any[]>([])
 
 const handleSelect = (key: string, keyPath: string[]) => {
     console.log(key, keyPath)

@@ -56,11 +56,11 @@
                             <el-form-item label="白名单">
                                 <div class="whitelist-section">
                                     <el-radio-group v-model="info.whiteList" :disabled="props.type !== 'edit'">
-                                        <el-radio-button label="1">
+                                        <el-radio-button value="1">
                                             <el-icon><Check /></el-icon>
                                             <span>开启</span>
                                         </el-radio-button>
-                                        <el-radio-button label="0">
+                                        <el-radio-button value="0">
                                             <el-icon><Close /></el-icon>
                                             <span>关闭</span>
                                         </el-radio-button>

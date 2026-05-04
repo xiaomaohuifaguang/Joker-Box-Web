@@ -1,0 +1,183 @@
+{
+    "nodes": [
+        {
+            "id": "Event_785c1cb",
+            "type": "bpmn:startEvent",
+            "x": 156,
+            "y": 156,
+            "properties": {
+                "width": 72,
+                "height": 72
+            },
+            "text": {
+                "x": 156,
+                "y": 156,
+                "value": "开始"
+            }
+        },
+        {
+            "id": "Activity_a0615d8",
+            "type": "bpmn:userTask",
+            "x": 492,
+            "y": 156,
+            "properties": {
+                "width": 100,
+                "height": 80
+            },
+            "text": {
+                "x": 492,
+                "y": 156,
+                "value": "用户任务"
+            }
+        },
+        {
+            "id": "Event_2d26d53",
+            "type": "bpmn:endEvent",
+            "x": 492,
+            "y": 403,
+            "properties": {
+                "width": 72,
+                "height": 72
+            },
+            "text": {
+                "x": 492,
+                "y": 403,
+                "value": "结束"
+            }
+        },
+        {
+            "id": "Gateway_c04a87c",
+            "type": "bpmn:exclusiveGateway",
+            "x": 287,
+            "y": 156,
+            "properties": {
+                "width": 50,
+                "height": 50
+            }
+        }
+    ],
+    "edges": [
+        {
+            "id": "Flow_f733fc5",
+            "type": "bpmn:sequenceFlow",
+            "properties": {},
+            "sourceNodeId": "Event_785c1cb",
+            "targetNodeId": "Gateway_c04a87c",
+            "sourceAnchorId": "Event_785c1cb_1",
+            "targetAnchorId": "Gateway_c04a87c_3",
+            "startPoint": {
+                "x": 192,
+                "y": 156
+            },
+            "endPoint": {
+                "x": 262,
+                "y": 156
+            },
+            "pointsList": [
+                {
+                    "x": 192,
+                    "y": 156
+                },
+                {
+                    "x": 262,
+                    "y": 156
+                }
+            ]
+        },
+        {
+            "id": "Flow_85f16a5",
+            "type": "bpmn:sequenceFlow",
+            "properties": {
+                "expressionType": "cdata",
+                "condition": "foo > bar"
+            },
+            "sourceNodeId": "Gateway_c04a87c",
+            "targetNodeId": "Activity_a0615d8",
+            "sourceAnchorId": "Gateway_c04a87c_1",
+            "targetAnchorId": "Activity_a0615d8_3",
+            "startPoint": {
+                "x": 312,
+                "y": 156
+            },
+            "endPoint": {
+                "x": 442,
+                "y": 156
+            },
+            "pointsList": [
+                {
+                    "x": 312,
+                    "y": 156
+                },
+                {
+                    "x": 442,
+                    "y": 156
+                }
+            ]
+        },
+        {
+            "id": "Flow_79e9b1a",
+            "type": "bpmn:sequenceFlow",
+            "properties": {
+                "expressionType": "cdata",
+                "condition": "foo <= bar"
+            },
+            "sourceNodeId": "Gateway_c04a87c",
+            "targetNodeId": "Event_2d26d53",
+            "sourceAnchorId": "Gateway_c04a87c_2",
+            "targetAnchorId": "Event_2d26d53_0",
+            "startPoint": {
+                "x": 287,
+                "y": 181
+            },
+            "endPoint": {
+                "x": 492,
+                "y": 367
+            },
+            "pointsList": [
+                {
+                    "x": 287,
+                    "y": 181
+                },
+                {
+                    "x": 287,
+                    "y": 352
+                },
+                {
+                    "x": 492,
+                    "y": 352
+                },
+                {
+                    "x": 492,
+                    "y": 367
+                }
+            ]
+        },
+        {
+            "id": "Flow_263c06c",
+            "type": "bpmn:sequenceFlow",
+            "properties": {},
+            "sourceNodeId": "Activity_a0615d8",
+            "targetNodeId": "Event_2d26d53",
+            "sourceAnchorId": "Activity_a0615d8_2",
+            "targetAnchorId": "Event_2d26d53_0",
+            "startPoint": {
+                "x": 492,
+                "y": 196
+            },
+            "endPoint": {
+                "x": 492,
+                "y": 367
+            },
+            "pointsList": [
+                {
+                    "x": 492,
+                    "y": 196
+                },
+                {
+                    "x": 492,
+                    "y": 367
+                }
+            ]
+        }
+    ]
+}

@@ -143,7 +143,7 @@
 
 <script setup lang='ts'>
 import { http, randomId } from '@/utils';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, shallowRef } from 'vue';
 import {
     Search, Plus, Grid, Timer, Document, Collection, Connection
 } from '@element-plus/icons-vue'
@@ -151,7 +151,7 @@ import ProcessDefinitionList from './ProcessDefinitionList.vue'
 import ProcessInstanceEdit from './ProcessInstanceEdit.vue';
 
 const loading = ref(false)
-const tableData = ref([])
+const tableData = ref<any[]>([])
 const queryParam = ref({
     search: '',
     type: '1'
@@ -163,7 +163,7 @@ const pageInfo = ref({
     pages: 0
 })
 
-const filters = ref([
+const filters = shallowRef([
     { label: '全部', value: '', icon: Grid, class: 'all', count: 0 },
     { label: '待办', value: '2', icon: Timer, class: 'todo', count: 0 },
     { label: '已申请', value: '11', icon: Collection, class: 'apply', count: 0 },
@@ -171,7 +171,12 @@ const filters = ref([
 ])
 
 const dialogAdd = ref({ show: false })
-const dialogEdit = ref({
+const dialogEdit = ref<{
+    show: boolean
+    type?: string
+    processDefinitionId?: number
+    workOrderId?: number
+}>({
     show: false,
     type: undefined,
     processDefinitionId: undefined,

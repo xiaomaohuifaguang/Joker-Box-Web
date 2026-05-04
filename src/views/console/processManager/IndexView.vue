@@ -1,15 +1,17 @@
 <template>
-  <div class="process-management-page">
+  <div class="processDefinition-management-page">
     <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-content">
         <div class="header-title">
           <div class="title-icon">
-            <el-icon><Connection /></el-icon>
+            <el-icon>
+              <Document />
+            </el-icon>
           </div>
           <div class="title-text">
             <h1>流程管理</h1>
-            <p>管理系统流程定义和审批配置</p>
+            <p>管理和维护流程数据</p>
           </div>
         </div>
       </div>
@@ -20,120 +22,119 @@
       <div class="breadcrumb-wrapper">
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/console' }">
-            <el-icon><House /></el-icon>
+            <el-icon>
+              <House />
+            </el-icon>
             <span>控制台</span>
           </el-breadcrumb-item>
           <el-breadcrumb-item>流程管理</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
 
-      <!-- 搜索筛选区域 -->
+      <!-- 搜索和操作区域 -->
       <div class="search-section">
         <div class="section-header">
           <div class="header-icon search">
-            <el-icon><Search /></el-icon>
+            <el-icon>
+              <Search />
+            </el-icon>
           </div>
           <span class="header-title">筛选条件</span>
         </div>
         <div class="search-form">
           <el-row :gutter="16">
             <el-col :xs="24" :sm="18" :md="20" :lg="20">
-              <el-input
-                v-model="queryParam.search"
-                placeholder="请输入流程名称/描述搜索"
-                clearable
-                @keyup.enter="queryPage"
-                @clear="queryPage">
+              <el-input v-model="queryParam.search" placeholder="请输入搜索内容" size="large" clearable
+                @keyup.enter="queryPage" @clear="queryPage">
                 <template #prefix>
-                  <el-icon><Search /></el-icon>
+                  <el-icon>
+                    <Search />
+                  </el-icon>
                 </template>
               </el-input>
             </el-col>
             <el-col :xs="24" :sm="6" :md="4" :lg="4" class="search-actions">
-              <el-button type="primary" @click="dialogAdd = true" class="add-button">
-                <el-icon><Plus /></el-icon>
-                <span>新建流程</span>
+              <el-button type="primary" size="large" @click="dialogAdd = true" class="add-button">
+                <el-icon>
+                  <Plus />
+                </el-icon>
+                <span>新建</span>
               </el-button>
             </el-col>
           </el-row>
         </div>
       </div>
 
-      <!-- 流程表格 -->
+      <!-- 数据表格 -->
       <div class="table-section" v-loading="loading" element-loading-text="加载中...">
         <div class="section-header">
           <div class="header-icon table">
-            <el-icon><List /></el-icon>
+            <el-icon>
+              <List />
+            </el-icon>
           </div>
-          <span class="header-title">流程定义</span>
+          <span class="header-title">数据列表</span>
           <span class="header-count">共 {{ pageInfo.total }} 条</span>
         </div>
 
         <div class="table-wrapper">
-          <el-table
-            :data="tableData"
-            stripe
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-            @sort-change="handleSortChange"
-            :default-sort="{ prop: 'createTime', order: 'descending' }">
+          <el-table :data="tableData" stripe style="width: 100%" @selection-change="handleSelectionChange"
+            @sort-change="handleSortChange" :default-sort="{ prop: 'createTime', order: 'descending' }">
             <el-table-column type="selection" width="50" align="center" />
-            <el-table-column prop="processKey" label="流程定义Key" min-width="120" />
-            <el-table-column prop="processName" label="流程名称" min-width="150">
+            <el-table-column prop="id" label="流程id" min-width="150" />
+            <!-- <el-table-column prop="processKey" label="流程定义key
+ACT_RE_PROCDEF" min-width="150" /> -->
+            <el-table-column prop="processName" label="流程名称" min-width="150" />
+            <el-table-column prop="processDescription" label="流程描述" min-width="150" />
+            <el-table-column prop="version" label="使用版本" min-width="150" />
+            <el-table-column prop="status" label="流程状态" min-width="120">
               <template #default="scope">
-                <div class="process-name-cell">
-                  <span class="name-text">{{ scope.row.processName }}</span>
-                </div>
+                <el-tag v-if="scope.row.status == '0'" type="info">草稿</el-tag>
+                <el-tag v-else-if="scope.row.status == '1'" type="success">已发布</el-tag>
+                <el-tag v-else-if="scope.row.status == '-1'" type="danger">已停用</el-tag>
+                <el-tag v-else type="info">{{ scope.row.status }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="processDescription" label="流程描述" min-width="180" />
-            <el-table-column prop="version" label="版本" width="80" align="center" />
-            <el-table-column prop="status" label="状态" width="100" align="center">
-              <template #default="scope">
-                <el-tag :type="getStatusTagType(scope.row.status)" effect="light" class="status-tag">
-                  {{ getStatusText(scope.row.status) }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="createByName" label="创建人" width="120" />
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" width="170">
-              <template #default="scope">
-                <div class="time-cell">
-                  <el-icon><Clock /></el-icon>
-                  <span>{{ scope.row.createTime }}</span>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" sortable="custom" width="170">
-              <template #default="scope">
-                <div class="time-cell">
-                  <el-icon><Timer /></el-icon>
-                  <span>{{ scope.row.updateTime }}</span>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" fixed="right" width="280" align="center">
+            <!-- <el-table-column prop="createBy" label="创建人userid" min-width="150" /> -->
+            <el-table-column prop="createTime" label="创建时间" min-width="150" />
+            <el-table-column prop="updateTime" label="更新时间" min-width="150" />
+            <!-- <el-table-column prop="deleted" label="逻辑删除" min-width="150" /> -->
+            <el-table-column label="操作" fixed="right" width="220" align="center">
               <template #default="scope">
                 <div class="action-buttons">
                   <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'view')">
-                    <el-icon><View /></el-icon>
+                    <el-icon>
+                      <View />
+                    </el-icon>
                     <span>详情</span>
                   </el-button>
-                  <el-button v-if="scope.row.status == '0' || scope.row.status == '-1'" type="primary" link size="small" @click="openDialog(scope.row.id, 'edit')">
-                    <el-icon><Edit /></el-icon>
+                  <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'edit')"
+                    v-if="scope.row.status == '0' || scope.row.status == '-1'">
+                    <el-icon>
+                      <Edit />
+                    </el-icon>
                     <span>编辑</span>
                   </el-button>
-                  <el-button v-if="scope.row.status == '0'" type="danger" link size="small" @click="confirmDelete(scope.row.id)">
-                    <el-icon><Delete /></el-icon>
+                  <el-button type="danger" link size="small" @click="confirmDelete(scope.row.id)"
+                    v-if="scope.row.status == '0' || scope.row.status == '-1'">
+                    <el-icon>
+                      <Delete />
+                    </el-icon>
                     <span>删除</span>
                   </el-button>
-                  <el-button v-if="scope.row.status == '1'" type="warning" link size="small" @click="confirmStop(scope.row.id)">
-                    <el-icon><SwitchButton /></el-icon>
-                    <span>停用</span>
+                  <el-button type="primary" link size="small" @click="confirmDeploy(scope.row.id)"
+                    v-if="scope.row.status == '0' || scope.row.status == '-1'">
+                    <el-icon>
+                      <Delete />
+                    </el-icon>
+                    <span>部署</span>
                   </el-button>
-                  <el-button v-if="scope.row.status == '0' || scope.row.status == '-1'" type="success" link size="small" @click="confirmDeploy(scope.row.id)">
-                    <el-icon><Upload /></el-icon>
-                    <span>发布</span>
+                  <el-button type="danger" link size="small" @click="confirmStop(scope.row.id)"
+                    v-if="scope.row.status == '1'">
+                    <el-icon>
+                      <Delete />
+                    </el-icon>
+                    <span>停用</span>
                   </el-button>
                 </div>
               </template>
@@ -143,237 +144,193 @@
 
         <!-- 分页 -->
         <div class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="pageInfo.current"
-            :page-size="pageInfo.size"
-            :total="pageInfo.total"
-            layout="total, sizes, prev, pager, next, jumper"
-            :page-sizes="[10, 20, 50, 100]"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" />
+          <el-pagination v-model:current-page="pageInfo.current" :page-size="pageInfo.size" :total="pageInfo.total"
+            layout="total, sizes, prev, pager, next, jumper" :page-sizes="[10, 20, 50, 100]"
+            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
         </div>
       </div>
     </div>
 
-    <!-- 流程详情/编辑对话框 -->
-    <el-dialog
-      v-model="dialogEdit.open"
-      :title="dialogEdit.title"
-      fullscreen
-      center
-      destroy-on-close
-      @closed="closeDialog"
-      class="process-dialog">
-      <ProcessDefinitionAddTestView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :key="dialogEdit.id"
-        @success="handleDialogSuccess" />
+    <!-- 详情/编辑对话框 -->
+    <el-dialog v-model="dialogEdit.open" fullscreen :title="dialogEdit.title" center destroy-on-close
+      @closed="closeDialog" class="custom-dialog">
+      <ProcessDefinitionInfoView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :key="dialogEdit.id" />
     </el-dialog>
 
-    <!-- 新建流程对话框 -->
-    <el-dialog
-      v-model="dialogAdd"
-      title="新建流程"
-      fullscreen
-      center
-      destroy-on-close
-      @closed="queryPage"
-      class="add-process-dialog">
+    <!-- 添加对话框 -->
+    <el-dialog v-model="dialogAdd" fullscreen title="添加流程" center destroy-on-close @closed="queryPage"
+      class="custom-dialog">
       <ProcessDefinitionAddView @success="handleAddSuccess" />
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-    House, Search, Plus, View, Edit, Delete,
-    SwitchButton, Upload, Switch
-} from '@element-plus/icons-vue'
+import { House, Search, Plus, View, Edit, Delete, Document, List } from '@element-plus/icons-vue'
 import { http, alert, confirm } from '@/utils';
 import { onMounted, ref } from 'vue';
+import ProcessDefinitionInfoView from './ProcessDefinitionInfoView.vue';
 import ProcessDefinitionAddView from './ProcessDefinitionAddView.vue';
-import ProcessDefinitionAddTestView from './ProcessDefinitionAddViewTest.vue';
 
 const loading = ref(false)
-const multipleSelection = ref([])
-const tableData = ref([])
+const multipleSelection = ref<any[]>([])
+const tableData = ref<any[]>([])
 
 const queryParam = ref({
-    search: '',
+  search: '',
 })
 
 const pageInfo = ref({
-    current: 1,
-    size: 10,
-    total: 0,
-    pages: 0
+  current: 1,
+  size: 10,
+  total: 0,
+  pages: 0
 })
 
 const dialogEdit = ref({
-    open: false,
-    title: '',
-    id: '',
-    type: 'view',
+  open: false,
+  title: '',
+  id: '',
+  type: 'view',
 })
 
 const dialogAdd = ref(false)
 
-const getStatusTagType = (status: string) => {
-    switch (status) {
-        case '-1': return 'warning';
-        case '0': return 'info';
-        case '1': return 'success';
-        default: return '';
-    }
-}
-
-const getStatusText = (status: string) => {
-    switch (status) {
-        case '-1': return '已停用';
-        case '0': return '草稿';
-        case '1': return '已发布';
-        default: return '';
-    }
-}
-
 const handleSelectionChange = (val: any) => {
-    multipleSelection.value = val
+  multipleSelection.value = val
 }
 
 const handleSortChange = (column: any) => {
-    console.log(column)
+  console.log(column)
 }
 
 const handleSizeChange = (size: number) => {
-    pageInfo.value.size = size
-    queryPage()
+  pageInfo.value.size = size
+  queryPage()
 }
 
 const handleCurrentChange = (val: number) => {
-    queryPage()
+  queryPage()
 }
 
 const queryPage = () => {
-    loading.value = true
-    http.result({
-        url: '/processDefinition/queryPage',
-        method: 'POST',
-        data: {
-            current: pageInfo.value.current,
-            size: pageInfo.value.size,
-            search: queryParam.value.search,
-        },
-        success(result) {
-            tableData.value = result.data.records
-            pageInfo.value.current = result.data.current
-            pageInfo.value.size = result.data.size
-            pageInfo.value.total = result.data.total
-            pageInfo.value.pages = result.data.pages
-            loading.value = false
-        }
-    })
+  loading.value = true
+  http.result({
+    url: '/processDefinition/queryPage',
+    method: 'POST',
+    data: {
+      current: pageInfo.value.current,
+      size: pageInfo.value.size,
+      search: queryParam.value.search,
+    },
+    success(result) {
+      tableData.value = result.data.records
+      pageInfo.value.current = result.data.current
+      pageInfo.value.size = result.data.size
+      pageInfo.value.total = result.data.total
+      pageInfo.value.pages = result.data.pages
+      loading.value = false
+    }
+  })
 }
 
 const remove = (id: any) => {
-    http.result({
-        url: '/processDefinition/remove',
-        method: 'POST',
-        data: {
-            id: id
-        },
-        success(result) {
-            if (result.code == '200') {
-                alert('删除成功', 'success')
-            }
-            queryPage()
-        }
-    })
-}
-
-const stop = (id: any) => {
-    http.result({
-        url: '/processDefinition/stop',
-        method: 'POST',
-        data: {
-            id: id
-        },
-        success(result) {
-            if (result.code == '200') {
-                alert('停用成功', 'success')
-            }
-            queryPage()
-        }
-    })
+  http.result({
+    url: '/processDefinition/remove',
+    method: 'POST',
+    data: {
+      id: id
+    },
+    success(result) {
+      if (result.code == '200') {
+        alert('删除成功', 'success')
+      }
+      queryPage()
+    }
+  })
 }
 
 const deploy = (id: any) => {
-    http.result({
-        url: '/processDefinition/deploy',
-        method: 'POST',
-        params: {
-            id: id
-        },
-        success(result) {
-            if (result.code == '200') {
-                alert('发布成功', 'success')
-            }
-            queryPage()
-        }
-    })
+  http.result({
+    url: '/processDefinition/deploy',
+    method: 'POST',
+    params: {
+      id: id
+    },
+    success(result) {
+      if (result.code == '200') {
+        alert('部署成功', 'success')
+      }
+      queryPage()
+    }
+  })
 }
 
-const openDialog = (id: string, type: string) => {
-    dialogEdit.value = {
-        open: true,
-        title: type === 'view' ? '流程详情' : '编辑流程',
-        id,
-        type
+const stop = (id: any) => {
+  http.result({
+    url: '/processDefinition/stop',
+    method: 'POST',
+    data: {
+      id: id
+    },
+    success(result) {
+      if (result.code == '200') {
+        alert('部署成功', 'success')
+      }
+      queryPage()
     }
+  })
+}
+
+const openDialog = (id: string | number, type: string) => {
+  dialogEdit.value = {
+    open: true,
+    title: type === 'view' ? 'ProcessDefinition详情' : '编辑ProcessDefinition',
+    id: String(id),
+    type
+  }
 }
 
 const closeDialog = () => {
-    dialogEdit.value = {
-        open: false,
-        title: '',
-        id: '',
-        type: 'view'
-    }
-    queryPage()
-}
-
-const handleDialogSuccess = () => {
-    dialogEdit.value.open = false
-    queryPage()
+  dialogEdit.value = {
+    open: false,
+    title: '',
+    id: '',
+    type: 'view'
+  }
+  queryPage()
 }
 
 const handleAddSuccess = () => {
-    dialogAdd.value = false
-    queryPage()
+  dialogAdd.value = false
+  queryPage()
 }
 
 const confirmDelete = (id: string) => {
-    confirm('提示', '确定删除该流程定义吗？', () => {
-        remove(id)
-    })
-}
-
-const confirmStop = (id: string) => {
-    confirm('提示', '确定停用该流程定义吗？', () => {
-        stop(id)
-    })
+  confirm('提示', '确定删除该ProcessDefinition吗？', () => {
+    remove(id)
+  })
 }
 
 const confirmDeploy = (id: string) => {
-    confirm('提示', '确定发布该流程定义吗？', () => {
-        deploy(id)
-    })
+  confirm('提示', '确定部署该流程吗？', () => {
+    deploy(id)
+  })
+}
+
+const confirmStop = (id: string) => {
+  confirm('提示', '确定停用该流程吗？', () => {
+    stop(id)
+  })
 }
 
 onMounted(() => {
-    queryPage()
+  queryPage()
 })
 </script>
 
 <style scoped lang="scss">
-.process-management-page {
+.processDefinition-management-page {
   min-height: calc(100vh - 60px);
   background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
 
@@ -504,9 +461,9 @@ onMounted(() => {
         justify-content: flex-end;
 
         .add-button {
+          width: 100%;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           border: none;
-          width: 100%;
         }
       }
     }
@@ -532,24 +489,6 @@ onMounted(() => {
           color: var(--el-text-color-primary);
         }
 
-        .process-name-cell {
-          .name-text {
-            font-weight: 500;
-          }
-        }
-
-        .time-cell {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: var(--el-text-color-secondary);
-          font-size: 13px;
-
-          .el-icon {
-            font-size: 14px;
-          }
-        }
-
         .action-buttons {
           display: flex;
           justify-content: center;
@@ -567,8 +506,7 @@ onMounted(() => {
   }
 }
 
-.process-dialog,
-.add-process-dialog {
+.custom-dialog {
   :deep(.el-dialog__header) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     margin: 0;
@@ -590,7 +528,7 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .process-management-page {
+  .processDefinition-management-page {
     .page-header {
       padding: 24px 0;
 

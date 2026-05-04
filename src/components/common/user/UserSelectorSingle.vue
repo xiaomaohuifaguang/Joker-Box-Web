@@ -34,7 +34,7 @@ import { User, Search } from '@element-plus/icons-vue'
 import { http } from '@/utils'
 import { onMounted, ref, watch } from 'vue'
 
-const options = ref([])
+const options = ref<any[]>([])
 const value = ref('')
 const loading = ref(false)
 

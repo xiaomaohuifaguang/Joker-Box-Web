@@ -60,7 +60,7 @@ const loading = ref(false)
 const roleName = ref('')
 const withRole = ref('')
 
-const selectorRoles = ref([])
+const selectorRoles = ref<any[]>([])
 
 const emit = defineEmits(['success']);
 

@@ -174,8 +174,8 @@ import CrawlerTaskInfoView from './CrawlerTaskInfoView.vue';
 import CrawlerTaskAddView from './CrawlerTaskAddView.vue';
 
 const loading = ref(false)
-const multipleSelection = ref([])
-const tableData = ref([])
+const multipleSelection = ref<any[]>([])
+const tableData = ref<any[]>([])
 
 const queryParam = ref({
     search: '',
@@ -251,11 +251,11 @@ const remove = (id: any) => {
     })
 }
 
-const openDialog = (id: string, type: string) => {
+const openDialog = (id: string | number, type: string) => {
     dialogEdit.value = {
         open: true,
         title: type === 'view' ? 'CrawlerTask详情' : '编辑CrawlerTask',
-        id,
+        id: String(id),
         type
     }
 }

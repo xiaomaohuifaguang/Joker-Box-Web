@@ -167,8 +167,8 @@ import AiModelInfoView from './AiModelInfoView.vue';
 import AiModelAddView from './AiModelAddView.vue';
 
 const loading = ref(false)
-const multipleSelection = ref([])
-const tableData = ref([])
+const multipleSelection = ref<any[]>([])
+const tableData = ref<any[]>([])
 
 const queryParam = ref({
     search: '',
@@ -244,11 +244,11 @@ const remove = (id: any) => {
     })
 }
 
-const openDialog = (id: string, type: string) => {
+const openDialog = (id: string | number, type: string) => {
     dialogEdit.value = {
         open: true,
         title: type === 'view' ? 'AiModel详情' : '编辑AiModel',
-        id,
+        id: String(id),
         type
     }
 }

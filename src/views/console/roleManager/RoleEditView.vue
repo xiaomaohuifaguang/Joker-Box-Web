@@ -6,7 +6,9 @@
                     <div class="info-card">
                         <div class="card-header">
                             <div class="header-icon">
-                                <el-icon><User /></el-icon>
+                                <el-icon>
+                                    <User />
+                                </el-icon>
                             </div>
                             <span class="header-title">角色信息</span>
                         </div>
@@ -15,34 +17,43 @@
                                 <el-form-item label="角色ID">
                                     <el-input v-model="info.id" disabled>
                                         <template #prefix>
-                                            <el-icon><Key /></el-icon>
+                                            <el-icon>
+                                                <Key />
+                                            </el-icon>
                                         </template>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="角色名称">
                                     <el-input v-model="info.name" :disabled="props.type !== 'edit'">
                                         <template #prefix>
-                                            <el-icon><User /></el-icon>
+                                            <el-icon>
+                                                <User />
+                                            </el-icon>
                                         </template>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="管理员权限">
-                                    <el-radio-group v-model="info.admin" :disabled="props.type !== 'edit'" class="admin-radio">
-                                        <el-radio-button label="1">是</el-radio-button>
-                                        <el-radio-button label="0">否</el-radio-button>
+                                    <el-radio-group v-model="info.admin" :disabled="props.type !== 'edit'"
+                                        class="admin-radio">
+                                        <el-radio-button value="1">是</el-radio-button>
+                                        <el-radio-button value="0">否</el-radio-button>
                                     </el-radio-group>
                                 </el-form-item>
                                 <el-form-item label="创建时间">
                                     <el-input v-model="info.createTime" disabled>
                                         <template #prefix>
-                                            <el-icon><Clock /></el-icon>
+                                            <el-icon>
+                                                <Clock />
+                                            </el-icon>
                                         </template>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="更新时间">
                                     <el-input v-model="info.updateTime" disabled>
                                         <template #prefix>
-                                            <el-icon><Timer /></el-icon>
+                                            <el-icon>
+                                                <Timer />
+                                            </el-icon>
                                         </template>
                                     </el-input>
                                 </el-form-item>
@@ -57,29 +68,24 @@
                             <el-tab-pane label="API权限配置" name="api">
                                 <div v-if="apiPathTree.length > 0" class="api-permission-container">
                                     <el-tabs v-model="apiServerTab" type="card" class="server-tabs">
-                                        <el-tab-pane
-                                            v-for="server in apiPathTree"
-                                            :key="server.server"
-                                            :label="server.server"
-                                            :name="server.server">
+                                        <el-tab-pane v-for="server in apiPathTree" :key="server.server"
+                                            :label="server.server" :name="server.server">
                                             <el-tabs v-model="apiGroupTab" type="card" class="group-tabs">
-                                                <el-tab-pane
-                                                    v-for="group in server.groups"
-                                                    :key="group.groupName"
-                                                    :label="group.groupName"
-                                                    :name="group.groupName">
+                                                <el-tab-pane v-for="group in server.groups" :key="group.groupName"
+                                                    :label="group.groupName" :name="group.groupName">
                                                     <el-scrollbar height="400px">
                                                         <el-checkbox-group v-model="apiPathSelection">
                                                             <div class="api-list">
-                                                                <el-checkbox
-                                                                    v-for="apiPath in group.apiPaths"
-                                                                    :key="apiPath.path"
-                                                                    :label="apiPath.path"
+                                                                <el-checkbox v-for="apiPath in group.apiPaths"
+                                                                    :key="apiPath.path" :value="apiPath.path"
                                                                     :disabled="props.id === '1' || props.type !== 'edit' || apiPath.whiteList === '1'"
                                                                     class="api-checkbox">
-                                                                    <span :class="{ 'whitelist-api': apiPath.whiteList === '1' }">
+                                                                    <span
+                                                                        :class="{ 'whitelist-api': apiPath.whiteList === '1' }">
                                                                         {{ apiPath.name }}
-                                                                        <el-tag v-if="apiPath.whiteList === '1'" size="small" type="success" effect="plain" class="whitelist-tag">
+                                                                        <el-tag v-if="apiPath.whiteList === '1'"
+                                                                            size="small" type="success" effect="plain"
+                                                                            class="whitelist-tag">
                                                                             白名单
                                                                         </el-tag>
                                                                     </span>
@@ -98,19 +104,15 @@
                             <el-tab-pane label="后台菜单权限" name="consoleMenu">
                                 <div class="menu-permission-container">
                                     <el-scrollbar>
-                                        <el-cascader-panel
-                                            style="height: 500px"
-                                            v-model="consoleMenuChoose"
-                                            :options="consoleMenuTree"
-                                            :props="{
+                                        <el-cascader-panel style="height: 500px" v-model="consoleMenuChoose"
+                                            :options="consoleMenuTree" :props="{
                                                 children: 'children',
                                                 label: 'name',
                                                 value: 'id',
                                                 multiple: true,
                                                 emitPath: false,
                                                 checkStrictly: true,
-                                            }"
-                                            :disabled="props.type !== 'edit'" />
+                                            }" :disabled="props.type !== 'edit'" />
                                     </el-scrollbar>
                                 </div>
                             </el-tab-pane>
@@ -118,19 +120,15 @@
                             <el-tab-pane label="前台菜单权限" name="indexMenu">
                                 <div class="menu-permission-container">
                                     <el-scrollbar>
-                                        <el-cascader-panel
-                                            style="height: 500px"
-                                            v-model="indexMenuChoose"
-                                            :options="indexMenuTree"
-                                            :props="{
+                                        <el-cascader-panel style="height: 500px" v-model="indexMenuChoose"
+                                            :options="indexMenuTree" :props="{
                                                 children: 'children',
                                                 label: 'name',
                                                 value: 'id',
                                                 multiple: true,
                                                 emitPath: false,
                                                 checkStrictly: true,
-                                            }"
-                                            :disabled="props.type !== 'edit'" />
+                                            }" :disabled="props.type !== 'edit'" />
                                     </el-scrollbar>
                                 </div>
                             </el-tab-pane>
@@ -141,7 +139,9 @@
 
             <div class="action-bar" v-if="props.type === 'edit'">
                 <el-button type="primary" size="large" @click="saveRole" :loading="loading">
-                    <el-icon><Check /></el-icon>
+                    <el-icon>
+                        <Check />
+                    </el-icon>
                     <span>保存角色配置</span>
                 </el-button>
             </div>
@@ -163,7 +163,7 @@ const loading = ref(false)
 const activeTab = ref('api')
 const apiServerTab = ref('')
 const apiGroupTab = ref('')
-const apiPathSelection = ref([])
+const apiPathSelection = ref<any[]>([])
 
 const info = ref({
     "id": '',
@@ -174,17 +174,17 @@ const info = ref({
     "admin": ""
 })
 
-const apiPathTree = ref([])
-const consoleMenuTree = ref([])
-const consoleMenuChoose = ref([])
-const indexMenuTree = ref([])
-const indexMenuChoose = ref([])
+const apiPathTree = ref<any[]>([])
+const consoleMenuTree = ref<any[]>([])
+const consoleMenuChoose = ref<any[]>([])
+const indexMenuTree = ref<any[]>([])
+const indexMenuChoose = ref<any[]>([])
 
 const initApiPathSelection = () => {
     apiPathSelection.value = []
-    apiPathTree.value.forEach(server => {
-        server.groups.forEach(group => {
-            group.apiPaths.forEach(apiPath => {
+    apiPathTree.value.forEach((server: any) => {
+        server.groups.forEach((group: any) => {
+            group.apiPaths.forEach((apiPath: any) => {
                 if (apiPath.roleBind) {
                     apiPathSelection.value.push(apiPath.path)
                 }
@@ -261,9 +261,9 @@ const queryMenuChoose = (menuType: string) => {
 }
 
 const updateApiPathRoleBind = () => {
-    apiPathTree.value.forEach(server => {
-        server.groups.forEach(group => {
-            group.apiPaths.forEach(apiPath => {
+    apiPathTree.value.forEach((server: any) => {
+        server.groups.forEach((group: any) => {
+            group.apiPaths.forEach((apiPath: any) => {
                 apiPath.roleBind = apiPathSelection.value.includes(apiPath.path)
             })
         })

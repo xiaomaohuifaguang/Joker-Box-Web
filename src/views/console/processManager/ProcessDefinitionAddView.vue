@@ -1,257 +1,175 @@
 <template>
-    <div class="bpmn-editor-container">
-        <!-- 主编辑区域 -->
-        <div class="editor-wrapper">
-            <el-card shadow="never" class="designer-card">
-                <!-- 流程设计器，负责绘制流程等 -->
-                <MyProcessDesigner key="designer" v-model="info.xmlStr" :value="info.xmlStr" v-bind="controlForm"
-                    ref="processDesigner" @init-finished="initModeler" :additionalModel="controlForm.additionalModel"
-                    :model="model" @save="change" class="process-designer" style="height: 80vh;" />
-            </el-card>
-
-            <!-- 流程属性面板 -->
-            <el-card shadow="never" class="panel-card">
-                <!-- 流程属性器，负责编辑每个流程节点的属性 -->
-                <MyProcessPenal v-if="modeler" key="penal" :bpmnModeler="modeler" :prefix="controlForm.prefix"
-                    class="process-panel" :model="model" />
-            </el-card>
+    <div class="add-process-view">
+        <div class="editor-area">
+            <ProcessEditor :info="info" @update:graphRawData="(data) => info.rawData = data"
+                @update:graphData="(data) => info.xmlStr = data" />
         </div>
-
-        <!-- 操作按钮区域 -->
-        <div class="action-buttons">
-            <el-button type="primary" @click="add" size="large" class="save-btn">
+        <div class="action-bar">
+            <div class="action-tip">
+                <el-icon>
+                    <InfoFilled />
+                </el-icon>
+                <span>请完成流程设计后点击右侧按钮确认添加</span>
+            </div>
+            <el-button type="primary" size="large" @click="add" class="confirm-button">
                 <el-icon>
                     <Check />
                 </el-icon>
-                <span>保存</span>
-            </el-button>
-            <el-button @click="emit('success')" size="large" class="cancel-btn">
-                <el-icon>
-                    <Close />
-                </el-icon>
-                <span>取消</span>
+                <span>确认添加</span>
             </el-button>
         </div>
     </div>
 </template>
 
-<script setup lang='ts'>
-import { ref, shallowRef, onBeforeUnmount } from 'vue'
-import { alert, http } from '@/utils'
-import { Check, Close } from '@element-plus/icons-vue'
-import { MyProcessDesigner, MyProcessPenal } from '@/components/bpmnProcessDesigner/package'
-import CustomContentPadProvider from '@/components/bpmnProcessDesigner/package/designer/plugins/content-pad'
-import CustomPaletteProvider from '@/components/bpmnProcessDesigner/package/designer/plugins/palette'
-import { ProcessDefinition } from '@/entity/process'
+<script setup lang="ts">
+import { Check, InfoFilled } from '@element-plus/icons-vue'
+import { alert, confirm, http } from '@/utils';
+import { ref } from 'vue';
+import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
 
-defineOptions({ name: 'BpmModelEditor' })
+const emit = defineEmits(['success']);
 
-const modeler = shallowRef()
-const processDesigner = ref()
-const model = ref<Object>()
-const info = ref<ProcessDefinition>({
+const info = ref({
     id: '',
-    processKey: '',
-    processName: '',
+    processKey: 'Process_' + Math.random().toString(36).substring(2, 16),
+    processName: '流程名称',
+    processCategory: '',
     processDescription: '',
     version: '',
     status: '',
     createBy: '',
     createTime: '',
     updateTime: '',
-    xmlStr: ''
+    deleted: '',
+    xmlStr: '',
+    rawData: {},
 })
-
-const controlForm = ref({
-    simulation: true,
-    labelEditing: false,
-    labelVisible: false,
-    prefix: 'flowable',
-    additionalModel: [CustomContentPadProvider, CustomPaletteProvider]
-})
-
-const emit = defineEmits(['success'])
-
-//   /​**​ 初始化 modeler */
-const initModeler = async (item: any) => {
-    modeler.value = item
-}
-
-//   /​**​ 添加/修改模型 */
-const change = async (bpmnXml: string) => {
-    try {
-        info.value.xmlStr = bpmnXml
-    } catch (error) {
-        console.error('保存失败:', error)
-        alert('保存失败', 'error')
-    }
-}
 
 const add = () => {
-    http.result({
-        url: '/processDefinition/add',
-        method: 'POST',
-        data: info.value,
-        success(result) {
-            alert(result.msg, 'success')
-            emit('success')
-        }
+    confirm("提示", "确认添加？", () => {
+        http.result({
+            url: '/processDefinition/add',
+            method: 'POST',
+            data: info.value,
+            success(result) {
+                alert(result.msg, 'success')
+                emit('success');
+            }
+        })
     })
-}
 
-// 在组件卸载时清理
-onBeforeUnmount(() => {
-    modeler.value = null
-    const w = window as any
-    if (w.bpmnInstances) {
-        w.bpmnInstances = null
-    }
-})
+}
 </script>
 
 <style scoped lang="scss">
-.bpmn-editor-container {
+.add-process-view {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
-    padding: 24px;
-    min-height: calc(100vh - 80px);
-}
-
-.editor-wrapper {
-    display: flex;
-    flex: 1;
-    gap: 20px;
-    margin-bottom: 24px;
-    height: calc(100% - 80px);
-}
-
-.designer-card {
-    flex: 3;
-    border-radius: 16px;
-    border: 1px solid var(--el-border-color-lighter);
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-
-    &:hover {
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    :deep(.el-card__body) {
-        padding: 0;
-        height: 100%;
-    }
-}
-
-.panel-card {
-    flex: 1;
-    border-radius: 16px;
-    border: 1px solid var(--el-border-color-lighter);
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-
-    &:hover {
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    :deep(.el-card__body) {
-        padding: 0;
-        height: 100%;
-    }
-}
-
-.process-designer {
+    height: calc(100vh - 64px);
     width: 100%;
-    height: 100%;
-}
+    background: var(--el-bg-color-page);
+    overflow: hidden;
 
-.process-panel {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-}
+    .editor-area {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+        overflow: auto;
+        background: var(--el-bg-color);
 
-.action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    padding: 24px 0;
-    border-top: 1px solid var(--el-border-color-lighter);
-    background: var(--el-bg-color);
-    border-radius: 0 0 16px 16px;
-    margin: 0 -24px -24px;
-    padding: 24px;
+        :deep(> div) {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
 
-    .save-btn {
-        min-width: 160px;
-        height: 48px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        font-weight: 600;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+            >.el-row:first-child {
+                flex-shrink: 0;
+            }
 
-        &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
-        }
+            >.el-row:last-child {
+                flex: 1;
+                min-height: 0;
 
-        .el-icon {
-            margin-right: 8px;
-            font-size: 18px;
+                .el-col {
+                    height: 100%;
+                }
+
+                .diagram,
+                .container {
+                    height: 100% !important;
+                }
+
+                .diagram-panel {
+                    height: 100%;
+                    overflow-y: auto;
+                }
+            }
         }
     }
 
-    .cancel-btn {
-        min-width: 160px;
-        height: 48px;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 15px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .action-bar {
+        flex-shrink: 0;
+        height: 72px;
+        padding: 0 24px;
+        background: var(--el-bg-color);
+        border-top: 1px solid var(--el-border-color-lighter);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+        z-index: 10;
 
-        &:hover {
-            transform: translateY(-2px);
+        .action-tip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--el-text-color-secondary);
+
+            .el-icon {
+                font-size: 16px;
+                color: #667eea;
+            }
         }
 
-        .el-icon {
-            margin-right: 8px;
-            font-size: 18px;
+        .confirm-button {
+            min-width: 160px;
+            height: 44px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background: linear-gradient(135deg, #5a6fd8 0%, #6a4292 100%);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 14px rgba(102, 126, 234, 0.45);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+
+            .el-icon {
+                margin-right: 4px;
+            }
         }
-    }
-}
-
-@media (max-width: 1200px) {
-    .editor-wrapper {
-        flex-direction: column;
-        height: auto;
-    }
-
-    .designer-card,
-    .panel-card {
-        flex: none;
-        min-height: 400px;
     }
 }
 
 @media (max-width: 768px) {
-    .bpmn-editor-container {
-        padding: 16px;
-    }
+    .add-process-view {
+        .action-bar {
+            padding: 0 16px;
 
-    .action-buttons {
-        flex-direction: column;
-        margin: 0 -16px -16px;
-        padding: 20px 16px;
+            .action-tip {
+                display: none;
+            }
 
-        .save-btn,
-        .cancel-btn {
-            width: 100%;
-            min-width: auto;
+            .confirm-button {
+                width: 100%;
+            }
         }
     }
 }

@@ -5,7 +5,9 @@
       <div class="header-content">
         <div class="header-title">
           <div class="title-icon">
-            <el-icon><User /></el-icon>
+            <el-icon>
+              <User />
+            </el-icon>
           </div>
           <div class="title-text">
             <h1>用户管理</h1>
@@ -20,7 +22,9 @@
       <div class="breadcrumb-wrapper">
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/console' }">
-            <el-icon><House /></el-icon>
+            <el-icon>
+              <House />
+            </el-icon>
             <span>控制台</span>
           </el-breadcrumb-item>
           <el-breadcrumb-item>身份与权限</el-breadcrumb-item>
@@ -32,59 +36,49 @@
       <div class="search-section">
         <div class="section-header">
           <div class="header-icon search">
-            <el-icon><Search /></el-icon>
+            <el-icon>
+              <Search />
+            </el-icon>
           </div>
           <span class="header-title">筛选条件</span>
         </div>
         <div class="search-form">
           <el-row :gutter="16">
             <el-col :xs="24" :sm="12" :md="8" :lg="6">
-              <el-input
-                v-model="queryParam.search"
-                placeholder="请输入用户名/昵称搜索"
-                clearable
-                @keyup.enter="queryPage"
+              <el-input v-model="queryParam.search" placeholder="请输入用户名/昵称搜索" clearable @keyup.enter="queryPage"
                 @clear="queryPage">
                 <template #prefix>
-                  <el-icon><Search /></el-icon>
+                  <el-icon>
+                    <Search />
+                  </el-icon>
                 </template>
               </el-input>
             </el-col>
             <el-col :xs="12" :sm="6" :md="6" :lg="5">
-              <el-select
-                v-model="queryParam.roleId"
-                placeholder="选择角色"
-                clearable
-                @change="queryPage">
-                <el-option
-                  v-for="item in roles"
-                  :key="item.key"
-                  :label="item.value"
-                  :value="item.key" />
+              <el-select v-model="queryParam.roleId" placeholder="选择角色" clearable @change="queryPage">
+                <el-option v-for="item in roles" :key="item.key" :label="item.value" :value="item.key" />
               </el-select>
             </el-col>
             <el-col :xs="12" :sm="6" :md="6" :lg="5">
-              <el-cascader
-                v-model="queryParam.orgId"
-                :options="orgTree"
-                :props="{
-                  children: 'children',
-                  label: 'name',
-                  value: 'id',
-                  emitPath: false,
-                  checkStrictly: true,
-                }"
-                placeholder="选择机构"
-                clearable
-                @change="queryPage" />
+              <el-cascader v-model="queryParam.orgId" :options="orgTree" :props="{
+                children: 'children',
+                label: 'name',
+                value: 'id',
+                emitPath: false,
+                checkStrictly: true,
+              }" placeholder="选择机构" clearable @change="queryPage" />
             </el-col>
             <el-col :xs="24" :sm="24" :md="4" :lg="8" class="search-actions">
               <el-button type="primary" @click="queryPage">
-                <el-icon><Search /></el-icon>
+                <el-icon>
+                  <Search />
+                </el-icon>
                 <span>搜索</span>
               </el-button>
               <el-button @click="resetQuery">
-                <el-icon><RefreshRight /></el-icon>
+                <el-icon>
+                  <RefreshRight />
+                </el-icon>
                 <span>重置</span>
               </el-button>
             </el-col>
@@ -96,20 +90,17 @@
       <div class="table-section" v-loading="loading" element-loading-text="加载中...">
         <div class="section-header">
           <div class="header-icon table">
-            <el-icon><List /></el-icon>
+            <el-icon>
+              <List />
+            </el-icon>
           </div>
           <span class="header-title">用户列表</span>
           <span class="header-count">共 {{ pageInfo.total }} 条</span>
         </div>
 
         <div class="table-wrapper">
-          <el-table
-            :data="tableData"
-            stripe
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-            @sort-change="handleSortChange"
-            :default-sort="{ prop: 'createTime', order: 'descending' }">
+          <el-table :data="tableData" stripe style="width: 100%" @selection-change="handleSelectionChange"
+            @sort-change="handleSortChange" :default-sort="{ prop: 'createTime', order: 'descending' }">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column prop="username" label="用户名" sortable="custom" min-width="120">
               <template #default="scope">
@@ -126,7 +117,9 @@
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="170">
               <template #default="scope">
                 <div class="time-cell">
-                  <el-icon><Clock /></el-icon>
+                  <el-icon>
+                    <Clock />
+                  </el-icon>
                   <span>{{ scope.row.createTime }}</span>
                 </div>
               </template>
@@ -134,7 +127,9 @@
             <el-table-column prop="updateTime" label="更新时间" sortable="custom" width="170">
               <template #default="scope">
                 <div class="time-cell">
-                  <el-icon><Timer /></el-icon>
+                  <el-icon>
+                    <Timer />
+                  </el-icon>
                   <span>{{ scope.row.updateTime }}</span>
                 </div>
               </template>
@@ -143,26 +138,36 @@
               <template #default="scope">
                 <div class="action-buttons">
                   <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'view')">
-                    <el-icon><View /></el-icon>
+                    <el-icon>
+                      <View />
+                    </el-icon>
                     <span>详情</span>
                   </el-button>
                   <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'edit')">
-                    <el-icon><Edit /></el-icon>
+                    <el-icon>
+                      <Edit />
+                    </el-icon>
                     <span>编辑</span>
                   </el-button>
                   <el-dropdown trigger="click" size="small">
                     <el-button type="info" link size="small">
-                      <el-icon><More /></el-icon>
+                      <el-icon>
+                        <More />
+                      </el-icon>
                       <span>更多</span>
                     </el-button>
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item @click="confirmResetPassword(scope.row.id)">
-                          <el-icon><Key /></el-icon>
+                          <el-icon>
+                            <Key />
+                          </el-icon>
                           <span>重置密码</span>
                         </el-dropdown-item>
                         <el-dropdown-item divided @click="confirmDelete(scope.row.id)">
-                          <el-icon><Delete /></el-icon>
+                          <el-icon>
+                            <Delete />
+                          </el-icon>
                           <span>删除</span>
                         </el-dropdown-item>
                       </el-dropdown-menu>
@@ -176,27 +181,16 @@
 
         <!-- 分页 -->
         <div class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="pageInfo.current"
-            :page-size="pageInfo.size"
-            :total="pageInfo.total"
-            layout="total, sizes, prev, pager, next, jumper"
-            :page-sizes="[10, 20, 50, 100]"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" />
+          <el-pagination v-model:current-page="pageInfo.current" :page-size="pageInfo.size" :total="pageInfo.total"
+            layout="total, sizes, prev, pager, next, jumper" :page-sizes="[10, 20, 50, 100]"
+            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
         </div>
       </div>
     </div>
 
     <!-- 用户详情/编辑对话框 -->
-    <el-dialog
-      v-model="dialogEdit.open"
-      :title="dialogEdit.title"
-      width="850px"
-      center
-      destroy-on-close
-      @closed="closeDialog"
-      class="user-dialog">
+    <el-dialog v-model="dialogEdit.open" :title="dialogEdit.title" width="850px" center destroy-on-close
+      @closed="closeDialog" class="user-dialog">
       <UserEditView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :key="dialogEdit.id" />
     </el-dialog>
   </div>
@@ -222,8 +216,8 @@ import { onMounted, ref } from 'vue';
 import UserEditView from './UserEditView.vue';
 
 const loading = ref(false)
-const multipleSelection = ref([])
-const tableData = ref([])
+const multipleSelection = ref<any[]>([])
+const tableData = ref<any[]>([])
 
 const queryParam = ref({
   search: '',
@@ -246,8 +240,8 @@ const dialogEdit = ref({
   type: 'view',
 })
 
-const roles = ref([])
-const orgTree = ref([])
+const roles = ref<any[]>([])
+const orgTree = ref<any[]>([])
 
 // 获取头像颜色
 const getAvatarColor = (name: string) => {
@@ -362,11 +356,11 @@ const resetPassword = (userId: any) => {
   })
 }
 
-const openDialog = (id: string, type: string) => {
+const openDialog = (id: string | number, type: string) => {
   dialogEdit.value = {
     open: true,
     title: type === 'view' ? '用户详情' : '编辑用户',
-    id,
+    id: String(id),
     type
   }
 }

@@ -224,7 +224,7 @@ import type { UploadFile, UploadFiles, UploadProgressEvent } from 'element-plus'
 
 const percent = ref(0);
 const parentId = ref('0');
-const list = ref([]);
+const list = ref<any[]>([]);
 const history = ref([{ id: '0', name: '根目录' }]);
 const loading = ref(false);
 

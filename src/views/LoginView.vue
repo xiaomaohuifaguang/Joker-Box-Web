@@ -23,15 +23,21 @@
                     </div>
                     <div class="features">
                         <div class="feature-item">
-                            <el-icon class="feature-icon"><CircleCheck /></el-icon>
+                            <el-icon class="feature-icon">
+                                <CircleCheck />
+                            </el-icon>
                             <span>高效工作流程</span>
                         </div>
                         <div class="feature-item">
-                            <el-icon class="feature-icon"><Lock /></el-icon>
+                            <el-icon class="feature-icon">
+                                <Lock />
+                            </el-icon>
                             <span>安全可靠的数据</span>
                         </div>
                         <div class="feature-item">
-                            <el-icon class="feature-icon"><Star /></el-icon>
+                            <el-icon class="feature-icon">
+                                <Star />
+                            </el-icon>
                             <span>智能化体验</span>
                         </div>
                     </div>
@@ -47,7 +53,9 @@
             <div class="login-card-right">
                 <!-- Home button -->
                 <el-button @click="toHome" class="home-button" circle>
-                    <el-icon><House /></el-icon>
+                    <el-icon>
+                        <House />
+                    </el-icon>
                 </el-button>
 
                 <!-- Card header -->
@@ -62,25 +70,13 @@
                 <div class="form-wrapper">
                     <div class="input-group">
                         <label class="input-label">账号</label>
-                        <el-input 
-                            v-model="loginInfo.username" 
-                            size="large" 
-                            placeholder="请输入账号" 
-                            :prefix-icon="User"
-                            class="input-field custom-input" 
-                            autocomplete="new-password" 
-                            clearable />
+                        <el-input v-model="loginInfo.username" size="large" placeholder="请输入账号" :prefix-icon="User"
+                            class="input-field custom-input" autocomplete="new-password" clearable />
                     </div>
                     <div class="input-group">
                         <label class="input-label">密码</label>
-                        <el-input 
-                            v-model="loginInfo.password" 
-                            type="password" 
-                            size="large" 
-                            placeholder="请输入密码"
-                            :prefix-icon="Lock" 
-                            class="input-field custom-input" 
-                            autocomplete="new-password" 
+                        <el-input v-model="loginInfo.password" type="password" size="large" placeholder="请输入密码"
+                            :prefix-icon="Lock" class="input-field custom-input" autocomplete="new-password"
                             show-password />
                     </div>
 
@@ -104,13 +100,16 @@
                     <div class="sso-buttons">
                         <el-button @click="ssoPath('github')" class="sso-button github-button">
                             <svg class="sso-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                                <path
+                                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
                             </svg>
                             GitHub
                         </el-button>
                         <el-button @click="ssoPath('gitee')" class="sso-button gitee-button">
                             <svg class="sso-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M11.984 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.016 0zm6.09 5.333c.328 0 .593.266.593.593v1.482a.593.593 0 0 1-.593.593h-.592v7.111h.592a.593.593 0 0 1 .593.593v1.481a.593.593 0 0 1-.593.593h-2.37a.593.593 0 0 1-.592-.593v-1.481a.593.593 0 0 1 .593-.593h.592V7.408h-.592a.593.593 0 0 1-.593-.593V5.333a.593.593 0 0 1 .593-.593h2.37zm-4.741 0c.328 0 .593.266.593.593v1.482a.593.593 0 0 1-.593.593h-.592v7.111h.592a.593.593 0 0 1 .593.593v1.481a.593.593 0 0 1-.593.593h-2.37a.593.593 0 0 1-.592-.593v-1.481a.593.593 0 0 1 .593-.593h.592V7.408h-.592a.593.593 0 0 1-.593-.593V5.333a.593.593 0 0 1 .593-.593h2.37zm-4.741 0c.328 0 .593.266.593.593v4.148h1.185V5.926a.593.593 0 0 1 .593-.593h2.37a.593.593 0 0 1 .593.593v1.482a.593.593 0 0 1-.593.593h-.592v3.556h.592a.593.593 0 0 1 .593.593v1.481a.593.593 0 0 1-.593.593h-2.37a.593.593 0 0 1-.592-.593v-1.481a.593.593 0 0 1 .593-.593h.592V7.408h-.592a.593.593 0 0 1-.593-.593V5.333a.593.593 0 0 1 .593-.593h-2.37z"/>
+                                <path
+                                    d="M512 1024q-104 0-199-40-92-39-163-110T40 711Q0 616 0 512t40-199Q79 221 150 150T313 40q95-40 199-40t199 40q92 39 163 110t110 163q40 95 40 199t-40 199q-39 92-110 163T711 984q-95 40-199 40z m259-569H480q-10 0-17.5 7.5T455 480v64q0 10 7.5 17.5T480 569h177q11 0 18.5 7.5T683 594v13q0 31-22.5 53.5T607 683H367q-11 0-18.5-7.5T341 657V417q0-31 22.5-53.5T417 341h354q11 0 18-7t7-18v-63q0-11-7-18t-18-7H417q-38 0-72.5 14T283 283q-27 27-41 61.5T228 417v354q0 11 7 18t18 7h373q46 0 85.5-22.5t62-62Q796 672 796 626V480q0-10-7-17.5t-18-7.5z">
+                                </path>
                             </svg>
                             Gitee
                         </el-button>
@@ -135,7 +134,7 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const path = ref('/');
-const loginInfo = ref({ username: '', password: '' });
+const loginInfo = ref({ username: 'admin', password: '12345678' });
 const ssoInfo = ref({ clientName: '', id: '' });
 const rememberMe = ref(false);
 const isLoading = ref(false);
@@ -162,7 +161,7 @@ const login = () => {
         alert('请输入账号和密码', 'warning');
         return;
     }
-    
+
     isLoading.value = true;
     loginVerify();
     http.result({
@@ -284,15 +283,20 @@ const toHome = () => {
 }
 
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translate(0, 0) scale(1);
     }
+
     25% {
         transform: translate(50px, -50px) scale(1.1);
     }
+
     50% {
         transform: translate(-30px, 30px) scale(0.9);
     }
+
     75% {
         transform: translate(30px, 50px) scale(1.05);
     }
@@ -316,38 +320,142 @@ const toHome = () => {
     animation: particle-float 15s infinite;
 }
 
-.particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
-.particle:nth-child(2) { left: 20%; top: 80%; animation-delay: 1s; }
-.particle:nth-child(3) { left: 30%; top: 40%; animation-delay: 2s; }
-.particle:nth-child(4) { left: 40%; top: 60%; animation-delay: 3s; }
-.particle:nth-child(5) { left: 50%; top: 10%; animation-delay: 4s; }
-.particle:nth-child(6) { left: 60%; top: 90%; animation-delay: 5s; }
-.particle:nth-child(7) { left: 70%; top: 30%; animation-delay: 6s; }
-.particle:nth-child(8) { left: 80%; top: 70%; animation-delay: 7s; }
-.particle:nth-child(9) { left: 90%; top: 50%; animation-delay: 8s; }
-.particle:nth-child(10) { left: 15%; top: 50%; animation-delay: 9s; }
-.particle:nth-child(11) { left: 25%; top: 15%; animation-delay: 10s; }
-.particle:nth-child(12) { left: 35%; top: 85%; animation-delay: 11s; }
-.particle:nth-child(13) { left: 45%; top: 35%; animation-delay: 12s; }
-.particle:nth-child(14) { left: 55%; top: 75%; animation-delay: 13s; }
-.particle:nth-child(15) { left: 65%; top: 25%; animation-delay: 14s; }
-.particle:nth-child(16) { left: 75%; top: 65%; animation-delay: 0.5s; }
-.particle:nth-child(17) { left: 85%; top: 45%; animation-delay: 1.5s; }
-.particle:nth-child(18) { left: 5%; top: 55%; animation-delay: 2.5s; }
-.particle:nth-child(19) { left: 95%; top: 35%; animation-delay: 3.5s; }
-.particle:nth-child(20) { left: 50%; top: 95%; animation-delay: 4.5s; }
+.particle:nth-child(1) {
+    left: 10%;
+    top: 20%;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    left: 20%;
+    top: 80%;
+    animation-delay: 1s;
+}
+
+.particle:nth-child(3) {
+    left: 30%;
+    top: 40%;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(4) {
+    left: 40%;
+    top: 60%;
+    animation-delay: 3s;
+}
+
+.particle:nth-child(5) {
+    left: 50%;
+    top: 10%;
+    animation-delay: 4s;
+}
+
+.particle:nth-child(6) {
+    left: 60%;
+    top: 90%;
+    animation-delay: 5s;
+}
+
+.particle:nth-child(7) {
+    left: 70%;
+    top: 30%;
+    animation-delay: 6s;
+}
+
+.particle:nth-child(8) {
+    left: 80%;
+    top: 70%;
+    animation-delay: 7s;
+}
+
+.particle:nth-child(9) {
+    left: 90%;
+    top: 50%;
+    animation-delay: 8s;
+}
+
+.particle:nth-child(10) {
+    left: 15%;
+    top: 50%;
+    animation-delay: 9s;
+}
+
+.particle:nth-child(11) {
+    left: 25%;
+    top: 15%;
+    animation-delay: 10s;
+}
+
+.particle:nth-child(12) {
+    left: 35%;
+    top: 85%;
+    animation-delay: 11s;
+}
+
+.particle:nth-child(13) {
+    left: 45%;
+    top: 35%;
+    animation-delay: 12s;
+}
+
+.particle:nth-child(14) {
+    left: 55%;
+    top: 75%;
+    animation-delay: 13s;
+}
+
+.particle:nth-child(15) {
+    left: 65%;
+    top: 25%;
+    animation-delay: 14s;
+}
+
+.particle:nth-child(16) {
+    left: 75%;
+    top: 65%;
+    animation-delay: 0.5s;
+}
+
+.particle:nth-child(17) {
+    left: 85%;
+    top: 45%;
+    animation-delay: 1.5s;
+}
+
+.particle:nth-child(18) {
+    left: 5%;
+    top: 55%;
+    animation-delay: 2.5s;
+}
+
+.particle:nth-child(19) {
+    left: 95%;
+    top: 35%;
+    animation-delay: 3.5s;
+}
+
+.particle:nth-child(20) {
+    left: 50%;
+    top: 95%;
+    animation-delay: 4.5s;
+}
 
 @keyframes particle-float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0) translateX(0);
         opacity: 0;
     }
+
     10% {
         opacity: 0.3;
     }
+
     90% {
         opacity: 0.3;
     }
+
     50% {
         transform: translateY(-100px) translateX(50px);
     }
@@ -372,6 +480,7 @@ const toHome = () => {
         opacity: 0;
         transform: translateY(30px) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -421,10 +530,13 @@ const toHome = () => {
 }
 
 @keyframes logo-pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
         box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
     }
+
     50% {
         transform: scale(1.05);
         box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
@@ -436,7 +548,7 @@ const toHome = () => {
     font-weight: 700;
     margin-bottom: 10px;
     letter-spacing: 2px;
-    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -523,9 +635,12 @@ const toHome = () => {
 }
 
 @keyframes shape-float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translate(0, 0) rotate(0deg);
     }
+
     50% {
         transform: translate(20px, -20px) rotate(180deg);
     }
@@ -575,6 +690,7 @@ const toHome = () => {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -791,7 +907,7 @@ const toHome = () => {
         border-radius: 0;
         min-height: 100vh;
     }
-    
+
     .login-card-right {
         padding: 30px 20px;
     }

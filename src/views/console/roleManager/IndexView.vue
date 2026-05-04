@@ -4,7 +4,9 @@
             <div class="header-content">
                 <div class="header-title">
                     <div class="title-icon">
-                        <el-icon><User /></el-icon>
+                        <el-icon>
+                            <User />
+                        </el-icon>
                     </div>
                     <div class="title-text">
                         <h1>角色管理</h1>
@@ -18,7 +20,9 @@
             <div class="breadcrumb-wrapper">
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item :to="{ path: '/console' }">
-                        <el-icon><House /></el-icon>
+                        <el-icon>
+                            <House />
+                        </el-icon>
                         <span>控制台</span>
                     </el-breadcrumb-item>
                     <el-breadcrumb-item>身份与权限</el-breadcrumb-item>
@@ -29,31 +33,35 @@
             <div class="search-section">
                 <div class="section-header">
                     <div class="header-icon search">
-                        <el-icon><Search /></el-icon>
+                        <el-icon>
+                            <Search />
+                        </el-icon>
                     </div>
                     <span class="header-title">搜索筛选</span>
                 </div>
                 <div class="search-form">
                     <el-row :gutter="16">
                         <el-col :xs="24" :sm="18" :md="16" :lg="14">
-                            <el-input
-                                v-model="queryParam.search"
-                                placeholder="请输入角色名称搜索"
-                                clearable
-                                @keyup.enter="queryPage"
-                                @clear="queryPage">
+                            <el-input v-model="queryParam.search" placeholder="请输入角色名称搜索" clearable
+                                @keyup.enter="queryPage" @clear="queryPage">
                                 <template #prefix>
-                                    <el-icon><Search /></el-icon>
+                                    <el-icon>
+                                        <Search />
+                                    </el-icon>
                                 </template>
                             </el-input>
                         </el-col>
                         <el-col :xs="24" :sm="6" :md="8" :lg="10" class="search-actions">
                             <el-button type="primary" @click="queryPage">
-                                <el-icon><Search /></el-icon>
+                                <el-icon>
+                                    <Search />
+                                </el-icon>
                                 <span>搜索</span>
                             </el-button>
                             <el-button type="primary" @click="dialogAdd = true" class="add-button">
-                                <el-icon><Plus /></el-icon>
+                                <el-icon>
+                                    <Plus />
+                                </el-icon>
                                 <span>添加角色</span>
                             </el-button>
                         </el-col>
@@ -64,26 +72,25 @@
             <div class="table-section" v-loading="loading" element-loading-text="加载中...">
                 <div class="section-header">
                     <div class="header-icon table">
-                        <el-icon><List /></el-icon>
+                        <el-icon>
+                            <List />
+                        </el-icon>
                     </div>
                     <span class="header-title">角色列表</span>
                     <span class="header-count">共 {{ pageInfo.total }} 条</span>
                 </div>
 
                 <div class="table-wrapper">
-                    <el-table
-                        :data="tableData"
-                        stripe
-                        style="width: 100%"
-                        @selection-change="handleSelectionChange"
-                        @sort-change="handleSortChange"
-                        :default-sort="{ prop: 'createTime', order: 'descending' }">
+                    <el-table :data="tableData" stripe style="width: 100%" @selection-change="handleSelectionChange"
+                        @sort-change="handleSortChange" :default-sort="{ prop: 'createTime', order: 'descending' }">
                         <el-table-column type="selection" width="50" align="center" />
                         <el-table-column prop="name" label="角色名称" sortable="custom" min-width="140">
                             <template #default="scope">
                                 <div class="role-cell">
                                     <div class="role-icon" :style="{ background: getRoleColor(scope.row.name) }">
-                                        <el-icon><User /></el-icon>
+                                        <el-icon>
+                                            <User />
+                                        </el-icon>
                                     </div>
                                     <span class="role-name">{{ scope.row.name }}</span>
                                 </div>
@@ -92,7 +99,9 @@
                         <el-table-column prop="createTime" label="创建时间" sortable="custom" width="170">
                             <template #default="scope">
                                 <div class="time-cell">
-                                    <el-icon><Clock /></el-icon>
+                                    <el-icon>
+                                        <Clock />
+                                    </el-icon>
                                     <span>{{ scope.row.createTime }}</span>
                                 </div>
                             </template>
@@ -100,7 +109,9 @@
                         <el-table-column prop="updateTime" label="更新时间" sortable="custom" width="170">
                             <template #default="scope">
                                 <div class="time-cell">
-                                    <el-icon><Timer /></el-icon>
+                                    <el-icon>
+                                        <Timer />
+                                    </el-icon>
                                     <span>{{ scope.row.updateTime }}</span>
                                 </div>
                             </template>
@@ -108,16 +119,24 @@
                         <el-table-column label="操作" fixed="right" width="220" align="center">
                             <template #default="scope">
                                 <div class="action-buttons">
-                                    <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'view')">
-                                        <el-icon><View /></el-icon>
+                                    <el-button type="primary" link size="small"
+                                        @click="openDialog(scope.row.id, 'view')">
+                                        <el-icon>
+                                            <View />
+                                        </el-icon>
                                         <span>详情</span>
                                     </el-button>
-                                    <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'edit')">
-                                        <el-icon><Edit /></el-icon>
+                                    <el-button type="primary" link size="small"
+                                        @click="openDialog(scope.row.id, 'edit')">
+                                        <el-icon>
+                                            <Edit />
+                                        </el-icon>
                                         <span>编辑</span>
                                     </el-button>
                                     <el-button type="danger" link size="small" @click="confirmDelete(scope.row.id)">
-                                        <el-icon><Delete /></el-icon>
+                                        <el-icon>
+                                            <Delete />
+                                        </el-icon>
                                         <span>删除</span>
                                     </el-button>
                                 </div>
@@ -127,36 +146,20 @@
                 </div>
 
                 <div class="pagination-wrapper">
-                    <el-pagination
-                        v-model:current-page="pageInfo.current"
-                        :page-size="pageInfo.size"
-                        :total="pageInfo.total"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :page-sizes="[10, 20, 50, 100]"
-                        @size-change="handleSizeChange"
+                    <el-pagination v-model:current-page="pageInfo.current" :page-size="pageInfo.size"
+                        :total="pageInfo.total" layout="total, sizes, prev, pager, next, jumper"
+                        :page-sizes="[10, 20, 50, 100]" @size-change="handleSizeChange"
                         @current-change="handleCurrentChange" />
                 </div>
             </div>
         </div>
 
-        <el-dialog
-            v-model="dialogEdit.open"
-            :title="dialogEdit.title"
-            width="70%"
-            center
-            destroy-on-close
-            @closed="closeDialog"
-            class="role-dialog">
+        <el-dialog v-model="dialogEdit.open" :title="dialogEdit.title" width="70%" center destroy-on-close
+            @closed="closeDialog" class="role-dialog">
             <RoleEditView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :key="dialogEdit.id" />
         </el-dialog>
 
-        <el-dialog
-            v-model="dialogAdd"
-            title="添加角色"
-            width="450px"
-            center
-            destroy-on-close
-            @closed="queryPage"
+        <el-dialog v-model="dialogAdd" title="添加角色" width="450px" center destroy-on-close @closed="queryPage"
             class="add-role-dialog">
             <RoleAddView @success="handleAddSuccess" />
         </el-dialog>
@@ -182,8 +185,8 @@ import RoleEditView from './RoleEditView.vue';
 import RoleAddView from './RoleAddView.vue';
 
 const loading = ref(false)
-const multipleSelection = ref([])
-const tableData = ref([])
+const multipleSelection = ref<any[]>([])
+const tableData = ref<any[]>([])
 
 const queryParam = ref({
     search: '',
@@ -266,11 +269,11 @@ const remove = (roleId: any) => {
     })
 }
 
-const openDialog = (id: string, type: string) => {
+const openDialog = (id: string | number, type: string) => {
     dialogEdit.value = {
         open: true,
         title: type === 'view' ? '角色详情' : '编辑角色',
-        id,
+        id: String(id),
         type
     }
 }

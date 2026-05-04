@@ -1,0 +1,177 @@
+{
+  "name": "dark",
+  "theme": {
+    "baseNode": {
+      "fill": "#33353A",
+      "stroke": "#EAEAEA",
+      "strokeWidth": 2,
+      "radius": 12
+    },
+    "baseEdge": {
+      "stroke": "#EAEAEA",
+      "strokeWidth": 2,
+      "radius": 12
+    },
+    "rect": {},
+    "circle": {},
+    "diamond": {},
+    "ellipse": {},
+    "polygon": {},
+    "html": {
+      "fill": "#33353A",
+      "stroke": "transparent",
+      "shadow": {
+        "dx": 0,
+        "dy": 0,
+        "stdDeviation": 4,
+        "floodColor": "#9CA1AA55"
+      }
+    },
+    "text": {
+      "color": "#EAEAEA",
+      "stroke": "none",
+      "fontSize": 12,
+      "background": {
+        "fill": "transparent"
+      }
+    },
+    "nodeText": {
+      "color": "#EAEAEA",
+      "overflowMode": "default",
+      "fontSize": 12,
+      "lineHeight": 1.2
+    },
+    "anchor": {
+      "stroke": "#EAEAEA",
+      "fill": "#33353A",
+      "r": 4,
+      "hover": {
+        "r": 8,
+        "fill": "#707070",
+        "fillOpacity": 0.15,
+        "stroke": "transparent"
+      }
+    },
+    "anchorLine": {
+      "stroke": "#EAEAEA",
+      "strokeWidth": 2,
+      "strokeDasharray": "3,2"
+    },
+    "line": {},
+    "polyline": {},
+    "bezier": {
+      "fill": "none",
+      "adjustLine": {
+        "stroke": "#EAEAEA"
+      },
+      "adjustAnchor": {
+        "r": 4,
+        "fill": "#33353A",
+        "fillOpacity": 1,
+        "stroke": "#EAEAEA"
+      }
+    },
+    "edgeText": {
+      "textWidth": 100,
+      "overflowMode": "default",
+      "fontSize": 12,
+      "background": {
+        "fill": "#EAEAEA"
+      }
+    },
+    "arrow": {
+      "strokeLinecap": "round",
+      "strokeLinejoin": "round",
+      "offset": 10,
+      "verticalLength": 5
+    },
+    "snapline": {
+      "strokeLinecap": "round",
+      "strokeLinejoin": "round",
+      "stroke": "#949494",
+      "strokeWidth": 1
+    },
+    "edgeAdjust": {
+      "r": 4,
+      "fill": "#33353A",
+      "stroke": "#EAEAEA",
+      "strokeWidth": 1
+    },
+    "outline": {
+      "fill": "none",
+      "stroke": "transparent",
+      "strokeWidth": 0
+    },
+    "edgeOutline": {
+      "fill": "transparent",
+      "stroke": "#EAEAEA",
+      "strokeWidth": 1.5,
+      "strokeDasharray": "4,4",
+      "radius": 8,
+      "hover": {
+        "stroke": "#4271DF"
+      }
+    },
+    "edgeAnimation": {
+      "stroke": "#4271DF",
+      "strokeDasharray": "12,4,6,4",
+      "strokeDashoffset": "100%",
+      "animationName": "lf_animate_dash",
+      "animationDuration": "20s",
+      "animationIterationCount": "infinite",
+      "animationTimingFunction": "linear",
+      "animationDirection": "normal"
+    },
+    "rotateControl": {
+      "stroke": "#EAEAEA",
+      "fill": "#33353A",
+      "strokeWidth": 1,
+      "hover": {
+        "fill": "#707070",
+        "fillOpacity": 0.15,
+        "stroke": "transparent"
+      }
+    },
+    "resizeControl": {
+      "width": 8,
+      "height": 8,
+      "radius": 2,
+      "fill": "#33353A",
+      "stroke": "#EAEAEA",
+      "hover": {
+        "width": 12,
+        "height": 12,
+        "fill": "#707070",
+        "fillOpacity": 0.15,
+        "stroke": "transparent"
+      }
+    },
+    "resizeOutline": {
+      "fill": "transparent",
+      "stroke": "#EAEAEA",
+      "strokeWidth": 1.5,
+      "strokeDasharray": "4,4",
+      "radius": 8,
+      "hover": {
+        "stroke": "#4271DF"
+      }
+    },
+    "background": {
+      "background": "#33353A",
+      "backgroundImage": "url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=)",
+      "backgroundRepeat": "repeat",
+      "backgroundSize": "40px 40px"
+    },
+    "grid": {
+      "size": 10,
+      "visible": true,
+      "type": "mesh",
+      "config": {
+        "color": "#83838377",
+        "thickness": 2
+      },
+      "majorBold": true
+    }
+  },
+  "timestamp": "2026-04-23T06:25:53.119Z"
+}

@@ -33,7 +33,7 @@ import { http } from '@/utils';
 import { onMounted, ref } from 'vue';
 import { Connection, ArrowRight, Warning } from '@element-plus/icons-vue';
 
-const processDefinitionList = ref([]);
+const processDefinitionList = ref<any[]>([]);
 const loading = ref(false);
 const emit = defineEmits(['choose']);
 

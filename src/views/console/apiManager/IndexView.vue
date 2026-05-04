@@ -235,8 +235,8 @@ import { onMounted, ref } from 'vue';
 import ApiEditView from './ApiEditView.vue';
 
 const loading = ref(false)
-const multipleSelection = ref([])
-const tableData = ref([])
+const multipleSelection = ref<any[]>([])
+const tableData = ref<any[]>([])
 
 const queryParam = ref({
     search: '',
@@ -260,8 +260,8 @@ const dialogEdit = ref({
     type: 'view',
 })
 
-const roles = ref([])
-const cascade = ref([])
+const roles = ref<any[]>([])
+const cascade = ref<any[]>([])
 
 const getServerColor = (server: string) => {
     if (!server) return '#909399'
