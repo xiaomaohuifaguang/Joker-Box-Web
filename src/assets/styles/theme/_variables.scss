@@ -1,0 +1,117 @@
+// ============================================================
+// 主题变量入口：将两套主题色板输出到 :root 与 [data-theme]
+// 默认主题 = joker（霓虹小丑·深色）
+// ============================================================
+
+@use './theme-ink' as ink;
+@use './theme-joker' as joker;
+@use './theme-obsidian' as obsidian;
+@use './theme-ocean' as ocean;
+
+/* 默认（无 data-theme 或未识别）= joker */
+:root {
+    @include joker.theme-joker;
+}
+
+/* 显式 ink 主题 */
+:root[data-theme='ink'] {
+    @include ink.theme-ink;
+}
+
+/* 显式 joker 主题（冗余声明，兼容动态切换）*/
+:root[data-theme='joker'] {
+    @include joker.theme-joker;
+}
+
+/* 显式 obsidian 主题 */
+:root[data-theme='obsidian'] {
+    @include obsidian.theme-obsidian;
+}
+
+/* 显式 ocean 主题（蓝色系纯色） */
+:root[data-theme='ocean'] {
+    @include ocean.theme-ocean;
+}
+
+/* ============================================================
+   全局 body / html 基础样式（消费主题变量）
+   ============================================================ */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-page);
+    color: var(--text-regular);
+    font-family: var(--font-cn);
+    font-size: var(--fs-md);
+    line-height: var(--lh-normal);
+    transition: background-color var(--duration-normal) var(--ease-out),
+        color var(--duration-normal) var(--ease-out);
+}
+
+* {
+    font-family: var(--font-cn);
+}
+
+/* ============================================================
+   全局滚动条（消费主题变量）
+   ============================================================ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--radius-pill);
+    transition: background var(--duration-fast) var(--ease-out);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* ============================================================
+   全局选中文本样式
+   ============================================================ */
+::selection {
+    background: var(--bg-overlay-strong);
+    color: var(--text-primary);
+}
+
+/* ============================================================
+   通用工具类
+   ============================================================ */
+.brand-text {
+    background: var(--brand-gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.brand-bg {
+    background: var(--brand-gradient);
+}
+
+.glow {
+    box-shadow: var(--shadow-glow);
+}
+
+.glow-strong {
+    box-shadow: var(--shadow-glow-strong);
+}

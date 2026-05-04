@@ -71,10 +71,10 @@ const handleMenuSelect = (index: string) => {
 <style scoped lang="scss">
 .person-space-page {
   min-height: calc(100vh - 60px);
-  background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+  background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
 
   .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     padding: 32px 0;
     margin-bottom: 32px;
 
@@ -101,7 +101,7 @@ const handleMenuSelect = (index: string) => {
 
         .el-icon {
           font-size: 32px;
-          color: white;
+          color: var(--text-on-brand);
         }
       }
 
@@ -110,7 +110,7 @@ const handleMenuSelect = (index: string) => {
           margin: 0 0 8px 0;
           font-size: 28px;
           font-weight: 600;
-          color: white;
+          color: var(--text-on-brand);
         }
 
         p {
@@ -129,11 +129,11 @@ const handleMenuSelect = (index: string) => {
   }
 
   .sidebar-menu {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 20px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
     margin-bottom: 20px;
 
     .menu-header {
@@ -142,14 +142,14 @@ const handleMenuSelect = (index: string) => {
       gap: 10px;
       padding: 0 12px 16px;
       margin-bottom: 12px;
-      border-bottom: 1px solid var(--el-border-color-lighter);
+      border-bottom: 1px solid var(--border-light);
       font-size: 14px;
       font-weight: 600;
-      color: var(--el-text-color-primary);
+      color: var(--text-primary);
 
       .el-icon {
         font-size: 18px;
-        color: #667eea;
+        color: var(--brand-primary);
       }
     }
 
@@ -165,15 +165,15 @@ const handleMenuSelect = (index: string) => {
         transition: all 0.3s ease;
 
         &:hover {
-          background: var(--el-fill-color-light);
+          background: var(--bg-overlay);
         }
 
         &.is-active {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
+          background: var(--brand-gradient);
+          color: var(--text-on-brand);
 
           .el-icon {
-            color: white;
+            color: var(--text-on-brand);
           }
         }
 

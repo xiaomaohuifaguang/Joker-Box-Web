@@ -63,7 +63,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
     position: relative;
     overflow: hidden;
     padding: 2rem;
@@ -86,7 +86,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
             &-1 {
                 width: 600px;
                 height: 600px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 top: -200px;
                 right: -200px;
                 animation: float 20s ease-in-out infinite;
@@ -95,7 +95,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
             &-2 {
                 width: 400px;
                 height: 400px;
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                background: var(--data-grad-6);
                 bottom: -100px;
                 left: -100px;
                 animation: float 15s ease-in-out infinite reverse;
@@ -104,7 +104,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
             &-3 {
                 width: 300px;
                 height: 300px;
-                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                background: var(--data-grad-3);
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
@@ -121,11 +121,11 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
     }
 
     .error-content {
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 24px;
         padding: 60px 48px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--el-border-color-lighter);
+        border: 1px solid var(--border-light);
     }
 
     // 错误图标区域
@@ -140,7 +140,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
             .ghost {
                 width: 120px;
                 height: 120px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 border-radius: 60px 60px 24px 24px;
                 display: flex;
                 align-items: center;
@@ -162,7 +162,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
                     bottom: -10px;
                     width: 20px;
                     height: 20px;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: var(--brand-gradient);
                     border-radius: 50%;
                 }
 
@@ -182,7 +182,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
                 transform: translate(-50%, -50%);
                 width: 160px;
                 height: 160px;
-                background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+                background: radial-gradient(circle, var(--bg-overlay-strong) 0%, transparent 70%);
                 border-radius: 50%;
                 z-index: 1;
                 animation: glow-pulse 2s ease-in-out infinite;
@@ -205,7 +205,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
         .error-code {
             font-size: 72px;
             font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -220,13 +220,13 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
         .error-title {
             font-size: 28px;
             font-weight: 600;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             margin: 0 0 16px 0;
         }
 
         .error-description {
             font-size: 16px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             margin: 0 0 32px 0;
             line-height: 1.6;
 
@@ -252,13 +252,13 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
             border-radius: 12px;
             font-size: 15px;
             font-weight: 500;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
             transition: all 0.3s ease;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+                box-shadow: var(--shadow-glow-strong);
             }
 
             .el-icon {
@@ -277,7 +277,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
 
             &:hover {
                 transform: translateY(-2px);
-                background: var(--el-fill-color-light);
+                background: var(--bg-overlay);
             }
 
             .el-icon {
@@ -295,7 +295,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
         justify-content: center;
         gap: 8px;
         font-size: 13px;
-        color: var(--el-text-color-placeholder);
+        color: var(--text-placeholder);
 
         .el-icon {
             font-size: 14px;

@@ -152,8 +152,8 @@ const commentLoading = ref(false)
 
 // 获取头像颜色
 const getAvatarColor = (name) => {
-    if (!name) return '#909399'
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a']
+    if (!name) return 'var(--text-secondary)'
+    const colors = ['var(--data-1)', 'var(--data-2)', 'var(--data-3)', 'var(--data-4)', 'var(--data-5)', 'var(--data-6)', 'var(--data-7)', 'var(--data-8)']
     const index = name ? name.charCodeAt(0) % colors.length : 0
     return colors[index]
 }
@@ -227,27 +227,27 @@ onMounted(() => {
 <style scoped lang="scss">
 .post-view-page {
     min-height: calc(100vh - 60px);
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
     padding: 32px 24px;
 
     .post-detail-container {
         max-width: 900px;
         margin: 0 auto;
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 16px;
-        box-shadow: var(--el-box-shadow-light);
+        box-shadow: var(--shadow-sm);
         overflow: hidden;
 
         // 帖子头部
         .post-header-section {
             padding: 32px;
-            border-bottom: 1px solid var(--el-border-color-lighter);
+            border-bottom: 1px solid var(--border-light);
 
             .post-title {
                 margin: 0 0 20px 0;
                 font-size: 26px;
                 font-weight: 600;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
                 line-height: 1.4;
                 word-break: break-word;
             }
@@ -272,7 +272,7 @@ onMounted(() => {
                         justify-content: center;
                         font-size: 14px;
                         font-weight: 600;
-                        color: white;
+                        color: var(--text-on-brand);
                     }
 
                     .author-link {
@@ -284,7 +284,7 @@ onMounted(() => {
                 .meta-divider {
                     width: 1px;
                     height: 16px;
-                    background: var(--el-border-color);
+                    background: var(--border-base);
                 }
 
                 .meta-time,
@@ -293,7 +293,7 @@ onMounted(() => {
                     align-items: center;
                     gap: 6px;
                     font-size: 14px;
-                    color: var(--el-text-color-secondary);
+                    color: var(--text-secondary);
 
                     .el-icon {
                         font-size: 16px;
@@ -305,7 +305,7 @@ onMounted(() => {
         // 帖子内容
         .post-content-section {
             padding: 32px;
-            border-bottom: 1px solid var(--el-border-color-lighter);
+            border-bottom: 1px solid var(--border-light);
 
             .post-editor {
                 border: none;
@@ -320,7 +320,7 @@ onMounted(() => {
         // 评论区
         .comment-section {
             padding: 32px;
-            background: var(--el-fill-color-light);
+            background: var(--bg-overlay);
 
             .comment-header {
                 margin-bottom: 24px;
@@ -333,7 +333,7 @@ onMounted(() => {
                     .title-icon {
                         width: 40px;
                         height: 40px;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        background: var(--brand-gradient);
                         border-radius: 10px;
                         display: flex;
                         align-items: center;
@@ -341,21 +341,21 @@ onMounted(() => {
 
                         .el-icon {
                             font-size: 20px;
-                            color: white;
+                            color: var(--text-on-brand);
                         }
                     }
 
                     span {
                         font-size: 20px;
                         font-weight: 600;
-                        color: var(--el-text-color-primary);
+                        color: var(--text-primary);
                     }
 
                     .comment-count {
                         font-size: 14px;
                         font-weight: normal;
-                        color: var(--el-text-color-secondary);
-                        background: var(--el-bg-color);
+                        color: var(--text-secondary);
+                        background: var(--bg-container);
                         padding: 4px 12px;
                         border-radius: 20px;
                         margin-left: 8px;
@@ -365,11 +365,11 @@ onMounted(() => {
 
             // 评论输入区
             .comment-input-area {
-                background: var(--el-bg-color);
+                background: var(--bg-container);
                 border-radius: 12px;
                 padding: 20px;
                 margin-bottom: 24px;
-                box-shadow: var(--el-box-shadow-light);
+                box-shadow: var(--shadow-sm);
 
                 .input-wrapper {
                     margin-bottom: 16px;
@@ -380,14 +380,14 @@ onMounted(() => {
                             padding: 16px;
                             font-size: 15px;
                             line-height: 1.6;
-                            background: var(--el-fill-color-light);
-                            border-color: var(--el-border-color-lighter);
+                            background: var(--bg-overlay);
+                            border-color: var(--border-light);
                             transition: all 0.3s;
 
                             &:focus {
-                                border-color: #667eea;
-                                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-                                background: var(--el-bg-color);
+                                border-color: var(--brand-primary);
+                                box-shadow: 0 0 0 3px var(--bg-overlay);
+                                background: var(--bg-container);
                             }
                         }
 
@@ -409,11 +409,11 @@ onMounted(() => {
                         align-items: center;
                         gap: 6px;
                         font-size: 13px;
-                        color: var(--el-text-color-secondary);
+                        color: var(--text-secondary);
 
                         .el-icon {
                             font-size: 14px;
-                            color: var(--el-color-info);
+                            color: var(--info);
                         }
                     }
 
@@ -423,13 +423,13 @@ onMounted(() => {
                         border-radius: 10px;
                         font-size: 14px;
                         font-weight: 500;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        background: var(--brand-gradient);
                         border: none;
                         transition: all 0.3s ease;
 
                         &:hover:not(:disabled) {
                             transform: translateY(-2px);
-                            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+                            box-shadow: var(--shadow-glow-strong);
                         }
 
                         &:disabled {
@@ -459,13 +459,13 @@ onMounted(() => {
                         padding: 0 32px;
                         border-radius: 10px;
                         font-size: 14px;
-                        border-color: #667eea;
-                        color: #667eea;
+                        border-color: var(--brand-primary);
+                        color: var(--brand-primary);
 
                         &:hover {
-                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            background: var(--brand-gradient);
                             border-color: transparent;
-                            color: white;
+                            color: var(--text-on-brand);
                         }
 
                         .el-icon {
@@ -480,14 +480,14 @@ onMounted(() => {
                     align-items: center;
                     justify-content: center;
                     padding: 60px 24px;
-                    background: var(--el-bg-color);
+                    background: var(--bg-container);
                     border-radius: 12px;
-                    box-shadow: var(--el-box-shadow-light);
+                    box-shadow: var(--shadow-sm);
 
                     .empty-icon {
                         width: 80px;
                         height: 80px;
-                        background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+                        background: linear-gradient(135deg, var(--brand-primary)20 0%, var(--brand-secondary)20 100%);
                         border-radius: 50%;
                         display: flex;
                         align-items: center;
@@ -496,20 +496,20 @@ onMounted(() => {
 
                         .el-icon {
                             font-size: 40px;
-                            color: #667eea;
+                            color: var(--brand-primary);
                         }
                     }
 
                     h3 {
                         margin: 0 0 8px 0;
                         font-size: 18px;
-                        color: var(--el-text-color-primary);
+                        color: var(--text-primary);
                     }
 
                     p {
                         margin: 0;
                         font-size: 14px;
-                        color: var(--el-text-color-secondary);
+                        color: var(--text-secondary);
                     }
                 }
             }

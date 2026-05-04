@@ -1,0 +1,109 @@
+// ============================================================
+// 🎭 霓虹小丑主题 · 深色舞台
+// 紧扣 Joker-Box 项目名，紫粉青三主色，赛博朋克美学
+// ============================================================
+
+@mixin theme-joker {
+    /* ---------- 品牌色 ---------- */
+    --brand-primary: #A855F7;
+    --brand-primary-hover: #9333EA;
+    --brand-primary-active: #7E22CE;
+    --brand-primary-light: #C084FC;
+    --brand-primary-lighter: #D8B4FE;
+    --brand-secondary: #EC4899;
+    --brand-accent: #22D3EE;
+
+    /* ---------- 渐变 ---------- */
+    --brand-gradient: linear-gradient(135deg, #A855F7 0%, #EC4899 100%);
+    --brand-gradient-hover: linear-gradient(135deg, #9333EA 0%, #DB2777 100%);
+    --brand-gradient-soft: linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(236, 72, 153, 0.18) 100%);
+    --brand-gradient-text: linear-gradient(135deg, #A855F7 0%, #EC4899 50%, #22D3EE 100%);
+    --brand-gradient-border: linear-gradient(90deg, #A855F7 0%, #EC4899 50%, #22D3EE 100%);
+
+    /* ---------- 背景层级 ---------- */
+    --bg-page: #0B0B14;
+    --bg-container: #14142B;
+    --bg-elevated: #1E1E3F;
+    --bg-input: #2A2A5C;
+    --bg-overlay: rgba(168, 85, 247, 0.12);
+    --bg-overlay-strong: rgba(168, 85, 247, 0.24);
+    --bg-mask: rgba(0, 0, 0, 0.72);
+
+    /* ---------- 文字层级 ---------- */
+    --text-primary: #F8FAFC;
+    --text-regular: #CBD5E1;
+    --text-secondary: #94A3B8;
+    --text-placeholder: #64748B;
+    --text-disabled: #475569;
+    --text-on-brand: #FFFFFF;
+    --text-on-dark: #FFFFFF;
+    --text-link: #C084FC;
+    --text-link-hover: #D8B4FE;
+
+    /* ---------- 边框 ---------- */
+    --border-base: #3D3D7A;
+    --border-light: #2A2A5C;
+    --border-strong: #5B5B9F;
+    --border-focus: #A855F7;
+    --border-divider: #2A2A5C;
+
+    /* ---------- 功能色（霓虹饱和）---------- */
+    --success: #10F2A0;
+    --success-hover: #34D399;
+    --success-bg: rgba(16, 242, 160, 0.1);
+    --success-border: rgba(16, 242, 160, 0.4);
+
+    --warning: #FBBF24;
+    --warning-hover: #F59E0B;
+    --warning-bg: rgba(251, 191, 36, 0.1);
+    --warning-border: rgba(251, 191, 36, 0.4);
+
+    --danger: #FB7185;
+    --danger-hover: #F43F5E;
+    --danger-bg: rgba(251, 113, 133, 0.1);
+    --danger-border: rgba(251, 113, 133, 0.4);
+
+    --info: #60A5FA;
+    --info-hover: #3B82F6;
+    --info-bg: rgba(96, 165, 250, 0.1);
+    --info-border: rgba(96, 165, 250, 0.4);
+
+    /* ---------- 阴影（赛博辉光）---------- */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 32px rgba(168, 85, 247, 0.3);
+    --shadow-xl: 0 24px 48px rgba(168, 85, 247, 0.45);
+    --shadow-glow: 0 0 24px rgba(168, 85, 247, 0.45);
+    --shadow-glow-strong: 0 0 40px rgba(168, 85, 247, 0.65);
+    --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+
+    /* ---------- 数据可视化（霓虹饱和）---------- */
+    --data-1: #A855F7;
+    --data-2: #EC4899;
+    --data-3: #22D3EE;
+    --data-4: #10F2A0;
+    --data-5: #FBBF24;
+    --data-6: #F472B6;
+    --data-7: #818CF8;
+    --data-8: #34D399;
+
+    --data-grad-1: linear-gradient(135deg, #A855F7 0%, #EC4899 100%);
+    --data-grad-2: linear-gradient(135deg, #EC4899 0%, #F472B6 100%);
+    --data-grad-3: linear-gradient(135deg, #22D3EE 0%, #06B6D4 100%);
+    --data-grad-4: linear-gradient(135deg, #10F2A0 0%, #34D399 100%);
+    --data-grad-5: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+    --data-grad-6: linear-gradient(135deg, #FB7185 0%, #F43F5E 100%);
+
+    /* ---------- 登录页专用 ---------- */
+    --auth-bg: linear-gradient(135deg, #0B0B14 0%, #14142B 50%, #1E1E3F 100%);
+    --auth-card-bg: rgba(20, 20, 43, 0.65);
+    --auth-card-border: rgba(168, 85, 247, 0.25);
+    --auth-text: #F8FAFC;
+    --auth-text-muted: rgba(248, 250, 252, 0.65);
+    --auth-input-bg: rgba(42, 42, 92, 0.6);
+
+    /* ---------- 滚动条 ---------- */
+    --scrollbar-thumb: #3D3D7A;
+    --scrollbar-thumb-hover: #A855F7;
+    --scrollbar-track: transparent;
+}

@@ -112,7 +112,7 @@ onMounted(() => {
         .header-icon {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -132,13 +132,13 @@ onMounted(() => {
                 margin: 0 0 6px 0;
                 font-size: 20px;
                 font-weight: 600;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
             }
 
             p {
                 margin: 0;
                 font-size: 14px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
             }
         }
     }
@@ -154,11 +154,11 @@ onMounted(() => {
                 transition: all 0.3s;
 
                 &:hover {
-                    box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+                    box-shadow: 0 0 0 1px var(--brand-primary) inset;
                 }
 
                 &.is-focus {
-                    box-shadow: 0 0 0 2px var(--el-color-primary) inset;
+                    box-shadow: 0 0 0 2px var(--brand-primary) inset;
                 }
             }
         }
@@ -170,7 +170,7 @@ onMounted(() => {
 
             .divider-text {
                 font-size: 13px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
                 padding: 0 16px;
                 position: relative;
                 font-weight: 500;
@@ -182,7 +182,7 @@ onMounted(() => {
                     top: 50%;
                     width: 40px;
                     height: 1px;
-                    background: var(--el-border-color-lighter);
+                    background: var(--border-light);
                 }
 
                 &::before {
@@ -202,13 +202,13 @@ onMounted(() => {
             height: 48px;
             font-size: 16px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
             transition: all 0.3s;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                box-shadow: var(--shadow-glow-strong);
             }
         }
     }

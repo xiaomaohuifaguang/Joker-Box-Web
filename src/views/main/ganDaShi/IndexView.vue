@@ -158,8 +158,8 @@ const pageInfo = ref({
 
 // 获取头像颜色
 const getAvatarColor = (name) => {
-    if (!name) return '#909399'
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a']
+    if (!name) return 'var(--text-secondary)'
+    const colors = ['var(--data-1)', 'var(--data-2)', 'var(--data-3)', 'var(--data-4)', 'var(--data-5)', 'var(--data-6)', 'var(--data-7)', 'var(--data-8)']
     const index = name.charCodeAt(0) % colors.length
     return colors[index]
 }
@@ -266,12 +266,12 @@ onMounted(() => {
 <style scoped lang="scss">
 .gandashi-page {
     min-height: calc(100vh - 60px);
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
     padding-bottom: 40px;
 
     // 页面头部
     .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         padding: 40px 0;
         margin-bottom: 32px;
 
@@ -303,7 +303,7 @@ onMounted(() => {
 
                 .el-icon {
                     font-size: 32px;
-                    color: white;
+                    color: var(--text-on-brand);
                 }
             }
 
@@ -312,7 +312,7 @@ onMounted(() => {
                     margin: 0 0 8px 0;
                     font-size: 32px;
                     font-weight: 600;
-                    color: white;
+                    color: var(--text-on-brand);
                 }
 
                 p {
@@ -330,13 +330,13 @@ onMounted(() => {
             font-weight: 500;
             border-radius: 12px;
             background: white;
-            color: #667eea;
+            color: var(--brand-primary);
             border: none;
             transition: all 0.3s ease;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+                box-shadow: var(--shadow-lg);
             }
 
             .el-icon {
@@ -354,15 +354,15 @@ onMounted(() => {
             display: flex;
             align-items: center;
             gap: 12px;
-            background: var(--el-bg-color);
+            background: var(--bg-container);
             padding: 8px;
             border-radius: 12px;
-            box-shadow: var(--el-box-shadow-light);
-            border: 1px solid var(--el-border-color-lighter);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
 
             .search-icon {
                 font-size: 20px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
                 margin-left: 12px;
             }
 
@@ -376,7 +376,7 @@ onMounted(() => {
                     padding-left: 8px;
 
                     &::placeholder {
-                        color: var(--el-text-color-placeholder);
+                        color: var(--text-placeholder);
                     }
                 }
             }
@@ -387,7 +387,7 @@ onMounted(() => {
                 border-radius: 10px;
                 font-size: 15px;
                 font-weight: 500;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 border: none;
             }
         }
@@ -399,23 +399,23 @@ onMounted(() => {
             display: flex;
             align-items: center;
             gap: 16px;
-            background: var(--el-bg-color);
+            background: var(--bg-container);
             padding: 24px;
             margin-bottom: 16px;
             border-radius: 12px;
-            box-shadow: var(--el-box-shadow-light);
-            border: 1px solid var(--el-border-color-lighter);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
             cursor: pointer;
             transition: all 0.3s ease;
 
             &:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-                border-color: var(--el-color-primary-light-5);
+                box-shadow: var(--shadow-glow);
+                border-color: var(--brand-primary-light);
 
                 .post-arrow {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
+                    background: var(--brand-gradient);
+                    color: var(--text-on-brand);
                     transform: translateX(4px);
                 }
             }
@@ -431,7 +431,7 @@ onMounted(() => {
                         margin: 0;
                         font-size: 17px;
                         font-weight: 600;
-                        color: var(--el-text-color-primary);
+                        color: var(--text-primary);
                         line-height: 1.5;
                         display: flex;
                         align-items: center;
@@ -452,7 +452,7 @@ onMounted(() => {
                 .post-digest {
                     margin: 0 0 14px 0;
                     font-size: 14px;
-                    color: var(--el-text-color-secondary);
+                    color: var(--text-secondary);
                     line-height: 1.6;
                     display: -webkit-box;
                     -webkit-line-clamp: 2;
@@ -471,7 +471,7 @@ onMounted(() => {
                         align-items: center;
                         gap: 8px;
                         font-size: 13px;
-                        color: var(--el-text-color-secondary);
+                        color: var(--text-secondary);
 
                         &.author {
                             .author-avatar {
@@ -483,11 +483,11 @@ onMounted(() => {
                                 justify-content: center;
                                 font-size: 12px;
                                 font-weight: 600;
-                                color: white;
+                                color: var(--text-on-brand);
                             }
 
                             .author-name {
-                                color: var(--el-text-color-regular);
+                                color: var(--text-regular);
                                 font-weight: 500;
                             }
                         }
@@ -506,7 +506,7 @@ onMounted(() => {
                                 align-items: center;
                                 gap: 4px;
                                 padding: 4px 10px;
-                                background: var(--el-fill-color-light);
+                                background: var(--bg-overlay);
                                 border-radius: 20px;
 
                                 .el-icon {
@@ -525,8 +525,8 @@ onMounted(() => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: var(--el-fill-color-light);
-                color: var(--el-text-color-secondary);
+                background: var(--bg-overlay);
+                color: var(--text-secondary);
                 transition: all 0.3s ease;
                 flex-shrink: 0;
 
@@ -543,14 +543,14 @@ onMounted(() => {
             align-items: center;
             justify-content: center;
             padding: 80px 24px;
-            background: var(--el-bg-color);
+            background: var(--bg-container);
             border-radius: 16px;
-            box-shadow: var(--el-box-shadow-light);
+            box-shadow: var(--shadow-sm);
 
             .empty-icon {
                 width: 100px;
                 height: 100px;
-                background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+                background: linear-gradient(135deg, var(--brand-primary)20 0%, var(--brand-secondary)20 100%);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -559,20 +559,20 @@ onMounted(() => {
 
                 .el-icon {
                     font-size: 48px;
-                    color: #667eea;
+                    color: var(--brand-primary);
                 }
             }
 
             h3 {
                 margin: 0 0 8px 0;
                 font-size: 20px;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
             }
 
             p {
                 margin: 0;
                 font-size: 14px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
             }
         }
 
@@ -582,9 +582,9 @@ onMounted(() => {
             justify-content: center;
             margin-top: 32px;
             padding: 20px;
-            background: var(--el-bg-color);
+            background: var(--bg-container);
             border-radius: 12px;
-            box-shadow: var(--el-box-shadow-light);
+            box-shadow: var(--shadow-sm);
         }
     }
 }
@@ -605,7 +605,7 @@ onMounted(() => {
         justify-content: space-between;
         align-items: center;
         padding: 20px 24px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
 
         .dialog-title {
             display: flex;
@@ -613,7 +613,7 @@ onMounted(() => {
             gap: 10px;
             font-size: 18px;
             font-weight: 600;
-            color: white;
+            color: var(--text-on-brand);
 
             .el-icon {
                 font-size: 22px;
@@ -623,7 +623,7 @@ onMounted(() => {
         .close-btn {
             background: rgba(255, 255, 255, 0.2);
             border: none;
-            color: white;
+            color: var(--text-on-brand);
 
             &:hover {
                 background: rgba(255, 255, 255, 0.3);

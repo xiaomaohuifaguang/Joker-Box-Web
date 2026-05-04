@@ -60,7 +60,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
 <style scoped lang="scss">
 .doing-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
     position: relative;
     overflow: hidden;
     padding: 60px 24px;
@@ -83,7 +83,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
             &-1 {
                 width: 500px;
                 height: 500px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 top: -150px;
                 right: -150px;
                 animation: float 20s ease-in-out infinite;
@@ -92,7 +92,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
             &-2 {
                 width: 350px;
                 height: 350px;
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                background: var(--data-grad-6);
                 bottom: -100px;
                 left: -100px;
                 animation: float 15s ease-in-out infinite reverse;
@@ -101,7 +101,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
             &-3 {
                 width: 250px;
                 height: 250px;
-                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                background: var(--data-grad-3);
                 top: 40%;
                 left: 60%;
                 animation: pulse 10s ease-in-out infinite;
@@ -122,11 +122,11 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
 
     // 建设中卡片
     .construction-card {
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 24px;
         padding: 48px 60px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--el-border-color-lighter);
+        border: 1px solid var(--border-light);
         text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -135,8 +135,8 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
 
         &:hover {
             transform: translateY(-5px);
-            box-shadow: 0 25px 70px rgba(102, 126, 234, 0.15);
-            border-color: var(--el-color-primary-light-5);
+            box-shadow: 0 25px 70px var(--bg-overlay-strong);
+            border-color: var(--brand-primary-light);
 
             .icon-wrapper {
                 .gear-large {
@@ -163,7 +163,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
                 &-large {
                     width: 100px;
                     height: 100px;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: var(--brand-gradient);
                     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
 
                     .el-icon {
@@ -175,7 +175,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
                 &-small {
                     width: 60px;
                     height: 60px;
-                    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                    background: var(--data-grad-6);
                     position: absolute;
                     bottom: -10px;
                     right: -20px;
@@ -192,20 +192,20 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
         .title {
             font-size: 28px;
             font-weight: 600;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             margin: 0 0 12px 0;
         }
 
         .subtitle {
             font-size: 14px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             margin: 0 0 24px 0;
         }
 
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: var(--el-fill-color-light);
+            background: var(--bg-overlay);
             border-radius: 4px;
             overflow: hidden;
             margin-bottom: 16px;
@@ -213,7 +213,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
             .progress-fill {
                 height: 100%;
                 width: 60%;
-                background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
                 border-radius: 4px;
                 animation: progress-shine 2s ease-in-out infinite;
             }
@@ -225,7 +225,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
             justify-content: center;
             gap: 8px;
             font-size: 14px;
-            color: var(--el-color-primary);
+            color: var(--brand-primary);
 
             .el-icon {
                 font-size: 16px;
@@ -237,11 +237,11 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
     // 娱乐区域
     .entertainment-section {
         width: 100%;
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 24px;
         padding: 32px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--el-border-color-lighter);
+        border: 1px solid var(--border-light);
 
         .section-header {
             display: flex;
@@ -252,7 +252,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
             .header-icon {
                 width: 40px;
                 height: 40px;
-                background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+                background: var(--danger-bg);
                 border-radius: 10px;
                 display: flex;
                 align-items: center;
@@ -267,7 +267,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
             span {
                 font-size: 18px;
                 font-weight: 600;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
             }
         }
 
@@ -277,7 +277,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
             height: 0;
             overflow: hidden;
             border-radius: 16px;
-            background: var(--el-fill-color-light);
+            background: var(--bg-overlay);
 
             iframe {
                 position: absolute;

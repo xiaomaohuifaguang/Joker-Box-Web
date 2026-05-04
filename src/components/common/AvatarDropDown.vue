@@ -160,15 +160,16 @@ const clickLogout = () => {
     gap: 8px;
 
     .login-btn {
-        color: var(--el-text-color-regular);
-        font-weight: 500;
+        color: var(--text-regular);
+        font-weight: var(--fw-medium);
         padding: 8px 16px;
-        border-radius: 10px;
-        transition: all 0.3s ease;
+        border-radius: var(--radius-md);
+        transition: color var(--duration-normal) var(--ease-out),
+            background-color var(--duration-normal) var(--ease-out);
 
         &:hover {
-            color: #667eea;
-            background-color: rgba(102, 126, 234, 0.1);
+            color: var(--brand-primary);
+            background: var(--bg-overlay);
         }
 
         .el-icon {
@@ -178,15 +179,17 @@ const clickLogout = () => {
 
     .register-btn {
         padding: 8px 16px;
-        font-weight: 500;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-weight: var(--fw-medium);
+        border-radius: var(--radius-md);
+        background: var(--brand-gradient);
         border: none;
-        transition: all 0.3s ease;
+        color: var(--text-on-brand);
+        transition: transform var(--duration-normal) var(--ease-out),
+            box-shadow var(--duration-normal) var(--ease-out);
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: var(--shadow-glow);
         }
 
         .el-icon {
@@ -208,15 +211,17 @@ const clickLogout = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all 0.3s ease;
-    color: var(--el-text-color-regular);
-    background-color: var(--el-fill-color-light);
+    transition: background var(--duration-normal) var(--ease-out),
+        color var(--duration-normal) var(--ease-out),
+        transform var(--duration-normal) var(--ease-out);
+    color: var(--text-regular);
+    background-color: var(--bg-overlay);
 
     &:hover {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: var(--brand-gradient);
+        color: var(--text-on-brand);
         transform: translateY(-2px);
     }
 
@@ -227,8 +232,9 @@ const clickLogout = () => {
 
 .message-badge {
     :deep(.el-badge__content) {
-        background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+        background: var(--data-grad-6);
         border: none;
+        color: var(--text-on-brand);
     }
 }
 
@@ -238,13 +244,13 @@ const clickLogout = () => {
     align-items: center;
     gap: 8px;
     padding: 4px 4px 4px 4px;
-    border-radius: 50px;
+    border-radius: var(--radius-pill);
     cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: var(--el-fill-color-light);
+    transition: background-color var(--duration-normal) var(--ease-out);
+    background-color: var(--bg-overlay);
 
     &:hover {
-        background-color: rgba(102, 126, 234, 0.1);
+        background-color: var(--bg-overlay-strong);
     }
 }
 
@@ -257,7 +263,7 @@ const clickLogout = () => {
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        border: 2px solid var(--el-color-primary-light-5);
+        border: 2px solid var(--brand-primary-light);
     }
 
     .online-status {
@@ -266,15 +272,15 @@ const clickLogout = () => {
         right: 2px;
         width: 10px;
         height: 10px;
-        background-color: #43e97b;
+        background-color: var(--success);
         border-radius: 50%;
-        border: 2px solid var(--el-bg-color);
+        border: 2px solid var(--bg-container);
     }
 }
 
 .dropdown-arrow {
     font-size: 12px;
-    color: var(--el-text-color-secondary);
+    color: var(--text-secondary);
     margin-right: 4px;
 }
 
@@ -282,9 +288,9 @@ const clickLogout = () => {
 .user-dropdown-card {
     width: 300px;
     padding: 20px;
-    background-color: var(--el-bg-color-overlay);
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    background-color: var(--bg-elevated);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
 }
 
 .user-header {
@@ -298,13 +304,13 @@ const clickLogout = () => {
         height: 56px;
         border-radius: 50%;
         padding: 3px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
 
         .header-avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            border: 3px solid var(--el-bg-color);
+            border: 3px solid var(--bg-elevated);
         }
     }
 
@@ -318,9 +324,9 @@ const clickLogout = () => {
             margin-bottom: 4px;
 
             .nickname {
-                font-size: 16px;
-                font-weight: 600;
-                color: var(--el-text-color-primary);
+                font-size: var(--fs-lg);
+                font-weight: var(--fw-semibold);
+                color: var(--text-primary);
             }
 
             .vip-badge {
@@ -328,11 +334,11 @@ const clickLogout = () => {
                 align-items: center;
                 gap: 4px;
                 padding: 2px 8px;
-                background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-                border-radius: 20px;
-                color: white;
+                background: var(--data-grad-5);
+                border-radius: var(--radius-pill);
+                color: var(--text-on-brand);
                 font-size: 11px;
-                font-weight: 600;
+                font-weight: var(--fw-semibold);
 
                 .el-icon {
                     font-size: 12px;
@@ -341,8 +347,8 @@ const clickLogout = () => {
         }
 
         .user-id {
-            font-size: 13px;
-            color: var(--el-text-color-secondary);
+            font-size: var(--fs-sm);
+            color: var(--text-secondary);
         }
     }
 }
@@ -353,8 +359,8 @@ const clickLogout = () => {
     align-items: center;
     justify-content: space-around;
     padding: 16px;
-    background-color: var(--el-fill-color-light);
-    border-radius: 12px;
+    background-color: var(--bg-overlay);
+    border-radius: var(--radius-md);
     margin-bottom: 20px;
 
     .stat-item {
@@ -364,21 +370,21 @@ const clickLogout = () => {
         gap: 4px;
 
         .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--el-text-color-primary);
+            font-size: var(--fs-xl);
+            font-weight: var(--fw-bold);
+            color: var(--text-primary);
         }
 
         .stat-label {
-            font-size: 12px;
-            color: var(--el-text-color-secondary);
+            font-size: var(--fs-xs);
+            color: var(--text-secondary);
         }
     }
 
     .stat-divider {
         width: 1px;
         height: 30px;
-        background-color: var(--el-border-color-light);
+        background-color: var(--border-light);
     }
 }
 
@@ -390,11 +396,11 @@ const clickLogout = () => {
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 12px;
-        color: var(--el-text-color-secondary);
+        font-size: var(--fs-xs);
+        color: var(--text-secondary);
         margin-bottom: 10px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: var(--ls-wide);
 
         .el-icon {
             font-size: 14px;
@@ -408,7 +414,7 @@ const clickLogout = () => {
 
         .info-tag {
             margin: 0;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
         }
     }
 }
@@ -420,13 +426,13 @@ const clickLogout = () => {
         align-items: center;
         gap: 12px;
         padding: 12px;
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: background-color var(--duration-normal) var(--ease-out);
         margin-bottom: 4px;
 
         &:hover {
-            background-color: var(--el-fill-color-light);
+            background-color: var(--bg-overlay);
 
             .menu-arrow {
                 opacity: 1;
@@ -435,15 +441,15 @@ const clickLogout = () => {
         }
 
         &.logout {
-            color: var(--el-color-danger);
+            color: var(--danger);
 
             &:hover {
-                background-color: var(--el-color-danger-light-9);
+                background-color: var(--danger-bg);
             }
 
             .menu-icon-wrapper.logout {
-                background-color: var(--el-color-danger-light-9);
-                color: var(--el-color-danger);
+                background-color: var(--danger-bg);
+                color: var(--danger);
             }
         }
 
@@ -453,14 +459,15 @@ const clickLogout = () => {
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            background-color: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            transition: all 0.3s ease;
+            border-radius: var(--radius-md);
+            background-color: var(--bg-overlay);
+            color: var(--brand-primary);
+            transition: background var(--duration-normal) var(--ease-out),
+                color var(--duration-normal) var(--ease-out);
 
             &.admin {
-                background-color: rgba(245, 87, 108, 0.1);
-                color: #f5576c;
+                background-color: var(--danger-bg);
+                color: var(--danger);
             }
 
             .el-icon {
@@ -470,22 +477,23 @@ const clickLogout = () => {
 
         .menu-text {
             flex: 1;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--el-text-color-primary);
+            font-size: var(--fs-md);
+            font-weight: var(--fw-medium);
+            color: var(--text-primary);
         }
 
         .menu-arrow {
             font-size: 14px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: opacity var(--duration-normal) var(--ease-out),
+                transform var(--duration-normal) var(--ease-out);
         }
     }
 
     .menu-divider {
         height: 1px;
-        background-color: var(--el-border-color-light);
+        background-color: var(--border-light);
         margin: 8px 0;
     }
 }

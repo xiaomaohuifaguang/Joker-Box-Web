@@ -2,7 +2,6 @@
 import { useColorMode } from '@vueuse/core'
 import { onMounted, reactive, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { useDark } from '@vueuse/core'
 import AiChartDrawer from './components/common/AiChartDrawer.vue';
 import { alert, http, saveUserInfo, userInfo } from '@/utils';
 import ChatGpt from '@/components/icon/ChatGpt.vue';
@@ -11,7 +10,6 @@ import ChatGpt from '@/components/icon/ChatGpt.vue';
 const { system, store } = useColorMode()
 store.value === 'auto' ? system.value : store.value
 const route = useRoute()
-const isDark = useDark()
 onMounted(() => {
   getUserInfo()
 })
@@ -30,15 +28,6 @@ const font = reactive({
 })
 
 watch(
-  isDark,
-  () => {
-    font.color = isDark.value
-      ? 'rgba(255, 255, 255, .15)'
-      : 'rgba(0, 0, 0, .15)'
-  },
-  {
-    immediate: true,
-  }
 )
 
 
@@ -119,9 +108,9 @@ const captureToBase64 = async () => {
   height: 56px;
   padding: 0;
   border-radius: 50%;
-  background: linear-gradient(135deg, #409EFF 0%, #36D1DC 100%);
+  background: var(--data-grad-3);
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   align-items: center;
@@ -139,9 +128,9 @@ const captureToBase64 = async () => {
   height: 56px;
   padding: 0;
   border-radius: 50%;
-  background: linear-gradient(135deg, #409EFF 0%, #36D1DC 100%);
+  background: var(--data-grad-3);
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   align-items: center;
@@ -164,7 +153,8 @@ const captureToBase64 = async () => {
 }
 
 /* 暗黑模式适配 */
-.dark .ai-assistant-btn {
+[data-theme="joker"] .ai-assistant-btn,
+[data-theme="obsidian"] .ai-assistant-btn {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 </style>

@@ -1,65 +1,22 @@
-/* ============================================================
-   el-plus 全局样式覆盖
-   ============================================================ */
-
-/* --------------------------------------------------
-   el-tree
-   -------------------------------------------------- */
-.el-tree-node {
-    position: relative;
-    padding-left: 16px;
-}
-
-.el-tree-node::before {
-    content: '';
-    position: absolute;
-    left: -4px;
-    top: -26px;
-    bottom: 0;
-    border-left: 1px dashed #1389BC;
-}
-
-.el-tree-node::after {
-    content: '';
-    position: absolute;
-    left: -4px;
-    top: 12px;
-    width: 23px;
-    border-top: 1px solid #1389BC;
-}
-
-.el-tree-node:last-child::before {
-    height: 48px;
-}
-
-.el-tree-node__content {
-    color: var(--el-table-text-color);
-    font-size: 14px;
-    padding-left: 0 !important;
-}
-
-/* --------------------------------------------------
-   el-button 全局去边框
-   -------------------------------------------------- */
-.el-button {
-    border: none;
-}
+// ============================================================
+// ElMessage 与 ElMessageBox 美化（变量化）
+// 从原 el-plus.css 迁移并接入主题变量
+// ============================================================
 
 /* ============================================================
-   ElMessage 消息提示美化
+   ElMessage 消息提示
    ============================================================ */
-
 .custom-message {
-    border-radius: 14px !important;
+    border-radius: var(--radius-lg) !important;
     padding: 14px 22px !important;
     min-width: 220px;
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: msgSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: all var(--duration-normal) var(--ease-out);
+    animation: msgSlideIn var(--duration-slow) var(--ease-bounce);
+    box-shadow: var(--shadow-md);
 }
 
 .custom-message::before {
@@ -69,99 +26,91 @@
     left: 0;
     width: 4px;
     height: 100%;
-    border-radius: 14px 0 0 14px;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
 }
 
 .custom-message:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+    box-shadow: var(--shadow-lg);
 }
 
-/* 文字 */
 .custom-message .el-message__content {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #303133;
-    font-weight: 500;
+    font-size: var(--fs-md);
+    line-height: var(--lh-loose);
+    color: var(--text-primary);
+    font-weight: var(--fw-medium);
     padding-left: 4px;
     letter-spacing: 0.3px;
 }
 
-/* 图标 */
 .custom-message .el-message__icon {
     font-size: 20px;
-    margin-right: 12px;
+    margin-right: var(--space-md);
 }
 
-/* 关闭按钮 */
 .custom-message .el-message__closeBtn {
-    color: #909399;
-    transition: all 0.2s ease;
+    color: var(--text-secondary);
+    transition: all var(--duration-fast) var(--ease-out);
     margin-left: 14px;
-    font-size: 14px;
+    font-size: var(--fs-md);
 }
 
 .custom-message .el-message__closeBtn:hover {
-    color: #606266;
+    color: var(--text-primary);
     transform: scale(1.2) rotate(90deg);
 }
 
-/* ---------- 类型色 ---------- */
-
-/* success */
+/* ---------- 类型色（接入主题变量） ---------- */
 .custom-message.el-message--success {
-    background: linear-gradient(135deg, #f0f9eb 0%, #f6fcf1 100%) !important;
-    border: 1px solid #c2e7b0 !important;
+    background: var(--success-bg) !important;
+    border: 1px solid var(--success-border) !important;
 }
 
 .custom-message.el-message--success::before {
-    background: linear-gradient(180deg, #67c23a 0%, #85ce61 100%);
+    background: var(--success);
 }
 
 .custom-message.el-message--success .el-message__icon {
-    color: #67c23a;
+    color: var(--success);
 }
 
-/* warning */
 .custom-message.el-message--warning {
-    background: linear-gradient(135deg, #fdf6ec 0%, #fefaf2 100%) !important;
-    border: 1px solid #f3d19e !important;
+    background: var(--warning-bg) !important;
+    border: 1px solid var(--warning-border) !important;
 }
 
 .custom-message.el-message--warning::before {
-    background: linear-gradient(180deg, #e6a23c 0%, #ebb563 100%);
+    background: var(--warning);
 }
 
 .custom-message.el-message--warning .el-message__icon {
-    color: #e6a23c;
+    color: var(--warning);
 }
 
-/* error */
 .custom-message.el-message--error {
-    background: linear-gradient(135deg, #fef0f0 0%, #fef7f7 100%) !important;
-    border: 1px solid #fab6b6 !important;
+    background: var(--danger-bg) !important;
+    border: 1px solid var(--danger-border) !important;
 }
 
 .custom-message.el-message--error::before {
-    background: linear-gradient(180deg, #f56c6c 0%, #f78989 100%);
+    background: var(--danger);
 }
 
 .custom-message.el-message--error .el-message__icon {
-    color: #f56c6c;
+    color: var(--danger);
 }
 
-/* info */
 .custom-message.el-message--info {
-    background: linear-gradient(135deg, #f4f4f5 0%, #fafafb 100%) !important;
-    border: 1px solid #dcdfe6 !important;
+    background: var(--info-bg) !important;
+    border: 1px solid var(--info-border) !important;
 }
 
 .custom-message.el-message--info::before {
-    background: linear-gradient(180deg, #909399 0%, #a6a9ad 100%);
+    background: var(--info);
 }
 
 .custom-message.el-message--info .el-message__icon {
-    color: #909399;
+    color: var(--info);
 }
 
 /* ---------- 入场动画 ---------- */
@@ -177,10 +126,10 @@
     }
 }
 
-/* ---------- 消息队列间距 ---------- */
+/* ---------- 队列间距 ---------- */
 .el-message {
-    margin-top: 12px !important;
-    transition: all 0.3s ease;
+    margin-top: var(--space-md) !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .el-message:first-child {
@@ -188,18 +137,17 @@
 }
 
 /* ============================================================
-   ElMessageBox 确认框美化
+   ElMessageBox 确认框
    ============================================================ */
-
 .custom-message-box {
-    border-radius: 18px !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: var(--shadow-xl), 0 0 0 1px var(--border-light) !important;
     overflow: hidden !important;
-    background: #ffffff !important;
+    background: var(--bg-container) !important;
     border: none !important;
     padding: 0 !important;
     width: 440px !important;
-    animation: boxFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: boxFadeIn var(--duration-slow) var(--ease-bounce);
 }
 
 @keyframes boxFadeIn {
@@ -214,7 +162,7 @@
     }
 }
 
-/* 顶部装饰条 */
+/* 顶部装饰条（品牌渐变） */
 .custom-message-box::before {
     content: '';
     position: absolute;
@@ -222,29 +170,29 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background: var(--brand-gradient-border);
     z-index: 1;
 }
 
 /* 头部 */
 .custom-message-box .el-message-box__header {
     padding: 28px 32px 16px !important;
-    border-bottom: 1px solid #f0f0f5;
+    border-bottom: 1px solid var(--border-light);
     text-align: center;
     position: relative;
 }
 
 .custom-message-box .el-message-box__title {
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    color: #303133 !important;
+    font-size: var(--fs-xl) !important;
+    font-weight: var(--fw-semibold) !important;
+    color: var(--text-primary) !important;
     letter-spacing: 0.5px;
     display: block;
     width: 100%;
 }
 
 .custom-message-box .el-message-box__title span {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -257,21 +205,21 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .custom-message-box .el-message-box__headerbtn:hover {
-    background: #f5f7fa;
+    background: var(--bg-elevated);
 }
 
 .custom-message-box .el-message-box__close {
-    color: #909399 !important;
-    font-size: 16px !important;
-    transition: all 0.3s ease;
+    color: var(--text-secondary) !important;
+    font-size: var(--fs-lg) !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .custom-message-box .el-message-box__headerbtn:hover .el-message-box__close {
-    color: #667eea !important;
+    color: var(--brand-primary) !important;
     transform: rotate(90deg);
 }
 
@@ -279,8 +227,8 @@
 .custom-message-box .el-message-box__content {
     padding: 24px 32px !important;
     font-size: 15px !important;
-    color: #606266 !important;
-    line-height: 1.7 !important;
+    color: var(--text-regular) !important;
+    line-height: var(--lh-loose) !important;
     text-align: center;
 }
 
@@ -292,7 +240,7 @@
     font-size: 26px !important;
     position: relative !important;
     top: 0 !important;
-    margin-right: 12px !important;
+    margin-right: var(--space-md) !important;
     transform: none !important;
 }
 
@@ -302,75 +250,75 @@
 
 .custom-message-box .el-message-box__message p {
     margin: 0;
-    line-height: 1.7;
+    line-height: var(--lh-loose);
 }
 
-/* ---------- 按钮区:底部居中 ---------- */
+/* 按钮区 */
 .custom-message-box .el-message-box__btns {
     padding: 8px 32px 28px !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center;
-    gap: 16px;
+    gap: var(--space-lg);
 }
 
 .custom-message-box .el-button {
-    border-radius: 10px !important;
+    border-radius: var(--radius-md) !important;
     padding: 10px 32px !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    transition: all 0.25s ease !important;
+    font-size: var(--fs-md) !important;
+    font-weight: var(--fw-medium) !important;
+    transition: all var(--duration-normal) var(--ease-out) !important;
     letter-spacing: 1px;
     min-width: 100px;
     margin: 0 !important;
 }
 
-/* 确认按钮 */
+/* 确认按钮（品牌渐变） */
 .custom-message-box .el-button--primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: var(--brand-gradient) !important;
     border: none !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4) !important;
+    color: var(--text-on-brand) !important;
+    box-shadow: var(--shadow-md) !important;
 }
 
 .custom-message-box .el-button--primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(102, 126, 234, 0.55) !important;
-    background: linear-gradient(135deg, #5a6fd8 0%, #6a4292 100%) !important;
+    box-shadow: var(--shadow-glow-strong) !important;
+    background: var(--brand-gradient-hover) !important;
 }
 
 .custom-message-box .el-button--primary:active {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.35) !important;
+    box-shadow: var(--shadow-md) !important;
 }
 
 /* 取消按钮 */
 .custom-message-box .el-button--default {
-    background: #f5f7fa !important;
-    border: 1px solid #e4e7ed !important;
-    color: #606266 !important;
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--border-base) !important;
+    color: var(--text-regular) !important;
 }
 
 .custom-message-box .el-button--default:hover {
-    background: #ebeef5 !important;
-    border-color: #c0c4cc !important;
-    color: #667eea !important;
+    background: var(--bg-input) !important;
+    border-color: var(--brand-primary) !important;
+    color: var(--brand-primary) !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    box-shadow: var(--shadow-md) !important;
 }
 
 .custom-message-box .el-button--default:active {
     transform: translateY(0);
 }
 
-/* ---------- 遮罩层模糊 ---------- */
+/* 遮罩层模糊 */
 .el-overlay:has(.custom-message-box) {
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: var(--bg-mask);
 }
 
-/* ---------- 响应式 ---------- */
+/* 响应式 */
 @media (max-width: 768px) {
     .custom-message-box {
         width: 90% !important;
@@ -379,7 +327,7 @@
 
     .custom-message-box .el-message-box__btns {
         flex-direction: column-reverse;
-        gap: 10px;
+        gap: var(--space-sm);
     }
 
     .custom-message-box .el-button {

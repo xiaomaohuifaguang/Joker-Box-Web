@@ -93,7 +93,7 @@ const push = async () => {
 <style scoped lang="scss">
 .post-add-container {
     padding: 24px;
-    background: var(--el-bg-color);
+    background: var(--bg-container);
 
     // 标题输入区
     .title-section {
@@ -104,20 +104,20 @@ const push = async () => {
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
-            background: var(--el-fill-color-light);
+            background: var(--bg-overlay);
             border-radius: 12px;
-            border: 2px solid var(--el-border-color-lighter);
+            border: 2px solid var(--border-light);
             transition: all 0.3s ease;
 
             &:focus-within {
-                border-color: #667eea;
-                background: var(--el-bg-color);
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                border-color: var(--brand-primary);
+                background: var(--bg-container);
+                box-shadow: 0 0 0 3px var(--bg-overlay);
             }
 
             .input-icon {
                 font-size: 20px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
             }
 
             .title-input {
@@ -131,14 +131,14 @@ const push = async () => {
                     padding: 0;
 
                     &::placeholder {
-                        color: var(--el-text-color-placeholder);
+                        color: var(--text-placeholder);
                     }
                 }
 
                 :deep(.el-input__suffix) {
                     .char-count {
                         font-size: 12px;
-                        color: var(--el-text-color-secondary);
+                        color: var(--text-secondary);
                     }
                 }
             }
@@ -150,15 +150,15 @@ const push = async () => {
         margin-bottom: 24px;
         border-radius: 12px;
         overflow: hidden;
-        border: 1px solid var(--el-border-color-lighter);
+        border: 1px solid var(--border-light);
 
         .editor-header {
             display: flex;
             align-items: center;
             gap: 8px;
             padding: 12px 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: var(--brand-gradient);
+            color: var(--text-on-brand);
             font-size: 14px;
             font-weight: 500;
 
@@ -187,7 +187,7 @@ const push = async () => {
         flex-wrap: wrap;
         gap: 16px;
         padding-top: 16px;
-        border-top: 1px solid var(--el-border-color-lighter);
+        border-top: 1px solid var(--border-light);
 
         .action-left {
             .tip-text {
@@ -195,11 +195,11 @@ const push = async () => {
                 align-items: center;
                 gap: 6px;
                 font-size: 13px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
 
                 .el-icon {
                     font-size: 14px;
-                    color: var(--el-color-info);
+                    color: var(--info);
                 }
             }
         }
@@ -225,13 +225,13 @@ const push = async () => {
                 border-radius: 10px;
                 font-size: 15px;
                 font-weight: 500;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 border: none;
                 transition: all 0.3s ease;
 
                 &:hover:not(:disabled) {
                     transform: translateY(-2px);
-                    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+                    box-shadow: var(--shadow-glow-strong);
                 }
 
                 &:disabled {

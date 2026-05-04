@@ -74,15 +74,15 @@ const add = async () => {
 <style scoped lang="scss">
 .add-prompt-container {
   padding: 24px;
-  background: var(--el-bg-color);
+  background: var(--bg-container);
 }
 
 .form-wrapper {
-  background: var(--el-bg-color);
+  background: var(--bg-container);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  border: 1px solid var(--el-border-color-lighter);
+  border: 1px solid var(--border-light);
 }
 
 .form-header {
@@ -92,12 +92,12 @@ const add = async () => {
   gap: 8px;
   margin-bottom: 24px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--el-border-color-lighter);
+  border-bottom: 1px solid var(--border-light);
 
   .header-icon {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -111,13 +111,13 @@ const add = async () => {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
-    color: var(--el-text-color-primary);
+    color: var(--text-primary);
   }
 
   p {
     margin: 0;
     font-size: 14px;
-    color: var(--el-text-color-secondary);
+    color: var(--text-secondary);
     text-align: center;
   }
 }
@@ -129,20 +129,20 @@ const add = async () => {
 
   :deep(.el-form-item__label) {
     font-weight: 600;
-    color: var(--el-text-color-primary);
+    color: var(--text-primary);
     margin-bottom: 8px;
     font-size: 14px;
   }
 
   :deep(.el-input__wrapper) {
     border-radius: 8px;
-    box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+    box-shadow: 0 0 0 1px var(--border-light) inset;
     padding: 0 16px;
   }
 
   :deep(.el-input__wrapper:hover),
   :deep(.el-input__wrapper.is-focus) {
-    box-shadow: 0 0 0 1px #667eea inset;
+    box-shadow: 0 0 0 1px var(--brand-primary) inset;
   }
 
   :deep(.el-input__inner) {
@@ -175,13 +175,13 @@ const add = async () => {
     font-size: 16px;
     font-weight: 600;
     border-radius: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     border: none;
     transition: all 0.3s ease;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      box-shadow: var(--shadow-glow);
     }
   }
 }

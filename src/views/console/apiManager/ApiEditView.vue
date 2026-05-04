@@ -189,15 +189,15 @@ onMounted(() => {
 <style scoped lang="scss">
 .api-edit-page {
     padding: 24px;
-    background: var(--el-bg-color-page);
+    background: var(--bg-page);
     min-height: 400px;
 
     .info-card {
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 16px;
         padding: 24px;
-        box-shadow: var(--el-box-shadow-light);
-        border: 1px solid var(--el-border-color-lighter);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
         margin-bottom: 24px;
 
         .card-header {
@@ -206,12 +206,12 @@ onMounted(() => {
             gap: 12px;
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 1px solid var(--el-border-color-lighter);
+            border-bottom: 1px solid var(--border-light);
 
             .header-icon {
                 width: 42px;
                 height: 42px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 border-radius: 10px;
                 display: flex;
                 align-items: center;
@@ -226,14 +226,14 @@ onMounted(() => {
             .header-title {
                 font-size: 18px;
                 font-weight: 600;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
             }
         }
 
         .api-form {
             :deep(.el-form-item__label) {
                 font-weight: 500;
-                color: var(--el-text-color-regular);
+                color: var(--text-regular);
                 padding-bottom: 8px;
             }
 
@@ -284,13 +284,13 @@ onMounted(() => {
             height: 48px;
             font-size: 16px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
             transition: all 0.3s;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                box-shadow: var(--shadow-glow-strong);
             }
         }
     }

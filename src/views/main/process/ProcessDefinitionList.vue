@@ -56,7 +56,7 @@ onMounted(() => {
 .process-select-container {
     min-height: 400px;
     padding: 28px;
-    background: var(--el-bg-color-page);
+    background: var(--bg-page);
 }
 
 /* Empty State */
@@ -71,27 +71,27 @@ onMounted(() => {
     .empty-icon {
         width: 96px;
         height: 96px;
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(251, 191, 36, 0.12) 100%);
+        background: var(--warning-bg);
         border-radius: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 24px;
         font-size: 48px;
-        color: #f59e0b;
-        box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+        box-shadow: var(--shadow-md);
     }
 
     h3 {
         font-size: 20px;
         font-weight: 700;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
         margin: 0 0 10px 0;
     }
 
     p {
         font-size: 15px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         margin: 0;
         max-width: 360px;
     }
@@ -109,14 +109,14 @@ onMounted(() => {
     align-items: center;
     gap: 18px;
     padding: 24px;
-    background: var(--el-bg-color);
-    border: 1px solid var(--el-border-color-lighter);
+    background: var(--bg-container);
+    border: 1px solid var(--border-light);
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    box-shadow: var(--shadow-sm);
 
     &::before {
         content: '';
@@ -125,14 +125,14 @@ onMounted(() => {
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, #667eea, #764ba2);
+        background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary));
         transform: scaleX(0);
         transition: transform 0.3s ease;
     }
 
     &:hover {
-        border-color: #667eea;
-        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.18);
+        border-color: var(--brand-primary);
+        box-shadow: var(--shadow-glow-strong);
         transform: translateY(-4px);
 
         &::before {
@@ -140,13 +140,13 @@ onMounted(() => {
         }
 
         .card-icon {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            background: var(--brand-gradient);
+            color: var(--text-on-brand);
+            box-shadow: var(--shadow-glow);
         }
 
         .card-arrow {
-            color: #667eea;
+            color: var(--brand-primary);
             transform: translateX(6px);
         }
     }
@@ -155,13 +155,13 @@ onMounted(() => {
 .card-icon {
     width: 56px;
     height: 56px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+    background: var(--brand-gradient-soft);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 28px;
-    color: #667eea;
+    color: var(--brand-primary);
     flex-shrink: 0;
     transition: all 0.3s ease;
 }
@@ -173,7 +173,7 @@ onMounted(() => {
     .process-name {
         font-size: 17px;
         font-weight: 700;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
         margin: 0 0 6px 0;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -182,10 +182,10 @@ onMounted(() => {
 
     .process-key {
         font-size: 13px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         margin: 0;
         font-family: 'Consolas', 'Monaco', monospace;
-        background: var(--el-fill-color-light);
+        background: var(--bg-overlay);
         padding: 4px 10px;
         border-radius: 6px;
         width: fit-content;
@@ -194,7 +194,7 @@ onMounted(() => {
 
 .card-arrow {
     font-size: 24px;
-    color: var(--el-text-color-tertiary);
+    color: var(--text-secondary);
     transition: all 0.3s ease;
     flex-shrink: 0;
 }

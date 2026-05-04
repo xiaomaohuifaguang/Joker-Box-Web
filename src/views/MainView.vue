@@ -70,7 +70,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: var(--el-bg-color-page);
+    background-color: var(--bg-page);
 }
 
 .app-header {
@@ -79,7 +79,7 @@ onMounted(async () => {
     z-index: 1000;
     padding: 0;
     height: auto;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 .app-main {
@@ -90,7 +90,6 @@ onMounted(async () => {
 }
 
 .router-view-container {
-    // max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -114,23 +113,24 @@ onMounted(async () => {
     max-width: 800px;
     padding: 14px 18px;
     margin-bottom: 12px;
-    background-color: var(--el-bg-color);
-    border-radius: 10px;
-    box-shadow: var(--el-box-shadow-light);
-    border-left: 4px solid var(--el-color-warning);
+    background-color: var(--bg-container);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border-left: 4px solid var(--warning);
     pointer-events: auto;
-    transition: all 0.3s ease;
+    transition: transform var(--duration-normal) var(--ease-out),
+        box-shadow var(--duration-normal) var(--ease-out);
     backdrop-filter: blur(5px);
 
     &:hover {
         transform: translateY(-2px);
-        box-shadow: var(--el-box-shadow);
+        box-shadow: var(--shadow-lg);
     }
 }
 
 .prompt-icon {
     margin-right: 14px;
-    color: var(--el-color-warning);
+    color: var(--warning);
     font-size: 22px;
 }
 
@@ -140,28 +140,28 @@ onMounted(async () => {
 }
 
 .prompt-title {
-    font-weight: 600;
-    color: var(--el-color-warning);
+    font-weight: var(--fw-semibold);
+    color: var(--warning);
     margin-bottom: 6px;
-    font-size: 15px;
+    font-size: var(--fs-sm);
 }
 
 .prompt-message {
-    color: var(--el-text-color-regular);
-    font-size: 14px;
-    line-height: 1.5;
+    color: var(--text-regular);
+    font-size: var(--fs-md);
+    line-height: var(--lh-normal);
     word-break: break-word;
 }
 
 .prompt-close {
     margin-left: 16px;
-    color: var(--el-text-color-placeholder);
+    color: var(--text-placeholder);
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color var(--duration-fast) var(--ease-out);
     flex-shrink: 0;
 
     &:hover {
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
     }
 }
 

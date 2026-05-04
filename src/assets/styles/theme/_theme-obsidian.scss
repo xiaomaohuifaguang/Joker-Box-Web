@@ -1,0 +1,109 @@
+// ============================================================
+// 🌑 曜石黑主题 · 极致暗色
+// 纯黑色系，以银灰为品牌色，营造高端冷酷的暗色质感
+// ============================================================
+
+@mixin theme-obsidian {
+    /* ---------- 品牌色（银灰系） ---------- */
+    --brand-primary: #B8B8D4;
+    --brand-primary-hover: #C8C8E0;
+    --brand-primary-active: #A8A8C8;
+    --brand-primary-light: #D0D0E8;
+    --brand-primary-lighter: #E0E0F0;
+    --brand-secondary: #8E8EAA;
+    --brand-accent: #7A8A9E;
+
+    /* ---------- 渐变 ---------- */
+    --brand-gradient: linear-gradient(135deg, #B8B8D4 0%, #8E8EAA 100%);
+    --brand-gradient-hover: linear-gradient(135deg, #C8C8E0 0%, #9E9EBA 100%);
+    --brand-gradient-soft: linear-gradient(135deg, rgba(184, 184, 212, 0.14) 0%, rgba(142, 142, 170, 0.14) 100%);
+    --brand-gradient-text: linear-gradient(135deg, #B8B8D4 0%, #8E8EAA 50%, #7A8A9E 100%);
+    --brand-gradient-border: linear-gradient(90deg, #B8B8D4 0%, #8E8EAA 50%, #7A8A9E 100%);
+
+    /* ---------- 背景层级 ---------- */
+    --bg-page: #030305;
+    --bg-container: #0A0A0F;
+    --bg-elevated: #12121A;
+    --bg-input: #1A1A24;
+    --bg-overlay: rgba(184, 184, 212, 0.08);
+    --bg-overlay-strong: rgba(184, 184, 212, 0.16);
+    --bg-mask: rgba(0, 0, 0, 0.8);
+
+    /* ---------- 文字层级 ---------- */
+    --text-primary: #F0F0F5;
+    --text-regular: #B8B8C8;
+    --text-secondary: #6E6E82;
+    --text-placeholder: #4A4A5E;
+    --text-disabled: #3A3A4E;
+    --text-on-brand: #0A0A0F;
+    --text-on-dark: #F0F0F5;
+    --text-link: #B8B8D4;
+    --text-link-hover: #D0D0E8;
+
+    /* ---------- 边框 ---------- */
+    --border-base: #1E1E2E;
+    --border-light: #151520;
+    --border-strong: #2E2E42;
+    --border-focus: #B8B8D4;
+    --border-divider: #1A1A28;
+
+    /* ---------- 功能色（降低饱和度） ---------- */
+    --success: #4ADE80;
+    --success-hover: #34D399;
+    --success-bg: rgba(74, 222, 128, 0.08);
+    --success-border: rgba(74, 222, 128, 0.35);
+
+    --warning: #FBBF24;
+    --warning-hover: #F59E0B;
+    --warning-bg: rgba(251, 191, 36, 0.08);
+    --warning-border: rgba(251, 191, 36, 0.35);
+
+    --danger: #FB7185;
+    --danger-hover: #F43F5E;
+    --danger-bg: rgba(251, 113, 133, 0.08);
+    --danger-border: rgba(251, 113, 133, 0.35);
+
+    --info: #60A5FA;
+    --info-hover: #3B82F6;
+    --info-bg: rgba(96, 165, 250, 0.08);
+    --info-border: rgba(96, 165, 250, 0.35);
+
+    /* ---------- 阴影（深邃暗调） ---------- */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
+    --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.55);
+    --shadow-glow: 0 0 24px rgba(184, 184, 212, 0.2);
+    --shadow-glow-strong: 0 0 40px rgba(184, 184, 212, 0.35);
+    --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+
+    /* ---------- 数据可视化 ---------- */
+    --data-1: #B8B8D4;
+    --data-2: #8E8EAA;
+    --data-3: #7A8A9E;
+    --data-4: #94A3B8;
+    --data-5: #A5B4FC;
+    --data-6: #FBBF24;
+    --data-7: #FB7185;
+    --data-8: #4ADE80;
+
+    --data-grad-1: linear-gradient(135deg, #B8B8D4 0%, #8E8EAA 100%);
+    --data-grad-2: linear-gradient(135deg, #8E8EAA 0%, #7A8A9E 100%);
+    --data-grad-3: linear-gradient(135deg, #7A8A9E 0%, #94A3B8 100%);
+    --data-grad-4: linear-gradient(135deg, #94A3B8 0%, #A5B4FC 100%);
+    --data-grad-5: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+    --data-grad-6: linear-gradient(135deg, #FB7185 0%, #F43F5E 100%);
+
+    /* ---------- 登录页专用 ---------- */
+    --auth-bg: linear-gradient(135deg, #030305 0%, #0A0A0F 50%, #12121A 100%);
+    --auth-card-bg: rgba(18, 18, 26, 0.75);
+    --auth-card-border: rgba(184, 184, 212, 0.2);
+    --auth-text: #F0F0F5;
+    --auth-text-muted: rgba(240, 240, 245, 0.55);
+    --auth-input-bg: rgba(26, 26, 36, 0.5);
+
+    /* ---------- 滚动条 ---------- */
+    --scrollbar-thumb: #2E2E42;
+    --scrollbar-thumb-hover: #B8B8D4;
+    --scrollbar-track: transparent;
+}

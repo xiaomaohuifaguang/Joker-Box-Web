@@ -4,9 +4,14 @@ import router from './router'
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import 'element-plus/theme-chalk/dark/css-vars.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import './assets/main.css'
+
+// 主题：先初始化（覆盖 EP 默认色），再加载我们自己的样式入口
+import { initThemeEarly } from './composables/useTheme'
+initThemeEarly()
+import './assets/font.css'
+import './assets/styles/main.scss'
+import './assets/logicFlow/custom/icon/iconClass.css'
 
 import registerComponents from './registerComponents';
 

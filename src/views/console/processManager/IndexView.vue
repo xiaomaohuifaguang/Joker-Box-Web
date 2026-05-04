@@ -296,10 +296,10 @@ onMounted(() => {
 <style scoped lang="scss">
 .processDefinition-management-page {
   min-height: calc(100vh - 60px);
-  background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+  background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
 
   .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     padding: 32px 0;
     margin-bottom: 24px;
 
@@ -318,7 +318,7 @@ onMounted(() => {
         width: 64px;
         height: 64px;
         background: rgba(255, 255, 255, 0.2);
-        border-radius: 16px;
+        border-radius: var(--radius-lg);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -326,21 +326,21 @@ onMounted(() => {
 
         .el-icon {
           font-size: 32px;
-          color: white;
+          color: var(--text-on-brand);
         }
       }
 
       .title-text {
         h1 {
           margin: 0 0 8px 0;
-          font-size: 28px;
-          font-weight: 600;
-          color: white;
+          font-size: var(--fs-3xl);
+          font-weight: var(--fw-semibold);
+          color: var(--text-on-brand);
         }
 
         p {
           margin: 0;
-          font-size: 15px;
+          font-size: var(--fs-md);
           color: rgba(255, 255, 255, 0.85);
         }
       }
@@ -357,7 +357,7 @@ onMounted(() => {
     margin-bottom: 20px;
 
     :deep(.el-breadcrumb) {
-      font-size: 14px;
+      font-size: var(--fs-md);
 
       .el-breadcrumb__inner {
         display: flex;
@@ -376,47 +376,47 @@ onMounted(() => {
     .header-icon {
       width: 36px;
       height: 36px;
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
 
       &.search {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
       }
 
       &.table {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        background: var(--data-grad-3);
       }
 
       .el-icon {
         font-size: 18px;
-        color: white;
+        color: var(--text-on-brand);
       }
     }
 
     .header-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
+      font-size: var(--fs-xl);
+      font-weight: var(--fw-semibold);
+      color: var(--text-primary);
     }
 
     .header-count {
       margin-left: auto;
-      font-size: 14px;
-      color: var(--el-text-color-secondary);
-      background: var(--el-fill-color-light);
+      font-size: var(--fs-md);
+      color: var(--text-secondary);
+      background: var(--bg-overlay);
       padding: 4px 12px;
-      border-radius: 20px;
+      border-radius: var(--radius-pill);
     }
   }
 
   .search-section {
-    background: var(--el-bg-color);
-    border-radius: 16px;
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
     padding: 24px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
     margin-bottom: 24px;
 
     .search-form {
@@ -426,7 +426,7 @@ onMounted(() => {
 
         .add-button {
           width: 100%;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: var(--brand-gradient);
           border: none;
         }
       }
@@ -434,23 +434,23 @@ onMounted(() => {
   }
 
   .table-section {
-    background: var(--el-bg-color);
-    border-radius: 16px;
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
     padding: 24px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
 
     .table-wrapper {
       margin-bottom: 20px;
 
       :deep(.el-table) {
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         overflow: hidden;
 
         .el-table__header th {
-          background: var(--el-fill-color-light);
-          font-weight: 600;
-          color: var(--el-text-color-primary);
+          background: var(--bg-elevated);
+          font-weight: var(--fw-semibold);
+          color: var(--text-primary);
         }
 
         .action-buttons {
@@ -465,24 +465,24 @@ onMounted(() => {
       display: flex;
       justify-content: flex-end;
       padding-top: 20px;
-      border-top: 1px solid var(--el-border-color-lighter);
+      border-top: 1px solid var(--border-light);
     }
   }
 }
 
 .custom-dialog {
   :deep(.el-dialog__header) {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     margin: 0;
     padding: 20px 24px;
 
     .el-dialog__title {
-      color: white;
-      font-weight: 600;
+      color: var(--text-on-brand);
+      font-weight: var(--fw-semibold);
     }
 
     .el-dialog__headerbtn .el-dialog__close {
-      color: white;
+      color: var(--text-on-brand);
     }
   }
 

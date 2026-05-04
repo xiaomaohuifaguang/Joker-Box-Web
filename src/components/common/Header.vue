@@ -41,8 +41,8 @@
             <!-- 右侧功能区 -->
             <div class="header-actions">
                 <!-- 主题切换 -->
-                <div class="action-btn theme-btn">
-                    <DarkSwitch />
+                <div class="theme-btn">
+                    <ThemeSelector />
                 </div>
 
                 <!-- 用户区域 -->
@@ -62,7 +62,7 @@ import {
     Grid, Tools, Warning, CircleClose
 } from '@element-plus/icons-vue'
 import AvatarDropDown from './AvatarDropDown.vue'
-import DarkSwitch from './DarkSwitch.vue'
+import ThemeSelector from './ThemeSelector.vue'
 import ElMenuItemInit from '@/components/common/ElMenuItemInit.vue'
 
 const route = useRoute()
@@ -94,10 +94,11 @@ onMounted(() => {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background-color: var(--el-bg-color-overlay);
+    background-color: var(--bg-container);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--el-border-color-light);
-    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--border-light);
+    transition: background-color var(--duration-normal) var(--ease-out),
+        border-color var(--duration-normal) var(--ease-out);
 }
 
 .header-container {
@@ -116,20 +117,20 @@ onMounted(() => {
     align-items: center;
     gap: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color var(--duration-normal) var(--ease-out);
     padding: 8px 12px;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
 
     &:hover {
-        background-color: var(--el-fill-color-light);
+        background-color: var(--bg-overlay);
     }
 }
 
 .logo-icon {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    border-radius: 12px;
+    background: var(--brand-gradient-soft);
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -143,9 +144,9 @@ onMounted(() => {
 }
 
 .logo-text {
-    font-size: 20px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    background: var(--brand-gradient-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -163,27 +164,28 @@ onMounted(() => {
 .custom-menu {
     background: transparent;
     border: none;
-    
+
     :deep(.el-menu-item),
     :deep(.el-sub-menu__title) {
         height: 50px;
         line-height: 50px;
         padding: 0 20px;
-        font-size: 15px;
-        font-weight: 500;
-        color: var(--el-text-color-regular);
-        border-radius: 10px;
+        font-size: var(--fs-md);
+        font-weight: var(--fw-medium);
+        color: var(--text-regular);
+        border-radius: var(--radius-md);
         margin: 0 4px;
-        transition: all 0.3s ease;
+        transition: background-color var(--duration-normal) var(--ease-out),
+            color var(--duration-normal) var(--ease-out);
 
         &:hover {
-            background-color: var(--el-fill-color-light);
-            color: var(--el-color-primary);
+            background-color: var(--bg-overlay);
+            color: var(--brand-primary);
         }
 
         &.is-active {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            color: #667eea;
+            background: var(--brand-gradient-soft);
+            color: var(--brand-primary);
         }
     }
 
@@ -227,14 +229,16 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all 0.3s ease;
-    color: var(--el-text-color-regular);
+    transition: background-color var(--duration-normal) var(--ease-out),
+        color var(--duration-normal) var(--ease-out),
+        transform var(--duration-normal) var(--ease-out);
+    color: var(--text-regular);
 
     &:hover {
-        background-color: var(--el-fill-color-light);
-        color: var(--el-color-primary);
+        background-color: var(--bg-overlay);
+        color: var(--brand-primary);
         transform: translateY(-2px);
     }
 
@@ -243,14 +247,21 @@ onMounted(() => {
     }
 }
 
+.theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+}
+
 .user-section {
     margin-left: 8px;
     padding: 4px;
-    border-radius: 50px;
-    transition: all 0.3s ease;
+    border-radius: var(--radius-pill);
+    transition: background-color var(--duration-normal) var(--ease-out);
 
     &:hover {
-        background-color: var(--el-fill-color-light);
+        background-color: var(--bg-overlay);
     }
 }
 

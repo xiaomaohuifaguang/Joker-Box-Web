@@ -221,12 +221,12 @@ const handleKeyClick = ({ key, path }) => {
 <style scoped lang="scss">
 .json-formatter-page {
     min-height: calc(100vh - 60px);
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
     padding-bottom: 40px;
 
     // 页面头部
     .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         padding: 32px 0;
         margin-bottom: 32px;
 
@@ -253,7 +253,7 @@ const handleKeyClick = ({ key, path }) => {
 
                 .el-icon {
                     font-size: 32px;
-                    color: white;
+                    color: var(--text-on-brand);
                 }
             }
 
@@ -262,7 +262,7 @@ const handleKeyClick = ({ key, path }) => {
                     margin: 0 0 8px 0;
                     font-size: 28px;
                     font-weight: 600;
-                    color: white;
+                    color: var(--text-on-brand);
                 }
 
                 p {
@@ -282,11 +282,11 @@ const handleKeyClick = ({ key, path }) => {
 }
 
 .card-section {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -298,7 +298,7 @@ const handleKeyClick = ({ key, path }) => {
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 16px;
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    border-bottom: 1px solid var(--border-light);
 
     .section-title {
         display: flex;
@@ -315,13 +315,13 @@ const handleKeyClick = ({ key, path }) => {
                 justify-content: center;
 
                 &.input {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
+                    background: var(--brand-gradient);
+                    color: var(--text-on-brand);
                 }
 
                 &.output {
-                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                    color: white;
+                    background: var(--data-grad-3);
+                    color: var(--text-on-brand);
                 }
 
                 .el-icon {
@@ -332,7 +332,7 @@ const handleKeyClick = ({ key, path }) => {
 
         h3 {
             margin: 0;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             font-size: 18px;
             font-weight: 600;
         }
@@ -352,33 +352,33 @@ const handleKeyClick = ({ key, path }) => {
             }
 
             &.compress {
-                background: var(--el-color-warning-light-9);
-                color: var(--el-color-warning);
+                background: var(--warning-bg);
+                color: var(--warning);
             }
 
             &.format {
-                background: var(--el-color-primary-light-9);
-                color: var(--el-color-primary);
+                background: var(--bg-overlay);
+                color: var(--brand-primary);
             }
 
             &.delete {
-                background: var(--el-color-danger-light-9);
-                color: var(--el-color-danger);
+                background: var(--danger-bg);
+                color: var(--danger);
             }
 
             &.copy {
-                background: var(--el-color-success-light-9);
-                color: var(--el-color-success);
+                background: var(--success-bg);
+                color: var(--success);
             }
 
             &.expand {
-                background: var(--el-color-info-light-9);
-                color: var(--el-color-info);
+                background: var(--info-bg);
+                color: var(--info);
             }
 
             &.collapse {
-                background: var(--el-color-danger-light-9);
-                color: var(--el-color-danger);
+                background: var(--danger-bg);
+                color: var(--danger);
             }
         }
     }
@@ -400,15 +400,15 @@ const handleKeyClick = ({ key, path }) => {
         padding: 16px;
         font-size: 14px;
         line-height: 1.6;
-        background: var(--el-fill-color-light);
-        border-color: var(--el-border-color-lighter);
+        background: var(--bg-overlay);
+        border-color: var(--border-light);
         transition: all 0.3s ease;
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 
         &:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            background: var(--el-bg-color);
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px var(--bg-overlay);
+            background: var(--bg-container);
         }
     }
 }
@@ -425,13 +425,13 @@ const handleKeyClick = ({ key, path }) => {
         border-radius: 10px;
         font-size: 14px;
         font-weight: 500;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border: none;
         transition: all 0.3s ease;
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+            box-shadow: var(--shadow-glow-strong);
         }
     }
 
@@ -451,10 +451,10 @@ const handleKeyClick = ({ key, path }) => {
 .json-viewer {
     flex: 1;
     overflow: auto;
-    border: 1px solid var(--el-border-color-lighter);
+    border: 1px solid var(--border-light);
     border-radius: 12px;
     padding: 16px;
-    background-color: var(--el-fill-color-light);
+    background-color: var(--bg-overlay);
     margin-bottom: 16px;
 }
 
@@ -463,9 +463,9 @@ const handleKeyClick = ({ key, path }) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px dashed var(--el-border-color-lighter);
+    border: 2px dashed var(--border-light);
     border-radius: 12px;
-    background-color: var(--el-fill-color-light);
+    background-color: var(--bg-overlay);
     margin-bottom: 16px;
     min-height: 300px;
 
@@ -474,7 +474,7 @@ const handleKeyClick = ({ key, path }) => {
         flex-direction: column;
         align-items: center;
         gap: 12px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
 
         .el-icon {
             font-size: 48px;
@@ -493,7 +493,7 @@ const handleKeyClick = ({ key, path }) => {
     align-items: center;
     gap: 24px;
     padding: 12px 16px;
-    background: var(--el-fill-color-light);
+    background: var(--bg-overlay);
     border-radius: 10px;
     flex-wrap: wrap;
 
@@ -509,12 +509,12 @@ const handleKeyClick = ({ key, path }) => {
 
         .checkbox-label {
             font-size: 14px;
-            color: var(--el-text-color-regular);
+            color: var(--text-regular);
         }
 
         .slider-label {
             font-size: 14px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             white-space: nowrap;
         }
 
@@ -527,8 +527,8 @@ const handleKeyClick = ({ key, path }) => {
             text-align: center;
             font-size: 14px;
             font-weight: 600;
-            color: #667eea;
-            background: var(--el-color-primary-light-9);
+            color: var(--brand-primary);
+            background: var(--bg-overlay);
             padding: 4px 8px;
             border-radius: 6px;
         }
@@ -543,28 +543,17 @@ const handleKeyClick = ({ key, path }) => {
     --jv-font-size: 14px;
     --jv-line-height: 1.6;
 
-    --jv-key-color: var(--el-color-primary);
-    --jv-string-color: var(--el-color-success);
-    --jv-number-color: var(--el-color-warning);
-    --jv-boolean-color: var(--el-color-danger);
-    --jv-null-color: var(--el-color-info);
-    --jv-arrow-color: var(--el-text-color-secondary);
-    --jv-edit-color: var(--el-color-primary);
-    --jv-copy-color: var(--el-color-primary);
+    --jv-key-color: var(--brand-primary);
+    --jv-string-color: var(--success);
+    --jv-number-color: var(--warning);
+    --jv-boolean-color: var(--danger);
+    --jv-null-color: var(--info);
+    --jv-arrow-color: var(--text-secondary);
+    --jv-edit-color: var(--brand-primary);
+    --jv-copy-color: var(--brand-primary);
     --jv-background-color: transparent;
-    --jv-ellipsis-color: var(--el-text-color-secondary);
-    --jv-hover-color: var(--el-fill-color-lighter);
-}
-
-// 暗色模式适配
-[data-theme="dark"] {
-    :deep(.json-viewer-container) {
-        --jv-key-color: var(--el-color-primary-light-3);
-        --jv-string-color: var(--el-color-success-light-3);
-        --jv-number-color: var(--el-color-warning-light-3);
-        --jv-boolean-color: var(--el-color-danger-light-3);
-        --jv-null-color: var(--el-color-info-light-3);
-    }
+    --jv-ellipsis-color: var(--text-secondary);
+    --jv-hover-color: var(--bg-overlay);
 }
 
 // 响应式调整

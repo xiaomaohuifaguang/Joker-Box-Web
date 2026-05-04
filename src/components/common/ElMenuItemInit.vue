@@ -33,38 +33,39 @@ const props = defineProps({
     height: 48px !important;
     line-height: 48px !important;
     margin: 4px 0 !important;
-    border-radius: 10px !important;
-    color: var(--el-text-color-regular) !important;
-    transition: all 0.3s ease !important;
+    border-radius: var(--radius-md) !important;
+    color: var(--text-regular) !important;
+    transition: background-color var(--duration-normal) var(--ease-out),
+        color var(--duration-normal) var(--ease-out) !important;
 
     &:hover {
-        background-color: var(--el-fill-color-light) !important;
-        color: #667eea !important;
+        background-color: var(--bg-overlay) !important;
+        color: var(--brand-primary) !important;
 
         .menu-icon {
-            color: #667eea !important;
+            color: var(--brand-primary) !important;
         }
     }
 
     &.is-active {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
-        color: #667eea !important;
-        font-weight: 600 !important;
+        background: var(--brand-gradient-soft) !important;
+        color: var(--brand-primary) !important;
+        font-weight: var(--fw-semibold) !important;
 
         .menu-icon {
-            color: #667eea !important;
+            color: var(--brand-primary) !important;
         }
     }
 
     .menu-icon {
         font-size: 18px !important;
         margin-right: 8px !important;
-        color: var(--el-text-color-secondary) !important;
-        transition: all 0.3s ease !important;
+        color: var(--text-secondary) !important;
+        transition: color var(--duration-normal) var(--ease-out) !important;
     }
 
     .menu-text {
-        font-size: 14px !important;
+        font-size: var(--fs-md) !important;
     }
 }
 
@@ -73,38 +74,39 @@ const props = defineProps({
         height: 48px !important;
         line-height: 48px !important;
         margin: 4px 0 !important;
-        border-radius: 10px !important;
-        color: var(--el-text-color-regular) !important;
-        transition: all 0.3s ease !important;
+        border-radius: var(--radius-md) !important;
+        color: var(--text-regular) !important;
+        transition: background-color var(--duration-normal) var(--ease-out),
+            color var(--duration-normal) var(--ease-out) !important;
 
         &:hover {
-            background-color: var(--el-fill-color-light) !important;
-            color: #667eea !important;
+            background-color: var(--bg-overlay) !important;
+            color: var(--brand-primary) !important;
 
             .menu-icon {
-                color: #667eea !important;
+                color: var(--brand-primary) !important;
             }
         }
 
         .menu-icon {
             font-size: 18px !important;
             margin-right: 8px !important;
-            color: var(--el-text-color-secondary) !important;
-            transition: all 0.3s ease !important;
+            color: var(--text-secondary) !important;
+            transition: color var(--duration-normal) var(--ease-out) !important;
         }
 
         .menu-text {
-            font-size: 14px !important;
+            font-size: var(--fs-md) !important;
         }
     }
 
     :deep(.el-sub-menu__icon-arrow) {
-        color: var(--el-text-color-secondary) !important;
-        transition: all 0.3s ease !important;
+        color: var(--text-secondary) !important;
+        transition: color var(--duration-normal) var(--ease-out) !important;
     }
 
     &:hover :deep(.el-sub-menu__icon-arrow) {
-        color: #667eea !important;
+        color: var(--brand-primary) !important;
     }
 }
 

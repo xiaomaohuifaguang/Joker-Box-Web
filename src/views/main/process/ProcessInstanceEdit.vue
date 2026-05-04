@@ -475,7 +475,7 @@ const reject = async () => {
 <style scoped lang="scss">
 .process-detail-container {
     padding: 32px;
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
     min-height: 100%;
     max-width: 1400px;
     margin: 0 auto;
@@ -483,11 +483,11 @@ const reject = async () => {
     // 页面头部
     .page-header {
         margin-bottom: 28px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border-radius: 20px;
         padding: 36px;
-        color: white;
-        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.35);
+        color: var(--text-on-brand);
+        box-shadow: var(--shadow-glow-strong);
         position: relative;
         overflow: hidden;
 
@@ -526,7 +526,7 @@ const reject = async () => {
                 align-items: center;
                 justify-content: center;
                 backdrop-filter: blur(12px);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+                box-shadow: var(--shadow-lg);
 
                 .el-icon {
                     font-size: 36px;
@@ -557,7 +557,7 @@ const reject = async () => {
                 border: none;
                 font-weight: 600;
                 backdrop-filter: blur(10px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                box-shadow: var(--shadow-md);
             }
         }
     }
@@ -566,16 +566,16 @@ const reject = async () => {
     .info-section,
     .timeline-section,
     .workorder-section {
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 16px;
         margin-bottom: 28px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--el-border-color-lighter);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
         overflow: hidden;
         transition: all 0.3s ease;
 
         &:hover {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow-lg);
         }
     }
 
@@ -584,15 +584,15 @@ const reject = async () => {
         align-items: center;
         gap: 14px;
         padding: 24px 28px;
-        border-bottom: 1px solid var(--el-border-color-lighter);
-        background: linear-gradient(180deg, var(--el-bg-color-overlay) 0%, var(--el-bg-color) 100%);
+        border-bottom: 1px solid var(--border-light);
+        background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-container) 100%);
 
         &.clickable {
             cursor: pointer;
             transition: all 0.3s ease;
 
             &:hover {
-                background: linear-gradient(180deg, var(--el-fill-color-light) 0%, var(--el-bg-color) 100%);
+                background: linear-gradient(180deg, var(--bg-overlay) 0%, var(--bg-container) 100%);
             }
         }
 
@@ -603,21 +603,21 @@ const reject = async () => {
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow-md);
 
             &.info {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
+                background: var(--brand-gradient);
+                color: var(--text-on-brand);
             }
 
             &.timeline {
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                color: white;
+                background: var(--data-grad-6);
+                color: var(--text-on-brand);
             }
 
             &.workorder {
-                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                color: white;
+                background: var(--data-grad-3);
+                color: var(--text-on-brand);
             }
 
             .el-icon {
@@ -628,20 +628,20 @@ const reject = async () => {
         .section-title {
             font-size: 18px;
             font-weight: 700;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             flex: 1;
         }
 
         .section-actions {
             .collapse-icon {
                 font-size: 20px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 padding: 8px;
                 border-radius: 8px;
 
                 &:hover {
-                    background: var(--el-fill-color-light);
+                    background: var(--bg-overlay);
                 }
 
                 &.is-collapsed {
@@ -663,9 +663,9 @@ const reject = async () => {
             align-items: center;
             gap: 18px;
             padding: 24px;
-            background: linear-gradient(135deg, var(--el-fill-color-light) 0%, var(--el-bg-color) 100%);
+            background: linear-gradient(135deg, var(--bg-overlay) 0%, var(--bg-container) 100%);
             border-radius: 16px;
-            border: 1px solid var(--el-border-color-lighter);
+            border: 1px solid var(--border-light);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -677,15 +677,15 @@ const reject = async () => {
                 left: 0;
                 width: 4px;
                 height: 100%;
-                background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(180deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
                 opacity: 0;
                 transition: opacity 0.3s ease;
             }
 
             &:hover {
                 transform: translateY(-4px);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-                border-color: var(--el-color-primary-light-3);
+                box-shadow: var(--shadow-lg);
+                border-color: var(--brand-primary-light);
 
                 &::before {
                     opacity: 1;
@@ -700,21 +700,21 @@ const reject = async () => {
                 align-items: center;
                 justify-content: center;
                 flex-shrink: 0;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                box-shadow: var(--shadow-md);
 
                 &.id {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
+                    background: var(--brand-gradient);
+                    color: var(--text-on-brand);
                 }
 
                 &.key {
-                    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                    color: white;
+                    background: var(--data-grad-6);
+                    color: var(--text-on-brand);
                 }
 
                 &.name {
-                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                    color: white;
+                    background: var(--data-grad-3);
+                    color: var(--text-on-brand);
                 }
 
                 .el-icon {
@@ -730,7 +730,7 @@ const reject = async () => {
 
                 .info-label {
                     font-size: 13px;
-                    color: var(--el-text-color-secondary);
+                    color: var(--text-secondary);
                     font-weight: 500;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
@@ -739,7 +739,7 @@ const reject = async () => {
                 .info-value {
                     font-size: 16px;
                     font-weight: 700;
-                    color: var(--el-text-color-primary);
+                    color: var(--text-primary);
                     word-break: break-all;
                 }
             }
@@ -756,32 +756,32 @@ const reject = async () => {
             :deep(.el-timeline-item__node) {
                 width: 16px;
                 height: 16px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                box-shadow: var(--shadow-sm);
             }
 
             :deep(.el-timeline-item__timestamp) {
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
                 font-size: 13px;
                 margin-bottom: 12px;
                 font-weight: 500;
             }
 
             :deep(.el-timeline-item__tail) {
-                border-left: 2px solid var(--el-border-color-lighter);
+                border-left: 2px solid var(--border-light);
             }
         }
 
         .timeline-card {
-            background: linear-gradient(135deg, var(--el-fill-color-light) 0%, var(--el-bg-color) 100%);
+            background: linear-gradient(135deg, var(--bg-overlay) 0%, var(--bg-container) 100%);
             border-radius: 16px;
             padding: 20px;
-            border: 1px solid var(--el-border-color-lighter);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
             transition: all 0.3s ease;
 
             &:hover {
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-                border-color: var(--el-border-color);
+                box-shadow: var(--shadow-md);
+                border-color: var(--border-base);
             }
 
             .timeline-header {
@@ -790,7 +790,7 @@ const reject = async () => {
                 align-items: center;
                 margin-bottom: 16px;
                 padding-bottom: 12px;
-                border-bottom: 1px solid var(--el-border-color-lighter);
+                border-bottom: 1px solid var(--border-light);
 
                 .task-info {
                     display: flex;
@@ -804,31 +804,31 @@ const reject = async () => {
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                        box-shadow: var(--shadow-sm);
 
                         &.apply {
-                            background: linear-gradient(135deg, var(--el-color-info-light-9) 0%, var(--el-color-info-light-8) 100%);
-                            color: var(--el-color-info);
+                            background: var(--info-bg);
+                            color: var(--info);
                         }
 
                         &.pass {
-                            background: linear-gradient(135deg, var(--el-color-success-light-9) 0%, var(--el-color-success-light-8) 100%);
-                            color: var(--el-color-success);
+                            background: var(--success-bg);
+                            color: var(--success);
                         }
 
                         &.reject {
-                            background: linear-gradient(135deg, var(--el-color-danger-light-9) 0%, var(--el-color-danger-light-8) 100%);
-                            color: var(--el-color-danger);
+                            background: var(--danger-bg);
+                            color: var(--danger);
                         }
 
                         &.transfer {
-                            background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-color-primary-light-8) 100%);
-                            color: var(--el-color-primary);
+                            background: var(--bg-overlay);
+                            color: var(--brand-primary);
                         }
 
                         &.system {
-                            background: linear-gradient(135deg, var(--el-color-warning-light-9) 0%, var(--el-color-warning-light-8) 100%);
-                            color: var(--el-color-warning);
+                            background: var(--warning-bg);
+                            color: var(--warning);
                         }
 
                         .el-icon {
@@ -839,7 +839,7 @@ const reject = async () => {
                     .task-name {
                         font-weight: 700;
                         font-size: 16px;
-                        color: var(--el-text-color-primary);
+                        color: var(--text-primary);
                     }
                 }
             }
@@ -860,7 +860,7 @@ const reject = async () => {
                         align-items: center;
                         gap: 8px;
                         font-size: 14px;
-                        color: var(--el-text-color-secondary);
+                        color: var(--text-secondary);
                         min-width: 80px;
                         flex-shrink: 0;
                         font-weight: 500;
@@ -872,16 +872,16 @@ const reject = async () => {
 
                     .row-value {
                         font-size: 15px;
-                        color: var(--el-text-color-regular);
+                        color: var(--text-regular);
                         flex: 1;
                         line-height: 1.6;
 
                         &.remark {
-                            background: var(--el-bg-color);
+                            background: var(--bg-container);
                             padding: 12px 16px;
                             border-radius: 10px;
-                            border-left: 4px solid var(--el-color-primary);
-                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+                            border-left: 4px solid var(--brand-primary);
+                            box-shadow: var(--shadow-sm);
                         }
                     }
                 }
@@ -894,7 +894,7 @@ const reject = async () => {
             align-items: center;
             justify-content: center;
             padding: 64px 48px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             gap: 16px;
 
             .el-icon {
@@ -921,15 +921,15 @@ const reject = async () => {
             flex-direction: column;
             gap: 8px;
             padding: 20px;
-            background: linear-gradient(135deg, var(--el-fill-color-light) 0%, var(--el-bg-color) 100%);
+            background: linear-gradient(135deg, var(--bg-overlay) 0%, var(--bg-container) 100%);
             border-radius: 14px;
-            border: 1px solid var(--el-border-color-lighter);
+            border: 1px solid var(--border-light);
             transition: all 0.3s ease;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-                border-color: var(--el-border-color);
+                box-shadow: var(--shadow-md);
+                border-color: var(--border-base);
             }
 
             &.full-width {
@@ -938,7 +938,7 @@ const reject = async () => {
 
             .item-label {
                 font-size: 12px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
                 text-transform: uppercase;
                 letter-spacing: 0.8px;
                 font-weight: 600;
@@ -947,11 +947,11 @@ const reject = async () => {
             .item-value {
                 font-size: 15px;
                 font-weight: 600;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
 
                 &.remark-text {
                     line-height: 1.7;
-                    color: var(--el-text-color-regular);
+                    color: var(--text-regular);
                     font-weight: 400;
                 }
             }
@@ -965,10 +965,10 @@ const reject = async () => {
         gap: 20px;
         padding: 36px 28px;
         flex-wrap: wrap;
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--el-border-color-lighter);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
 
         .action-btn {
             min-width: 160px;
@@ -981,7 +981,7 @@ const reject = async () => {
 
             &:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+                box-shadow: var(--shadow-lg);
             }
 
             &:active {
@@ -994,37 +994,37 @@ const reject = async () => {
             }
 
             &.primary {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 border: none;
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+                box-shadow: var(--shadow-md);
 
                 &:hover {
-                    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+                    box-shadow: var(--shadow-lg);
                 }
             }
 
             &.success {
-                background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                background: var(--data-grad-4);
                 border: none;
-                box-shadow: 0 4px 12px rgba(17, 153, 142, 0.25);
+                box-shadow: var(--shadow-md);
 
                 &:hover {
-                    box-shadow: 0 8px 24px rgba(17, 153, 142, 0.4);
+                    box-shadow: var(--shadow-lg);
                 }
             }
 
             &.danger {
-                background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+                background: var(--danger-bg);
                 border: none;
-                box-shadow: 0 4px 12px rgba(235, 51, 73, 0.25);
+                box-shadow: var(--shadow-md);
 
                 &:hover {
-                    box-shadow: 0 8px 24px rgba(235, 51, 73, 0.4);
+                    box-shadow: var(--shadow-lg);
                 }
             }
 
             &.warning {
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                background: var(--data-grad-6);
                 border: none;
                 box-shadow: 0 4px 12px rgba(240, 147, 251, 0.25);
 
@@ -1039,18 +1039,18 @@ const reject = async () => {
 // 转办对话框样式
 .transfer-dialog {
     :deep(.el-dialog__header) {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         margin: 0;
         padding: 24px 28px;
 
         .el-dialog__title {
-            color: white;
+            color: var(--text-on-brand);
             font-weight: 700;
             font-size: 18px;
         }
 
         .el-dialog__headerbtn .el-dialog__close {
-            color: white;
+            color: var(--text-on-brand);
             font-size: 20px;
             transition: all 0.3s ease;
 
@@ -1070,10 +1070,10 @@ const reject = async () => {
             align-items: center;
             gap: 10px;
             padding: 16px 20px;
-            background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-color-primary-light-8) 100%);
+            background: linear-gradient(135deg, var(--bg-overlay) 0%, var(--bg-overlay) 100%);
             border-radius: 12px;
             margin-bottom: 24px;
-            color: var(--el-color-primary);
+            color: var(--brand-primary);
             font-size: 15px;
             font-weight: 500;
 

@@ -159,7 +159,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .website-edit-container {
     padding: 24px;
-    background: var(--el-bg-color-page);
+    background: var(--bg-page);
 
     .content-wrapper {
         max-width: 900px;
@@ -175,7 +175,7 @@ onMounted(() => {
         .header-icon {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -195,13 +195,13 @@ onMounted(() => {
                 margin: 0 0 6px 0;
                 font-size: 20px;
                 font-weight: 600;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
             }
 
             p {
                 margin: 0;
                 font-size: 14px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
             }
         }
     }
@@ -209,7 +209,7 @@ onMounted(() => {
     .website-form {
         :deep(.el-form-item__label) {
             font-weight: 500;
-            color: var(--el-text-color-regular);
+            color: var(--text-regular);
             padding-bottom: 8px;
         }
 
@@ -223,7 +223,7 @@ onMounted(() => {
         justify-content: center;
         margin-top: 24px;
         padding-top: 20px;
-        border-top: 1px solid var(--el-border-color-lighter);
+        border-top: 1px solid var(--border-light);
 
         .save-button {
             min-width: 200px;
@@ -231,13 +231,13 @@ onMounted(() => {
             font-size: 16px;
             font-weight: 500;
             border-radius: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
             transition: all 0.3s;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                box-shadow: var(--shadow-glow-strong);
             }
         }
     }

@@ -88,8 +88,8 @@ const totalWebsites = computed(() => {
 });
 
 const getSiteColor = (name: string) => {
-    if (!name) return '#667eea'
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a', '#667eea', '#764ba2']
+    if (!name) return 'var(--brand-primary)'
+    const colors = ['var(--data-1)', 'var(--data-2)', 'var(--data-3)', 'var(--data-4)', 'var(--data-5)', 'var(--data-6)', 'var(--data-7)', 'var(--data-8)', 'var(--data-1)', 'var(--data-2)']
     const index = name.charCodeAt(0) % colors.length
     return colors[index]
 }
@@ -139,12 +139,12 @@ onMounted(() => {
 <style scoped lang="scss">
 .website-page {
     min-height: calc(100vh - 60px);
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
 }
 
 /* 页面头部 */
 .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     padding: 32px 0;
     margin-bottom: 24px;
 }
@@ -172,7 +172,7 @@ onMounted(() => {
 
         .el-icon {
             font-size: 32px;
-            color: white;
+            color: var(--text-on-brand);
         }
     }
 
@@ -181,7 +181,7 @@ onMounted(() => {
             margin: 0 0 8px 0;
             font-size: 28px;
             font-weight: 600;
-            color: white;
+            color: var(--text-on-brand);
         }
 
         p {
@@ -214,11 +214,11 @@ onMounted(() => {
 }
 
 .sidebar-card {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 20px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
 }
 
 .sidebar-header {
@@ -227,12 +227,12 @@ onMounted(() => {
     gap: 12px;
     margin-bottom: 20px;
     padding-bottom: 16px;
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    border-bottom: 1px solid var(--border-light);
 
     .header-icon {
         width: 36px;
         height: 36px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border-radius: 10px;
         display: flex;
         align-items: center;
@@ -240,14 +240,14 @@ onMounted(() => {
 
         .el-icon {
             font-size: 18px;
-            color: white;
+            color: var(--text-on-brand);
         }
     }
 
     .header-title {
         font-size: 16px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
     }
 }
 
@@ -263,22 +263,22 @@ onMounted(() => {
     gap: 10px;
     padding: 12px 14px;
     border-radius: 10px;
-    color: var(--el-text-color-regular);
+    color: var(--text-regular);
     text-decoration: none;
     font-size: 14px;
     transition: all 0.2s;
     cursor: pointer;
 
     &:hover {
-        background: var(--el-fill-color-light);
-        color: var(--el-text-color-primary);
+        background: var(--bg-overlay);
+        color: var(--text-primary);
         transform: translateX(4px);
     }
 
     &.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        background: var(--brand-gradient);
+        color: var(--text-on-brand);
+        box-shadow: var(--shadow-glow);
 
         .nav-dot {
             background: white;
@@ -286,7 +286,7 @@ onMounted(() => {
 
         .nav-badge {
             background: rgba(255, 255, 255, 0.2);
-            color: white;
+            color: var(--text-on-brand);
         }
     }
 }
@@ -295,7 +295,7 @@ onMounted(() => {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--el-border-color-dark);
+    background: var(--border-strong);
     flex-shrink: 0;
 }
 
@@ -309,11 +309,11 @@ onMounted(() => {
 
 .nav-badge {
     padding: 2px 10px;
-    background: var(--el-fill-color);
+    background: var(--bg-overlay);
     border-radius: 12px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--el-text-color-secondary);
+    color: var(--text-secondary);
     flex-shrink: 0;
 }
 
@@ -325,11 +325,11 @@ onMounted(() => {
 
 .group-block {
     margin-bottom: 40px;
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
 
     &:last-child {
         margin-bottom: 0;
@@ -342,20 +342,20 @@ onMounted(() => {
     gap: 12px;
     margin-bottom: 20px;
     padding-bottom: 16px;
-    border-bottom: 2px solid var(--el-border-color-lighter);
+    border-bottom: 2px solid var(--border-light);
 }
 
 .group-name {
     font-size: 20px;
     font-weight: 600;
-    color: var(--el-text-color-primary);
+    color: var(--text-primary);
     margin: 0;
 }
 
 .group-count {
     font-size: 14px;
-    color: var(--el-text-color-secondary);
-    background: var(--el-fill-color-light);
+    color: var(--text-secondary);
+    background: var(--bg-overlay);
     padding: 4px 12px;
     border-radius: 12px;
 }
@@ -372,15 +372,15 @@ onMounted(() => {
     align-items: flex-start;
     gap: 14px;
     padding: 20px;
-    background: var(--el-bg-color-page);
-    border: 1px solid var(--el-border-color-lighter);
+    background: var(--bg-page);
+    border: 1px solid var(--border-light);
     border-radius: 12px;
     text-decoration: none;
     transition: all 0.3s;
 
     &:hover {
-        border-color: #667eea;
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        border-color: var(--brand-primary);
+        box-shadow: var(--shadow-glow);
         transform: translateY(-4px);
     }
 }
@@ -403,7 +403,7 @@ onMounted(() => {
 
     .el-icon {
         font-size: 22px;
-        color: white;
+        color: var(--text-on-brand);
     }
 }
 
@@ -415,7 +415,7 @@ onMounted(() => {
 .site-title {
     font-size: 16px;
     font-weight: 600;
-    color: var(--el-text-color-primary);
+    color: var(--text-primary);
     margin: 0 0 6px 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -424,7 +424,7 @@ onMounted(() => {
 
 .site-desc {
     font-size: 13px;
-    color: var(--el-text-color-secondary);
+    color: var(--text-secondary);
     margin: 0 0 8px 0;
     line-height: 1.5;
     overflow: hidden;
@@ -439,7 +439,7 @@ onMounted(() => {
     align-items: center;
     gap: 4px;
     font-size: 12px;
-    color: #667eea;
+    color: var(--brand-primary);
     font-family: 'Consolas', monospace;
 
     .el-icon {

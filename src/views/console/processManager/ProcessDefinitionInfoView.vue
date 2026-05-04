@@ -92,7 +92,7 @@ onMounted(() => {
     flex-direction: column;
     height: calc(100vh - 64px);
     width: 100%;
-    background: var(--el-bg-color-page);
+    background: var(--bg-page);
     overflow: hidden;
 
     .editor-area {
@@ -100,7 +100,7 @@ onMounted(() => {
         min-height: 0;
         position: relative;
         overflow: auto;
-        background: var(--el-bg-color);
+        background: var(--bg-container);
 
         .editor-placeholder {
             height: 100%;
@@ -109,12 +109,12 @@ onMounted(() => {
             align-items: center;
             justify-content: center;
             gap: 12px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             font-size: 14px;
 
             .placeholder-icon {
                 font-size: 40px;
-                color: #667eea;
+                color: var(--brand-primary);
                 opacity: 0.6;
             }
         }
@@ -153,8 +153,8 @@ onMounted(() => {
         flex-shrink: 0;
         height: 72px;
         padding: 0 24px;
-        background: var(--el-bg-color);
-        border-top: 1px solid var(--el-border-color-lighter);
+        background: var(--bg-container);
+        border-top: 1px solid var(--border-light);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -166,27 +166,27 @@ onMounted(() => {
             align-items: center;
             gap: 8px;
             font-size: 14px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
 
             .el-icon {
                 font-size: 16px;
-                color: #667eea;
+                color: var(--brand-primary);
             }
         }
 
         .confirm-button {
             min-width: 160px;
             height: 44px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
             font-weight: 500;
             font-size: 15px;
             transition: all 0.3s ease;
 
             &:hover {
-                background: linear-gradient(135deg, #5a6fd8 0%, #6a4292 100%);
+                background: var(--brand-gradient-hover);
                 transform: translateY(-1px);
-                box-shadow: 0 4px 14px rgba(102, 126, 234, 0.45);
+                box-shadow: var(--shadow-glow-strong);
             }
 
             &:active {

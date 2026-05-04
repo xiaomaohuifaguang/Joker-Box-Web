@@ -107,10 +107,10 @@ onMounted(() => {
 <style scoped lang="scss">
 .dynamic-form-page {
     min-height: calc(100vh - 60px);
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
 
     .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         padding: 32px 0;
         margin-bottom: 24px;
 
@@ -137,7 +137,7 @@ onMounted(() => {
 
                 .el-icon {
                     font-size: 32px;
-                    color: white;
+                    color: var(--text-on-brand);
                 }
             }
 
@@ -146,7 +146,7 @@ onMounted(() => {
                     margin: 0 0 8px 0;
                     font-size: 28px;
                     font-weight: 600;
-                    color: white;
+                    color: var(--text-on-brand);
                 }
 
                 p {
@@ -166,11 +166,11 @@ onMounted(() => {
 
     .form-wrapper {
         .form-card {
-            background: var(--el-bg-color);
+            background: var(--bg-container);
             border-radius: 16px;
             padding: 32px;
-            box-shadow: var(--el-box-shadow-light);
-            border: 1px solid var(--el-border-color-lighter);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
             margin-bottom: 24px;
         }
 
@@ -184,13 +184,13 @@ onMounted(() => {
                 font-size: 16px;
                 font-weight: 500;
                 border-radius: 12px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 border: none;
                 transition: all 0.3s;
 
                 &:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                    box-shadow: var(--shadow-glow-strong);
                 }
             }
         }

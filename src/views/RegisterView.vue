@@ -69,12 +69,12 @@
                                         用户名
                                     </span>
                                 </template>
-                                <el-input 
-                                    v-model="ruleForm.username" 
-                                    size="large" 
+                                <el-input
+                                    v-model="ruleForm.username"
+                                    size="large"
                                     placeholder="4-18位英文字符或数字"
-                                    autocomplete="new-password" 
-                                    clearable 
+                                    autocomplete="new-password"
+                                    clearable
                                     class="custom-input" />
                             </el-form-item>
                         </div>
@@ -86,12 +86,12 @@
                                         昵称
                                     </span>
                                 </template>
-                                <el-input 
-                                    v-model="ruleForm.nickname" 
-                                    size="large" 
+                                <el-input
+                                    v-model="ruleForm.nickname"
+                                    size="large"
                                     placeholder="请输入您的昵称"
-                                    autocomplete="new-password" 
-                                    clearable 
+                                    autocomplete="new-password"
+                                    clearable
                                     class="custom-input" />
                             </el-form-item>
                         </div>
@@ -106,13 +106,13 @@
                                         密码
                                     </span>
                                 </template>
-                                <el-input 
-                                    v-model="ruleForm.password" 
-                                    type="password" 
-                                    size="large" 
+                                <el-input
+                                    v-model="ruleForm.password"
+                                    type="password"
+                                    size="large"
                                     placeholder="至少6位字符"
-                                    autocomplete="new-password" 
-                                    show-password 
+                                    autocomplete="new-password"
+                                    show-password
                                     class="custom-input" />
                             </el-form-item>
                         </div>
@@ -124,13 +124,13 @@
                                         确认密码
                                     </span>
                                 </template>
-                                <el-input 
-                                    v-model="ruleForm.passwordAgain" 
-                                    type="password" 
-                                    size="large" 
+                                <el-input
+                                    v-model="ruleForm.passwordAgain"
+                                    type="password"
+                                    size="large"
                                     placeholder="再次输入密码"
-                                    autocomplete="new-password" 
-                                    show-password 
+                                    autocomplete="new-password"
+                                    show-password
                                     class="custom-input" />
                             </el-form-item>
                         </div>
@@ -143,13 +143,13 @@
                                 邮箱
                             </span>
                         </template>
-                        <el-input 
-                            v-model="ruleForm.mail" 
-                            size="large" 
-                            type="email" 
+                        <el-input
+                            v-model="ruleForm.mail"
+                            size="large"
+                            type="email"
                             placeholder="请输入有效邮箱地址"
-                            autocomplete="new-password" 
-                            clearable 
+                            autocomplete="new-password"
+                            clearable
                             class="custom-input" />
                     </el-form-item>
 
@@ -161,16 +161,16 @@
                             </span>
                         </template>
                         <div class="code-input-group">
-                            <el-input 
-                                v-model="ruleForm.code" 
-                                size="large" 
+                            <el-input
+                                v-model="ruleForm.code"
+                                size="large"
                                 placeholder="请输入6位验证码"
                                 autocomplete="new-password"
                                 maxlength="6"
                                 class="custom-input code-input" />
-                            <el-button 
-                                @click="sndCode" 
-                                class="code-button" 
+                            <el-button
+                                @click="sndCode"
+                                class="code-button"
                                 :disabled="sendButtonText !== '发送'"
                                 :loading="isSendingCode">
                                 <el-icon v-if="sendButtonText === '发送'"><Promotion /></el-icon>
@@ -194,10 +194,10 @@
 
                 <!-- Card footer -->
                 <div class="card-footer">
-                    <el-button 
-                        type="primary" 
-                        size="large" 
-                        @click="register(ruleFormRef)" 
+                    <el-button
+                        type="primary"
+                        size="large"
+                        @click="register(ruleFormRef)"
                         class="register-button"
                         :loading="isRegistering"
                         :disabled="!agreedToTerms">
@@ -385,7 +385,7 @@ const toHome = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: var(--auth-bg);
     position: relative;
     overflow: hidden;
     padding: 20px;
@@ -413,7 +413,7 @@ const toHome = () => {
 .orb-1 {
     width: 400px;
     height: 400px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     top: -100px;
     left: -100px;
     animation-delay: 0s;
@@ -422,7 +422,7 @@ const toHome = () => {
 .orb-2 {
     width: 300px;
     height: 300px;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: var(--data-grad-2);
     bottom: -50px;
     right: -50px;
     animation-delay: -7s;
@@ -431,28 +431,19 @@ const toHome = () => {
 .orb-3 {
     width: 250px;
     height: 250px;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: var(--data-grad-3);
     top: 50%;
     left: 50%;
     animation-delay: -14s;
 }
 
 @keyframes float {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-    }
-    25% {
-        transform: translate(50px, -50px) scale(1.1);
-    }
-    50% {
-        transform: translate(-30px, 30px) scale(0.9);
-    }
-    75% {
-        transform: translate(30px, 50px) scale(1.05);
-    }
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(50px, -50px) scale(1.1); }
+    50% { transform: translate(-30px, 30px) scale(0.9); }
+    75% { transform: translate(30px, 50px) scale(1.05); }
 }
 
-/* 粒子效果 */
 .particles {
     position: absolute;
     top: 0;
@@ -496,24 +487,18 @@ const toHome = () => {
         transform: translateY(0) translateX(0);
         opacity: 0;
     }
-    10% {
-        opacity: 0.3;
-    }
-    90% {
-        opacity: 0.3;
-    }
-    50% {
-        transform: translateY(-100px) translateX(50px);
-    }
+    10% { opacity: 0.3; }
+    90% { opacity: 0.3; }
+    50% { transform: translateY(-100px) translateX(50px); }
 }
 
 /* 注册卡片 */
 .register-card {
     width: 1000px;
     min-height: 650px;
-    border-radius: 24px;
+    border-radius: var(--radius-xl);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bg-container);
     position: relative;
     display: flex;
     overflow: hidden;
@@ -532,11 +517,10 @@ const toHome = () => {
     }
 }
 
-/* 左侧区域 */
 .register-card-left {
     flex: 1;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--brand-gradient);
+    color: #fff;
     padding: 60px 50px;
     display: flex;
     flex-direction: column;
@@ -560,7 +544,7 @@ const toHome = () => {
     height: 100px;
     margin: 0 auto 20px;
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 24px;
+    border-radius: var(--radius-xl);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -590,7 +574,7 @@ const toHome = () => {
     font-weight: 700;
     margin-bottom: 10px;
     letter-spacing: 2px;
-    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -615,9 +599,9 @@ const toHome = () => {
     gap: 15px;
     padding: 15px 20px;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .feature-item:hover {
@@ -635,7 +619,6 @@ const toHome = () => {
     font-weight: 500;
 }
 
-/* 装饰形状 */
 .decorative-shapes {
     position: absolute;
     top: 0;
@@ -677,12 +660,8 @@ const toHome = () => {
 }
 
 @keyframes shape-float {
-    0%, 100% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    50% {
-        transform: translate(20px, -20px) rotate(180deg);
-    }
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(20px, -20px) rotate(180deg); }
 }
 
 /* 右侧表单区域 */
@@ -701,17 +680,17 @@ const toHome = () => {
     width: 40px;
     height: 40px;
     font-size: 18px;
-    background: transparent;
-    border: 2px solid #e4e7ed;
-    color: #909399;
-    transition: all 0.3s ease;
+    background: transparent !important;
+    border: 2px solid var(--border-base) !important;
+    color: var(--text-secondary) !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .home-button:hover {
-    color: #409eff;
-    border-color: #409eff;
+    color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
     transform: scale(1.1) rotate(5deg);
-    background: rgba(64, 158, 255, 0.1);
+    background: var(--bg-overlay) !important;
 }
 
 .card-header {
@@ -737,14 +716,14 @@ const toHome = () => {
 
 .register-title {
     font-size: 28px;
-    color: #303133;
+    color: var(--text-primary);
     font-weight: 700;
     margin-bottom: 8px;
 }
 
 .register-subtitle {
     font-size: 14px;
-    color: #909399;
+    color: var(--text-secondary);
     font-weight: 400;
 }
 
@@ -787,9 +766,9 @@ const toHome = () => {
     align-items: center;
     gap: 6px;
     font-size: 14px;
-    color: #303133;
+    color: var(--text-primary);
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
     width: 100%;
     box-sizing: border-box;
     min-height: 20px;
@@ -797,45 +776,43 @@ const toHome = () => {
 
 .field-label .el-icon {
     font-size: 18px;
-    color: #667eea;
-    transition: all 0.3s ease;
+    color: var(--brand-primary);
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .custom-form-item:focus-within .field-label .el-icon {
-    color: #764ba2;
+    color: var(--brand-secondary);
     transform: scale(1.1);
 }
 
 .custom-input :deep(.el-input__wrapper) {
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 0 0 1px #e4e7ed inset;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border-base) inset;
     padding: 0 20px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: rgba(255, 255, 255, 0.95);
+    transition: all var(--duration-normal) var(--ease-out);
+    background: var(--bg-input);
 }
 
 .custom-input :deep(.el-input__wrapper:hover) {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 0 0 1px #667eea inset;
-    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--brand-primary) inset;
 }
 
 .custom-input :deep(.el-input__wrapper.is-focus) {
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2), 0 0 0 2px #667eea inset;
-    background: white;
+    box-shadow: 0 6px 16px var(--bg-overlay-strong), 0 0 0 2px var(--brand-primary) inset;
     transform: translateY(-2px);
 }
 
 .custom-input :deep(.el-input__inner) {
     height: 50px;
     font-size: 15px;
-    color: #303133;
+    color: var(--text-primary);
     font-weight: 400;
 }
 
 /* 表单验证反馈 */
 .custom-form-item :deep(.el-form-item__error) {
     font-size: 12px;
-    color: #f56c6c;
+    color: var(--danger);
     margin-top: 6px;
     animation: shake 0.5s ease-in-out;
 }
@@ -846,13 +823,11 @@ const toHome = () => {
     75% { transform: translateX(4px); }
 }
 
-/* 表单标签动画 */
 .custom-form-item:focus-within .field-label {
-    color: #667eea;
+    color: var(--brand-primary);
     transform: translateY(-2px);
 }
 
-/* 验证码输入组 */
 .code-input-group {
     display: flex;
     gap: 12px;
@@ -866,11 +841,11 @@ const toHome = () => {
     width: 130px;
     height: 46px;
     font-size: 14px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    border-radius: var(--radius-md);
+    background: var(--brand-gradient);
+    color: var(--text-on-brand);
     border: none;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -879,16 +854,15 @@ const toHome = () => {
 
 .code-button:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: var(--shadow-glow-strong);
 }
 
 .code-button:disabled {
-    background: #dcdfe6;
-    color: #909399;
+    background: var(--bg-input);
+    color: var(--text-disabled);
     cursor: not-allowed;
 }
 
-/* 协议部分 */
 .agreement-section {
     margin: 15px 0 20px;
     animation: fade-in-up 0.5s ease-out 0.4s both;
@@ -896,7 +870,7 @@ const toHome = () => {
 
 .agreement-checkbox :deep(.el-checkbox__label) {
     font-size: 13px;
-    color: #606266;
+    color: var(--text-secondary);
 }
 
 .agreement-text {
@@ -904,18 +878,17 @@ const toHome = () => {
 }
 
 .agreement-link {
-    color: #667eea;
+    color: var(--brand-primary);
     text-decoration: none;
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .agreement-link:hover {
-    color: #764ba2;
+    color: var(--brand-primary-hover);
     text-decoration: underline;
 }
 
-/* 按钮样式 */
 .card-footer {
     animation: fade-in-up 0.5s ease-out 0.5s both;
 }
@@ -925,16 +898,17 @@ const toHome = () => {
     height: 52px;
     font-size: 16px;
     font-weight: 600;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--radius-md);
+    background: var(--brand-gradient) !important;
     border: none;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
     letter-spacing: 2px;
+    color: var(--text-on-brand) !important;
 }
 
 .register-button:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: var(--shadow-glow-strong);
 }
 
 .register-button:active:not(:disabled) {
@@ -942,33 +916,32 @@ const toHome = () => {
 }
 
 .register-button:disabled {
-    background: #c0c4cc;
+    background: var(--bg-input) !important;
+    color: var(--text-disabled) !important;
     cursor: not-allowed;
 }
 
-/* 登录链接 */
 .login-link {
     text-align: center;
     margin-top: 20px;
     font-size: 14px;
-    color: #606266;
+    color: var(--text-secondary);
     animation: fade-in-up 0.5s ease-out 0.6s both;
 }
 
 .login-link a {
-    color: #667eea;
+    color: var(--brand-primary);
     text-decoration: none;
     font-weight: 600;
     margin-left: 5px;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .login-link a:hover {
-    color: #764ba2;
+    color: var(--brand-primary-hover);
     text-decoration: underline;
 }
 
-/* 响应式设计 */
 @media (max-width: 900px) {
     .register-card {
         width: 100%;
@@ -995,7 +968,7 @@ const toHome = () => {
         border-radius: 0;
         min-height: 100vh;
     }
-    
+
     .register-card-right {
         padding: 30px 20px;
     }

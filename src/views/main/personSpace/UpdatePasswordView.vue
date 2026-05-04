@@ -255,11 +255,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 .password-page {
   .password-card,
   .tips-card {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
     margin-bottom: 24px;
 
     .card-header {
@@ -268,24 +268,24 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       gap: 12px;
       margin-bottom: 24px;
       padding-bottom: 16px;
-      border-bottom: 1px solid var(--el-border-color-lighter);
+      border-bottom: 1px solid var(--border-light);
 
       .header-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
 
         &.tips {
-          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+          background: var(--data-grad-6);
         }
 
         .el-icon {
           font-size: 20px;
-          color: white;
+          color: var(--text-on-brand);
         }
       }
 
@@ -297,12 +297,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         .header-title {
           font-size: 18px;
           font-weight: 600;
-          color: var(--el-text-color-primary);
+          color: var(--text-primary);
         }
 
         .header-subtitle {
           font-size: 13px;
-          color: var(--el-text-color-secondary);
+          color: var(--text-secondary);
         }
       }
     }
@@ -311,7 +311,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   .password-form {
     :deep(.el-form-item__label) {
       font-weight: 500;
-      color: var(--el-text-color-regular);
+      color: var(--text-regular);
       padding-bottom: 8px;
     }
 
@@ -329,7 +329,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       .strength-bar-container {
         flex: 1;
         height: 6px;
-        background: var(--el-fill-color-light);
+        background: var(--bg-overlay);
         border-radius: 3px;
         overflow: hidden;
 
@@ -340,17 +340,17 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
           &.strength-weak {
             width: 33%;
-            background: var(--el-color-danger);
+            background: var(--danger);
           }
 
           &.strength-medium {
             width: 66%;
-            background: var(--el-color-warning);
+            background: var(--warning);
           }
 
           &.strength-strong {
             width: 100%;
-            background: var(--el-color-success);
+            background: var(--success);
           }
         }
       }
@@ -361,15 +361,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         min-width: 50px;
 
         &.strength-weak {
-          color: var(--el-color-danger);
+          color: var(--danger);
         }
 
         &.strength-medium {
-          color: var(--el-color-warning);
+          color: var(--warning);
         }
 
         &.strength-strong {
-          color: var(--el-color-success);
+          color: var(--success);
         }
       }
     }
@@ -380,11 +380,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       align-items: center;
       gap: 6px;
       font-size: 13px;
-      color: var(--el-text-color-secondary);
+      color: var(--text-secondary);
 
       .el-icon {
         font-size: 14px;
-        color: var(--el-color-info);
+        color: var(--info);
       }
     }
 
@@ -398,13 +398,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         border-radius: 10px;
         font-size: 15px;
         font-weight: 500;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border: none;
         transition: all 0.3s ease;
 
         &:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+          box-shadow: var(--shadow-glow-strong);
         }
 
         .el-icon {
@@ -421,7 +421,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       align-items: center;
       gap: 12px;
       padding: 12px 0;
-      border-bottom: 1px solid var(--el-border-color-lighter);
+      border-bottom: 1px solid var(--border-light);
 
       &:last-child {
         border-bottom: none;
@@ -435,7 +435,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       .tip-icon {
         width: 24px;
         height: 24px;
-        background: var(--el-color-success-light-9);
+        background: var(--success-bg);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -444,13 +444,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
         .el-icon {
           font-size: 14px;
-          color: var(--el-color-success);
+          color: var(--success);
         }
       }
 
       span {
         font-size: 14px;
-        color: var(--el-text-color-regular);
+        color: var(--text-regular);
       }
     }
   }

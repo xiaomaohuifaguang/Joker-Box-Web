@@ -296,11 +296,11 @@ onMounted(() => {
   .info-card,
   .role-card,
   .org-card {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
     margin-bottom: 24px;
 
     .card-header {
@@ -309,7 +309,7 @@ onMounted(() => {
       gap: 12px;
       margin-bottom: 20px;
       padding-bottom: 16px;
-      border-bottom: 1px solid var(--el-border-color-lighter);
+      border-bottom: 1px solid var(--border-light);
 
       .header-icon {
         width: 40px;
@@ -325,22 +325,22 @@ onMounted(() => {
         }
 
         &:not(.role):not(.org) {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: var(--brand-gradient);
         }
 
         &.role {
-          background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+          background: var(--data-grad-4);
         }
 
         &.org {
-          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+          background: var(--data-grad-3);
         }
       }
 
       .header-title {
         font-size: 18px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
         flex: 1;
       }
 
@@ -353,7 +353,7 @@ onMounted(() => {
       .info-form {
         :deep(.el-form-item__label) {
           font-weight: 500;
-          color: var(--el-text-color-regular);
+          color: var(--text-regular);
           padding-bottom: 8px;
         }
 
@@ -368,7 +368,7 @@ onMounted(() => {
         align-items: center;
         justify-content: center;
         padding: 48px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         gap: 12px;
 
         .el-icon {
@@ -401,15 +401,15 @@ onMounted(() => {
           }
 
           &.role-tag {
-            background: var(--el-color-success-light-9);
-            border-color: var(--el-color-success-light-5);
-            color: var(--el-color-success);
+            background: var(--success-bg);
+            border-color: var(--success);
+            color: var(--success);
           }
 
           &.org-tag {
-            background: var(--el-color-primary-light-9);
-            border-color: var(--el-color-primary-light-5);
-            color: var(--el-color-primary);
+            background: var(--bg-overlay);
+            border-color: var(--brand-primary-light);
+            color: var(--brand-primary);
           }
         }
       }
@@ -419,7 +419,7 @@ onMounted(() => {
 
 .add-dialog {
   :deep(.el-dialog__header) {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     margin: 0;
     padding: 20px 24px;
 
@@ -439,7 +439,7 @@ onMounted(() => {
 
   :deep(.el-dialog__footer) {
     padding: 16px 24px;
-    border-top: 1px solid var(--el-border-color-lighter);
+    border-top: 1px solid var(--border-light);
   }
 }
 

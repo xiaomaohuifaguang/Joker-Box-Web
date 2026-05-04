@@ -67,7 +67,7 @@
                 <el-col :span="18" :offset="3">
                     <el-row :gutter="20">
                         <el-col :xs="12" :sm="6" v-for="(item, idx) in stats" :key="idx">
-                            <div class="stat-card" :style="{ '--c1': item.c1, '--c2': item.c2 }">
+                            <div class="stat-card" :style="{ '--grad': item.grad }">
                                 <div class="stat-icon">
                                     <el-icon><component :is="item.icon" /></el-icon>
                                 </div>
@@ -102,9 +102,9 @@
                     </div>
                     <el-row :gutter="20">
                         <el-col :xs="12" :sm="8" :md="6" v-for="(f, idx) in features" :key="idx">
-                            <div class="feature-card" @click="goTo(f.path)">
-                                <div class="feature-bg" :style="{ background: f.bg }"></div>
-                                <div class="feature-icon" :style="{ color: f.color }">
+                            <div class="feature-card" :style="{ '--grad': f.bg }" @click="goTo(f.path)">
+                                <div class="feature-bg"></div>
+                                <div class="feature-icon">
                                     <el-icon><component :is="f.icon" /></el-icon>
                                 </div>
                                 <div class="feature-name">{{ f.name }}</div>
@@ -269,24 +269,24 @@ const carouselList = ref([
     },
 ]);
 
-// ========== 数据统计 ==========
+// ========== 数据统计（grad 引用主题数据色梯度，随主题切换） ==========
 const stats = ref([
-    { label: '今日访问', value: '1,286', trend: 12, icon: markRaw(View), c1: '#667eea', c2: '#764ba2' },
-    { label: '论坛帖子', value: '342', trend: 8, icon: markRaw(ChatDotRound), c1: '#f093fb', c2: '#f5576c' },
-    { label: '工具调用', value: '5,721', trend: 21, icon: markRaw(Tools), c1: '#4facfe', c2: '#00f2fe' },
-    { label: '在线用户', value: '78', trend: -3, icon: markRaw(User), c1: '#43e97b', c2: '#38f9d7' },
+    { label: '今日访问', value: '1,286', trend: 12, icon: markRaw(View), grad: 'var(--data-grad-1)' },
+    { label: '论坛帖子', value: '342', trend: 8, icon: markRaw(ChatDotRound), grad: 'var(--data-grad-2)' },
+    { label: '工具调用', value: '5,721', trend: 21, icon: markRaw(Tools), grad: 'var(--data-grad-3)' },
+    { label: '在线用户', value: '78', trend: -3, icon: markRaw(User), grad: 'var(--data-grad-4)' },
 ]);
 
-// ========== 快捷功能 ==========
+// ========== 快捷功能（bg 引用主题数据色梯度，随主题切换） ==========
 const features = ref([
-    { name: '网站收藏', desc: '常用网站，一键直达', icon: markRaw(Collection), color: '#fff', bg: 'linear-gradient(135deg,#667eea,#764ba2)', path: '/website' },
-    { name: '码头', desc: '文件存储与共享', icon: markRaw(Folder), color: '#fff', bg: 'linear-gradient(135deg,#11998e,#38ef7d)', path: '/file-server' },
-    { name: '代码生成器', desc: '快速生成 CRUD', icon: markRaw(Cpu), color: '#fff', bg: 'linear-gradient(135deg,#f12711,#f5af19)', path: '/code-maker' },
-    { name: '流程审批', desc: '可视化流程引擎', icon: markRaw(Promotion), color: '#fff', bg: 'linear-gradient(135deg,#3a7bd5,#3a6073)', path: '/process' },
-    { name: '干大事论坛', desc: '分享你的故事', icon: markRaw(ChatDotRound), color: '#fff', bg: 'linear-gradient(135deg,#fc5c7d,#6a82fb)', path: '/ganDaShi' },
-    { name: 'JSON 工具', desc: '格式化 & 校验', icon: markRaw(Tickets), color: '#fff', bg: 'linear-gradient(135deg,#0ba360,#3cba92)', path: '/tools/jsonFormat' },
-    { name: '个人空间', desc: '管理你的主页', icon: markRaw(User), color: '#fff', bg: 'linear-gradient(135deg,#ee0979,#ff6a00)', path: '/person-space' },
-    { name: '签到打卡', desc: '坚持每一天', icon: markRaw(Star), color: '#fff', bg: 'linear-gradient(135deg,#834d9b,#d04ed6)', path: '/tools/signInCard' },
+    { name: '网站收藏', desc: '常用网站，一键直达', icon: markRaw(Collection), bg: 'var(--data-grad-1)', path: '/website' },
+    { name: '码头', desc: '文件存储与共享', icon: markRaw(Folder), bg: 'var(--data-grad-4)', path: '/file-server' },
+    { name: '代码生成器', desc: '快速生成 CRUD', icon: markRaw(Cpu), bg: 'var(--data-grad-5)', path: '/code-maker' },
+    { name: '流程审批', desc: '可视化流程引擎', icon: markRaw(Promotion), bg: 'var(--data-grad-3)', path: '/process' },
+    { name: '干大事论坛', desc: '分享你的故事', icon: markRaw(ChatDotRound), bg: 'var(--data-grad-2)', path: '/ganDaShi' },
+    { name: 'JSON 工具', desc: '格式化 & 校验', icon: markRaw(Tickets), bg: 'var(--data-grad-4)', path: '/tools/jsonFormat' },
+    { name: '个人空间', desc: '管理你的主页', icon: markRaw(User), bg: 'var(--data-grad-6)', path: '/person-space' },
+    { name: '签到打卡', desc: '坚持每一天', icon: markRaw(Star), bg: 'var(--data-grad-1)', path: '/tools/signInCard' },
 ]);
 
 // ========== 公告 / 动态 ==========
@@ -299,11 +299,11 @@ const notices = ref([
 ]);
 
 const dynamics = ref([
-    { title: '发布了新的代码片段：Vue3 自定义指令', user: '@张三', time: '2 分钟前', color: '#667eea' },
-    { title: '在论坛回复了《如何优雅地写文档》', user: '@李四', time: '15 分钟前', color: '#f5576c' },
-    { title: '上传了新文件到「码头」', user: '@王五', time: '1 小时前', color: '#43e97b' },
-    { title: '完成了一项流程审批', user: '@赵六', time: '3 小时前', color: '#f5af19' },
-    { title: '更新了个人主页的封面', user: '@小七', time: '昨天', color: '#a18cd1' },
+    { title: '发布了新的代码片段：Vue3 自定义指令', user: '@张三', time: '2 分钟前', color: 'var(--data-1)' },
+    { title: '在论坛回复了《如何优雅地写文档》', user: '@李四', time: '15 分钟前', color: 'var(--data-2)' },
+    { title: '上传了新文件到「码头」', user: '@王五', time: '1 小时前', color: 'var(--data-4)' },
+    { title: '完成了一项流程审批', user: '@赵六', time: '3 小时前', color: 'var(--data-5)' },
+    { title: '更新了个人主页的封面', user: '@小七', time: '昨天', color: 'var(--data-3)' },
 ]);
 
 // ========== 底部诗句 ==========
@@ -324,7 +324,7 @@ function goTo(path: string) {
 <style scoped>
 .index-page {
     padding: 24px 0 48px;
-    background: linear-gradient(180deg, #f6f8ff 0%, #ffffff 30%, #ffffff 100%);
+    background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-page) 30%, var(--bg-page) 100%);
     min-height: 100%;
 }
 
@@ -351,9 +351,9 @@ function goTo(path: string) {
     animation: float 12s ease-in-out infinite;
 }
 
-.blob-1 { width: 280px; height: 280px; background: #a18cd1; top: -60px; left: 8%; }
-.blob-2 { width: 220px; height: 220px; background: #fbc2eb; top: 30px; right: 12%; animation-delay: -4s; }
-.blob-3 { width: 200px; height: 200px; background: #84fab0; bottom: -80px; left: 35%; animation-delay: -8s; }
+.blob-1 { width: 280px; height: 280px; background: var(--data-1); top: -60px; left: 8%; }
+.blob-2 { width: 220px; height: 220px; background: var(--data-2); top: 30px; right: 12%; animation-delay: -4s; }
+.blob-3 { width: 200px; height: 200px; background: var(--data-3); bottom: -80px; left: 35%; animation-delay: -8s; }
 
 @keyframes float {
     0%, 100% { transform: translate(0, 0) scale(1); }
@@ -375,35 +375,35 @@ function goTo(path: string) {
     align-items: center;
     gap: 6px;
     padding: 6px 14px;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--bg-container);
     backdrop-filter: blur(8px);
-    border-radius: 20px;
-    font-size: 13px;
-    color: #5d6b8a;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
 }
 
-.greet-icon { color: #f5af19; }
+.greet-icon { color: var(--warning); }
 
 .hero-title {
-    font-size: 36px;
-    font-weight: 700;
+    font-size: var(--fs-3xl);
+    font-weight: var(--fw-bold);
     margin: 16px 0 8px;
-    color: #1f2a44;
-    letter-spacing: 1px;
+    color: var(--text-primary);
+    letter-spacing: var(--ls-wide);
 }
 
 .brand {
-    background: linear-gradient(135deg, #667eea, #764ba2 60%, #f5576c);
+    background: var(--brand-gradient-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .hero-subtitle {
-    color: #7a86a4;
-    font-size: 14px;
+    color: var(--text-secondary);
+    font-size: var(--fs-md);
     margin: 0 0 18px;
 }
 
@@ -412,18 +412,18 @@ function goTo(path: string) {
 .hero-clock {
     text-align: right;
     padding: 16px 24px;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--bg-container);
     backdrop-filter: blur(8px);
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
 }
 
 .clock-time {
     font-size: 38px;
-    font-weight: 600;
+    font-weight: var(--fw-semibold);
     font-family: 'Consolas', 'Monaco', monospace;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: var(--brand-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -431,10 +431,10 @@ function goTo(path: string) {
 }
 
 .clock-date {
-    font-size: 13px;
-    color: #7a86a4;
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
     margin-top: 2px;
-    letter-spacing: 1px;
+    letter-spacing: var(--ls-wide);
 }
 
 /* ========== 轮播 ========== */
@@ -444,10 +444,10 @@ function goTo(path: string) {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    color: white;
-    border-radius: 12px;
+    color: var(--text-on-brand);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(31, 42, 68, 0.18);
+    box-shadow: var(--shadow-lg);
 }
 
 :deep(.el-carousel__item:nth-child(2n)),
@@ -459,7 +459,7 @@ function goTo(path: string) {
     position: absolute;
     inset: 0;
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.55) 100%);
-    transition: opacity 0.4s;
+    transition: opacity var(--duration-normal) var(--ease-out);
 }
 
 .carousel-text {
@@ -474,15 +474,15 @@ function goTo(path: string) {
 
 .carousel-text h3 {
     margin: 0 0 4px;
-    font-size: 20px;
-    font-weight: 500;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-    letter-spacing: 1px;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-medium);
+    text-shadow: var(--shadow-lg);
+    letter-spacing: var(--ls-wide);
 }
 
 .carousel-text p {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--fs-xs);
     opacity: 0.85;
     letter-spacing: 2px;
 }
@@ -493,66 +493,68 @@ function goTo(path: string) {
 .stat-card {
     position: relative;
     padding: 20px;
-    background: #fff;
-    border-radius: 14px;
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     gap: 14px;
-    box-shadow: 0 4px 16px rgba(31, 42, 68, 0.06);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform var(--duration-normal) var(--ease-out),
+        box-shadow var(--duration-normal) var(--ease-out);
     margin-bottom: 16px;
+    border: 1px solid var(--border-light);
 }
 
 .stat-card::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, var(--c1), var(--c2));
+    background: var(--grad);
     opacity: 0.06;
     pointer-events: none;
 }
 
 .stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(31, 42, 68, 0.12);
+    box-shadow: var(--shadow-lg);
 }
 
 .stat-icon {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--c1), var(--c2));
-    color: #fff;
+    border-radius: var(--radius-md);
+    background: var(--grad);
+    color: var(--text-on-brand);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 22px;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
     flex-shrink: 0;
 }
 
 .stat-info { flex: 1; min-width: 0; }
 .stat-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f2a44;
-    line-height: 1.2;
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
+    color: var(--text-primary);
+    line-height: var(--lh-tight);
     font-family: 'Consolas', 'Monaco', sans-serif;
 }
-.stat-label { font-size: 12px; color: #7a86a4; margin-top: 2px; }
+.stat-label { font-size: var(--fs-xs); color: var(--text-secondary); margin-top: 2px; }
 
 .stat-trend {
-    font-size: 12px;
+    font-size: var(--fs-xs);
     display: inline-flex;
     align-items: center;
     gap: 2px;
     padding: 3px 8px;
-    border-radius: 8px;
-    font-weight: 600;
+    border-radius: var(--radius-sm);
+    font-weight: var(--fw-semibold);
 }
-.stat-trend.up { color: #11b76b; background: rgba(17, 183, 107, 0.1); }
-.stat-trend.down { color: #f56c6c; background: rgba(245, 108, 108, 0.1); }
+.stat-trend.up { color: var(--success); background: var(--success-bg); }
+.stat-trend.down { color: var(--danger); background: var(--danger-bg); }
 
 /* ========== 通用 section header ========== */
 .section-header {
@@ -566,17 +568,17 @@ function goTo(path: string) {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1f2a44;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
 }
 
 .title-icon {
-    color: #667eea;
+    color: var(--brand-primary);
     font-size: 20px;
 }
 
-.section-tip { font-size: 12px; color: #a0a8be; }
+.section-tip { font-size: var(--fs-xs); color: var(--text-placeholder); }
 
 /* ========== 功能卡 ========== */
 .features-section { margin-bottom: 32px; }
@@ -584,34 +586,38 @@ function goTo(path: string) {
 .feature-card {
     position: relative;
     padding: 22px 18px 20px;
-    border-radius: 14px;
-    background: #fff;
+    border-radius: var(--radius-lg);
+    background: var(--bg-container);
     cursor: pointer;
     overflow: hidden;
-    transition: transform 0.35s, box-shadow 0.35s;
-    box-shadow: 0 4px 14px rgba(31, 42, 68, 0.06);
+    transition: transform var(--duration-normal) var(--ease-out),
+        box-shadow var(--duration-normal) var(--ease-out);
+    box-shadow: var(--shadow-sm);
     margin-bottom: 16px;
     min-height: 130px;
+    border: 1px solid var(--border-light);
 }
 
 .feature-bg {
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 0.35s;
+    background: var(--grad);
+    transition: opacity var(--duration-normal) var(--ease-out);
 }
 
 .feature-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 14px 30px rgba(31, 42, 68, 0.16);
+    box-shadow: var(--shadow-lg);
 }
 
 .feature-card:hover .feature-bg { opacity: 1; }
 .feature-card:hover .feature-name,
 .feature-card:hover .feature-desc,
-.feature-card:hover .feature-arrow { color: #fff; }
+.feature-card:hover .feature-arrow { color: var(--text-on-brand); }
 .feature-card:hover .feature-icon {
-    color: #fff !important;
+    color: var(--text-on-brand);
+    background: rgba(255, 255, 255, 0.18);
     transform: scale(1.1) rotate(-6deg);
 }
 
@@ -621,32 +627,34 @@ function goTo(path: string) {
     font-size: 28px;
     width: 48px;
     height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #f5f7fc, #eef0fa);
+    border-radius: var(--radius-md);
+    background: var(--brand-gradient-soft);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
-    transition: all 0.4s;
-    color: #667eea !important;
+    transition: background var(--duration-normal) var(--ease-out),
+        color var(--duration-normal) var(--ease-out),
+        transform var(--duration-normal) var(--ease-out);
+    color: var(--brand-primary);
 }
 
 .feature-name {
     position: relative;
     z-index: 1;
-    font-size: 15px;
-    font-weight: 600;
-    color: #1f2a44;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
     margin-bottom: 4px;
-    transition: color 0.35s;
+    transition: color var(--duration-normal) var(--ease-out);
 }
 
 .feature-desc {
     position: relative;
     z-index: 1;
-    font-size: 12px;
-    color: #7a86a4;
-    transition: color 0.35s;
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    transition: color var(--duration-normal) var(--ease-out);
 }
 
 .feature-arrow {
@@ -654,8 +662,9 @@ function goTo(path: string) {
     z-index: 1;
     top: 18px;
     right: 18px;
-    color: #c5cbe0;
-    transition: transform 0.35s, color 0.35s;
+    color: var(--text-placeholder);
+    transition: transform var(--duration-normal) var(--ease-out),
+        color var(--duration-normal) var(--ease-out);
 }
 
 .feature-card:hover .feature-arrow {
@@ -666,11 +675,12 @@ function goTo(path: string) {
 .info-section { margin-bottom: 32px; }
 
 .info-card {
-    background: #fff;
-    border-radius: 14px;
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
     padding: 18px 20px 8px;
-    box-shadow: 0 4px 14px rgba(31, 42, 68, 0.06);
+    box-shadow: var(--shadow-sm);
     margin-bottom: 16px;
+    border: 1px solid var(--border-light);
 }
 
 .info-header {
@@ -679,38 +689,38 @@ function goTo(path: string) {
     align-items: center;
     margin-bottom: 12px;
     padding-bottom: 12px;
-    border-bottom: 1px dashed #eef0fa;
+    border-bottom: 1px dashed var(--border-divider);
 }
 
 .info-title {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1f2a44;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
 }
 
 .info-icon {
     font-size: 18px;
     width: 28px;
     height: 28px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.info-icon.notice { background: rgba(245, 175, 25, 0.12); color: #f5af19; }
-.info-icon.dynamic { background: rgba(102, 126, 234, 0.12); color: #667eea; }
+.info-icon.notice { background: var(--warning-bg); color: var(--warning); }
+.info-icon.dynamic { background: var(--bg-overlay); color: var(--brand-primary); }
 
 .info-more {
-    font-size: 12px;
-    color: #a0a8be;
+    font-size: var(--fs-xs);
+    color: var(--text-placeholder);
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color var(--duration-fast) var(--ease-out);
 }
-.info-more:hover { color: #667eea; }
+.info-more:hover { color: var(--brand-primary); }
 
 .info-list {
     list-style: none;
@@ -723,26 +733,26 @@ function goTo(path: string) {
     align-items: center;
     gap: 10px;
     padding: 10px 0;
-    border-bottom: 1px dashed #f3f5fb;
-    font-size: 13px;
+    border-bottom: 1px dashed var(--border-divider);
+    font-size: var(--fs-sm);
 }
 .info-list li:last-child { border-bottom: none; }
 
 .info-list .info-text {
     flex: 1;
-    color: #4a5573;
+    color: var(--text-regular);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: color 0.2s;
+    transition: color var(--duration-fast) var(--ease-out);
     cursor: pointer;
 }
 
-.info-list li:hover .info-text { color: #667eea; }
+.info-list li:hover .info-text { color: var(--brand-primary); }
 
 .info-list .info-date {
-    font-size: 12px;
-    color: #a0a8be;
+    font-size: var(--fs-xs);
+    color: var(--text-placeholder);
     flex-shrink: 0;
 }
 
@@ -765,7 +775,7 @@ function goTo(path: string) {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 0 0 3px var(--bg-overlay);
     z-index: 1;
 }
 
@@ -775,20 +785,20 @@ function goTo(path: string) {
     top: 16px;
     bottom: -4px;
     width: 1px;
-    background: #eef0fa;
+    background: var(--border-divider);
 }
 
 .info-timeline li:last-child .line { display: none; }
 
 .info-timeline .content-title {
-    font-size: 13px;
-    color: #4a5573;
-    line-height: 1.5;
+    font-size: var(--fs-sm);
+    color: var(--text-regular);
+    line-height: var(--lh-normal);
 }
 
 .info-timeline .content-meta {
-    font-size: 12px;
-    color: #a0a8be;
+    font-size: var(--fs-xs);
+    color: var(--text-placeholder);
     margin-top: 2px;
     display: flex;
     gap: 12px;
@@ -800,12 +810,12 @@ function goTo(path: string) {
 .quote-banner {
     position: relative;
     padding: 36px 60px;
-    background: linear-gradient(135deg, #1f2a44 0%, #2d3a5f 60%, #4a3f6b 100%);
-    border-radius: 16px;
+    background: var(--auth-bg);
+    border-radius: var(--radius-lg);
     text-align: center;
-    color: #fff;
+    color: var(--text-on-dark);
     overflow: hidden;
-    box-shadow: 0 12px 30px rgba(31, 42, 68, 0.25);
+    box-shadow: var(--shadow-lg);
 }
 
 .quote-banner::before,
@@ -823,17 +833,17 @@ function goTo(path: string) {
 
 .quote-text {
     position: relative;
-    font-size: 22px;
+    font-size: var(--fs-xl);
     letter-spacing: 4px;
-    font-weight: 300;
-    line-height: 1.6;
+    font-weight: var(--fw-light);
+    line-height: var(--lh-loose);
     margin-bottom: 8px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    text-shadow: var(--shadow-md);
 }
 
 .quote-author {
     position: relative;
-    font-size: 13px;
+    font-size: var(--fs-sm);
     opacity: 0.7;
     letter-spacing: 2px;
 }

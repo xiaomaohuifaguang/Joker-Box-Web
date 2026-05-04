@@ -220,11 +220,11 @@ onMounted(() => {
 .person-info-page {
   .info-card,
   .security-card {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
     margin-bottom: 24px;
 
     .card-header {
@@ -233,31 +233,31 @@ onMounted(() => {
       gap: 12px;
       margin-bottom: 24px;
       padding-bottom: 16px;
-      border-bottom: 1px solid var(--el-border-color-lighter);
+      border-bottom: 1px solid var(--border-light);
 
       .header-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
 
         &.security {
-          background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+          background: var(--data-grad-4);
         }
 
         .el-icon {
           font-size: 20px;
-          color: white;
+          color: var(--text-on-brand);
         }
       }
 
       .header-title {
         font-size: 18px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
       }
     }
   }
@@ -281,12 +281,12 @@ onMounted(() => {
           height: 120px;
           border-radius: 50%;
           overflow: hidden;
-          border: 3px solid var(--el-border-color-lighter);
+          border: 3px solid var(--border-light);
           transition: all 0.3s ease;
 
           &:hover {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 4px var(--bg-overlay);
 
             .avatar-overlay {
               opacity: 1;
@@ -305,8 +305,8 @@ onMounted(() => {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: var(--el-fill-color-light);
-            color: var(--el-text-color-secondary);
+            background: var(--bg-overlay);
+            color: var(--text-secondary);
 
             .placeholder-icon {
               font-size: 32px;
@@ -329,7 +329,7 @@ onMounted(() => {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--text-on-brand);
             opacity: 0;
             transition: opacity 0.3s ease;
 
@@ -351,7 +351,7 @@ onMounted(() => {
       align-items: center;
       gap: 6px;
       font-size: 13px;
-      color: var(--el-text-color-secondary);
+      color: var(--text-secondary);
 
       .el-icon {
         font-size: 14px;
@@ -363,7 +363,7 @@ onMounted(() => {
     .info-form {
       :deep(.el-form-item__label) {
         font-weight: 500;
-        color: var(--el-text-color-regular);
+        color: var(--text-regular);
         padding-bottom: 8px;
       }
 
@@ -392,13 +392,13 @@ onMounted(() => {
           border-radius: 10px;
           font-size: 15px;
           font-weight: 500;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: var(--brand-gradient);
           border: none;
           transition: all 0.3s ease;
 
           &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            box-shadow: var(--shadow-glow-strong);
           }
 
           .el-icon {
@@ -416,12 +416,12 @@ onMounted(() => {
       justify-content: space-between;
       align-items: center;
       padding: 16px;
-      background: var(--el-fill-color-light);
+      background: var(--bg-overlay);
       border-radius: 12px;
       transition: all 0.3s ease;
 
       &:hover {
-        background: var(--el-fill-color);
+        background: var(--bg-overlay);
       }
 
       .item-info {
@@ -432,7 +432,7 @@ onMounted(() => {
         .item-icon {
           width: 48px;
           height: 48px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: var(--brand-gradient);
           border-radius: 12px;
           display: flex;
           align-items: center;
@@ -440,7 +440,7 @@ onMounted(() => {
 
           .el-icon {
             font-size: 24px;
-            color: white;
+            color: var(--text-on-brand);
           }
         }
 
@@ -452,12 +452,12 @@ onMounted(() => {
           .item-title {
             font-size: 16px;
             font-weight: 500;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
           }
 
           .item-desc {
             font-size: 13px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
           }
         }
       }

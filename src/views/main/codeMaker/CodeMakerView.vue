@@ -342,13 +342,13 @@ const formatTime = (index: number) => {
 <style scoped lang="scss">
 .code-generator-container {
     min-height: calc(100vh - 70px);
-    background: linear-gradient(180deg, var(--el-bg-color-page) 0%, var(--el-fill-color-light) 100%);
+    background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-overlay) 100%);
 }
 
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    border-bottom: 1px solid var(--el-border-color-light);
+    background: var(--brand-gradient-soft);
+    border-bottom: 1px solid var(--border-light);
     padding: 30px 0;
 }
 
@@ -366,27 +366,27 @@ const formatTime = (index: number) => {
     .title-icon {
         width: 56px;
         height: 56px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: var(--text-on-brand);
         font-size: 28px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: var(--shadow-glow);
     }
 
     .title-text {
         h1 {
             font-size: 24px;
             font-weight: 700;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             margin: 0 0 4px 0;
         }
 
         p {
             font-size: 14px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             margin: 0;
         }
     }
@@ -405,10 +405,10 @@ const formatTime = (index: number) => {
 }
 
 .input-card {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-md);
 }
 
 .input-header {
@@ -423,11 +423,11 @@ const formatTime = (index: number) => {
         gap: 8px;
         font-size: 14px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
 
         .el-icon {
             font-size: 18px;
-            color: #667eea;
+            color: var(--brand-primary);
         }
     }
 }
@@ -442,16 +442,16 @@ const formatTime = (index: number) => {
 
         :deep(.el-input__wrapper) {
             border-radius: 12px;
-            box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+            box-shadow: 0 0 0 1px var(--border-light) inset;
             padding: 0 16px;
             transition: all 0.3s ease;
 
             &:hover {
-                box-shadow: 0 0 0 1px #667eea inset;
+                box-shadow: 0 0 0 1px var(--brand-primary) inset;
             }
 
             &.is-focus {
-                box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) inset;
+                box-shadow: 0 0 0 2px var(--bg-overlay-strong) inset;
             }
         }
 
@@ -462,7 +462,7 @@ const formatTime = (index: number) => {
 
         :deep(.el-input__prefix) {
             font-size: 20px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
         }
     }
 
@@ -472,13 +472,13 @@ const formatTime = (index: number) => {
         font-size: 16px;
         font-weight: 600;
         border-radius: 12px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border: none;
         transition: all 0.3s ease;
 
         &:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: var(--shadow-glow-strong);
         }
 
         &:disabled {
@@ -494,10 +494,10 @@ const formatTime = (index: number) => {
         justify-content: center;
         gap: 8px;
         padding: 12px 16px;
-        background: var(--el-fill-color-light);
+        background: var(--bg-overlay);
         border-radius: 8px;
         font-size: 13px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
 
         .el-icon {
             font-size: 16px;
@@ -505,10 +505,10 @@ const formatTime = (index: number) => {
 
         &.success {
             background: linear-gradient(135deg, rgba(103, 194, 58, 0.1) 0%, rgba(103, 194, 58, 0.05) 100%);
-            color: var(--el-color-success);
+            color: var(--success);
 
             strong {
-                color: var(--el-color-success);
+                color: var(--success);
                 font-weight: 600;
             }
         }
@@ -530,11 +530,11 @@ const formatTime = (index: number) => {
             gap: 8px;
             font-size: 16px;
             font-weight: 600;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
 
             .el-icon {
                 font-size: 20px;
-                color: #667eea;
+                color: var(--brand-primary);
             }
         }
 
@@ -546,17 +546,17 @@ const formatTime = (index: number) => {
 }
 
 .code-card {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-md);
     overflow: hidden;
 }
 
 .code-tabs {
     :deep(.el-tabs__header) {
         margin: 0;
-        background: var(--el-fill-color-light);
-        border-bottom: 1px solid var(--el-border-color-light);
+        background: var(--bg-overlay);
+        border-bottom: 1px solid var(--border-light);
     }
 
     :deep(.el-tabs__nav) {
@@ -573,15 +573,15 @@ const formatTime = (index: number) => {
         font-size: 13px;
 
         &:hover {
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
+            color: var(--brand-primary);
+            background: var(--bg-overlay);
         }
 
         &.is-active {
-            background: var(--el-bg-color);
-            color: #667eea;
+            background: var(--bg-container);
+            color: var(--brand-primary);
             font-weight: 600;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid var(--brand-primary);
         }
     }
 
@@ -598,23 +598,23 @@ const formatTime = (index: number) => {
 
 .code-content {
     min-height: 500px;
-    background: var(--el-bg-color-page);
+    background: var(--bg-page);
 
     .code-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 12px 20px;
-        background: var(--el-bg-color);
-        border-bottom: 1px solid var(--el-border-color-light);
+        background: var(--bg-container);
+        border-bottom: 1px solid var(--border-light);
 
         .filename {
             font-size: 13px;
             font-weight: 500;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             font-family: 'SFMono-Regular', Consolas, monospace;
             padding: 4px 12px;
-            background: var(--el-fill-color-light);
+            background: var(--bg-overlay);
             border-radius: 6px;
         }
 
@@ -635,7 +635,7 @@ const formatTime = (index: number) => {
     align-items: center;
     justify-content: center;
     height: 400px;
-    color: var(--el-text-color-secondary);
+    color: var(--text-secondary);
 
     .el-icon {
         font-size: 48px;
@@ -663,7 +663,7 @@ const formatTime = (index: number) => {
     width: 200px;
     height: 120px;
     margin: 0 auto 32px;
-    background: var(--el-fill-color-light);
+    background: var(--bg-overlay);
     border-radius: 12px;
     padding: 20px;
     display: flex;
@@ -672,7 +672,7 @@ const formatTime = (index: number) => {
 
     .code-line {
         height: 12px;
-        background: linear-gradient(90deg, var(--el-border-color-light) 0%, var(--el-fill-color) 50%, var(--el-border-color-light) 100%);
+        background: linear-gradient(90deg, var(--border-light) 0%, var(--bg-overlay) 50%, var(--border-light) 100%);
         background-size: 200% 100%;
         border-radius: 6px;
         animation: shimmer 2s infinite;
@@ -693,13 +693,13 @@ const formatTime = (index: number) => {
     h3 {
         font-size: 20px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
         margin: 0 0 8px 0;
     }
 
     p {
         font-size: 14px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         margin: 0 0 24px 0;
     }
 }
@@ -717,15 +717,15 @@ const formatTime = (index: number) => {
     align-items: center;
     gap: 8px;
     padding: 12px 16px;
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 10px;
     font-size: 14px;
-    color: var(--el-text-color-regular);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    color: var(--text-regular);
+    box-shadow: var(--shadow-sm);
 
     .el-icon {
         font-size: 16px;
-        color: var(--el-color-success);
+        color: var(--success);
     }
 }
 
@@ -733,7 +733,7 @@ const formatTime = (index: number) => {
 .history-dialog {
     :deep(.el-dialog__header) {
         padding: 20px;
-        border-bottom: 1px solid var(--el-border-color-light);
+        border-bottom: 1px solid var(--border-light);
     }
 
     :deep(.el-dialog__body) {
@@ -753,10 +753,10 @@ const formatTime = (index: number) => {
     padding: 16px 20px;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-bottom: 1px solid var(--el-border-color-light);
+    border-bottom: 1px solid var(--border-light);
 
     &:hover {
-        background: var(--el-fill-color-light);
+        background: var(--bg-overlay);
     }
 
     &:last-child {
@@ -766,12 +766,12 @@ const formatTime = (index: number) => {
     .history-icon {
         width: 36px;
         height: 36px;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        background: var(--brand-gradient-soft);
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #667eea;
+        color: var(--brand-primary);
     }
 
     .history-info {
@@ -780,12 +780,12 @@ const formatTime = (index: number) => {
         .history-name {
             font-size: 14px;
             font-weight: 500;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
         }
 
         .history-time {
             font-size: 12px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             margin-top: 2px;
         }
     }

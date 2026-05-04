@@ -201,7 +201,7 @@ const toHome = () => {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: var(--auth-bg);
     position: relative;
     overflow: hidden;
     padding: 20px;
@@ -229,7 +229,7 @@ const toHome = () => {
 .orb-1 {
     width: 400px;
     height: 400px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     top: -100px;
     left: -100px;
     animation-delay: 0s;
@@ -238,7 +238,7 @@ const toHome = () => {
 .orb-2 {
     width: 300px;
     height: 300px;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: var(--data-grad-2);
     bottom: -50px;
     right: -50px;
     animation-delay: -7s;
@@ -247,7 +247,7 @@ const toHome = () => {
 .orb-3 {
     width: 250px;
     height: 250px;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: var(--data-grad-3);
     top: 50%;
     left: 50%;
     animation-delay: -14s;
@@ -291,125 +291,26 @@ const toHome = () => {
     animation: particle-float 15s infinite;
 }
 
-.particle:nth-child(1) {
-    left: 10%;
-    top: 20%;
-    animation-delay: 0s;
-}
-
-.particle:nth-child(2) {
-    left: 20%;
-    top: 80%;
-    animation-delay: 1s;
-}
-
-.particle:nth-child(3) {
-    left: 30%;
-    top: 40%;
-    animation-delay: 2s;
-}
-
-.particle:nth-child(4) {
-    left: 40%;
-    top: 60%;
-    animation-delay: 3s;
-}
-
-.particle:nth-child(5) {
-    left: 50%;
-    top: 10%;
-    animation-delay: 4s;
-}
-
-.particle:nth-child(6) {
-    left: 60%;
-    top: 90%;
-    animation-delay: 5s;
-}
-
-.particle:nth-child(7) {
-    left: 70%;
-    top: 30%;
-    animation-delay: 6s;
-}
-
-.particle:nth-child(8) {
-    left: 80%;
-    top: 70%;
-    animation-delay: 7s;
-}
-
-.particle:nth-child(9) {
-    left: 90%;
-    top: 50%;
-    animation-delay: 8s;
-}
-
-.particle:nth-child(10) {
-    left: 15%;
-    top: 50%;
-    animation-delay: 9s;
-}
-
-.particle:nth-child(11) {
-    left: 25%;
-    top: 15%;
-    animation-delay: 10s;
-}
-
-.particle:nth-child(12) {
-    left: 35%;
-    top: 85%;
-    animation-delay: 11s;
-}
-
-.particle:nth-child(13) {
-    left: 45%;
-    top: 35%;
-    animation-delay: 12s;
-}
-
-.particle:nth-child(14) {
-    left: 55%;
-    top: 75%;
-    animation-delay: 13s;
-}
-
-.particle:nth-child(15) {
-    left: 65%;
-    top: 25%;
-    animation-delay: 14s;
-}
-
-.particle:nth-child(16) {
-    left: 75%;
-    top: 65%;
-    animation-delay: 0.5s;
-}
-
-.particle:nth-child(17) {
-    left: 85%;
-    top: 45%;
-    animation-delay: 1.5s;
-}
-
-.particle:nth-child(18) {
-    left: 5%;
-    top: 55%;
-    animation-delay: 2.5s;
-}
-
-.particle:nth-child(19) {
-    left: 95%;
-    top: 35%;
-    animation-delay: 3.5s;
-}
-
-.particle:nth-child(20) {
-    left: 50%;
-    top: 95%;
-    animation-delay: 4.5s;
-}
+.particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 20%; top: 80%; animation-delay: 1s; }
+.particle:nth-child(3) { left: 30%; top: 40%; animation-delay: 2s; }
+.particle:nth-child(4) { left: 40%; top: 60%; animation-delay: 3s; }
+.particle:nth-child(5) { left: 50%; top: 10%; animation-delay: 4s; }
+.particle:nth-child(6) { left: 60%; top: 90%; animation-delay: 5s; }
+.particle:nth-child(7) { left: 70%; top: 30%; animation-delay: 6s; }
+.particle:nth-child(8) { left: 80%; top: 70%; animation-delay: 7s; }
+.particle:nth-child(9) { left: 90%; top: 50%; animation-delay: 8s; }
+.particle:nth-child(10) { left: 15%; top: 50%; animation-delay: 9s; }
+.particle:nth-child(11) { left: 25%; top: 15%; animation-delay: 10s; }
+.particle:nth-child(12) { left: 35%; top: 85%; animation-delay: 11s; }
+.particle:nth-child(13) { left: 45%; top: 35%; animation-delay: 12s; }
+.particle:nth-child(14) { left: 55%; top: 75%; animation-delay: 13s; }
+.particle:nth-child(15) { left: 65%; top: 25%; animation-delay: 14s; }
+.particle:nth-child(16) { left: 75%; top: 65%; animation-delay: 0.5s; }
+.particle:nth-child(17) { left: 85%; top: 45%; animation-delay: 1.5s; }
+.particle:nth-child(18) { left: 5%; top: 55%; animation-delay: 2.5s; }
+.particle:nth-child(19) { left: 95%; top: 35%; animation-delay: 3.5s; }
+.particle:nth-child(20) { left: 50%; top: 95%; animation-delay: 4.5s; }
 
 @keyframes particle-float {
 
@@ -436,9 +337,9 @@ const toHome = () => {
 .login-card {
     width: 1000px;
     min-height: 600px;
-    border-radius: 24px;
+    border-radius: var(--radius-xl);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bg-container);
     position: relative;
     display: flex;
     overflow: hidden;
@@ -461,8 +362,8 @@ const toHome = () => {
 /* 左侧区域 */
 .login-card-left {
     flex: 1;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--brand-gradient);
+    color: #fff;
     padding: 60px 50px;
     display: flex;
     flex-direction: column;
@@ -486,7 +387,7 @@ const toHome = () => {
     height: 100px;
     margin: 0 auto 20px;
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 24px;
+    border-radius: var(--radius-xl);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -544,9 +445,9 @@ const toHome = () => {
     gap: 15px;
     padding: 15px 20px;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .feature-item:hover {
@@ -633,17 +534,17 @@ const toHome = () => {
     width: 40px;
     height: 40px;
     font-size: 18px;
-    background: transparent;
-    border: 2px solid #e4e7ed;
-    color: #909399;
-    transition: all 0.3s ease;
+    background: transparent !important;
+    border: 2px solid var(--border-base) !important;
+    color: var(--text-secondary) !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .home-button:hover {
-    color: #409eff;
-    border-color: #409eff;
+    color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
     transform: scale(1.1) rotate(5deg);
-    background: rgba(64, 158, 255, 0.1);
+    background: var(--bg-overlay) !important;
 }
 
 .card-header {
@@ -670,14 +571,14 @@ const toHome = () => {
 
 .login-title {
     font-size: 28px;
-    color: #303133;
+    color: var(--text-primary);
     font-weight: 700;
     margin-bottom: 8px;
 }
 
 .login-subtitle {
     font-size: 14px;
-    color: #909399;
+    color: var(--text-secondary);
     font-weight: 400;
 }
 
@@ -694,24 +595,25 @@ const toHome = () => {
 .input-label {
     display: block;
     font-size: 14px;
-    color: #606266;
+    color: var(--text-regular);
     font-weight: 500;
     margin-bottom: 8px;
 }
 
 .custom-input :deep(.el-input__wrapper) {
-    border-radius: 12px;
-    box-shadow: 0 0 0 1px #dcdfe6 inset;
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 0 1px var(--border-base) inset;
     padding: 0 15px;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
+    background: var(--bg-input);
 }
 
 .custom-input :deep(.el-input__wrapper:hover) {
-    box-shadow: 0 0 0 1px #409eff inset;
+    box-shadow: 0 0 0 1px var(--brand-primary) inset;
 }
 
 .custom-input :deep(.el-input__wrapper.is-focus) {
-    box-shadow: 0 0 0 2px #409eff inset;
+    box-shadow: 0 0 0 2px var(--brand-primary) inset;
 }
 
 .custom-input :deep(.el-input__inner) {
@@ -729,18 +631,18 @@ const toHome = () => {
 
 .remember-checkbox :deep(.el-checkbox__label) {
     font-size: 13px;
-    color: #606266;
+    color: var(--text-secondary);
 }
 
 .forgot-link {
     font-size: 13px;
-    color: #409eff;
+    color: var(--text-link);
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .forgot-link:hover {
-    color: #66b1ff;
+    color: var(--text-link-hover);
     text-decoration: underline;
 }
 
@@ -754,16 +656,17 @@ const toHome = () => {
     height: 52px;
     font-size: 16px;
     font-weight: 600;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--radius-md);
+    background: var(--brand-gradient) !important;
     border: none;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
     letter-spacing: 2px;
+    color: var(--text-on-brand) !important;
 }
 
 .login-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: var(--shadow-glow-strong);
 }
 
 .login-button:active {
@@ -783,14 +686,14 @@ const toHome = () => {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #dcdfe6, transparent);
+    background: linear-gradient(90deg, transparent, var(--border-base), transparent);
 }
 
 .divider-text {
     display: inline-block;
     padding: 0 20px;
-    background: white;
-    color: #909399;
+    background: var(--bg-container);
+    color: var(--text-secondary);
     font-size: 13px;
     position: relative;
 }
@@ -804,15 +707,15 @@ const toHome = () => {
     flex: 1;
     height: 44px;
     font-size: 14px;
-    border-radius: 10px;
-    transition: all 0.3s ease;
+    border-radius: var(--radius-md);
+    transition: all var(--duration-normal) var(--ease-out);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    border: 1px solid #e4e7ed;
-    background: white;
-    color: #606266;
+    border: 1px solid var(--border-base) !important;
+    background: var(--bg-container) !important;
+    color: var(--text-regular) !important;
 }
 
 .sso-icon {
@@ -821,16 +724,16 @@ const toHome = () => {
 }
 
 .github-button:hover {
-    background: #24292e;
-    color: white;
-    border-color: #24292e;
+    background: #24292e !important;
+    color: #fff !important;
+    border-color: #24292e !important;
     transform: translateY(-2px);
 }
 
 .gitee-button:hover {
-    background: #c71d23;
-    color: white;
-    border-color: #c71d23;
+    background: #c71d23 !important;
+    color: #fff !important;
+    border-color: #c71d23 !important;
     transform: translateY(-2px);
 }
 
@@ -839,20 +742,20 @@ const toHome = () => {
     text-align: center;
     margin-top: 25px;
     font-size: 14px;
-    color: #606266;
+    color: var(--text-secondary);
     animation: fade-in-up 0.5s ease-out 0.5s both;
 }
 
 .register-link a {
-    color: #667eea;
+    color: var(--brand-primary);
     text-decoration: none;
     font-weight: 600;
     margin-left: 5px;
-    transition: all 0.3s ease;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .register-link a:hover {
-    color: #764ba2;
+    color: var(--brand-primary-hover);
     text-decoration: underline;
 }
 

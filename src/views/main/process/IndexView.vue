@@ -243,14 +243,14 @@ onMounted(() => {
 <style scoped lang="scss">
 .process-page {
     min-height: calc(100vh - 70px);
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
 }
 
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     padding: 36px 0;
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    box-shadow: var(--shadow-glow);
 }
 
 .header-content {
@@ -272,17 +272,17 @@ onMounted(() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: var(--text-on-brand);
         font-size: 32px;
         backdrop-filter: blur(10px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-lg);
     }
 
     .title-text {
         h1 {
             font-size: 28px;
             font-weight: 700;
-            color: white;
+            color: var(--text-on-brand);
             margin: 0 0 6px 0;
         }
 
@@ -317,9 +317,9 @@ onMounted(() => {
     align-items: center;
     gap: 18px;
     padding: 24px;
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
-    border: 1px solid var(--el-border-color-lighter);
+    border: 1px solid var(--border-light);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -332,15 +332,15 @@ onMounted(() => {
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, #667eea, #764ba2);
+        background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary));
         transform: scaleX(0);
         transition: transform 0.3s ease;
     }
 
     &:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-        border-color: rgba(102, 126, 234, 0.4);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--brand-primary-light);
 
         &::before {
             transform: scaleX(1);
@@ -348,22 +348,22 @@ onMounted(() => {
     }
 
     &.active {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
-        border-color: #667eea;
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        background: linear-gradient(135deg, var(--bg-overlay) 0%, var(--bg-overlay) 100%);
+        border-color: var(--brand-primary);
+        box-shadow: var(--shadow-glow);
 
         &::before {
             transform: scaleX(1);
         }
 
         .filter-icon {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            background: var(--brand-gradient);
+            color: var(--text-on-brand);
+            box-shadow: var(--shadow-glow);
         }
 
         .filter-name {
-            color: #667eea;
+            color: var(--brand-primary);
             font-weight: 600;
         }
     }
@@ -380,23 +380,23 @@ onMounted(() => {
     flex-shrink: 0;
 
     &.all {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.18) 0%, rgba(118, 75, 162, 0.18) 100%);
-        color: #667eea;
+        background: var(--brand-gradient-soft);
+        color: var(--brand-primary);
     }
 
     &.todo {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(251, 191, 36, 0.18) 100%);
-        color: #f59e0b;
+        background: var(--warning-bg);
+        color: var(--warning);
     }
 
     &.apply {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(52, 211, 153, 0.18) 100%);
-        color: #10b981;
+        background: var(--success-bg);
+        color: var(--success);
     }
 
     &.draft {
-        background: linear-gradient(135deg, rgba(107, 114, 128, 0.18) 0%, rgba(156, 163, 175, 0.18) 100%);
-        color: #6b7280;
+        background: var(--bg-overlay);
+        color: var(--text-secondary);
     }
 }
 
@@ -408,15 +408,15 @@ onMounted(() => {
     .filter-name {
         font-size: 15px;
         font-weight: 500;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
         transition: color 0.3s ease;
     }
 
     .filter-count {
         font-size: 13px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         font-weight: 600;
-        background: var(--el-fill-color-light);
+        background: var(--bg-overlay);
         padding: 2px 10px;
         border-radius: 10px;
         width: fit-content;
@@ -439,12 +439,12 @@ onMounted(() => {
     .search-input {
         :deep(.el-input__wrapper) {
             border-radius: 12px;
-            box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+            box-shadow: 0 0 0 1px var(--border-light) inset;
             padding: 0 18px;
             transition: all 0.3s ease;
 
             &:hover, &.is-focus {
-                box-shadow: 0 0 0 2px #667eea inset;
+                box-shadow: 0 0 0 2px var(--brand-primary) inset;
             }
         }
 
@@ -458,16 +458,16 @@ onMounted(() => {
     height: 48px;
     padding: 0 28px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--brand-gradient);
     border: none;
     font-weight: 600;
     font-size: 15px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    box-shadow: var(--shadow-glow);
 
     &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+        box-shadow: var(--shadow-glow-strong);
     }
 
     &:active {
@@ -477,19 +477,19 @@ onMounted(() => {
 
 /* Table Section */
 .table-section {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
 }
 
 .custom-table {
     :deep(.el-table__header-wrapper) {
         th.el-table__cell {
-            background: linear-gradient(180deg, var(--el-fill-color-light) 0%, var(--el-fill-color) 100%);
+            background: linear-gradient(180deg, var(--bg-overlay) 0%, var(--bg-overlay) 100%);
             font-weight: 700;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             font-size: 14px;
         }
     }
@@ -498,7 +498,7 @@ onMounted(() => {
         transition: all 0.2s ease;
 
         &:hover {
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+            background: linear-gradient(90deg, var(--bg-overlay) 0%, var(--bg-overlay) 100%);
         }
     }
 }
@@ -513,7 +513,7 @@ onMounted(() => {
     display: flex;
     justify-content: flex-end;
     padding-top: 24px;
-    border-top: 1px solid var(--el-border-color-lighter);
+    border-top: 1px solid var(--border-light);
     margin-top: 24px;
 }
 
@@ -521,13 +521,13 @@ onMounted(() => {
 .process-dialog, .process-edit-dialog {
     :deep(.el-dialog__header) {
         padding: 24px 28px;
-        border-bottom: 1px solid var(--el-border-color-lighter);
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        border-bottom: 1px solid var(--border-light);
+        background: linear-gradient(135deg, var(--bg-overlay) 0%, var(--bg-overlay) 100%);
 
         .el-dialog__title {
             font-weight: 700;
             font-size: 18px;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
         }
     }
 

@@ -164,7 +164,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .detail-form-container {
     padding: 24px;
-    background: var(--el-bg-color-page);
+    background: var(--bg-page);
     min-height: 500px;
 
     .content-wrapper {
@@ -173,11 +173,11 @@ onMounted(() => {
 
     .info-card,
     .form-maker-card {
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 16px;
         padding: 24px;
-        box-shadow: var(--el-box-shadow-light);
-        border: 1px solid var(--el-border-color-lighter);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
 
         .card-header {
             display: flex;
@@ -185,7 +185,7 @@ onMounted(() => {
             gap: 12px;
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 1px solid var(--el-border-color-lighter);
+            border-bottom: 1px solid var(--border-light);
 
             .header-icon {
                 width: 42px;
@@ -194,7 +194,7 @@ onMounted(() => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
 
                 .el-icon {
                     font-size: 20px;
@@ -205,7 +205,7 @@ onMounted(() => {
             .header-title {
                 font-size: 18px;
                 font-weight: 600;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
             }
         }
 
@@ -213,7 +213,7 @@ onMounted(() => {
             .detail-form {
                 :deep(.el-form-item__label) {
                     font-weight: 500;
-                    color: var(--el-text-color-regular);
+                    color: var(--text-regular);
                     padding-bottom: 8px;
                 }
 
@@ -241,7 +241,7 @@ onMounted(() => {
         justify-content: center;
         gap: 16px;
         padding-top: 20px;
-        border-top: 1px solid var(--el-border-color-lighter);
+        border-top: 1px solid var(--border-light);
 
         .save-button,
         .close-button {
@@ -253,13 +253,13 @@ onMounted(() => {
         }
 
         .save-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
             transition: all 0.3s;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                box-shadow: var(--shadow-glow-strong);
             }
         }
     }

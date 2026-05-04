@@ -153,8 +153,8 @@ const replayInfo = ref({
 
 // 获取头像颜色
 const getAvatarColor = (name) => {
-    if (!name) return '#909399'
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a']
+    if (!name) return 'var(--text-secondary)'
+    const colors = ['var(--data-1)', 'var(--data-2)', 'var(--data-3)', 'var(--data-4)', 'var(--data-5)', 'var(--data-6)', 'var(--data-7)', 'var(--data-8)']
     const index = name ? name.charCodeAt(0) % colors.length : 0
     return colors[index]
 }
@@ -262,15 +262,15 @@ watch(() => props.replayCount, (newVal) => {
 
 <style scoped lang="scss">
 .comment-card {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 12px;
     padding: 20px;
-    box-shadow: var(--el-box-shadow-light);
-    border: 1px solid var(--el-border-color-lighter);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
     transition: all 0.3s ease;
 
     &:hover {
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.1);
+        box-shadow: 0 4px 16px var(--bg-overlay);
     }
 
     .comment-main {
@@ -294,7 +294,7 @@ watch(() => props.replayCount, (newVal) => {
                     justify-content: center;
                     font-size: 14px;
                     font-weight: 600;
-                    color: white;
+                    color: var(--text-on-brand);
 
                     &.small {
                         width: 28px;
@@ -306,20 +306,20 @@ watch(() => props.replayCount, (newVal) => {
                 .author-name {
                     font-size: 15px;
                     font-weight: 600;
-                    color: var(--el-text-color-primary);
+                    color: var(--text-primary);
                 }
             }
 
             .comment-time {
                 font-size: 13px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
             }
         }
 
         .comment-content {
             font-size: 15px;
             line-height: 1.7;
-            color: var(--el-text-color-regular);
+            color: var(--text-regular);
             margin-bottom: 12px;
             word-break: break-word;
         }
@@ -341,7 +341,7 @@ watch(() => props.replayCount, (newVal) => {
     .reply-section {
         margin-top: 16px;
         padding-top: 16px;
-        border-top: 1px dashed var(--el-border-color-lighter);
+        border-top: 1px dashed var(--border-light);
 
         .reply-toggle {
             margin-bottom: 12px;
@@ -359,13 +359,13 @@ watch(() => props.replayCount, (newVal) => {
         }
 
         .reply-list {
-            background: var(--el-fill-color-light);
+            background: var(--bg-overlay);
             border-radius: 10px;
             padding: 16px;
 
             .reply-item {
                 padding: 12px 0;
-                border-bottom: 1px solid var(--el-border-color-lighter);
+                border-bottom: 1px solid var(--border-light);
 
                 &:last-child {
                     border-bottom: none;
@@ -389,7 +389,7 @@ watch(() => props.replayCount, (newVal) => {
                         .author-name {
                             font-size: 14px;
                             font-weight: 600;
-                            color: var(--el-text-color-primary);
+                            color: var(--text-primary);
                         }
 
                         .reply-to {
@@ -397,14 +397,14 @@ watch(() => props.replayCount, (newVal) => {
                             align-items: center;
                             gap: 4px;
                             font-size: 13px;
-                            color: var(--el-text-color-secondary);
+                            color: var(--text-secondary);
 
                             .el-icon {
                                 font-size: 12px;
                             }
 
                             .target-name {
-                                color: var(--el-color-primary);
+                                color: var(--brand-primary);
                                 font-weight: 500;
                             }
                         }
@@ -412,14 +412,14 @@ watch(() => props.replayCount, (newVal) => {
 
                     .reply-time {
                         font-size: 12px;
-                        color: var(--el-text-color-placeholder);
+                        color: var(--text-placeholder);
                     }
                 }
 
                 .reply-content {
                     font-size: 14px;
                     line-height: 1.6;
-                    color: var(--el-text-color-regular);
+                    color: var(--text-regular);
                     margin-bottom: 8px;
                     padding-left: 36px;
                     word-break: break-word;
@@ -446,7 +446,7 @@ watch(() => props.replayCount, (newVal) => {
                 align-items: center;
                 margin-top: 12px;
                 padding-top: 12px;
-                border-top: 1px dashed var(--el-border-color-lighter);
+                border-top: 1px dashed var(--border-light);
 
                 .load-btn,
                 .collapse-btn {
@@ -469,18 +469,18 @@ watch(() => props.replayCount, (newVal) => {
 // 回复弹窗样式
 .reply-dialog {
     :deep(.el-dialog__header) {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         margin: 0;
         padding: 16px 20px;
 
         .el-dialog__title {
-            color: white;
+            color: var(--text-on-brand);
             font-size: 16px;
             font-weight: 600;
         }
 
         .el-dialog__headerbtn .el-dialog__close {
-            color: white;
+            color: var(--text-on-brand);
         }
     }
 
@@ -490,7 +490,7 @@ watch(() => props.replayCount, (newVal) => {
 
     :deep(.el-dialog__footer) {
         padding: 16px 20px;
-        border-top: 1px solid var(--el-border-color-lighter);
+        border-top: 1px solid var(--border-light);
     }
 
     .reply-dialog-content {
@@ -499,19 +499,19 @@ watch(() => props.replayCount, (newVal) => {
             align-items: center;
             gap: 8px;
             padding: 10px 14px;
-            background: var(--el-color-primary-light-9);
+            background: var(--bg-overlay);
             border-radius: 8px;
             margin-bottom: 16px;
             font-size: 14px;
-            color: var(--el-text-color-regular);
+            color: var(--text-regular);
 
             .el-icon {
                 font-size: 16px;
-                color: var(--el-color-primary);
+                color: var(--brand-primary);
             }
 
             strong {
-                color: var(--el-color-primary);
+                color: var(--brand-primary);
             }
         }
 
@@ -521,14 +521,14 @@ watch(() => props.replayCount, (newVal) => {
                 padding: 14px;
                 font-size: 14px;
                 line-height: 1.6;
-                background: var(--el-fill-color-light);
-                border-color: var(--el-border-color-lighter);
+                background: var(--bg-overlay);
+                border-color: var(--border-light);
                 transition: all 0.3s;
 
                 &:focus {
-                    border-color: #667eea;
-                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-                    background: var(--el-bg-color);
+                    border-color: var(--brand-primary);
+                    box-shadow: 0 0 0 3px var(--bg-overlay);
+                    background: var(--bg-container);
                 }
             }
 
@@ -544,12 +544,12 @@ watch(() => props.replayCount, (newVal) => {
         gap: 12px;
 
         .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
 
             &:hover:not(:disabled) {
                 transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                box-shadow: var(--shadow-glow);
             }
 
             .el-icon {

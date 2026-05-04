@@ -112,7 +112,7 @@ const add = async () => {
 <style scoped lang="scss">
 .add-form-container {
     padding: 24px;
-    background: var(--el-bg-color-page);
+    background: var(--bg-page);
     min-height: 500px;
 
     .form-header {
@@ -124,7 +124,7 @@ const add = async () => {
         .header-icon {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -144,13 +144,13 @@ const add = async () => {
                 margin: 0 0 6px 0;
                 font-size: 20px;
                 font-weight: 600;
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
             }
 
             p {
                 margin: 0;
                 font-size: 14px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
             }
         }
     }
@@ -159,7 +159,7 @@ const add = async () => {
         .info-form {
             :deep(.el-form-item__label) {
                 font-weight: 500;
-                color: var(--el-text-color-regular);
+                color: var(--text-regular);
                 padding-bottom: 8px;
             }
 
@@ -169,10 +169,10 @@ const add = async () => {
         }
 
         .form-maker-wrapper {
-            background: var(--el-bg-color);
+            background: var(--bg-container);
             border-radius: 16px;
             padding: 20px;
-            border: 1px solid var(--el-border-color-lighter);
+            border: 1px solid var(--border-light);
 
             .form-maker-header {
                 display: flex;
@@ -183,7 +183,7 @@ const add = async () => {
                 .header-icon {
                     width: 36px;
                     height: 36px;
-                    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                    background: var(--data-grad-4);
                     border-radius: 10px;
                     display: flex;
                     align-items: center;
@@ -198,7 +198,7 @@ const add = async () => {
                 .header-title {
                     font-size: 16px;
                     font-weight: 600;
-                    color: var(--el-text-color-primary);
+                    color: var(--text-primary);
                 }
             }
         }
@@ -210,7 +210,7 @@ const add = async () => {
         gap: 16px;
         margin-top: 32px;
         padding-top: 20px;
-        border-top: 1px solid var(--el-border-color-lighter);
+        border-top: 1px solid var(--border-light);
 
         .save-button,
         .cancel-button {
@@ -222,13 +222,13 @@ const add = async () => {
         }
 
         .save-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
             transition: all 0.3s;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                box-shadow: var(--shadow-glow-strong);
             }
         }
     }

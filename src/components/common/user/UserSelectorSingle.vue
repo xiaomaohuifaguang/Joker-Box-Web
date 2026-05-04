@@ -82,13 +82,13 @@ const remoteMethod = async (query: string) => {
 .user-selector {
     :deep(.el-input__wrapper) {
         border-radius: 12px;
-        box-shadow: 0 0 0 1px var(--el-border-color-light) inset;
+        box-shadow: 0 0 0 1px var(--border-light) inset;
         transition: all 0.3s ease;
         padding: 4px 16px;
 
         &:hover,
         &.is-focus {
-            box-shadow: 0 0 0 2px #667eea inset;
+            box-shadow: 0 0 0 2px var(--brand-primary) inset;
         }
     }
 
@@ -104,14 +104,14 @@ const remoteMethod = async (query: string) => {
 
         .el-icon {
             font-size: 18px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             transition: color 0.3s ease;
         }
     }
 
     &:focus-within {
         :deep(.el-input__prefix .el-icon) {
-            color: #667eea;
+            color: var(--brand-primary);
         }
     }
 }
@@ -124,12 +124,12 @@ const remoteMethod = async (query: string) => {
     border-radius: 8px;
 
     &:hover {
-        background: var(--el-fill-color-light);
+        background: var(--bg-overlay);
     }
 
     .user-avatar {
         margin-right: 14px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         color: white;
         font-weight: 600;
         box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
@@ -142,13 +142,13 @@ const remoteMethod = async (query: string) => {
 
         .username {
             font-size: 15px;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             font-weight: 600;
         }
 
         .nickname {
             font-size: 13px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
         }
     }
 }
@@ -158,7 +158,7 @@ const remoteMethod = async (query: string) => {
 .user-selector-popper {
     border-radius: 12px !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
-    border: 1px solid var(--el-border-color-lighter) !important;
+    border: 1px solid var(--border-light) !important;
     overflow: hidden;
 
     .empty-tip {
@@ -166,7 +166,7 @@ const remoteMethod = async (query: string) => {
         align-items: center;
         justify-content: center;
         padding: 24px 16px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         gap: 10px;
 
         .el-icon {
@@ -188,12 +188,12 @@ const remoteMethod = async (query: string) => {
         transition: all 0.2s ease;
 
         &:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            background: linear-gradient(135deg, var(--bg-overlay) 0%, rgba(118, 75, 162, 0.08) 100%);
         }
 
         &.selected {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
-            color: #667eea;
+            background: var(--brand-gradient-soft);
+            color: var(--brand-primary);
             font-weight: 600;
         }
     }

@@ -420,13 +420,13 @@ onMounted(() => {
 <style scoped lang="scss">
 .file-manager-container {
     min-height: calc(100vh - 70px);
-    background: linear-gradient(180deg, var(--el-bg-color-page) 0%, var(--el-fill-color-light) 100%);
+    background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-overlay) 100%);
 }
 
 /* Page Header */
 .page-header {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    border-bottom: 1px solid var(--el-border-color-light);
+    background: var(--brand-gradient-soft);
+    border-bottom: 1px solid var(--border-light);
     padding: 30px 0;
 }
 
@@ -447,27 +447,27 @@ onMounted(() => {
     .title-icon {
         width: 56px;
         height: 56px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: var(--text-on-brand);
         font-size: 28px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: var(--shadow-glow);
     }
 
     .title-text {
         h1 {
             font-size: 24px;
             font-weight: 700;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
             margin: 0 0 4px 0;
         }
 
         p {
             font-size: 14px;
-            color: var(--el-text-color-secondary);
+            color: var(--text-secondary);
             margin: 0;
         }
     }
@@ -479,15 +479,15 @@ onMounted(() => {
         align-items: center;
         gap: 8px;
         padding: 10px 20px;
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 12px;
         font-size: 14px;
-        color: var(--el-text-color-regular);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        color: var(--text-regular);
+        box-shadow: var(--shadow-sm);
 
         .el-icon {
             font-size: 18px;
-            color: #667eea;
+            color: var(--brand-primary);
         }
     }
 }
@@ -505,10 +505,10 @@ onMounted(() => {
 }
 
 .upload-area {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
     padding: 8px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-md);
 }
 
 .upload-component {
@@ -520,14 +520,14 @@ onMounted(() => {
         width: 100%;
         height: auto;
         padding: 40px;
-        border: 2px dashed var(--el-border-color);
+        border: 2px dashed var(--border-base);
         border-radius: 12px;
         background: transparent;
         transition: all 0.3s ease;
 
         &:hover {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-color: var(--brand-primary);
+            background: linear-gradient(135deg, var(--bg-overlay) 0%, var(--bg-overlay) 100%);
         }
     }
 }
@@ -539,7 +539,7 @@ onMounted(() => {
 .upload-icon-wrapper {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    background: var(--brand-gradient-soft);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -548,7 +548,7 @@ onMounted(() => {
 
     .upload-icon {
         font-size: 40px;
-        color: #667eea;
+        color: var(--brand-primary);
     }
 }
 
@@ -556,17 +556,17 @@ onMounted(() => {
     h3 {
         font-size: 18px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
         margin: 0 0 8px 0;
     }
 
     p {
         font-size: 14px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         margin: 0;
 
         .highlight {
-            color: #667eea;
+            color: var(--brand-primary);
             font-weight: 500;
             cursor: pointer;
         }
@@ -580,7 +580,7 @@ onMounted(() => {
     gap: 6px;
     margin-top: 16px;
     font-size: 12px;
-    color: var(--el-text-color-secondary);
+    color: var(--text-secondary);
 
     .el-icon {
         font-size: 14px;
@@ -589,7 +589,7 @@ onMounted(() => {
 
 .upload-progress-wrapper {
     padding: 16px 24px;
-    border-top: 1px solid var(--el-border-color-light);
+    border-top: 1px solid var(--border-light);
 
     .progress-header {
         display: flex;
@@ -599,13 +599,13 @@ onMounted(() => {
 
         .progress-title {
             font-size: 14px;
-            color: var(--el-text-color-regular);
+            color: var(--text-regular);
         }
 
         .progress-percent {
             font-size: 14px;
             font-weight: 600;
-            color: #667eea;
+            color: var(--brand-primary);
         }
     }
 }
@@ -617,9 +617,9 @@ onMounted(() => {
     align-items: center;
     margin-bottom: 20px;
     padding: 12px 16px;
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
 }
 
 .breadcrumb-wrapper {
@@ -641,21 +641,21 @@ onMounted(() => {
                 display: flex;
                 align-items: center;
                 gap: 4px;
-                color: var(--el-text-color-secondary);
+                color: var(--text-secondary);
                 transition: all 0.3s ease;
 
                 &:hover {
-                    color: #667eea;
+                    color: var(--brand-primary);
                 }
             }
 
             &.active .el-breadcrumb__inner {
-                color: var(--el-text-color-primary);
+                color: var(--text-primary);
                 font-weight: 600;
                 cursor: default;
 
                 &:hover {
-                    color: var(--el-text-color-primary);
+                    color: var(--text-primary);
                 }
             }
         }
@@ -668,12 +668,12 @@ onMounted(() => {
 
     .action-btn {
         &.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--brand-gradient);
             border: none;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                box-shadow: var(--shadow-glow);
             }
         }
     }
@@ -687,33 +687,33 @@ onMounted(() => {
 .empty-state {
     text-align: center;
     padding: 80px 20px;
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-md);
 
     .empty-icon {
         width: 100px;
         height: 100px;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        background: var(--brand-gradient-soft);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 24px;
         font-size: 48px;
-        color: #667eea;
+        color: var(--brand-primary);
     }
 
     h3 {
         font-size: 20px;
         font-weight: 600;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
         margin: 0 0 8px 0;
     }
 
     p {
         font-size: 14px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         margin: 0;
     }
 }
@@ -725,7 +725,7 @@ onMounted(() => {
 }
 
 .file-card {
-    background: var(--el-bg-color);
+    background: var(--bg-container);
     border-radius: 12px;
     padding: 16px;
     cursor: pointer;
@@ -735,8 +735,8 @@ onMounted(() => {
 
     &:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        border-color: rgba(102, 126, 234, 0.2);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--bg-overlay-strong);
 
         .file-actions {
             opacity: 1;
@@ -745,8 +745,8 @@ onMounted(() => {
 
     &.folder {
         .file-icon {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 160, 0, 0.15) 100%);
-            color: #ff9800;
+            background: var(--warning-bg);
+            color: var(--warning);
         }
     }
 }
@@ -766,28 +766,28 @@ onMounted(() => {
         transition: all 0.3s ease;
 
         &.folder {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 160, 0, 0.15) 100%);
-            color: #ff9800;
+            background: var(--warning-bg);
+            color: var(--warning);
         }
 
         &.image {
-            background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(139, 195, 74, 0.15) 100%);
-            color: #4caf50;
+            background: var(--success-bg);
+            color: var(--success);
         }
 
         &.video {
-            background: linear-gradient(135deg, rgba(244, 67, 54, 0.15) 0%, rgba(233, 30, 99, 0.15) 100%);
-            color: #f44336;
+            background: var(--danger-bg);
+            color: var(--danger);
         }
 
         &.document {
-            background: linear-gradient(135deg, rgba(33, 150, 243, 0.15) 0%, rgba(3, 169, 244, 0.15) 100%);
-            color: #2196f3;
+            background: var(--info-bg);
+            color: var(--info);
         }
 
         &.default {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-            color: #667eea;
+            background: linear-gradient(135deg, var(--bg-overlay-strong) 0%, var(--bg-overlay-strong) 100%);
+            color: var(--brand-primary);
         }
     }
 
@@ -796,12 +796,12 @@ onMounted(() => {
         bottom: -4px;
         right: calc(50% - 32px);
         padding: 2px 8px;
-        background: var(--el-bg-color);
-        border: 1px solid var(--el-border-color-light);
+        background: var(--bg-container);
+        border: 1px solid var(--border-light);
         border-radius: 10px;
         font-size: 10px;
         font-weight: 600;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
         text-transform: uppercase;
     }
 }
@@ -812,7 +812,7 @@ onMounted(() => {
     .filename {
         font-size: 14px;
         font-weight: 500;
-        color: var(--el-text-color-primary);
+        color: var(--text-primary);
         margin-bottom: 6px;
         white-space: nowrap;
         overflow: hidden;
@@ -824,7 +824,7 @@ onMounted(() => {
         justify-content: center;
         gap: 8px;
         font-size: 12px;
-        color: var(--el-text-color-secondary);
+        color: var(--text-secondary);
     }
 }
 
@@ -836,11 +836,11 @@ onMounted(() => {
     transition: opacity 0.3s ease;
 
     .more-btn {
-        background: var(--el-bg-color);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background: var(--bg-container);
+        box-shadow: var(--shadow-sm);
 
         &:hover {
-            background: var(--el-fill-color-light);
+            background: var(--bg-overlay);
         }
     }
 }
@@ -850,7 +850,7 @@ onMounted(() => {
     :deep(.el-dialog__header) {
         text-align: center;
         padding: 24px;
-        border-bottom: 1px solid var(--el-border-color-light);
+        border-bottom: 1px solid var(--border-light);
 
         .el-dialog__title {
             font-size: 18px;
@@ -864,7 +864,7 @@ onMounted(() => {
 
     :deep(.el-dialog__footer) {
         padding: 16px 24px 24px;
-        border-top: 1px solid var(--el-border-color-light);
+        border-top: 1px solid var(--border-light);
     }
 }
 
@@ -874,14 +874,14 @@ onMounted(() => {
     .dialog-icon {
         width: 64px;
         height: 64px;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        background: var(--brand-gradient-soft);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 20px;
         font-size: 32px;
-        color: #667eea;
+        color: var(--brand-primary);
     }
 
     .dialog-form {
@@ -903,10 +903,10 @@ onMounted(() => {
         }
 
         &.danger {
-            color: var(--el-color-danger);
+            color: var(--danger);
 
             &:hover {
-                background-color: var(--el-color-danger-light-9);
+                background-color: var(--danger-bg);
             }
         }
     }

@@ -134,8 +134,8 @@ const currentYear = ref(new Date().getFullYear());
 
 <style scoped lang="scss">
 .app-footer {
-    background: linear-gradient(180deg, var(--el-bg-color-page) 0%, var(--el-fill-color-light) 100%);
-    border-top: 1px solid var(--el-border-color-light);
+    background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
+    border-top: 1px solid var(--border-light);
     padding: 60px 0 30px;
     margin-top: 60px;
 }
@@ -157,21 +157,21 @@ const currentYear = ref(new Date().getFullYear());
     .divider-line {
         flex: 1;
         height: 1px;
-        background: linear-gradient(90deg, transparent, var(--el-border-color), transparent);
+        background: linear-gradient(90deg, transparent, var(--border-base), transparent);
         max-width: 200px;
     }
 
     .divider-icon {
         width: 50px;
         height: 50px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: var(--text-on-brand);
         font-size: 24px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: var(--shadow-glow);
     }
 }
 
@@ -199,9 +199,9 @@ const currentYear = ref(new Date().getFullYear());
         }
 
         .brand-name {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: var(--fs-2xl);
+            font-weight: var(--fw-bold);
+            background: var(--brand-gradient-text);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -210,8 +210,8 @@ const currentYear = ref(new Date().getFullYear());
     }
 
     .brand-slogan {
-        font-size: 14px;
-        color: var(--el-text-color-secondary);
+        font-size: var(--fs-md);
+        color: var(--text-secondary);
         margin-bottom: 24px;
         font-style: italic;
     }
@@ -226,18 +226,22 @@ const currentYear = ref(new Date().getFullYear());
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            background: var(--el-bg-color);
-            border: 1px solid var(--el-border-color-light);
-            color: var(--el-text-color-regular);
-            transition: all 0.3s ease;
+            border-radius: var(--radius-md);
+            background: var(--bg-container);
+            border: 1px solid var(--border-light);
+            color: var(--text-regular);
+            transition: background var(--duration-normal) var(--ease-out),
+                color var(--duration-normal) var(--ease-out),
+                border-color var(--duration-normal) var(--ease-out),
+                transform var(--duration-normal) var(--ease-out),
+                box-shadow var(--duration-normal) var(--ease-out);
 
             &:hover {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
                 border-color: transparent;
-                color: white;
+                color: var(--text-on-brand);
                 transform: translateY(-3px);
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                box-shadow: var(--shadow-glow);
             }
 
             .el-icon {
@@ -261,16 +265,16 @@ const currentYear = ref(new Date().getFullYear());
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--el-text-color-primary);
+        font-size: var(--fs-lg);
+        font-weight: var(--fw-semibold);
+        color: var(--text-primary);
         margin-bottom: 20px;
         padding-bottom: 12px;
-        border-bottom: 2px solid var(--el-border-color-light);
+        border-bottom: 2px solid var(--border-light);
 
         .el-icon {
             font-size: 18px;
-            color: #667eea;
+            color: var(--brand-primary);
         }
     }
 
@@ -289,16 +293,18 @@ const currentYear = ref(new Date().getFullYear());
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--el-text-color-regular);
+    color: var(--text-regular);
     text-decoration: none;
-    font-size: 14px;
+    font-size: var(--fs-md);
     padding: 8px 12px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    border-radius: var(--radius-sm);
+    transition: background var(--duration-normal) var(--ease-out),
+        color var(--duration-normal) var(--ease-out),
+        transform var(--duration-normal) var(--ease-out);
 
     &:hover {
-        background: var(--el-fill-color-light);
-        color: #667eea;
+        background: var(--bg-overlay);
+        color: var(--brand-primary);
         transform: translateX(4px);
     }
 
@@ -308,7 +314,7 @@ const currentYear = ref(new Date().getFullYear());
 
         &:hover {
             background: transparent;
-            color: var(--el-text-color-regular);
+            color: var(--text-regular);
             transform: none;
         }
     }
@@ -327,7 +333,7 @@ const currentYear = ref(new Date().getFullYear());
 
 /* Footer Bottom */
 .footer-bottom {
-    border-top: 1px solid var(--el-border-color-light);
+    border-top: 1px solid var(--border-light);
     padding-top: 30px;
     display: flex;
     justify-content: space-between;
@@ -340,20 +346,20 @@ const currentYear = ref(new Date().getFullYear());
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
-    color: var(--el-text-color-secondary);
+    font-size: var(--fs-md);
+    color: var(--text-secondary);
 
     .author-link {
         display: flex;
         align-items: center;
         gap: 6px;
-        color: #667eea;
+        color: var(--brand-primary);
         text-decoration: none;
-        font-weight: 500;
-        transition: all 0.3s ease;
+        font-weight: var(--fw-medium);
+        transition: color var(--duration-normal) var(--ease-out);
 
         &:hover {
-            color: #764ba2;
+            color: var(--brand-secondary);
             text-decoration: underline;
         }
 
@@ -367,15 +373,15 @@ const currentYear = ref(new Date().getFullYear());
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
-    color: var(--el-text-color-placeholder);
+    font-size: var(--fs-md);
+    color: var(--text-placeholder);
 
     .meta-item {
         font-style: italic;
     }
 
     .heart-icon {
-        color: #f5576c;
+        color: var(--danger);
         font-size: 16px;
         animation: heartbeat 1.5s ease-in-out infinite;
     }

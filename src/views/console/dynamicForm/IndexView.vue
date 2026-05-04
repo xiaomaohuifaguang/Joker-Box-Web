@@ -267,15 +267,15 @@ const dialogEdit = ref({
 const dialogAdd = ref(false)
 
 const getFormColor = (name: string) => {
-    if (!name) return '#909399'
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a']
+    if (!name) return 'var(--text-secondary)'
+    const colors = ['var(--data-1)', 'var(--data-2)', 'var(--data-3)', 'var(--data-4)', 'var(--data-5)', 'var(--data-6)', 'var(--data-7)', 'var(--data-8)']
     const index = name.charCodeAt(0) % colors.length
     return colors[index]
 }
 
 const getAvatarColor = (name: string) => {
-    if (!name) return '#909399'
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a']
+    if (!name) return 'var(--text-secondary)'
+    const colors = ['var(--data-1)', 'var(--data-2)', 'var(--data-3)', 'var(--data-4)', 'var(--data-5)', 'var(--data-6)', 'var(--data-7)', 'var(--data-8)']
     const index = name.charCodeAt(0) % colors.length
     return colors[index]
 }
@@ -380,10 +380,10 @@ onMounted(() => {
 <style scoped lang="scss">
 .dynamic-form-management-page {
     min-height: calc(100vh - 60px);
-    background: linear-gradient(135deg, var(--el-bg-color-page) 0%, var(--el-bg-color) 100%);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
 
     .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--brand-gradient);
         padding: 32px 0;
         margin-bottom: 24px;
 
@@ -466,11 +466,11 @@ onMounted(() => {
             justify-content: center;
 
             &.search {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: var(--brand-gradient);
             }
 
             &.table {
-                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                background: var(--data-grad-3);
             }
 
             .el-icon {
@@ -482,25 +482,25 @@ onMounted(() => {
         .header-title {
             font-size: 18px;
             font-weight: 600;
-            color: var(--el-text-color-primary);
+            color: var(--text-primary);
         }
 
         .header-count {
             margin-left: auto;
             font-size: 14px;
-            color: var(--el-text-color-secondary);
-            background: var(--el-fill-color-light);
+            color: var(--text-secondary);
+            background: var(--bg-overlay);
             padding: 4px 12px;
             border-radius: 20px;
         }
     }
 
     .search-section {
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 16px;
         padding: 24px;
-        box-shadow: var(--el-box-shadow-light);
-        border: 1px solid var(--el-border-color-lighter);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
         margin-bottom: 24px;
 
         .search-form {
@@ -510,7 +510,7 @@ onMounted(() => {
 
                 .add-button {
                     width: 100%;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: var(--brand-gradient);
                     border: none;
                 }
             }
@@ -518,11 +518,11 @@ onMounted(() => {
     }
 
     .table-section {
-        background: var(--el-bg-color);
+        background: var(--bg-container);
         border-radius: 16px;
         padding: 24px;
-        box-shadow: var(--el-box-shadow-light);
-        border: 1px solid var(--el-border-color-lighter);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
 
         .table-wrapper {
             margin-bottom: 20px;
@@ -532,9 +532,9 @@ onMounted(() => {
                 overflow: hidden;
 
                 .el-table__header th {
-                    background: var(--el-fill-color-light);
+                    background: var(--bg-overlay);
                     font-weight: 600;
-                    color: var(--el-text-color-primary);
+                    color: var(--text-primary);
                 }
 
                 .id-cell {
@@ -596,7 +596,7 @@ onMounted(() => {
                     display: flex;
                     align-items: center;
                     gap: 6px;
-                    color: var(--el-text-color-secondary);
+                    color: var(--text-secondary);
 
                     .el-icon {
                         font-size: 14px;
@@ -616,7 +616,7 @@ onMounted(() => {
             display: flex;
             justify-content: flex-end;
             padding-top: 20px;
-            border-top: 1px solid var(--el-border-color-lighter);
+            border-top: 1px solid var(--border-light);
         }
     }
 }
