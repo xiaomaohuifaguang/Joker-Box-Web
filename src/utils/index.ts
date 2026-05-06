@@ -3,6 +3,7 @@ import http_ from './axios'
 import regex from './regex'
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus'
 import router from '@/router'
+import { ref } from 'vue'
 
 export const CONSTANTS = CONSTANTS_
 
@@ -19,12 +20,20 @@ export const setToken = (token: string) => {
 export const logout = () => {
     localStorage.removeItem(CONSTANTS.SYSTEM.TOKEN)
     localStorage.removeItem(CONSTANTS.SYSTEM.USER_INFO)
-    // window.location.href = CONSTANTS.SYSTEM.LOGIN_PAGE
-    // window.location.reload()
+    userInfoRef.value = null
 }
+
+export const userInfoRef = ref<any>(null)
+
+const initUserInfo = () => {
+    const userInfoStr = localStorage.getItem(CONSTANTS.SYSTEM.USER_INFO)
+    userInfoRef.value = userInfoStr ? JSON.parse(userInfoStr) : null
+}
+initUserInfo()
 
 export const saveUserInfo = (data: any) => {
     localStorage.setItem(CONSTANTS.SYSTEM.USER_INFO, JSON.stringify(data))
+    userInfoRef.value = data
 }
 
 export const userInfo = () => {
@@ -43,12 +52,12 @@ export const alert = (msg: string, type: 'info' | 'success' | 'warning' | 'error
     ElMessage({
         message: msg,
         type: type,
-        // duration: 3000,
-        // showClose: true,
-        // offset: 80,
+        // duration: 5000,
+        showClose: true,
+        offset: 80,
         center: false,
-        customClass: 'custom-message',
-        // grouping: true,
+        // customClass: 'custom-message',
+        grouping: true,
         appendTo: document.body
     })
 

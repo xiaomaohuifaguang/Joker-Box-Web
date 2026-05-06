@@ -5,7 +5,9 @@
             <div class="header-content">
                 <div class="header-title">
                     <div class="title-icon">
-                        <el-icon><Document /></el-icon>
+                        <el-icon>
+                            <Document />
+                        </el-icon>
                     </div>
                     <div class="title-text">
                         <h1>动态表单管理</h1>
@@ -20,7 +22,9 @@
             <div class="breadcrumb-wrapper">
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item :to="{ path: '/console' }">
-                        <el-icon><House /></el-icon>
+                        <el-icon>
+                            <House />
+                        </el-icon>
                         <span>控制台</span>
                     </el-breadcrumb-item>
                     <el-breadcrumb-item>表单管理</el-breadcrumb-item>
@@ -31,28 +35,29 @@
             <div class="search-section">
                 <div class="section-header">
                     <div class="header-icon search">
-                        <el-icon><Search /></el-icon>
+                        <el-icon>
+                            <Search />
+                        </el-icon>
                     </div>
                     <span class="header-title">筛选条件</span>
                 </div>
                 <div class="search-form">
                     <el-row :gutter="16">
                         <el-col :xs="24" :sm="18" :md="20" :lg="20">
-                            <el-input
-                                v-model="queryParam.search"
-                                placeholder="请输入表单名称/描述搜索"
-                                size="large"
-                                clearable
-                                @keyup.enter="queryPage"
-                                @clear="queryPage">
+                            <el-input v-model="queryParam.search" placeholder="请输入表单名称/描述搜索" size="large" clearable
+                                @keyup.enter="queryPage" @clear="queryPage">
                                 <template #prefix>
-                                    <el-icon><Search /></el-icon>
+                                    <el-icon>
+                                        <Search />
+                                    </el-icon>
                                 </template>
                             </el-input>
                         </el-col>
                         <el-col :xs="24" :sm="6" :md="4" :lg="4" class="search-actions">
                             <el-button type="primary" size="large" @click="dialogAdd = true" class="add-button">
-                                <el-icon><Plus /></el-icon>
+                                <el-icon>
+                                    <Plus />
+                                </el-icon>
                                 <span>新建表单</span>
                             </el-button>
                         </el-col>
@@ -64,33 +69,32 @@
             <div class="table-section" v-loading="loading" element-loading-text="加载中...">
                 <div class="section-header">
                     <div class="header-icon table">
-                        <el-icon><List /></el-icon>
+                        <el-icon>
+                            <List />
+                        </el-icon>
                     </div>
                     <span class="header-title">表单列表</span>
                     <span class="header-count">共 {{ pageInfo.total }} 条</span>
                 </div>
 
                 <div class="table-wrapper">
-                    <el-table
-                        :data="tableData"
-                        stripe
-                        style="width: 100%"
-                        @selection-change="handleSelectionChange"
-                        @sort-change="handleSortChange"
-                        :default-sort="{ prop: 'createTime', order: 'descending' }">
+                    <el-table :data="tableData" stripe style="width: 100%" @selection-change="handleSelectionChange"
+                        @sort-change="handleSortChange" :default-sort="{ prop: 'createTime', order: 'descending' }">
                         <el-table-column type="selection" width="50" align="center" />
-                        <el-table-column prop="id" label="表单ID" min-width="100">
+                        <!-- <el-table-column prop="id" label="表单ID" min-width="100">
                             <template #default="scope">
                                 <div class="id-cell">
                                     <el-tag type="info" effect="dark" size="small">{{ scope.row.id }}</el-tag>
                                 </div>
                             </template>
-                        </el-table-column>
+                        </el-table-column> -->
                         <el-table-column prop="name" label="表单名称" min-width="150">
                             <template #default="scope">
                                 <div class="name-cell">
                                     <div class="form-icon" :style="{ background: getFormColor(scope.row.name) }">
-                                        <el-icon><Document /></el-icon>
+                                        <el-icon>
+                                            <Document />
+                                        </el-icon>
                                     </div>
                                     <span>{{ scope.row.name }}</span>
                                 </div>
@@ -105,33 +109,43 @@
                         <el-table-column prop="status" label="状态" width="100" align="center">
                             <template #default="scope">
                                 <el-tag v-if="scope.row.status == '1'" type="success" effect="light" class="status-tag">
-                                    <el-icon><CircleCheck /></el-icon>
+                                    <el-icon>
+                                        <CircleCheck />
+                                    </el-icon>
                                     <span>发布</span>
                                 </el-tag>
-                                <el-tag v-else-if="scope.row.status == '0'" type="warning" effect="light" class="status-tag">
-                                    <el-icon><EditPen /></el-icon>
+                                <el-tag v-else-if="scope.row.status == '0'" type="warning" effect="light"
+                                    class="status-tag">
+                                    <el-icon>
+                                        <EditPen />
+                                    </el-icon>
                                     <span>草稿</span>
                                 </el-tag>
                                 <el-tag v-else type="info" effect="light" class="status-tag">
-                                    <el-icon><Close /></el-icon>
+                                    <el-icon>
+                                        <Close />
+                                    </el-icon>
                                     <span>停用</span>
                                 </el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="createBy" label="创建人" width="120">
+                        <el-table-column prop="createByName" label="创建人" width="120">
                             <template #default="scope">
                                 <div class="creator-cell">
-                                    <div class="avatar" :style="{ background: getAvatarColor(scope.row.createBy) }">
-                                        {{ scope.row.createBy ? scope.row.createBy.charAt(0).toUpperCase() : 'U' }}
+                                    <div class="avatar" :style="{ background: getAvatarColor(scope.row.createByName) }">
+                                        {{ scope.row.createByName ? scope.row.createByName.charAt(0).toUpperCase() : 'U'
+                                        }}
                                     </div>
-                                    <span>{{ scope.row.createBy }}</span>
+                                    <span>{{ scope.row.createByName }}</span>
                                 </div>
                             </template>
                         </el-table-column>
                         <el-table-column prop="createTime" label="创建时间" width="170">
                             <template #default="scope">
                                 <div class="time-cell">
-                                    <el-icon><Clock /></el-icon>
+                                    <el-icon>
+                                        <Clock />
+                                    </el-icon>
                                     <span>{{ scope.row.createTime }}</span>
                                 </div>
                             </template>
@@ -139,28 +153,48 @@
                         <el-table-column label="操作" fixed="right" width="320" align="center">
                             <template #default="scope">
                                 <div class="action-buttons">
-                                    <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'view')">
-                                        <el-icon><View /></el-icon>
+                                    <el-button type="primary" link size="small"
+                                        @click="openDialog(scope.row.id, 'view')">
+                                        <el-icon>
+                                            <View />
+                                        </el-icon>
                                         <span>详情</span>
                                     </el-button>
-                                    <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'edit')" v-if="scope.row.status == '0' || scope.row.status == '-1'">
-                                        <el-icon><Edit /></el-icon>
+                                    <el-button type="primary" link size="small"
+                                        @click="openDialog(scope.row.id, 'edit')"
+                                        v-if="scope.row.status == '0' || scope.row.status == '-1'">
+                                        <el-icon>
+                                            <Edit />
+                                        </el-icon>
                                         <span>编辑</span>
                                     </el-button>
-                                    <el-button type="danger" link size="small" @click="confirmDelete(scope.row.id)" v-if="scope.row.status == '0'">
-                                        <el-icon><Delete /></el-icon>
+                                    <el-button type="danger" link size="small" @click="confirmDelete(scope.row.id)"
+                                        v-if="scope.row.status == '0'">
+                                        <el-icon>
+                                            <Delete />
+                                        </el-icon>
                                         <span>删除</span>
                                     </el-button>
-                                    <el-button type="success" link size="small" @click="deploy(scope.row.id)" v-if="scope.row.status == '0' || scope.row.status == '-1'">
-                                        <el-icon><Upload /></el-icon>
+                                    <el-button type="success" link size="small" @click="deploy(scope.row.id)"
+                                        v-if="scope.row.status == '0' || scope.row.status == '-1'">
+                                        <el-icon>
+                                            <Upload />
+                                        </el-icon>
                                         <span>发布</span>
                                     </el-button>
-                                    <el-button type="warning" link size="small" @click="stop(scope.row.id)" v-if="scope.row.status == '1'">
-                                        <el-icon><SwitchButton /></el-icon>
+                                    <el-button type="warning" link size="small" @click="stop(scope.row.id)"
+                                        v-if="scope.row.status == '1'">
+                                        <el-icon>
+                                            <SwitchButton />
+                                        </el-icon>
                                         <span>停用</span>
                                     </el-button>
-                                    <el-button type="info" link size="small" @click="makeUrl(scope.row.id, scope.row.version)" v-if="scope.row.status == '1'">
-                                        <el-icon><Link /></el-icon>
+                                    <el-button type="info" link size="small"
+                                        @click="makeUrl(scope.row.id, scope.row.version)"
+                                        v-if="scope.row.status == '1'">
+                                        <el-icon>
+                                            <Link />
+                                        </el-icon>
                                         <span>链接</span>
                                     </el-button>
                                 </div>
@@ -171,49 +205,25 @@
 
                 <!-- 分页 -->
                 <div class="pagination-wrapper">
-                    <el-pagination
-                        v-model:current-page="pageInfo.current"
-                        :page-size="pageInfo.size"
-                        :total="pageInfo.total"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :page-sizes="[10, 20, 50, 100]"
-                        @size-change="handleSizeChange"
+                    <el-pagination v-model:current-page="pageInfo.current" :page-size="pageInfo.size"
+                        :total="pageInfo.total" layout="total, sizes, prev, pager, next, jumper"
+                        :page-sizes="[10, 20, 50, 100]" @size-change="handleSizeChange"
                         @current-change="handleCurrentChange" />
                 </div>
             </div>
         </div>
 
         <!-- 详情/编辑对话框 -->
-        <el-dialog
-            v-if="dialogEdit.open"
-            v-model="dialogEdit.open"
-            :title="dialogEdit.title"
-            fullscreen
-            :close-on-click-modal="false"
-            :close-on-press-escape="false"
-            :show-close="false"
-            center
-            destroy-on-close
+        <el-dialog v-if="dialogEdit.open" v-model="dialogEdit.open" :title="dialogEdit.title" fullscreen
+            :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" center destroy-on-close
             @closed="closeDialog">
-            <DynamicFormInfoView
-                v-model:id="dialogEdit.id"
-                v-model:type="dialogEdit.type"
-                :key="dialogEdit.id"
+            <DynamicFormInfoView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :key="dialogEdit.id"
                 @success="dialogEdit.open = false;" />
         </el-dialog>
 
         <!-- 添加对话框 -->
-        <el-dialog
-            v-if="dialogAdd"
-            v-model="dialogAdd"
-            title="添加表单"
-            fullscreen
-            :close-on-click-modal="false"
-            :close-on-press-escape="false"
-            :show-close="false"
-            center
-            destroy-on-close
-            @closed="queryPage">
+        <el-dialog v-if="dialogAdd" v-model="dialogAdd" title="添加表单" fullscreen :close-on-click-modal="false"
+            :close-on-press-escape="false" :show-close="false" center destroy-on-close @closed="queryPage">
             <DynamicFormAddView @success="handleAddSuccess" :type="dialogEdit.type" />
         </el-dialog>
     </div>
@@ -241,6 +251,7 @@ import { http, alert, confirm } from '@/utils';
 import { onMounted, ref } from 'vue';
 import DynamicFormInfoView from './DynamicFormInfoView.vue';
 import DynamicFormAddView from './DynamicFormAddView.vue';
+import { validateTemplate } from '@/components/dynamicForm/linkage';
 
 const loading = ref(false)
 const multipleSelection = ref<any[]>([])
@@ -293,7 +304,7 @@ const handleSizeChange = (size: number) => {
     queryPage()
 }
 
-const handleCurrentChange = (val: number) => {
+const handleCurrentChange = () => {
     queryPage()
 }
 
@@ -319,9 +330,26 @@ const remove = async (id: any) => {
 }
 
 const deploy = async (id: any) => {
-    await http.post('/dynamicForm/deploy', undefined, { params: { formId: id } })
-    alert('发布成功', 'success')
-    queryPage()
+    let info: any
+    try {
+        info = await http.post('/dynamicForm/info', { id })
+    } catch {
+        return
+    }
+    const check = validateTemplate(
+        info?.name,
+        info?.formFields || [],
+        info?.linkageRules || [],
+    )
+    if (!check.ok) {
+        alert(`发布前校验失败：${check.errors[0]}`, 'warning')
+        return
+    }
+    confirm('发布表单', `确认发布表单「${info.name}」？发布后将不可修改。`, async () => {
+        await http.post('/dynamicForm/deploy', undefined, { params: { formId: id } })
+        alert('发布成功', 'success')
+        queryPage()
+    })
 }
 
 const stop = async (id: any) => {

@@ -106,6 +106,12 @@ const router = createRouter({
           meta: { title: '工具箱|JSON', requiresAuth: true, onlyLogin: true },
         },
         {
+          path: 'tools/cron',
+          name: 'tools-cron',
+          component: () => import('@/views/main/tools/CronView.vue'),
+          meta: { title: '工具箱|cron时间表达式转换', requiresAuth: true, onlyLogin: true },
+        },
+        {
           path: 'tools/signInCard',
           name: 'tools-signInCard',
           component: () => import('@/views/common/Doing.vue'),

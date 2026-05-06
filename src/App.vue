@@ -3,9 +3,8 @@ import { useColorMode } from '@vueuse/core'
 import { onMounted, reactive, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import AiChartDrawer from './components/common/AiChartDrawer.vue';
-import { alert, http, saveUserInfo, userInfo } from '@/utils';
+import { alert, http, saveUserInfo, userInfo, userInfoRef } from '@/utils';
 import ChatGpt from '@/components/icon/ChatGpt.vue';
-
 
 const { system, store } = useColorMode()
 store.value === 'auto' ? system.value : store.value
@@ -79,7 +78,7 @@ const captureToBase64 = async () => {
       <AiChartDrawer v-model:dialog="aiChartDialog" @update:dialog="(flag) => { aiChartDialog = flag }" />
     </el-watermark>
 
-    <el-button v-if="userInfo() != null && !aiChartDialog" class="ai-assistant-btn"
+    <el-button v-if="userInfoRef != null && !aiChartDialog" class="ai-assistant-btn"
       @click="aiChartDialog = !aiChartDialog;" circle>
       <el-icon :size="40">
         <ChatGpt />

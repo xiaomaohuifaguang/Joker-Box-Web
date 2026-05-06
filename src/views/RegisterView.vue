@@ -16,7 +16,7 @@
                 <div class="left-content">
                     <div class="logo-section">
                         <div class="logo-icon">
-                            <img src="@/assets/img/joker-1.png" alt="Logo" />
+                            <LogoIcon :size="64" />
                         </div>
                         <h1 class="brand-name">Joker Box</h1>
                         <p class="brand-slogan">开启您的智能之旅</p>
@@ -222,6 +222,7 @@ import { onMounted, ref, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import type { FormInstance, FormRules } from 'element-plus'
 import { House, User, Lock, Message, CircleCheck, Avatar, Key, Opportunity, Promotion } from '@element-plus/icons-vue';
+import LogoIcon from '@/components/icon/LogoIcon.vue';
 
 const route = useRoute()
 const path = ref('/')

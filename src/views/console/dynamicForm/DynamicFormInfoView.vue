@@ -7,7 +7,9 @@
                         <div class="info-card">
                             <div class="card-header">
                                 <div class="header-icon">
-                                    <el-icon><Document /></el-icon>
+                                    <el-icon>
+                                        <Document />
+                                    </el-icon>
                                 </div>
                                 <span class="header-title">{{ props.type === 'view' ? '表单详情' : '编辑表单' }}</span>
                             </div>
@@ -16,47 +18,54 @@
                                     <el-form-item label="表单ID">
                                         <el-input v-model="info.id" disabled size="large">
                                             <template #prefix>
-                                                <el-icon><Key /></el-icon>
+                                                <el-icon>
+                                                    <Key />
+                                                </el-icon>
                                             </template>
                                         </el-input>
                                     </el-form-item>
                                     <el-form-item label="表单名称">
-                                        <el-input
-                                            v-model="info.name"
-                                            :disabled="props.type !== 'edit'"
-                                            size="large">
+                                        <el-input v-model="info.name" :disabled="props.type !== 'edit'" size="large">
                                             <template #prefix>
-                                                <el-icon><Document /></el-icon>
+                                                <el-icon>
+                                                    <Document />
+                                                </el-icon>
                                             </template>
                                         </el-input>
                                     </el-form-item>
                                     <el-form-item label="描述">
-                                        <el-input
-                                            v-model="info.description"
-                                            :disabled="props.type !== 'edit'"
-                                            type="textarea"
-                                            :rows="3"
-                                            size="large" />
+                                        <el-input v-model="info.description" :disabled="props.type !== 'edit'"
+                                            type="textarea" :rows="3" size="large" />
                                     </el-form-item>
                                     <el-form-item label="版本">
                                         <el-input v-model="info.version" disabled size="large">
                                             <template #prefix>
-                                                <el-icon><Tickets /></el-icon>
+                                                <el-icon>
+                                                    <Tickets />
+                                                </el-icon>
                                             </template>
                                         </el-input>
                                     </el-form-item>
                                     <el-form-item label="状态">
                                         <div class="status-section">
-                                            <el-tag v-if="info.status == '1'" type="success" effect="light" class="status-tag">
-                                                <el-icon><CircleCheck /></el-icon>
+                                            <el-tag v-if="info.status == '1'" type="success" effect="light"
+                                                class="status-tag">
+                                                <el-icon>
+                                                    <CircleCheck />
+                                                </el-icon>
                                                 <span>已发布</span>
                                             </el-tag>
-                                            <el-tag v-else-if="info.status == '0'" type="warning" effect="light" class="status-tag">
-                                                <el-icon><EditPen /></el-icon>
+                                            <el-tag v-else-if="info.status == '0'" type="warning" effect="light"
+                                                class="status-tag">
+                                                <el-icon>
+                                                    <EditPen />
+                                                </el-icon>
                                                 <span>草稿</span>
                                             </el-tag>
                                             <el-tag v-else type="info" effect="light" class="status-tag">
-                                                <el-icon><Close /></el-icon>
+                                                <el-icon>
+                                                    <Close />
+                                                </el-icon>
                                                 <span>已停用</span>
                                             </el-tag>
                                         </div>
@@ -64,14 +73,18 @@
                                     <el-form-item label="创建时间">
                                         <el-input v-model="info.createTime" disabled size="large">
                                             <template #prefix>
-                                                <el-icon><Clock /></el-icon>
+                                                <el-icon>
+                                                    <Clock />
+                                                </el-icon>
                                             </template>
                                         </el-input>
                                     </el-form-item>
                                     <el-form-item label="更新时间">
                                         <el-input v-model="info.updateTime" disabled size="large">
                                             <template #prefix>
-                                                <el-icon><Timer /></el-icon>
+                                                <el-icon>
+                                                    <Timer />
+                                                </el-icon>
                                             </template>
                                         </el-input>
                                     </el-form-item>
@@ -83,16 +96,17 @@
                         <div class="form-maker-card">
                             <div class="card-header">
                                 <div class="header-icon">
-                                    <el-icon><Setting /></el-icon>
+                                    <el-icon>
+                                        <Setting />
+                                    </el-icon>
                                 </div>
                                 <span class="header-title">表单字段配置</span>
                             </div>
                             <div class="card-body">
-                                <FormMaker
-                                    :form-fields="info.formFields"
-                                    @update:fields="info.formFields = $event;"
-                                    v-model="formData"
-                                    :type="props.type == 'edit' ? 'create' : 'view'" />
+                                <FormMaker :form-fields="info.formFields" :linkage-rules="info.linkageRules"
+                                    v-model="formData" :type="props.type === 'edit' ? 'create' : 'view'"
+                                    @update:fields="info.formFields = $event"
+                                    @update:rules="info.linkageRules = $event" />
                             </div>
                         </div>
                     </el-col>
@@ -100,8 +114,11 @@
             </div>
 
             <div class="action-bar">
-                <el-button type="primary" size="large" @click="save" class="save-button" v-if="props.type === 'edit'" :loading="loading">
-                    <el-icon><Check /></el-icon>
+                <el-button type="primary" size="large" @click="save" class="save-button" v-if="props.type === 'edit'"
+                    :loading="loading">
+                    <el-icon>
+                        <Check />
+                    </el-icon>
                     <span>保存修改</span>
                 </el-button>
                 <el-button type="info" size="large" @click="emit('success')" class="close-button">
@@ -117,18 +134,34 @@ import { Document, Key, Tickets, CircleCheck, EditPen, Close, Clock, Timer, Sett
 import { alert, http } from '@/utils';
 import { onMounted, ref } from 'vue';
 import FormMaker from '@/components/dynamicForm/FormMaker.vue';
+import type { FormField, FormLinkage } from '@/components/dynamicForm/types';
+import { validateTemplate } from '@/components/dynamicForm/linkage';
 
 const emit = defineEmits(['success']);
 
-const props = defineProps({
-    id: Number,
-    type: String
-})
+const props = defineProps<{
+    id?: number | string
+    type?: string
+}>()
 
 const loading = ref(false)
-const formData = ref({})
+const formData = ref<Record<string, any>>({})
 
-const info = ref({
+interface InfoState {
+    id: number | string
+    name: string
+    description: string
+    version: string
+    status: string
+    deleted: string
+    createBy: string
+    createTime: string
+    updateTime: string
+    formFields: FormField[]
+    linkageRules: FormLinkage[]
+}
+
+const info = ref<InfoState>({
     id: -1,
     name: '',
     description: '',
@@ -138,21 +171,39 @@ const info = ref({
     createBy: '',
     createTime: '',
     updateTime: '',
-    formFields: []
+    formFields: [],
+    linkageRules: []
 })
 
 const queryInfo = async () => {
     loading.value = true
-    info.value = await http.post('/dynamicForm/info', { id: props.id })
-    loading.value = false
+    try {
+        const data = await http.post('/dynamicForm/info', { id: props.id })
+        info.value = {
+            ...data,
+            formFields: data.formFields || [],
+            linkageRules: data.linkageRules || []
+        }
+    } finally {
+        loading.value = false
+    }
 }
 
 const save = async () => {
+    const check = validateTemplate(info.value.name, info.value.formFields, info.value.linkageRules)
+    if (!check.ok) {
+        alert(check.errors[0], 'warning')
+        return
+    }
+
     loading.value = true
-    const result = await http.post('/dynamicForm/update', info.value, { raw: true })
-    alert(result.msg, 'success')
-    queryInfo()
-    loading.value = false
+    try {
+        const result = await http.post('/dynamicForm/update', info.value, { raw: true })
+        alert(result.msg, 'success')
+        await queryInfo()
+    } finally {
+        loading.value = false
+    }
 }
 
 onMounted(() => {

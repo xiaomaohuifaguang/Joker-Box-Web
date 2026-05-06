@@ -83,7 +83,7 @@ const addRole = async () => {
             },
             raw: true
         })
-        if (result.code === '200') {
+        if (result.code === 200) {
             roleName.value = ''
             withRole.value = ''
             alert('添加成功', 'success')

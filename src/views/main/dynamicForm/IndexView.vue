@@ -20,7 +20,8 @@
                 <div class="form-card">
                     <FormMaker
                         v-model="formData"
-                        v-bind:form-fields="info.formFields"
+                        :form-fields="info.formFields"
+                        :linkage-rules="info.linkageRules"
                         type="edit"
                         ref="formMakerRef" />
                 </div>
@@ -36,16 +37,31 @@
 </template>
 
 <script setup lang='ts'>
-import { http, toPath } from '@/utils'
+import { http, toPath, alert } from '@/utils'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Document, Check } from '@element-plus/icons-vue'
 import FormMaker from '@/components/dynamicForm/FormMaker.vue'
+import type { FormField, FormLinkage } from '@/components/dynamicForm/types'
 
 const route = useRoute()
 const loading = ref(false)
 
-const info = ref({
+interface FormInfoState {
+    id: number | string
+    name: string
+    description: string
+    version: string
+    status: string
+    deleted: string
+    createBy: string
+    createTime: string
+    updateTime: string
+    formFields: FormField[]
+    linkageRules: FormLinkage[]
+}
+
+const info = ref<FormInfoState>({
     id: -1,
     name: '',
     description: '',
@@ -55,19 +71,25 @@ const info = ref({
     createBy: '',
     createTime: '',
     updateTime: '',
-    formFields: []
+    formFields: [],
+    linkageRules: []
 })
-const formData = ref({})
-const formMakerRef = ref(null)
+const formData = ref<Record<string, any>>({})
+const formMakerRef = ref<InstanceType<typeof FormMaker> | null>(null)
 
 const queryFields = async () => {
     loading.value = true
     try {
-        info.value = await http.post('/dynamicForm/info', {
+        const data = await http.post('/dynamicForm/info', {
             id: route.params.id,
             version: route.params.version
         })
-        if (!info.value.formFields || info.value.formFields.length == 0) {
+        info.value = {
+            ...data,
+            formFields: data.formFields || [],
+            linkageRules: data.linkageRules || []
+        }
+        if (info.value.formFields.length == 0) {
             toPath('/404')
         }
     } catch (e: any) {
@@ -78,7 +100,7 @@ const queryFields = async () => {
 }
 
 const submit = async () => {
-    const verifyFlag = await formMakerRef.value.verify();
+    const verifyFlag = await formMakerRef.value?.verify();
     if (!verifyFlag) {
         return
     }
@@ -91,7 +113,7 @@ const submit = async () => {
             formInstanceId: null,
             data: formData.value
         })
-        http.alert('提交成功', 'success')
+        alert('提交成功', 'success')
     } catch (e: any) {
         // error handled by interceptor
     } finally {

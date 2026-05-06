@@ -9,13 +9,14 @@
         </el-row>
         <el-row>
             <el-col :span="20">
-                <div class="diagram">
+                <div class="diagram" style="min-height: 75vh;">
                     <Palette class="diagram-palette" @dragInNode="dragInNode" v-if="!readonly" />
                     <div class="container" ref="container"></div>
                 </div>
             </el-col>
             <el-col :span="4">
-                <PropertyPanel class="diagram-panel" :lf="lf" :data="itemData" :itemType="itemType" />
+                <PropertyPanel class="diagram-panel" :lf="lf" :data="itemData" :itemType="itemType" :readonly="readonly"
+                    @change="onPropertyChange" />
             </el-col>
         </el-row>
 
@@ -146,6 +147,13 @@ const dragInNode = (type: any) => {
     }
 }
 
+const onPropertyChange = () => {
+    if (lf.value) {
+        emit('update:graphRawData', lf.value.getGraphRawData())
+        emit('update:graphData', lf.value.getGraphData())
+    }
+}
+
 </script>
 
 <style scoped>
@@ -164,12 +172,6 @@ const dragInNode = (type: any) => {
     padding: 10px;
     border-radius: 4px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
-
-.container {
-    width: 100%;
-    height: 100%;
-    border: 1px solid #000;
 }
 
 .container {

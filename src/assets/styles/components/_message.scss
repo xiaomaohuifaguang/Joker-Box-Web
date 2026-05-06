@@ -17,6 +17,7 @@
     transition: all var(--duration-normal) var(--ease-out);
     animation: msgSlideIn var(--duration-slow) var(--ease-bounce);
     box-shadow: var(--shadow-md);
+    z-index: 9999 !important;
 }
 
 .custom-message::before {

@@ -1,7 +1,7 @@
 <template>
     <div class="avatar-dropdown-container">
         <!-- 登录和注册按钮 -->
-        <div v-if="userInfo() == null" class="auth-buttons">
+        <div v-if="userInfoRef == null" class="auth-buttons">
             <el-button text @click="toPath('/login')" class="login-btn">
                 <el-icon><User /></el-icon>
                 <span>登录</span>
@@ -40,13 +40,13 @@
                             </div>
                             <div class="user-info">
                                 <div class="nickname-row">
-                                    <span class="nickname">{{ userInfo().nickname }}</span>
+                                    <span class="nickname">{{ userInfoRef.nickname }}</span>
                                     <div class="vip-badge">
                                         <el-icon><StarFilled /></el-icon>
                                         <span>VIP8</span>
                                     </div>
                                 </div>
-                                <div class="user-id">@{{ userInfo().username }}</div>
+                                <div class="user-id">@{{ userInfoRef.username }}</div>
                             </div>
                         </div>
 
@@ -69,26 +69,26 @@
                         </div>
 
                         <!-- 组织信息 -->
-                        <div v-if="userInfo().orgs && userInfo().orgs.length > 0" class="info-section">
+                        <div v-if="userInfoRef.orgs && userInfoRef.orgs.length > 0" class="info-section">
                             <div class="section-header">
                                 <el-icon><OfficeBuilding /></el-icon>
                                 <span>所属组织</span>
                             </div>
                             <div class="tag-list">
-                                <el-tag v-for="org in userInfo().orgs" :key="org.id" type="success" effect="light" class="info-tag">
+                                <el-tag v-for="org in userInfoRef.orgs" :key="org.id" type="success" effect="light" class="info-tag">
                                     {{ org.name }}
                                 </el-tag>
                             </div>
                         </div>
 
                         <!-- 角色信息 -->
-                        <div v-if="userInfo().roles && userInfo().roles.length > 0" class="info-section">
+                        <div v-if="userInfoRef.roles && userInfoRef.roles.length > 0" class="info-section">
                             <div class="section-header">
                                 <el-icon><UserFilled /></el-icon>
                                 <span>拥有角色</span>
                             </div>
                             <div class="tag-list">
-                                <el-tag v-for="role in userInfo().roles" :key="role.id" type="warning" effect="light" class="info-tag">
+                                <el-tag v-for="role in userInfoRef.roles" :key="role.id" type="warning" effect="light" class="info-tag">
                                     {{ role.name }}
                                 </el-tag>
                             </div>
@@ -104,7 +104,7 @@
                                 <el-icon class="menu-arrow"><ArrowRight /></el-icon>
                             </div>
 
-                            <div v-if="userInfo().admin" class="menu-item" @click="toPath('/console')">
+                            <div v-if="userInfoRef.admin" class="menu-item" @click="toPath('/console')">
                                 <div class="menu-icon-wrapper admin">
                                     <el-icon><Monitor /></el-icon>
                                 </div>
@@ -139,7 +139,7 @@
 <script setup lang="ts">
 import { User, EditPen, ArrowDown, ArrowRight, StarFilled, OfficeBuilding, UserFilled, Monitor, SwitchButton, Message, Setting } from '@element-plus/icons-vue'
 import Avatar from './Avatar.vue'
-import { userInfo, logout, toPath } from '@/utils'
+import { userInfoRef, logout, toPath } from '@/utils'
 
 const clickLogout = () => {
     logout()
@@ -243,7 +243,7 @@ const clickLogout = () => {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 4px 4px 4px 4px;
+    padding: 4px 8px 4px 4px;
     border-radius: var(--radius-pill);
     cursor: pointer;
     transition: background-color var(--duration-normal) var(--ease-out);

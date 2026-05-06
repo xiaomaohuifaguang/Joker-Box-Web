@@ -77,7 +77,7 @@ const add = async () => {
     loading.value = true
     try {
         const result = await http.post('/org/add', info.value, { raw: true })
-        if (result.code === '200') {
+        if (result.code === 200) {
             alert(result.msg, 'success')
             emit('success');
             info.value.name = ''

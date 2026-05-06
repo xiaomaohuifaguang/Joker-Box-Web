@@ -158,7 +158,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
     </el-dialog>
 
     <!-- 添加对话框 -->
-    <el-dialog v-model="dialogAdd" fullscreen title="添加流程" center destroy-on-close @closed="queryPage"
+    <el-dialog v-model="dialogAdd" fullscreen title="添加流程定义" center destroy-on-close @closed="queryPage"
       class="custom-dialog">
       <ProcessDefinitionAddView @success="handleAddSuccess" />
     </el-dialog>
@@ -249,7 +249,7 @@ const stop = async (id: any) => {
 const openDialog = (id: string | number, type: string) => {
   dialogEdit.value = {
     open: true,
-    title: type === 'view' ? 'ProcessDefinition详情' : '编辑ProcessDefinition',
+    title: type === 'view' ? '流程定义详情' : '流程定义编辑',
     id: String(id),
     type
   }
@@ -488,6 +488,19 @@ onMounted(() => {
 
   :deep(.el-dialog__body) {
     padding: 0;
+  }
+
+
+  :deep(.el-dialog.is-fullscreen) {
+    display: flex !important;
+    flex-direction: column;
+    height: 100vh !important;
+    overflow: hidden !important;
+  }
+
+  :deep(.el-dialog.is-fullscreen .el-dialog__body) {
+    flex: 1;
+    overflow: hidden;
   }
 }
 

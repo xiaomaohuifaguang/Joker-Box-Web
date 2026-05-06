@@ -15,7 +15,7 @@
                 <!-- 品牌区域 -->
                 <div class="footer-brand">
                     <div class="brand-logo">
-                        <img src="@/assets/img/joker-1.png" alt="Joker Box" />
+                        <LogoIcon :size="48" />
                         <span class="brand-name">Joker Box</span>
                     </div>
                     <p class="brand-slogan">救赎之道，就在其中</p>
@@ -124,8 +124,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { 
-    StarFilled, Message, Document, Connection, Collection, 
+import LogoIcon from '@/components/icon/LogoIcon.vue'
+import {
+    StarFilled, Message, Document, Connection, Collection,
     Link, Reading, Box, Monitor, Cpu, UserFilled
 } from '@element-plus/icons-vue';
 

@@ -20,19 +20,30 @@
 </template>
 
 <script setup lang='ts'>
-const props = defineProps({
-    path: String,
-    name: String,
-    children: Array,
-    icon: String
-});
+interface MenuItem {
+    name: string
+    path: string
+    icon: string
+    children: MenuItem[]
+}
+
+const props = withDefaults(defineProps<{
+    path?: string
+    name?: string
+    children?: MenuItem[]
+    icon?: string
+}>(), {
+    path: '',
+    name: '',
+    children: () => [],
+    icon: ''
+})
 </script>
 
 <style scoped lang="scss">
 .custom-menu-item {
     height: 48px !important;
     line-height: 48px !important;
-    margin: 4px 0 !important;
     border-radius: var(--radius-md) !important;
     color: var(--text-regular) !important;
     transition: background-color var(--duration-normal) var(--ease-out),
@@ -73,7 +84,6 @@ const props = defineProps({
     :deep(.el-sub-menu__title) {
         height: 48px !important;
         line-height: 48px !important;
-        margin: 4px 0 !important;
         border-radius: var(--radius-md) !important;
         color: var(--text-regular) !important;
         transition: background-color var(--duration-normal) var(--ease-out),

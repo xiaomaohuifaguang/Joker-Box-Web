@@ -1,853 +1,562 @@
 <template>
-    <div class="dynamic-form-container">
-        <el-form ref="formRef" :model="modelValue" :rules="formRules" label-position="top">
-            <el-row :gutter="20" v-if="props.type == 'create'">
-                <draggable v-model="newFormFields" item-key="fieldId" class="draggable-row">
-                    <template #item="{ element }" style="width: 100%;">
-                        <el-col :key="element.fieldId" :span="element.span || 24" class="draggable-col">
-                            <div class="form-item-container">
-                                <el-form-item :label="element.title" :prop="element.fieldId">
-                                    <!-- 文本输入框 -->
-                                    <el-input v-if="element.type === 'INPUT'" v-model="modelValue[element.fieldId]"
-                                        :placeholder="element.placeholder" clearable style="width: 100%;"
-                                        :maxlength="element.maxLength" :minlength="element.minLength" />
-                                    <!-- 数字输入框 -->
-                                    <el-input-number v-else-if="element.type === 'NUMBER'"
-                                        v-model="modelValue[element.fieldId]" :placeholder="element.placeholder"
-                                        style="width: 100%;" :min="element.min ?? -Infinity
-                                            " :max="element.max ?? Infinity" />
-                                    <!-- 文本域 -->
-                                    <el-input v-else-if="element.type === 'TEXTAREA'"
-                                        v-model="modelValue[element.fieldId]" type="textarea" :autosize="{
-                                            minRows: element.min ?? 2,
-                                            maxRows: element.max ?? 4
-                                        }" :placeholder="element.placeholder" style="width: 100%;"
-                                        :minlength="element.minLength" :maxlength="element.maxLength" />
+    <!-- 设计模式：字段 / 联动 / 预览 -->
+    <div v-if="type === 'create'" class="form-maker design">
+        <el-tabs v-model="activeTab">
+            <el-tab-pane label="字段设计" name="fields">
+                <div class="design-toolbar">
+                    <span class="design-tip">拖拽卡片右上角把手可调整字段顺序，预览按 span 实际布局</span>
+                    <el-button type="primary" :icon="Plus" @click="onAddField">添加字段</el-button>
+                </div>
 
-                                    <!-- 评分 -->
-                                    <el-rate v-else-if="element.type === 'RATE'" v-model="modelValue[element.fieldId]"
-                                        :max="element.max || 5" />
+                <div v-if="fieldList.length === 0" class="empty-state">
+                    <el-empty description="点击右上角添加字段" />
+                </div>
 
-                                    <!-- 下拉选择框单选 -->
-                                    <el-select v-else-if="element.type === 'SELECT'"
-                                        v-model="modelValue[element.fieldId]" :placeholder="element.placeholder"
-                                        clearable>
-                                        <el-option v-for="item in element.options || []" :key="item.value"
-                                            :label="item.label" :value="item.value" style="width: 100%;" />
-                                    </el-select>
-
-                                    <!-- 下拉选择框多选 -->
-                                    <el-select v-else-if="element.type === 'MULTISELECT'"
-                                        v-model="modelValue[element.fieldId]" :placeholder="element.placeholder"
-                                        clearable multiple>
-                                        <el-option v-for="item in element.options || []" :key="item.value"
-                                            :label="item.label" :value="item.value" style="width: 100%;" />
-                                    </el-select>
-
-                                    <!-- 单选按钮组 -->
-                                    <el-radio-group v-else-if="element.type === 'RADIO'"
-                                        v-model="modelValue[element.fieldId]" style="width: 100%;">
-                                        <el-radio v-for="item in element.options || []" :key="item.value"
-                                            :value="item.value" :label="item.label">
-                                            {{ item.label }}
-                                        </el-radio>
-                                    </el-radio-group>
-
-                                    <!-- 多选框 -->
-                                    <el-checkbox-group v-else-if="element.type === 'CHECKBOX'"
-                                        v-model="modelValue[element.fieldId]" style="width: 100%;">
-                                        <el-checkbox v-for="item in element.options || []" :key="item.value"
-                                            :value="item.value">
-                                            {{ item.label }}
-                                        </el-checkbox>
-                                    </el-checkbox-group>
-
-                                    <!-- 级联选择 -->
-                                    <el-cascader v-else-if="element.type === 'CASCADER'"
-                                        v-model="modelValue[element.fieldId]" :options="element.options"
-                                        :placeholder="element.placeholder" style="width: 100%;" :props="{
-                                            multiple: false,
-                                            // emitPath: false
-                                        }" />
-                                    <el-cascader v-else-if="element.type === 'MULTICASCADER'"
-                                        v-model="modelValue[element.fieldId]" :options="element.options"
-                                        :placeholder="element.placeholder" style="width: 100%;" :props="{
-                                            multiple: true,
-                                            // emitPath: false
-                                        }" />
-
-                                    <!-- 开关 -->
-                                    <el-switch v-else-if="element.type === 'SWITCH'"
-                                        v-model="modelValue[element.fieldId]" style="width: 100%;" />
-
-                                    <!-- 颜色选择器 -->
-                                    <el-color-picker v-else-if="element.type === 'COLOR'"
-                                        v-model="modelValue[element.fieldId]" />
-
-                                    <!-- 滑块 -->
-                                    <el-slider v-else-if="element.type === 'SLIDER'"
-                                        v-model="modelValue[element.fieldId]" :min="element.min || 0"
-                                        :max="element.max || 100" show-input />
-
-                                    <!-- 日期选择器 -->
-                                    <el-date-picker v-else-if="element.type === 'DATE'"
-                                        v-model="modelValue[element.fieldId]" type="date"
-                                        :placeholder="element.placeholder" value-format="YYYY-MM-DD"
-                                        style="width: 100%;" />
-
-                                    <!-- 日期时间选择器 -->
-                                    <el-date-picker v-else-if="element.type === 'DATETIME'"
-                                        v-model="modelValue[element.fieldId]" type="datetime"
-                                        :placeholder="element.placeholder" value-format="YYYY-MM-DD HH:mm:ss" />
-
-                                    <!-- 时间选择器 -->
-                                    <el-time-picker v-else-if="element.type === 'TIME'"
-                                        v-model="modelValue[element.fieldId]" :placeholder="element.placeholder"
-                                        value-format="HH:mm:ss" style="width: 100%;" />
-                                    <!-- 日期区间选择器 -->
-                                    <el-date-picker v-else-if="element.type === 'DATERANGE'"
-                                        v-model="modelValue[element.fieldId]" type="daterange" unlink-panels
-                                        range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"
-                                        :placeholder="element.placeholder" value-format="YYYY-MM-DD"
-                                        style="width: 100%;" />
-
-                                </el-form-item>
-                                <!-- <el-button class="edit-btn" type="warning" size="small" @click.stop="editField()" circle
-                                    :icon="Edit" /> -->
-                                <el-button class="delete-btn" type="danger" size="small"
-                                    @click.stop="removeField(element.fieldId)" circle :icon="Delete" />
+                <draggable v-else v-model="fieldList" item-key="fieldId" handle=".field-drag-handle"
+                    @end="onFieldsSorted" class="field-grid">
+                    <template #item="{ element, index }">
+                        <div class="field-col" :style="{ width: `${((element.span || 24) / 24) * 100}%` }">
+                            <div class="field-card" :class="cardSizeClass(element.span)">
+                                <div class="card-head">
+                                    <span class="field-index">#{{ index + 1 }}</span>
+                                    <span class="field-title" :title="element.title">{{ element.title }}</span>
+                                    <div class="card-actions">
+                                        <el-button type="primary" link :icon="Edit" @click="onEditField(element)"
+                                            title="编辑">
+                                            <span class="action-text">编辑</span>
+                                        </el-button>
+                                        <el-button type="danger" link :icon="Delete"
+                                            @click="onRemoveField(element.fieldId)" title="删除">
+                                            <span class="action-text">删除</span>
+                                        </el-button>
+                                        <span class="field-drag-handle" title="拖拽排序">
+                                            <el-icon>
+                                                <Rank />
+                                            </el-icon>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="card-tags">
+                                    <el-tag size="small" type="info">{{ typeLabel(element.type) }}</el-tag>
+                                    <el-tag size="small" type="danger" v-if="element.required === '1'">必填</el-tag>
+                                    <el-tag size="small" type="warning">span {{ element.span ?? 24 }}</el-tag>
+                                    <span class="field-id">{{ element.fieldId }}</span>
+                                </div>
+                                <div class="card-preview">
+                                    <FieldRenderer :field="element" :model-value="null" disabled />
+                                </div>
                             </div>
-                        </el-col>
+                        </div>
                     </template>
                 </draggable>
-            </el-row>
-            <el-row :gutter="20" v-else-if="props.type == 'view' || props.type == 'edit'">
-                <el-col v-for="(field, index) in newFormFields" :key="field.fieldId" :span="field.span || 24">
-                    <div class="form-item-container">
-                        <el-form-item :label="field.title" :prop="field.fieldId">
-                            <!-- 文本输入框 -->
-                            <el-input v-if="field.type === 'INPUT'" v-model="modelValue[field.fieldId]"
-                                :placeholder="field.placeholder" clearable style="width: 100%;"
-                                :maxlength="field.maxLength" :minlength="field.minLength" />
-                            <!-- 数字输入框 -->
-                            <el-input-number v-else-if="field.type === 'NUMBER'" v-model="modelValue[field.fieldId]"
-                                :placeholder="field.placeholder" style="width: 100%;" :min="field.min ?? -Infinity
-                                    " :max="field.max ?? Infinity" />
-                            <!-- 文本域 -->
-                            <el-input v-else-if="field.type === 'TEXTAREA'" v-model="modelValue[field.fieldId]"
-                                type="textarea" :autosize="{
-                                    minRows: field.min ?? 2,
-                                    maxRows: field.max ?? 4
-                                }" :placeholder="field.placeholder" style="width: 100%;" :minlength="field.minLength"
-                                :maxlength="field.maxLength" />
+            </el-tab-pane>
 
-                            <!-- 评分 -->
-                            <el-rate v-else-if="field.type === 'RATE'" v-model="modelValue[field.fieldId]"
-                                :max="field.max || 5" />
+            <el-tab-pane :label="`联动规则 (${linkageList.length})`" name="linkage">
+                <LinkageEditor :rules="linkageList" :fields="fieldList" @update:rules="linkageList = $event" />
+            </el-tab-pane>
 
-                            <!-- 下拉选择框单选 -->
-                            <el-select v-else-if="field.type === 'SELECT'" v-model="modelValue[field.fieldId]"
-                                :placeholder="field.placeholder" clearable>
-                                <el-option v-for="item in field.options || []" :key="item.value" :label="item.label"
-                                    :value="item.value" style="width: 100%;" />
-                            </el-select>
-
-                            <!-- 下拉选择框多选 -->
-                            <el-select v-else-if="field.type === 'MULTISELECT'" v-model="modelValue[field.fieldId]"
-                                :placeholder="field.placeholder" clearable multiple>
-                                <el-option v-for="item in field.options || []" :key="item.value" :label="item.label"
-                                    :value="item.value" style="width: 100%;" />
-                            </el-select>
-
-                            <!-- 单选按钮组 -->
-                            <el-radio-group v-else-if="field.type === 'RADIO'" v-model="modelValue[field.fieldId]"
-                                style="width: 100%;">
-                                <el-radio v-for="item in field.options || []" :key="item.value" :value="item.value"
-                                    :label="item.label">
-                                    {{ item.label }}
-                                </el-radio>
-                            </el-radio-group>
-
-                            <!-- 多选框 -->
-                            <el-checkbox-group v-else-if="field.type === 'CHECKBOX'" v-model="modelValue[field.fieldId]"
-                                style="width: 100%;" :min="field.min" :max="field.max">
-                                <el-checkbox v-for="item in field.options || []" :key="item.value" :value="item.value">
-                                    {{ item.label }}
-                                </el-checkbox>
-                            </el-checkbox-group>
-
-                            <!-- 级联选择 -->
-                            <el-cascader v-else-if="field.type === 'CASCADER'" v-model="modelValue[field.fieldId]"
-                                :options="field.options" :placeholder="field.placeholder" style="width: 100%;" :props="{
-                                    multiple: false,
-                                    // emitPath: false
-                                }" />
-                            <el-cascader v-else-if="field.type === 'MULTICASCADER'" v-model="modelValue[field.fieldId]"
-                                :options="field.options" :placeholder="field.placeholder" style="width: 100%;" :props="{
-                                    multiple: true,
-                                    // emitPath: false
-                                }" />
-
-                            <!-- 开关 -->
-                            <el-switch v-else-if="field.type === 'SWITCH'" v-model="modelValue[field.fieldId]"
-                                style="width: 100%;" />
-
-                            <!-- 颜色选择器 -->
-                            <el-color-picker v-else-if="field.type === 'COLOR'" v-model="modelValue[field.fieldId]" />
-
-                            <!-- 滑块 -->
-                            <el-slider v-else-if="field.type === 'SLIDER'" v-model="modelValue[field.fieldId]"
-                                :min="field.min || 0" :max="field.max || 100" show-input />
-
-                            <!-- 日期选择器 -->
-                            <el-date-picker v-else-if="field.type === 'DATE'" v-model="modelValue[field.fieldId]"
-                                type="date" :placeholder="field.placeholder" value-format="YYYY-MM-DD"
-                                style="width: 100%;" />
-
-                            <!-- 日期时间选择器 -->
-                            <el-date-picker v-else-if="field.type === 'DATETIME'" v-model="modelValue[field.fieldId]"
-                                type="datetime" :placeholder="field.placeholder" value-format="YYYY-MM-DD HH:mm:ss" />
-
-                            <!-- 时间选择器 -->
-                            <el-time-picker v-else-if="field.type === 'TIME'" v-model="modelValue[field.fieldId]"
-                                :placeholder="field.placeholder" value-format="HH:mm:ss" style="width: 100%;" />
-                            <!-- 日期区间选择器 -->
-                            <el-date-picker v-else-if="field.type === 'DATERANGE'" v-model="modelValue[field.fieldId]"
-                                type="daterange" unlink-panels range-separator="至" start-placeholder="开始时间"
-                                end-placeholder="结束时间" :placeholder="field.placeholder" value-format="YYYY-MM-DD"
-                                style="width: 100%;" />
-
-                        </el-form-item>
-                    </div>
-                </el-col>
-            </el-row>
-        </el-form>
-        <div class="form-actions">
-            <el-button type="primary" @click="addFieldOpen" v-if="props.type == 'create'">添加新字段</el-button>
-            <el-button type="primary" @click="verify"
-                v-if="props.type == 'create' || props.type == 'view'">验证表单</el-button>
-        </div>
-        <el-dialog v-if="addFiledDialog" v-model="addFiledDialog" title="编辑字段">
-            <div class="dialog-content" v-loading="newFieldLoading">
-                <el-form ref="newFieldFormRef" :rules="newFieldFormRules" :model="newFieldParams" label-position="top">
-                    <el-row :gutter="20">
-                        <el-col :span="24">
-                            <el-form-item label="fieldId" prop="fieldId">
-                                <el-input v-model="newFieldParams.fieldId" placeholder="" disabled>
-                                    <template #append>
-                                        <el-button type="primary"
-                                            @click="newFieldParams.fieldId = randomId('field_')">重新生成</el-button>
-                                    </template>
-                                </el-input>
+            <el-tab-pane label="表单预览" name="preview">
+                <div class="preview-tip">
+                    <el-icon>
+                        <InfoFilled />
+                    </el-icon>
+                    <span>这里实时反映字段配置和联动规则的运行效果。</span>
+                </div>
+                <el-form ref="previewFormRef" :model="previewData" :rules="previewRules" label-position="top">
+                    <el-row :gutter="16">
+                        <el-col v-for="field in visibleFieldsForPreview" :key="field.fieldId" :span="field.span || 24">
+                            <el-form-item :label="field.title" :prop="field.fieldId"
+                                :required="previewStates[field.fieldId]?.required">
+                                <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
+                                    @update:model-value="previewData[field.fieldId] = $event"
+                                    :disabled="previewStates[field.fieldId]?.disabled" />
                             </el-form-item>
-                        </el-col>
-                        <el-col :span="24">
-                            <el-form-item label="标题" prop="title">
-                                <el-input v-model="newFieldParams.title" placeholder="请填写标题" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24">
-                            <el-form-item label="字段类型" prop="type">
-                                <el-select v-model="newFieldParams.type" placeholder="请选择字段类型">
-                                    <el-option v-for="item in fieldTypes" :label="item.label" :value="item.value" />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24">
-                            <el-form-item label="提示" prop="placeholder">
-                                <el-input v-model="newFieldParams.placeholder" placeholder="提示词" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24">
-                            <el-form-item label="必填" prop="required">
-                                <el-switch v-model="newFieldParams.required" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24"
-                            v-if="['SELECT', 'MULTISELECT', 'CASCADER', 'MULTICASCADER', 'RADIO', 'CHECKBOX'].includes(newFieldParams.type)">
-                            <el-form-item>
-                                <el-button type="primary" @click="optionsDialog = true">选项管理器</el-button>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24" v-if="['INPUT', 'TEXTAREA'].includes(newFieldParams.type)">
-                            <el-form-item label="默认值" prop="defaultValue">
-                                <el-input v-model="newFieldParams.defaultValue" placeholder="填写默认值" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24" v-if="['SELECT', 'RADIO'].includes(newFieldParams.type)">
-                            <el-form-item label="默认值" prop="defaultValue">
-                                <el-select v-model="newFieldParams.defaultValue" placeholder="选择默认值" clearable>
-                                    <el-option v-for="item in newFieldParams.options" :label="item.label"
-                                        :value="item.value" />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24" v-if="['MULTISELECT', 'CHECKBOX'].includes(newFieldParams.type)">
-                            <el-form-item label="默认值" prop="defaultValue">
-                                <el-select v-model="newFieldParams.defaultValue" placeholder="选择默认值" clearable multiple>
-                                    <el-option v-for="item in newFieldParams.options" :label="item.label"
-                                        :value="item.value" />
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24" v-if="['CASCADER'].includes(newFieldParams.type)">
-                            <el-form-item label="默认值" prop="defaultValue">
-                                <!-- 级联选择 -->
-                                <el-cascader v-model="newFieldParams.defaultValue" :options="newFieldParams.options"
-                                    clearable placeholder="选择默认值" style="width: 100%;" :props="{
-                                        multiple: false,
-                                        // emitPath: false
-                                    }" />
-
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24" v-if="['MULTICASCADER'].includes(newFieldParams.type)">
-                            <el-form-item label="默认值" prop="defaultValue">
-                                <el-cascader v-model="newFieldParams.defaultValue" :options="newFieldParams.options"
-                                    clearable placeholder="选择默认值" style="width: 100%;" :props="{
-                                        multiple: true,
-                                        // emitPath: false
-                                    }" />
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24">
-                            <el-form-item label="默认值" prop="span">
-                                <el-input v-model="newFieldParams.span" placeholder="布局宽度1-24" style="width: 100%;" />
-                            </el-form-item>
-
-                        </el-col>
-                        <el-col :span="12" v-if="['INPUT', 'TEXTAREA'].includes(newFieldParams.type)">
-                            <el-row :gutter="20">
-                                <el-col :span="12">
-                                    <el-form-item label="最小长度" prop="minLength">
-                                        <el-input v-model="newFieldParams.minLength" placeholder="" />
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="12">
-                                    <el-form-item label="最大长度" prop="maxLength">
-                                        <el-input v-model="newFieldParams.maxLength" placeholder="" />
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-col>
-                        <el-col :span="12" v-if="['NUMBER'].includes(newFieldParams.type)">
-                            <el-row :gutter="20">
-                                <el-col :span="12">
-                                    <el-form-item label="最小值" prop="min">
-                                        <el-input v-model="newFieldParams.min" placeholder="" />
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="12">
-                                    <el-form-item label="最大值" prop="max">
-                                        <el-input v-model="newFieldParams.max" placeholder="" />
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-col>
-                        <el-col :span="12" v-if="['TEXTAREA'].includes(newFieldParams.type)">
-                            <el-row :gutter="20">
-                                <el-col :span="12">
-                                    <el-form-item label="显示最小行数" prop="min">
-                                        <el-input v-model="newFieldParams.min" placeholder="" />
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="12">
-                                    <el-form-item label="显示最大行数" prop="max">
-                                        <el-input v-model="newFieldParams.max" placeholder="" />
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-col>
-
-                        <el-col :span="24">
-                            <el-row :gutter="20">
-                                <el-col :span="12">
-                                    <el-form-item label="正则验证" prop="pattern">
-                                        <el-input v-model="newFieldParams.pattern"
-                                            placeholder="例如：^[\u4e00-\u9fa5]{2,4}$" />
-                                    </el-form-item>
-                                </el-col>
-                                <el-col :span="12">
-                                    <el-form-item label="正则验证提示" prop="patternTips">
-                                        <el-input v-model="newFieldParams.patternTips" placeholder="例：格式不正确" />
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
                         </el-col>
                     </el-row>
                 </el-form>
-                <div style="text-align: center;">
-                    <el-button @click="addFieldFun" type="primary">确定</el-button>
-                    <el-button @click="addFiledDialog = false" type="info">取消</el-button>
-                </div>
-            </div>
-        </el-dialog>
-        <el-dialog v-model="optionsDialog" width="60%">
-            <div class="options-manager-container">
-                <OptionsMaker v-model:options="newFieldParams.options" :type="newFieldParams.type" />
-            </div>
-            <template #footer>
-                <div style="text-align: center;">
-                    <el-button @click="optionsDialog = false" type="info">关闭</el-button>
-                </div>
-            </template>
-        </el-dialog>
+                <el-button type="primary" plain @click="verifyPreview">验证表单</el-button>
+            </el-tab-pane>
+        </el-tabs>
+
+        <FieldEditor v-model="fieldEditorOpen" :field="editingField" :existing-field-ids="fieldIds"
+            @submit="onFieldSubmit" />
+    </div>
+
+    <!-- 运行模式：填表 / 查看 -->
+    <div v-else class="form-maker runtime">
+        <el-form ref="runtimeFormRef" :model="modelValue" :rules="runtimeRules" label-position="top">
+            <el-row :gutter="16">
+                <el-col v-for="field in visibleFieldsForRuntime" :key="field.fieldId" :span="field.span || 24">
+                    <el-form-item :label="field.title" :prop="field.fieldId"
+                        :required="runtimeStates[field.fieldId]?.required">
+                        <FieldRenderer :field="field" :model-value="modelValue[field.fieldId]"
+                            @update:model-value="onRuntimeFieldUpdate(field.fieldId, $event)"
+                            :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled" />
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
     </div>
 </template>
 
-<script setup lang='ts'>
-import { computed, watch } from 'vue';
-import { type FormField, FormFieldType } from './types'
-import type { FormInstance, FormRules, FormItemRule } from 'element-plus'
-import { ref } from 'vue';
-import { alert, randomId } from '@/utils';
-import OptionsMaker from '@/components/dynamicForm/OptionsMaker.vue';
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
-import { Delete, Edit } from '@element-plus/icons-vue'
+import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
+import { Plus, Edit, Delete, Rank, InfoFilled } from '@element-plus/icons-vue'
+import { alert } from '@/utils'
+import FieldRenderer from './FieldRenderer.vue'
+import FieldEditor from './FieldEditor.vue'
+import LinkageEditor from './LinkageEditor.vue'
+import {
+    FIELD_TYPE_OPTIONS,
+    type FormField,
+    type FormLinkage,
+} from './types'
+import { computeFieldStates, validateTemplate } from './linkage'
 
-const props = defineProps({
-    formFields: {
-        type: Array as () => FormField[],
-        required: true,
-        default: () => []
-    },
-    modelValue: {
-        type: Object,
-        required: true,
-        default: () => ({})
-    },
-    formId: {
-        type: String,
-        required: false,
-        default: () => null
-    },
-    formInstanceId: {
-        type: String,
-        required: false,
-        default: () => null
-    },
-    type: {
-        type: String as () => 'view' | 'edit' | 'create',
-        required: true,
-        default: () => 'view'
-    }
-})
-
-// 使用计算属性来处理表单字段
-const newFormFields = computed({
-    get() {
-        return props.formFields
-    },
-    set(value) {
-        emit('update:fields', value)
-    }
-})
-
-// 表单引用
-const formRef = ref<FormInstance>()
-
-const emit = defineEmits(['update:fields', 'update:modelValue'])
-
-
-// 编辑表单项
-const editField = () => {
-    alert('此功能暂未开发', 'warning')
+interface Props {
+    formFields: FormField[]
+    linkageRules?: FormLinkage[]
+    modelValue: Record<string, any>
+    type: 'create' | 'view' | 'edit'
 }
 
-// 删除表单项
-const removeField = (fieldId: string) => {
-    const updatedFields = props.formFields.filter(field => field.fieldId !== fieldId)
-    emit('update:fields', updatedFields)
+const props = withDefaults(defineProps<Props>(), {
+    linkageRules: () => [],
+    modelValue: () => ({}),
+})
 
-    // 从modelValue中移除对应的字段
-    const newModelValue = { ...props.modelValue }
-    delete newModelValue[fieldId]
-    emit('update:modelValue', newModelValue)
+const emit = defineEmits<{
+    (e: 'update:fields', v: FormField[]): void
+    (e: 'update:rules', v: FormLinkage[]): void
+    (e: 'update:modelValue', v: Record<string, any>): void
+}>()
+
+// 设计模式数据
+const fieldList = computed<FormField[]>({
+    get: () => props.formFields,
+    set: v => emit('update:fields', v),
+})
+
+const linkageList = computed<FormLinkage[]>({
+    get: () => props.linkageRules || [],
+    set: v => emit('update:rules', v),
+})
+
+const fieldIds = computed(() => fieldList.value.map(f => f.fieldId))
+
+const typeLabel = (type: string): string =>
+    FIELD_TYPE_OPTIONS.find(o => o.value === type)?.label || type
+
+const cardSizeClass = (span?: number): string => {
+    const s = span ?? 24
+    if (s >= 19) return 'card-full'
+    if (s >= 12) return 'card-wide'
+    if (s >= 7) return 'card-mid'
+    return 'card-narrow'
 }
 
-// 规则生成
-const formRules = computed<FormRules>(() => {
+const activeTab = ref<'fields' | 'linkage' | 'preview'>('fields')
+
+// 字段编辑器
+const fieldEditorOpen = ref(false)
+const editingField = ref<FormField | null>(null)
+
+const onAddField = () => {
+    editingField.value = null
+    fieldEditorOpen.value = true
+}
+
+const onEditField = (field: FormField) => {
+    editingField.value = field
+    fieldEditorOpen.value = true
+}
+
+const onFieldSubmit = (field: FormField) => {
+    const list = [...fieldList.value]
+    const idx = list.findIndex(f => f.fieldId === (editingField.value?.fieldId || field.fieldId))
+    if (idx >= 0 && editingField.value) {
+        list[idx] = { ...field, sort: list[idx].sort ?? idx }
+    } else {
+        list.push({ ...field, sort: list.length })
+    }
+    fieldList.value = reindexSort(list)
+    syncDefaultValues(list)
+}
+
+const onRemoveField = (fieldId: string) => {
+    const list = fieldList.value.filter(f => f.fieldId !== fieldId)
+    fieldList.value = reindexSort(list)
+    // 同步移除引用该字段的联动规则
+    const rules = linkageList.value.filter(
+        r => r.triggerFieldId !== fieldId && r.targetFieldId !== fieldId,
+    )
+    if (rules.length !== linkageList.value.length) {
+        linkageList.value = rules
+    }
+    // 同步清掉 modelValue 中对应数据
+    if (Object.prototype.hasOwnProperty.call(props.modelValue, fieldId)) {
+        const next = { ...props.modelValue }
+        delete next[fieldId]
+        emit('update:modelValue', next)
+    }
+}
+
+const onFieldsSorted = () => {
+    // 拖拽结束 → 重新落 sort
+    fieldList.value = reindexSort(fieldList.value)
+}
+
+const reindexSort = (list: FormField[]): FormField[] =>
+    list.map((f, i) => ({ ...f, sort: i }))
+
+// 默认值初始化（仅在新增字段时把 defaultValue 写入 modelValue）
+const syncDefaultValues = (fields: FormField[]) => {
+    const next = { ...props.modelValue }
+    let changed = false
+    fields.forEach(field => {
+        if (Object.prototype.hasOwnProperty.call(next, field.fieldId)) return
+        if (field.defaultValue === undefined || field.defaultValue === null) return
+        switch (field.type) {
+            case 'CHECKBOX':
+            case 'MULTISELECT':
+            case 'MULTICASCADER':
+                next[field.fieldId] = Array.isArray(field.defaultValue) ? field.defaultValue : []
+                break
+            case 'NUMBER':
+            case 'SLIDER':
+            case 'RATE':
+                next[field.fieldId] = Number(field.defaultValue) || 0
+                break
+            case 'SWITCH':
+                next[field.fieldId] = !!field.defaultValue
+                break
+            default:
+                next[field.fieldId] = field.defaultValue
+        }
+        changed = true
+    })
+    if (changed) emit('update:modelValue', next)
+}
+
+watch(() => props.formFields, list => syncDefaultValues(list), { immediate: true })
+
+// 运行模式：联动求值 + 校验规则
+const runtimeStates = computed(() =>
+    computeFieldStates(props.formFields, props.linkageRules, props.modelValue),
+)
+
+const visibleFieldsForRuntime = computed(() =>
+    props.formFields.filter(f => runtimeStates.value[f.fieldId]?.visible !== false),
+)
+
+const buildItemRules = (field: FormField, requiredOverride: boolean): FormItemRule[] => {
+    const itemRules: FormItemRule[] = []
+    if (requiredOverride) {
+        itemRules.push({
+            required: true,
+            message: `${field.title}不能为空`,
+            trigger: 'change',
+        })
+    }
+    if (field.minLength != null) {
+        itemRules.push({
+            min: Number(field.minLength),
+            message: `${field.title} 长度不能小于 ${field.minLength}`,
+            trigger: 'change',
+        })
+    }
+    if (field.maxLength != null) {
+        itemRules.push({
+            max: Number(field.maxLength),
+            message: `${field.title} 长度不能大于 ${field.maxLength}`,
+            trigger: 'change',
+        })
+    }
+    if (field.pattern) {
+        try {
+            const re = new RegExp(field.pattern)
+            itemRules.push({
+                pattern: re,
+                message: field.patternTips || `${field.title}格式不正确`,
+                trigger: 'change',
+            })
+        } catch {
+            // 无效正则忽略，不抛
+        }
+    }
+    return itemRules
+}
+
+const runtimeRules = computed<FormRules>(() => {
     const rules: FormRules = {}
     props.formFields.forEach(field => {
-        const itemRules: FormItemRule[] = []
-        if (field.required && (field.required === true || field.required === "true")) {
-            itemRules.push({
-                required: true,
-                message: field.title + '不能为空',
-                trigger: 'change'
-            })
-        }
-
-        if (field.pattern && field.pattern !== '') {
-            itemRules.push({
-                pattern: new RegExp(field['pattern']),
-                message: field.patternTips ? field.patternTips : `${field.title}格式不正确`,
-                trigger: 'change'
-            })
-        }
-
-        if (!props.modelValue.hasOwnProperty(field.fieldId)) {
-            if (field.defaultValue !== undefined) {
-                // 更新表单数据
-                const newFormData = { ...props.modelValue }
-                switch (field.type) {
-                    case 'CHECKBOX':
-                        newFormData[field.fieldId] = field.defaultValue || []
-                        break
-                    case 'NUMBER':
-                        newFormData[field.fieldId] = Number(field.defaultValue) || 0
-                        break
-                    case 'SWITCH':
-                        newFormData[field.fieldId] = field.defaultValue || false
-                        break
-                    case 'RATE':
-                        newFormData[field.fieldId] = field.defaultValue || 0
-                        break
-                    case 'SLIDER':
-                        newFormData[field.fieldId] = field.defaultValue || 0
-                        break
-                    default:
-                        newFormData[field.fieldId] = field.defaultValue || null
-                }
-                emit('update:modelValue', newFormData)
-            }
-        }
-
-        if (itemRules.length > 0) {
-            rules[field.fieldId] = itemRules
-        }
+        const state = runtimeStates.value[field.fieldId]
+        if (!state || !state.visible) return // 隐藏字段不参与校验
+        const itemRules = buildItemRules(field, state.required)
+        if (itemRules.length > 0) rules[field.fieldId] = itemRules
     })
-
     return rules
 })
 
-// 验证表单
-const verify = async () => {
-    if (!formRef.value) return
+const onRuntimeFieldUpdate = (fieldId: string, value: any) => {
+    emit('update:modelValue', { ...props.modelValue, [fieldId]: value })
+}
+
+const runtimeFormRef = ref<FormInstance>()
+
+const verify = async (): Promise<boolean> => {
+    if (!runtimeFormRef.value) return true
     try {
-        await formRef.value.validate();
-        return true;
-    } catch (error) {
-        return false;
+        await runtimeFormRef.value.validate()
+        return true
+    } catch {
+        return false
     }
 }
 
-// 添加修改表单项 
-const addFiledDialog = ref(false)
-const newFieldFormRef = ref<FormInstance>()
-const newFieldLoading = ref(false)
-const fieldTypes = [
-    { label: '文本输入', value: 'INPUT' },
-    { label: '数字输入', value: 'NUMBER' },
-    { label: '下拉选择单选', value: 'SELECT' },
-    { label: '下拉选择多选', value: 'MULTISELECT' },
-    { label: '勾选框单选', value: 'RADIO' },
-    { label: '勾选框复选', value: 'CHECKBOX' },
-    { label: '日期选择', value: 'DATE' },
-    { label: '日期时间', value: 'DATETIME' },
-    { label: '时间选择', value: 'TIME' },
-    { label: '开关', value: 'SWITCH' },
-    { label: '文本域', value: 'TEXTAREA' },
-    { label: '文件上传', value: 'UPLOAD' },
-    { label: '评分', value: 'RATE' },
-    { label: '滑块', value: 'SLIDER' },
-    { label: '颜色选择', value: 'COLOR' },
-    { label: '级联选择单选', value: 'CASCADER' },
-    { label: '级联选择多选', value: 'MULTICASCADER' },
-]
+// 设计模式：预览
+const previewData = ref<Record<string, any>>({})
 
-const newFieldParams = ref<{
-    fieldId: string;
-    type: FormFieldType;
-    title: string;
-    required: boolean;
-    defaultValue: any;
-    placeholder: string | null;
-    options: any[] | null;
-    minLength: number | null;
-    maxLength: number | null;
-    min: number | null;
-    max: number | null;
-    pattern: string | null;
-    patternTips: string | null;
-    span?: number // 宽度
-}>({
-    fieldId: randomId('field_'),
-    type: 'INPUT',
-    title: '',
-    required: false,
-    defaultValue: null,
-    placeholder: null,
-    options: null,
-    minLength: null,
-    maxLength: null,
-    min: null,
-    max: null,
-    pattern: null,
-    patternTips: null,
-    span: 24 // 宽度
+watch(
+    () => props.formFields,
+    fields => {
+        const next: Record<string, any> = {}
+        fields.forEach(f => {
+            next[f.fieldId] = previewData.value[f.fieldId] ?? f.defaultValue ?? null
+        })
+        previewData.value = next
+    },
+    { immediate: true, deep: true },
+)
+
+const previewStates = computed(() =>
+    computeFieldStates(props.formFields, linkageList.value, previewData.value),
+)
+
+const visibleFieldsForPreview = computed(() =>
+    props.formFields.filter(f => previewStates.value[f.fieldId]?.visible !== false),
+)
+
+const previewRules = computed<FormRules>(() => {
+    const rules: FormRules = {}
+    props.formFields.forEach(field => {
+        const state = previewStates.value[field.fieldId]
+        if (!state || !state.visible) return
+        const itemRules = buildItemRules(field, state.required)
+        if (itemRules.length > 0) rules[field.fieldId] = itemRules
+    })
+    return rules
 })
 
-const optionsDialog = ref(false)
-const newFieldFormRules = ref<FormRules>({
-    fieldId: [
-        { required: true, message: 'id不能为空', trigger: 'change' },
-        { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'change' }
-    ],
-    title: [
-        { required: true, message: '标题不能为空', trigger: 'change' },
-        { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'change' }
-    ],
-    type: [
-        { required: true, message: '类型不能为空', trigger: 'change' }
-    ]
-})
+const previewFormRef = ref<FormInstance>()
 
-const addFieldOpen = () => {
-    addFiledDialog.value = true;
-    newFieldParams.value = {
-        fieldId: randomId('field_'),
-        type: 'INPUT',
-        title: '',
-        required: false,
-        defaultValue: null,
-        placeholder: null,
-        options: null,
-        minLength: null,
-        maxLength: null,
-        min: null,
-        max: null,
-        pattern: null,
-        patternTips: null,
-        span: 24
-    }
-}
-
-const addFieldFun = async () => {
-    newFieldLoading.value = true
-    if (!formRef.value || !newFieldFormRef.value) return
+const verifyPreview = async () => {
+    if (!previewFormRef.value) return
     try {
-        await newFieldFormRef.value.validate();
-        const field: FormField = {
-            fieldId: newFieldParams.value.fieldId,
-            type: newFieldParams.value.type,
-            title: newFieldParams.value.title,
-            required: newFieldParams.value.required,
-            defaultValue: newFieldParams.value.defaultValue,
-            placeholder: newFieldParams.value.placeholder ?? undefined,
-            options: newFieldParams.value.options ?? undefined,
-            minLength: newFieldParams.value.minLength ?? undefined,
-            maxLength: newFieldParams.value.maxLength ?? undefined,
-            min: newFieldParams.value.min ?? undefined,
-            max: newFieldParams.value.max ?? undefined,
-            pattern: newFieldParams.value.pattern ?? undefined,
-            patternTips: newFieldParams.value.patternTips ?? undefined,
-            span: newFieldParams.value.span
-        }
-        // 创建新数组并触发更新
-        const updatedFields = [...props.formFields, field]
-        emit('update:fields', updatedFields)
-
-        // 更新表单数据
-        const newFormData = { ...props.modelValue }
-        switch (field.type) {
-            case 'CHECKBOX':
-                newFormData[field.fieldId] = []
-                break
-            case 'NUMBER':
-                newFormData[field.fieldId] = Number(field.defaultValue) || 0
-                break
-            case 'SWITCH':
-                newFormData[field.fieldId] = field.defaultValue || false
-                break
-            case 'RATE':
-                newFormData[field.fieldId] = field.defaultValue || 0
-                break
-            case 'SLIDER':
-                newFormData[field.fieldId] = field.defaultValue || 0
-                break
-            default:
-                newFormData[field.fieldId] = field.defaultValue || null
-        }
-        emit('update:modelValue', newFormData)
-
-        addFiledDialog.value = false
-        return true;
-
-    } catch (error) {
-        return false;
-    } finally {
-        newFieldLoading.value = false
+        await previewFormRef.value.validate()
+        alert('表单校验通过', 'success')
+    } catch {
+        alert('表单校验失败', 'error')
     }
 }
+
+// 模板预校验（外部用：发布前）
+const validateTpl = (name?: string) =>
+    validateTemplate(name ?? '_skip_', props.formFields, props.linkageRules)
 
 defineExpose({
-    verify
+    verify, // 运行时表单校验
+    validateTpl, // 模板预校验
 })
 </script>
 
-<style scoped>
-/* 主容器样式 */
-.dynamic-form-container {
-    background-color: var(--el-bg-color);
-    padding: 20px;
-    border-radius: var(--el-border-radius-base);
-    box-shadow: var(--el-box-shadow-light);
+<style scoped lang="scss">
+.form-maker {
+    width: 100%;
 }
 
-/* 表单行样式 */
-.el-row {
-    margin-bottom: 20px;
-}
+.design {
+    .design-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        gap: 12px;
 
-/* 表单项容器 */
-.form-item-container {
-    position: relative;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    background-color: var(--el-fill-color-lighter);
-    border-radius: var(--el-border-radius-base);
-    transition: all 0.3s var(--el-transition-function-ease-in-out-bezier);
-    border: 1px solid var(--el-border-color-light);
-}
-
-/* 拖拽相关样式 */
-.draggable-row {
-    display: contents;
-}
-
-.draggable-col {
-    margin-bottom: 16px;
-    transition: all 0.3s;
-    padding-left: 8px;
-    padding-right: 8px;
-}
-
-/* 拖拽时的样式 */
-.draggable-col.sortable-chosen {
-    background-color: var(--el-color-primary-light-9);
-    border: 1px dashed var(--el-color-primary);
-    cursor: move;
-}
-
-/* 拖拽占位样式 */
-.draggable-col.sortable-ghost {
-    background-color: var(--el-color-primary-light-8);
-    border: 1px dashed var(--el-color-primary-light-3);
-    opacity: 0.6;
-}
-
-/* 拖拽预览样式 */
-.draggable-col.sortable-drag {
-    opacity: 0.9;
-    box-shadow: var(--el-box-shadow-light);
-    transform: scale(1.02);
-}
-
-
-/* 修改按钮样式 */
-.edit-btn {
-    position: absolute;
-    right: 50px;
-    top: 55%;
-    transform: translateY(-50%);
-    background-color: var(--el-color-warning);
-    color: white;
-    border: none;
-    transition: all 0.2s;
-}
-
-.edit-btn:hover {
-    background-color: var(--el-color-warning-light-3);
-    transform: translateY(-50%) scale(1.1);
-}
-
-/* 删除按钮样式 */
-.delete-btn {
-    position: absolute;
-    right: 20px;
-    top: 45%;
-    transform: translateY(-50%);
-    background-color: var(--el-color-danger);
-    color: white;
-    border: none;
-    transition: all 0.2s;
-}
-
-.delete-btn:hover {
-    background-color: var(--el-color-danger-light-3);
-    transform: translateY(-50%) scale(1.1);
-}
-
-/* 操作按钮区域 */
-.form-actions {
-    margin-top: 24px;
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-}
-
-/* 对话框内容样式 */
-.dialog-content {
-    padding: 16px;
-    background-color: var(--el-bg-color);
-    border-radius: var(--el-border-radius-base);
-}
-
-/* 选项管理器容器 */
-.options-manager-container {
-    background-color: var(--el-fill-color-lighter);
-    padding: 16px;
-    border-radius: var(--el-border-radius-base);
-    border: 1px solid var(--el-border-color-light);
-}
-
-/* 响应式调整 */
-@media (max-width: 768px) {
-    .el-col {
-        width: 100%;
+        .design-tip {
+            color: var(--el-text-color-secondary);
+            font-size: 12px;
+        }
     }
 
-    .form-item-container {
-        padding: 12px;
+    .empty-state {
+        padding: 40px 0;
     }
 
-    .form-actions {
+    .field-grid {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -6px;
+        min-height: 60px;
+    }
+
+    .field-col {
+        box-sizing: border-box;
+        padding: 12px 6px 12px;
+        min-width: 0;
+        margin-bottom: 12px;
+    }
+
+    .field-card {
+        display: flex;
         flex-direction: column;
-        align-items: stretch;
+        height: 100%;
+        background: var(--el-bg-color);
+        border: 1px solid var(--el-border-color-light);
+        border-radius: 10px;
+        padding: 10px 12px;
+        transition: all 0.2s;
+        gap: 8px;
+
+        &:hover {
+            border-color: var(--el-color-primary-light-5);
+            box-shadow: var(--el-box-shadow-light);
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+
+            .field-index {
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--el-color-primary);
+                flex-shrink: 0;
+            }
+
+            .field-title {
+                font-weight: 600;
+                color: var(--el-text-color-primary);
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .card-actions {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                flex-shrink: 0;
+
+                .field-drag-handle {
+                    cursor: grab;
+                    color: var(--el-text-color-secondary);
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 4px;
+                    border-radius: 4px;
+
+                    &:hover {
+                        background: var(--el-fill-color);
+                        color: var(--el-color-primary);
+                    }
+
+                    &:active {
+                        cursor: grabbing;
+                    }
+                }
+
+                :deep(.el-button + .el-button) {
+                    margin-left: 0;
+                }
+            }
+        }
+
+        .card-tags {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            min-width: 0;
+
+            .field-id {
+                font-size: 12px;
+                color: var(--el-text-color-secondary);
+                font-family: monospace;
+                margin-left: auto;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 50%;
+            }
+        }
+
+        .card-preview {
+            background: var(--el-fill-color-lighter);
+            padding: 8px 10px;
+            border-radius: 6px;
+            pointer-events: none;
+            opacity: 0.85;
+            min-width: 0;
+        }
+
+        // 窄宽度卡片的渐进精简
+        &.card-mid {
+            .card-tags .field-id {
+                display: none;
+            }
+
+            .card-actions .action-text {
+                display: none;
+            }
+        }
+
+        &.card-narrow {
+            padding: 8px 10px;
+            gap: 6px;
+
+            .card-tags .field-id {
+                display: none;
+            }
+
+            .card-actions .action-text {
+                display: none;
+            }
+
+            .card-preview {
+                display: none;
+            }
+        }
+    }
+
+    // 拖拽过程的占位与幽灵态
+    :deep(.sortable-ghost) {
+        opacity: 0.4;
+    }
+
+    :deep(.sortable-chosen) {
+        cursor: grabbing;
     }
 }
 
-/* 表单标签增强样式 */
-:deep(.el-form-item__label) {
-    font-weight: 500;
-    color: var(--el-text-color-primary);
-}
-
-/* 输入框增强样式 */
-:deep(.el-input__inner),
-:deep(.el-textarea__inner) {
-    border-radius: var(--el-border-radius-base);
-}
-
-/* 选择器增强样式 */
-:deep(.el-select) {
-    width: 100%;
-}
-
-/* 日期选择器增强样式 */
-:deep(.el-date-editor) {
-    width: 100%;
-}
-
-/* 滑块增强样式 */
-:deep(.el-slider) {
-    margin-top: 12px;
+.preview-tip {
+    color: var(--el-text-color-secondary);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     margin-bottom: 12px;
 }
 
-/* 开关增强样式 */
-:deep(.el-switch) {
-    margin-top: 8px;
+@media (max-width: 768px) {
+    .design .field-col {
+        width: 100% !important;
+    }
 }
 </style>

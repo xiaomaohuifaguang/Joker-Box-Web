@@ -5,7 +5,7 @@
             <div class="sidebar-header">
                 <div class="logo-section" @click="toPath('/')">
                     <div class="logo-icon">
-                        <img src="@/assets/img/joker-1.png" alt="Logo" />
+                        <LogoIcon :size="32" />
                     </div>
                     <span v-show="!isCollapse" class="logo-text">Joker Box</span>
                 </div>
@@ -22,7 +22,9 @@
                     class="console-menu" :collapse-transition="false">
                     <!-- 控制台主页 -->
                     <el-menu-item index="/console" class="menu-item home-item">
-                        <el-icon><HomeFilled /></el-icon>
+                        <el-icon>
+                            <HomeFilled />
+                        </el-icon>
                         <span>控制台主页</span>
                     </el-menu-item>
 
@@ -40,11 +42,15 @@
                     <!-- 设置菜单 -->
                     <el-sub-menu index="/console/settings" class="menu-item settings-item">
                         <template #title>
-                            <el-icon><Setting /></el-icon>
+                            <el-icon>
+                                <Setting />
+                            </el-icon>
                             <span>系统设置</span>
                         </template>
                         <el-menu-item index="/console/settings/system-manager" class="sub-menu-item">
-                            <el-icon><Tools /></el-icon>
+                            <el-icon>
+                                <Tools />
+                            </el-icon>
                             <span>基础设置</span>
                         </el-menu-item>
                     </el-sub-menu>
@@ -59,23 +65,21 @@
                         <div class="online-indicator"></div>
                     </div>
                     <div v-show="!isCollapse" class="user-info">
-                        <div class="user-name">{{ userInfo().nickname }}</div>
+                        <div class="user-name">{{ userInfoRef?.nickname }}</div>
                         <div class="user-role">管理员</div>
                     </div>
                 </div>
 
                 <!-- 操作按钮 -->
                 <div class="action-buttons" :class="{ collapsed: isCollapse }">
-                    <el-tooltip content="退出登录" placement="top">
-                        <div class="action-btn logout" @click="doLogout">
-                            <el-icon><SwitchButton /></el-icon>
-                        </div>
-                    </el-tooltip>
-                    <el-tooltip content="切换主题" placement="top">
-                        <div class="action-btn theme-action">
-                            <ThemeSelector />
-                        </div>
-                    </el-tooltip>
+                    <div class="action-btn logout" @click="doLogout">
+                        <el-icon>
+                            <SwitchButton />
+                        </el-icon>
+                    </div>
+                    <div class="action-btn theme-action">
+                        <ThemeSelector />
+                    </div>
                 </div>
             </div>
         </aside>
@@ -92,10 +96,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { confirm, http, logout, toPath, userInfo } from '@/utils'
+import { confirm, http, logout, toPath, userInfoRef } from '@/utils'
 import ThemeSelector from '@/components/common/ThemeSelector.vue'
 import Avatar from '@/components/common/Avatar.vue'
 import ElMenuItemInit from '@/components/common/ElMenuItemInit.vue'
+import LogoIcon from '@/components/icon/LogoIcon.vue'
 import { HomeFilled, Expand, Fold, SwitchButton, Setting, Tools } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -138,7 +143,7 @@ onMounted(() => {
 .sidebar {
     width: 260px;
     height: 100%;
-    background: linear-gradient(180deg, var(--bg-container) 0%, var(--bg-elevated) 100%);
+    background: var(--bg-container);
     border-right: 1px solid var(--border-light);
     display: flex;
     flex-direction: column;
@@ -160,7 +165,14 @@ onMounted(() => {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    background: var(--brand-gradient-soft);
+    background: var(--bg-overlay);
+    transition: padding var(--duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
+
+    .collapsed & {
+        padding: 12px 8px;
+        justify-content: center;
+        gap: 8px;
+    }
 }
 
 .logo-section {
@@ -221,7 +233,7 @@ onMounted(() => {
     background-color: var(--bg-container);
 
     &:hover {
-        background: var(--brand-gradient);
+        background: var(--brand-primary);
         color: var(--text-on-brand);
         transform: scale(1.1);
     }
@@ -258,7 +270,7 @@ onMounted(() => {
         }
 
         &.is-active {
-            background: var(--brand-gradient);
+            background: var(--brand-primary);
             color: var(--text-on-brand);
 
             .el-icon {
@@ -383,7 +395,7 @@ onMounted(() => {
 .sidebar-footer {
     padding: 16px;
     border-top: 1px solid var(--border-divider);
-    background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg-container) 100%);
+    background: var(--bg-elevated);
 }
 
 .user-card {
@@ -489,7 +501,7 @@ onMounted(() => {
     box-shadow: var(--shadow-sm);
 
     &:hover {
-        background: var(--brand-gradient);
+        background: var(--brand-primary);
         color: var(--text-on-brand);
         transform: translateY(-2px);
         box-shadow: var(--shadow-glow-strong);
@@ -499,7 +511,7 @@ onMounted(() => {
         color: var(--danger);
 
         &:hover {
-            background: linear-gradient(135deg, var(--danger) 0%, var(--brand-secondary) 100%);
+            background: var(--danger);
             color: var(--text-on-brand);
         }
     }
@@ -556,12 +568,12 @@ onMounted(() => {
         box-shadow: var(--shadow-lg);
 
         &.collapsed {
-            transform: translateX(0);
-            width: 260px;
+            transform: translateX(-100%);
         }
 
         &:not(.collapsed) {
             transform: translateX(0);
+            width: 260px;
         }
     }
 

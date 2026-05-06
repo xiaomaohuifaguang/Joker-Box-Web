@@ -144,7 +144,7 @@ import {
     Menu
 } from '@element-plus/icons-vue'
 import { alert, http } from '@/utils';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const loading = ref(false)
 
@@ -171,6 +171,11 @@ const queryMenuTree = async () => {
     menuTree.value = await http.get('/menu/menuTreeAll', { params: { menuType: info.value.menuType } })
 }
 
+watch(() => info.value.menuType, () => {
+    info.value.parentId = ''
+    queryMenuTree()
+})
+
 const add = async () => {
     if (!info.value.name.trim()) {
         alert('请输入菜单名称', 'warning')
@@ -184,8 +189,12 @@ const add = async () => {
 
     loading.value = true
     try {
-        const result = await http.post('/menu/add', info.value, { raw: true })
-        if (result.code === '200') {
+        const payload = {
+            ...info.value,
+            parentId: info.value.parentId || info.value.menuType,
+        }
+        const result = await http.post('/menu/add', payload, { raw: true })
+        if (result.code === 200) {
             alert(result.msg, 'success')
             emit('success');
             // 重置表单

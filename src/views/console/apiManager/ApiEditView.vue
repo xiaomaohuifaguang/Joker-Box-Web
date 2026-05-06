@@ -74,14 +74,6 @@
                                 </div>
                             </el-form-item>
                         </el-col>
-                        <el-col :xs="24" :sm="12">
-                            <el-form-item label="角色绑定">
-                                <el-tag :type="info.roleBind ? 'success' : 'info'" effect="light" class="role-tag">
-                                    <el-icon><User /></el-icon>
-                                    <span>{{ info.roleBind ? '已绑定' : '未绑定' }}</span>
-                                </el-tag>
-                            </el-form-item>
-                        </el-col>
                     </el-row>
 
                     <el-row :gutter="20">
@@ -126,7 +118,6 @@ import {
     Folder,
     Check,
     Close,
-    User,
     Clock,
     Timer
 } from '@element-plus/icons-vue'
@@ -260,17 +251,6 @@ onMounted(() => {
                 }
             }
 
-            .role-tag {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 8px 16px;
-                font-size: 14px;
-
-                .el-icon {
-                    font-size: 14px;
-                }
-            }
         }
     }
 

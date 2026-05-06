@@ -2,7 +2,9 @@
     <div class="add-form-container">
         <div class="form-header">
             <div class="header-icon">
-                <el-icon><Plus /></el-icon>
+                <el-icon>
+                    <Plus />
+                </el-icon>
             </div>
             <div class="header-content">
                 <h3>添加表单</h3>
@@ -15,24 +17,17 @@
                 <el-col :xs="24" :sm="24" :md="6" :lg="6">
                     <el-form label-position="top" class="info-form">
                         <el-form-item label="表单名称" required>
-                            <el-input
-                                v-model="info.name"
-                                :placeholder="`请输入表单名称`"
-                                clearable
-                                size="large">
+                            <el-input v-model="info.name" :placeholder="`请输入表单名称`" clearable size="large">
                                 <template #prefix>
-                                    <el-icon><Document /></el-icon>
+                                    <el-icon>
+                                        <Document />
+                                    </el-icon>
                                 </template>
                             </el-input>
                         </el-form-item>
                         <el-form-item label="描述">
-                            <el-input
-                                v-model="info.description"
-                                :placeholder="`请输入描述`"
-                                clearable
-                                type="textarea"
-                                :rows="4"
-                                size="large" />
+                            <el-input v-model="info.description" :placeholder="`请输入描述`" clearable type="textarea"
+                                :rows="4" size="large" />
                         </el-form-item>
                     </el-form>
                 </el-col>
@@ -40,15 +35,15 @@
                     <div class="form-maker-wrapper">
                         <div class="form-maker-header">
                             <div class="header-icon small">
-                                <el-icon><Setting /></el-icon>
+                                <el-icon>
+                                    <Setting />
+                                </el-icon>
                             </div>
                             <span class="header-title">表单字段配置</span>
                         </div>
-                        <FormMaker
-                            :form-fields="info.formFields"
-                            @update:fields="info.formFields = $event;"
-                            type="create"
-                            v-model="formData" />
+                        <FormMaker ref="formMakerRef" :form-fields="info.formFields" :linkage-rules="info.linkageRules"
+                            v-model="formData" type="create" @update:fields="info.formFields = $event"
+                            @update:rules="info.linkageRules = $event" />
                     </div>
                 </el-col>
             </el-row>
@@ -56,7 +51,9 @@
 
         <div class="action-bar">
             <el-button type="primary" size="large" @click="add" class="save-button" :loading="loading">
-                <el-icon><Check /></el-icon>
+                <el-icon>
+                    <Check />
+                </el-icon>
                 <span>确认添加</span>
             </el-button>
             <el-button type="info" size="large" @click="emit('success')" class="cancel-button">
@@ -71,11 +68,28 @@ import { Plus, Document, Setting, Check } from '@element-plus/icons-vue'
 import { alert, http } from '@/utils';
 import { ref } from 'vue';
 import FormMaker from '@/components/dynamicForm/FormMaker.vue';
+import type { FormField, FormLinkage } from '@/components/dynamicForm/types';
+import { validateTemplate } from '@/components/dynamicForm/linkage';
 
 const emit = defineEmits(['success']);
 const loading = ref(false)
+const formMakerRef = ref<InstanceType<typeof FormMaker> | null>(null)
 
-const info = ref({
+interface AddFormState {
+    id: number
+    name: string
+    description: string
+    version: string
+    status: string
+    deleted: string
+    createBy: string
+    createTime: string
+    updateTime: string
+    formFields: FormField[]
+    linkageRules: FormLinkage[]
+}
+
+const info = ref<AddFormState>({
     id: -1,
     name: '',
     description: '',
@@ -85,14 +99,16 @@ const info = ref({
     createBy: '',
     createTime: '',
     updateTime: '',
-    formFields: []
+    formFields: [],
+    linkageRules: []
 })
 
-const formData = ref({})
+const formData = ref<Record<string, any>>({})
 
 const add = async () => {
-    if (!info.value.name.trim()) {
-        alert('请输入表单名称', 'warning')
+    const check = validateTemplate(info.value.name, info.value.formFields, info.value.linkageRules)
+    if (!check.ok) {
+        alert(check.errors[0], 'warning')
         return
     }
 

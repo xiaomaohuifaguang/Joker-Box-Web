@@ -7,6 +7,7 @@
 @use './theme-joker' as joker;
 @use './theme-obsidian' as obsidian;
 @use './theme-cyan' as cyan;
+@use './theme-deepblue' as deepblue;
 
 /* 默认（无 data-theme 或未识别）= joker */
 :root {
@@ -31,6 +32,11 @@
 /* 显式 cyan 主题（青色纯色） */
 :root[data-theme='cyan'] {
     @include cyan.theme-cyan;
+}
+
+/* 显式 deepblue 主题（深海蓝纯色） */
+:root[data-theme='deepblue'] {
+    @include deepblue.theme-deepblue;
 }
 
 /* ============================================================

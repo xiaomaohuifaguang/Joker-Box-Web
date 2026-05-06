@@ -13,6 +13,9 @@ const extraProps =
             "properties.candidateGroups",
             "properties.candidateDepts",
             "properties.passRate",
+            "properties.actionButtons",
+            "properties.backType",
+            "properties.backNodeId",
             "properties.form"
         ]
     },
@@ -20,7 +23,7 @@ const extraProps =
     transformer: {
         'bpmn:userTask': {
             out(data: any) {
-                const { properties: { approvalType, candidateUsers, candidateRoles, candidateGroups, candidateDepts, passRate } } = data;
+                const { properties: { approvalType, candidateUsers, candidateRoles, candidateGroups, candidateDepts, passRate, actionButtons, backType, backNodeId } } = data;
                 let extensionElements = '';
                 if (approvalType) {
                     extensionElements += `<flowable:approvalType desc="处理类型">${approvalType}</flowable:approvalType>`;
@@ -39,6 +42,15 @@ const extraProps =
                 }
                 if (passRate) {
                     extensionElements += `<flowable:passRate desc="通过率">${passRate}</flowable:passRate>`;
+                }
+                if (actionButtons) {
+                    extensionElements += `<flowable:actionButtons desc="处理按钮">${actionButtons}</flowable:actionButtons>`;
+                }
+                if (backType) {
+                    extensionElements += `<flowable:backType desc="驳回方式">${backType}</flowable:backType>`;
+                }
+                if (backNodeId) {
+                    extensionElements += `<flowable:backNodeId desc="驳回节点">${backNodeId}</flowable:backNodeId>`;
                 }
                 if (extensionElements) {
                     return {

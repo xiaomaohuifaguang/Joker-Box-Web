@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { userInfo, CONSTANTS } from '@/utils'
+import { userInfoRef, CONSTANTS } from '@/utils'
 import Joker from '../icon/Joker.vue'
 import JokerMan from '../icon/JokerMan.vue'
 import JokerWoman from '../icon/JokerWoman.vue'
@@ -23,8 +23,8 @@ const props = defineProps({
     }
 })
 
-const userSex = computed(() => userInfo()?.sex || '')
-const avatarUrl = computed(() => CONSTANTS.HTTP.BASEURL + '/auth/avatar/' + userInfo()?.userId)
+const userSex = computed(() => userInfoRef.value?.sex || '')
+const avatarUrl = computed(() => CONSTANTS.HTTP.BASEURL + '/auth/avatar/' + userInfoRef.value?.userId)
 
 const errorHandler = () => true
 </script>

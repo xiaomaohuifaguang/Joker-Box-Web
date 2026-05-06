@@ -1,27 +1,14 @@
 <template>
-    <el-dropdown
-        trigger="click"
-        placement="bottom-end"
-        popper-class="theme-dropdown"
-        @command="handleCommand"
-    >
-        <button
-            class="theme-trigger"
-            :class="`is-${theme}`"
-            :aria-label="`当前主题：${currentLabel}，点击切换`"
-        >
+    <el-dropdown trigger="click" placement="bottom-end" popper-class="theme-dropdown" @command="handleCommand">
+        <button class="theme-trigger" :class="`is-${theme}`" :aria-label="`当前主题：${currentLabel}，点击切换`">
             <el-icon :size="18">
                 <component :is="currentIcon" />
             </el-icon>
         </button>
         <template #dropdown>
             <el-dropdown-menu class="theme-menu">
-                <el-dropdown-item
-                    v-for="item in THEME_LIST"
-                    :key="item.key"
-                    :command="item.key"
-                    :class="{ active: theme === item.key }"
-                >
+                <el-dropdown-item v-for="item in THEME_LIST" :key="item.key" :command="item.key"
+                    :class="{ active: theme === item.key }">
                     <span class="theme-item__icon">
                         <el-icon :size="16">
                             <component :is="resolveIcon(item.icon)" />
@@ -29,7 +16,9 @@
                     </span>
                     <span class="theme-item__label">{{ item.label }}</span>
                     <span v-if="theme === item.key" class="theme-item__check">
-                        <el-icon :size="14"><Check /></el-icon>
+                        <el-icon :size="14">
+                            <Check />
+                        </el-icon>
                     </span>
                 </el-dropdown-item>
             </el-dropdown-menu>
@@ -39,10 +28,10 @@
 
 <script setup>
 import { computed } from 'vue'
-import { Sunny, Moon, MoonNight, PartlyCloudy, Check } from '@element-plus/icons-vue'
+import { Sunny, Moon, MoonNight, PartlyCloudy, MostlyCloudy, Check } from '@element-plus/icons-vue'
 import { useTheme } from '@/composables/useTheme'
 
-const ICON_MAP = { Sunny, Moon, MoonNight, PartlyCloudy }
+const ICON_MAP = { Sunny, Moon, MoonNight, PartlyCloudy, MostlyCloudy }
 
 const { theme, setTheme, THEME_LIST } = useTheme()
 

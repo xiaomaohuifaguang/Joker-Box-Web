@@ -12,11 +12,13 @@
             </div>
         </div>
         <div class="action-bar">
-            <div class="action-tip">
+            <div class="action-tip" :class="{ readonly: type === 'view' }">
                 <el-icon>
-                    <InfoFilled />
+                    <InfoFilled v-if="type === 'edit'" />
+                    <View v-else />
                 </el-icon>
-                <span>请完成流程设计后点击右侧按钮确认保存</span>
+                <span v-if="type === 'edit'">请完成流程设计后点击右侧按钮确认保存</span>
+                <span v-else>当前为只读预览模式，无法编辑</span>
             </div>
             <el-button type="primary" size="large" @click="save" class="confirm-button" v-if="type === 'edit'"
                 :disabled="!loaded">
@@ -30,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { Document, Check, InfoFilled } from '@element-plus/icons-vue'
+import { Document, Check, InfoFilled, View } from '@element-plus/icons-vue'
 import { alert, confirm, http } from '@/utils';
 import { onMounted, ref } from 'vue';
 import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
@@ -90,7 +92,7 @@ onMounted(() => {
 .add-process-view {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 64px);
+    height: 100%;
     width: 100%;
     background: var(--bg-page);
     overflow: hidden;
@@ -99,7 +101,7 @@ onMounted(() => {
         flex: 1;
         min-height: 0;
         position: relative;
-        overflow: auto;
+        overflow: hidden;
         background: var(--bg-container);
 
         .editor-placeholder {
@@ -133,12 +135,20 @@ onMounted(() => {
                 min-height: 0;
 
                 .el-col {
-                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
                 }
 
-                .diagram,
+                .diagram {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    min-height: 0;
+                }
+
                 .container {
-                    height: 100% !important;
+                    flex: 1;
+                    min-height: 0;
                 }
 
                 .diagram-panel {
@@ -171,6 +181,14 @@ onMounted(() => {
             .el-icon {
                 font-size: 16px;
                 color: var(--brand-primary);
+            }
+
+            &.readonly {
+                color: var(--text-placeholder);
+
+                .el-icon {
+                    color: var(--text-secondary);
+                }
             }
         }
 

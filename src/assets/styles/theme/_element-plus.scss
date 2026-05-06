@@ -146,6 +146,17 @@
     --el-color-primary-dark-2: #1E40AF;
 }
 
+/* deepblue 主题（深色蓝色系，light-N 用透明度阶梯）*/
+:root[data-theme='deepblue'] {
+    --el-color-primary: #3B82F6;
+    --el-color-primary-light-3: #2563EB;
+    --el-color-primary-light-5: rgba(59, 130, 246, 0.4);
+    --el-color-primary-light-7: rgba(59, 130, 246, 0.24);
+    --el-color-primary-light-8: rgba(59, 130, 246, 0.16);
+    --el-color-primary-light-9: rgba(59, 130, 246, 0.08);
+    --el-color-primary-dark-2: #60A5FA;
+}
+
 /* ============================================================
    常用组件视觉微调（消费主题变量）
    ============================================================ */

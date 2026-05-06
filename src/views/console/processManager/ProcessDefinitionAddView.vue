@@ -59,7 +59,7 @@ const add = () => {
 .add-process-view {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 64px);
+    height: 100%;
     width: 100%;
     background: var(--bg-page);
     overflow: hidden;
@@ -68,7 +68,7 @@ const add = () => {
         flex: 1;
         min-height: 0;
         position: relative;
-        overflow: auto;
+        overflow: hidden;
         background: var(--bg-container);
 
         :deep(> div) {
@@ -85,12 +85,20 @@ const add = () => {
                 min-height: 0;
 
                 .el-col {
-                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
                 }
 
-                .diagram,
+                .diagram {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    min-height: 0;
+                }
+
                 .container {
-                    height: 100% !important;
+                    flex: 1;
+                    min-height: 0;
                 }
 
                 .diagram-panel {

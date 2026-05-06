@@ -23,7 +23,7 @@
               :show-file-list="false">
               <div class="avatar-container">
                 <el-image
-                  :src="CONSTANTS.HTTP.BASEURL + '/auth/avatar/' + userInfo().userId"
+                  :src="CONSTANTS.HTTP.BASEURL + '/auth/avatar/' + userInfoRef?.userId"
                   fit="cover"
                   :key="avatarFlag"
                   class="avatar-image">
@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { alert, CONSTANTS, getToken, http, saveUserInfo, userInfo } from '@/utils';
+import { alert, CONSTANTS, getToken, http, saveUserInfo, userInfoRef } from '@/utils';
 import { onMounted, ref } from 'vue';
 import {
   Plus,

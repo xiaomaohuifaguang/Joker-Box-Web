@@ -4,7 +4,7 @@
             <!-- Logo 区域 -->
             <div class="logo-section" @click="toHome">
                 <div class="logo-icon">
-                    <img src="@/assets/img/joker-1.png" alt="Logo" />
+                    <LogoIcon :size="32" />
                 </div>
                 <span class="logo-text">Joker Box</span>
             </div>
@@ -40,15 +40,8 @@
 
             <!-- 右侧功能区 -->
             <div class="header-actions">
-                <!-- 主题切换 -->
-                <div class="theme-btn">
-                    <ThemeSelector />
-                </div>
-
-                <!-- 用户区域 -->
-                <div class="user-section">
-                    <AvatarDropDown />
-                </div>
+                <ThemeSelector />
+                <AvatarDropDown />
             </div>
         </div>
     </header>
@@ -64,6 +57,7 @@ import {
 import AvatarDropDown from './AvatarDropDown.vue'
 import ThemeSelector from './ThemeSelector.vue'
 import ElMenuItemInit from '@/components/common/ElMenuItemInit.vue'
+import LogoIcon from '@/components/icon/LogoIcon.vue'
 
 const route = useRoute()
 const activeIndex = ref(route.path)
@@ -167,9 +161,9 @@ onMounted(() => {
 
     :deep(.el-menu-item),
     :deep(.el-sub-menu__title) {
-        height: 50px;
-        line-height: 50px;
-        padding: 0 20px;
+        height: 48px;
+        line-height: 48px;
+        padding: 0 16px;
         font-size: var(--fs-md);
         font-weight: var(--fw-medium);
         color: var(--text-regular);
@@ -223,48 +217,6 @@ onMounted(() => {
     gap: 8px;
 }
 
-.action-btn {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: background-color var(--duration-normal) var(--ease-out),
-        color var(--duration-normal) var(--ease-out),
-        transform var(--duration-normal) var(--ease-out);
-    color: var(--text-regular);
-
-    &:hover {
-        background-color: var(--bg-overlay);
-        color: var(--brand-primary);
-        transform: translateY(-2px);
-    }
-
-    .el-icon {
-        font-size: 20px;
-    }
-}
-
-.theme-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-}
-
-.user-section {
-    margin-left: 8px;
-    padding: 4px;
-    border-radius: var(--radius-pill);
-    transition: background-color var(--duration-normal) var(--ease-out);
-
-    &:hover {
-        background-color: var(--bg-overlay);
-    }
-}
-
 /* Responsive Design */
 @media (max-width: 992px) {
     .header-container {
@@ -307,14 +259,6 @@ onMounted(() => {
         display: none;
     }
 
-    .action-btn {
-        width: 36px;
-        height: 36px;
-
-        .el-icon {
-            font-size: 18px;
-        }
-    }
 }
 
 @media (max-width: 480px) {
