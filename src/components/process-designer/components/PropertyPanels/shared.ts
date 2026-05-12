@@ -97,7 +97,7 @@ export const useSearchOptions = () => {
   const searchUsers = async (query: string) => {
     userLoading.value = true
     try {
-      const result = await http.post('/user/queryPage', { current: 1, size: 50, search: query || '' })
+      const result = await http.post('/user/queryPage', { current: 1, size: 15, search: query || '' })
       const records: any[] = result?.records || []
       userOptions.value = records.map((u: any) => {
         const id = String(u.id)
@@ -113,7 +113,7 @@ export const useSearchOptions = () => {
   const searchRoles = async (query: string) => {
     roleLoading.value = true
     try {
-      const result = await http.post('/role/queryPage', { current: 1, size: 50, search: query || '' })
+      const result = await http.post('/role/queryPage', { current: 1, size: 15, search: query || '' })
       const records: any[] = result?.records || []
       roleOptions.value = records.map((r: any) => {
         const id = String(r.id)
@@ -129,7 +129,7 @@ export const useSearchOptions = () => {
   const searchOrgs = async (query: string) => {
     orgLoading.value = true
     try {
-      const result = await http.post('/org/queryPage', { current: 1, size: 50, search: query || '' })
+      const result = await http.post('/org/queryPage', { current: 1, size: 15, search: query || '' })
       const records: any[] = result?.records || []
       orgOptions.value = records.map((o: any) => {
         const id = String(o.id)
@@ -140,6 +140,48 @@ export const useSearchOptions = () => {
     } finally {
       orgLoading.value = false
     }
+  }
+
+  const initUsersByIds = async (ids: string[]) => {
+    if (ids.length === 0) return
+    try {
+      const result = await http.post('/user/selectorInitByIds', ids)
+      const records: any[] = result || []
+      userOptions.value = records.map((u: any) => {
+        const id = String(u.id)
+        const label = u.nickname ? `${u.nickname}(${u.username})` : u.username
+        userCache.value.set(id, label)
+        return { id, label }
+      })
+    } catch (e) { /* ignore */ }
+  }
+
+  const initRolesByIds = async (ids: string[]) => {
+    if (ids.length === 0) return
+    try {
+      const result = await http.post('/role/queryPage', { current: 1, size: 999, search: '' })
+      const records: any[] = result?.records || []
+      roleOptions.value = records.map((r: any) => {
+        const id = String(r.id)
+        const label = r.name
+        roleCache.value.set(id, label)
+        return { id, label }
+      })
+    } catch (e) { /* ignore */ }
+  }
+
+  const initOrgsByIds = async (ids: string[]) => {
+    if (ids.length === 0) return
+    try {
+      const result = await http.post('/org/queryPage', { current: 1, size: 999, search: '' })
+      const records: any[] = result?.records || []
+      orgOptions.value = records.map((o: any) => {
+        const id = String(o.id)
+        const label = o.name
+        orgCache.value.set(id, label)
+        return { id, label }
+      })
+    } catch (e) { /* ignore */ }
   }
 
   return {
@@ -155,6 +197,9 @@ export const useSearchOptions = () => {
     mergeSelected,
     searchUsers,
     searchRoles,
-    searchOrgs
+    searchOrgs,
+    initUsersByIds,
+    initRolesByIds,
+    initOrgsByIds
   }
 }

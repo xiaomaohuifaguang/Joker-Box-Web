@@ -104,8 +104,10 @@
                             </div>
                             <div class="card-body">
                                 <FormMaker :form-fields="info.formFields" :linkage-rules="info.linkageRules"
+                                    :groups="info.groups"
                                     v-model="formData" :type="props.type === 'edit' ? 'create' : 'view'"
                                     @update:fields="info.formFields = $event"
+                                    @update:groups="info.groups = $event"
                                     @update:rules="info.linkageRules = $event" />
                             </div>
                         </div>
@@ -134,7 +136,8 @@ import { Document, Key, Tickets, CircleCheck, EditPen, Close, Clock, Timer, Sett
 import { alert, http } from '@/utils';
 import { onMounted, ref } from 'vue';
 import FormMaker from '@/components/dynamicForm/FormMaker.vue';
-import type { FormField, FormLinkage } from '@/components/dynamicForm/types';
+import type { FormField, FormFieldGroup, FormLinkageRule } from '@/components/dynamicForm/types';
+import { flattenGroups } from '@/components/dynamicForm/types';
 import { validateTemplate } from '@/components/dynamicForm/linkage';
 
 const emit = defineEmits(['success']);
@@ -158,7 +161,8 @@ interface InfoState {
     createTime: string
     updateTime: string
     formFields: FormField[]
-    linkageRules: FormLinkage[]
+    linkageRules: FormLinkageRule[]
+    groups?: FormFieldGroup[]
 }
 
 const info = ref<InfoState>({
@@ -179,10 +183,15 @@ const queryInfo = async () => {
     loading.value = true
     try {
         const data = await http.post('/dynamicForm/info', { id: props.id })
+        const groups = data.groups || []
+        const formFields = data.formFields || []
         info.value = {
             ...data,
-            formFields: data.formFields || [],
-            linkageRules: data.linkageRules || []
+            formFields: groups.length > 0
+                ? flattenGroups(groups).concat(formFields)
+                : formFields,
+            linkageRules: data.linkageRules || [],
+            groups: groups.length > 0 ? groups : undefined,
         }
     } finally {
         loading.value = false
@@ -198,7 +207,12 @@ const save = async () => {
 
     loading.value = true
     try {
-        const result = await http.post('/dynamicForm/update', info.value, { raw: true })
+        const payload = {
+            ...info.value,
+            groups: info.value.groups,
+            formFields: info.value.formFields.filter(f => !f.groupId),
+        }
+        const result = await http.post('/dynamicForm/update', payload, { raw: true })
         alert(result.msg, 'success')
         await queryInfo()
     } finally {

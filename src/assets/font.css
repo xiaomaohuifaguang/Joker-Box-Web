@@ -6,10 +6,11 @@
   font-style: normal;
 }
 
-@font-face {
-  /* 寒蝉活仿楷 */
+
+/* 寒蝉活仿楷 */
+/* @font-face {
   font-family: 'ChillHuoFangKai_F_ConRegular';
   src: url('/static/font/ChillHuoFangKai_F_ConRegular.otf') format('truetype');
   font-weight: normal;
   font-style: normal;
-}
+} */

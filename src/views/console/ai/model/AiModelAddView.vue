@@ -3,7 +3,9 @@
     <div class="form-wrapper">
       <div class="form-header">
         <div class="header-icon">
-          <el-icon><Cpu /></el-icon>
+          <el-icon>
+            <Cpu />
+          </el-icon>
         </div>
         <h3>添加 AI 模型</h3>
         <p>配置新的 AI 模型参数</p>
@@ -22,8 +24,13 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="24" :md="24" :lg="24">
-            <el-form-item label="版本" prop="version">
-              <el-input v-model="info.version" :placeholder="`请输入版本`" clearable />
+            <el-form-item label="Base URL" prop="baseUrl">
+              <el-input v-model="info.baseUrl" :placeholder="`请输入 Base URL`" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="24" :md="24" :lg="24">
+            <el-form-item label="API Key" prop="apiKey">
+              <el-input v-model="info.apiKey" :placeholder="`请输入 API Key`" clearable show-password />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="24" :md="24" :lg="24">
@@ -36,7 +43,9 @@
 
       <div class="action-bar">
         <el-button type="primary" @click="add" class="add-button">
-          <el-icon><Plus /></el-icon>
+          <el-icon>
+            <Plus />
+          </el-icon>
           <span>确认添加</span>
         </el-button>
       </div>
@@ -52,19 +61,20 @@ import { ref } from 'vue';
 const emit = defineEmits(['success']);
 
 const info = ref({
-    id: '',
-    name: '',
-    model: '',
-    version: '',
-    description: '',
-    userId: '',
-    createTime: '',
+  id: '',
+  name: '',
+  model: '',
+  baseUrl: '',
+  apiKey: '',
+  description: '',
+  userId: '',
+  createTime: '',
 })
 
 const add = async () => {
-    const result = await http.post('/ai/model/add', info.value, { raw: true })
-    alert(result.msg, 'success')
-    emit('success');
+  const result = await http.post('/ai/model/add', info.value, { raw: true })
+  alert(result.msg, 'success')
+  emit('success');
 }
 </script>
 

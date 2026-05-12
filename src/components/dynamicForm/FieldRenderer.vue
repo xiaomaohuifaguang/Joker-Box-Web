@@ -54,7 +54,8 @@
         :disabled="disabled" />
 
     <el-slider v-else-if="field.type === 'SLIDER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :min="field.min ?? 0" :max="field.max ?? 100" :disabled="disabled" show-input />
+        :min="field.min ?? 0" :max="field.max ?? 100" :disabled="disabled"
+        :show-input="!disabled" show-stops show-tooltip style="margin: 0 12px;" />
 
     <el-date-picker v-else-if="field.type === 'DATE'" :model-value="modelValue" @update:model-value="onUpdate"
         type="date" :placeholder="field.placeholder" :disabled="disabled"

@@ -1,19 +1,8 @@
 <template>
   <div class="process-approval-page">
     <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-title">
-          <div class="title-icon">
-            <el-icon>
-              <Tickets />
-            </el-icon>
-          </div>
-          <div class="title-text">
-            <h1>流程审批</h1>
-            <p>处理待办任务、跟进流程进度</p>
-          </div>
-        </div>
+    <PageHeader :icon="Tickets" title="就酱审" description="处理待办任务、跟进流程进度">
+      <template #extra>
         <div class="header-actions">
           <div class="stat-item">
             <span class="stat-value">{{ pageInfo.total }}</span>
@@ -26,25 +15,24 @@
             <span>发起流程</span>
           </el-button>
         </div>
-      </div>
-    </div>
+      </template>
+    </PageHeader>
 
     <div class="page-container">
       <!-- 分类标签 -->
       <div class="tabs-section">
-        <div
-          v-for="tab in tabs"
-          :key="tab.type"
-          :class="['tab-item', { active: queryParam.type === tab.type }]"
-          @click="switchTab(tab.type)"
-        >
+        <div v-for="tab in tabs" :key="tab.type" :class="['tab-item', { active: queryParam.type === tab.type }]"
+          @click="switchTab(tab.type)">
           <div class="tab-icon" :style="{ background: tab.bg }">
             <el-icon>
               <component :is="tab.icon" />
             </el-icon>
           </div>
           <div class="tab-text">
-            <span class="tab-label">{{ tab.label }}</span>
+            <div class="tab-label-row">
+              <span class="tab-label">{{ tab.label }}</span>
+              <span v-if="tabCounts[tab.type] > 0" class="tab-count">{{ tabCounts[tab.type] }}</span>
+            </div>
             <span class="tab-desc">{{ tab.desc }}</span>
           </div>
         </div>
@@ -63,14 +51,8 @@
         <div class="search-form">
           <el-row :gutter="16">
             <el-col :xs="24" :sm="16" :md="18" :lg="18">
-              <el-input
-                v-model="queryParam.search"
-                placeholder="搜索流程名称、申请人..."
-                size="large"
-                clearable
-                @keyup.enter="handleSearch"
-                @clear="handleSearch"
-              >
+              <el-input v-model="queryParam.search" placeholder="搜索流程名称、申请人..." size="large" clearable
+                @keyup.enter="handleSearch" @clear="handleSearch">
                 <template #prefix>
                   <el-icon>
                     <Search />
@@ -117,12 +99,7 @@
         </div>
 
         <div class="list-wrapper">
-          <div
-            v-for="item in tableData"
-            :key="item.id"
-            class="process-card"
-            @click="openDetail(item)"
-          >
+          <div v-for="item in tableData" :key="item.id" class="process-card" @click="openDetail(item)">
             <div class="card-icon" :style="{ background: getIconBg(item) }">
               <el-icon>
                 <Document />
@@ -130,17 +107,18 @@
             </div>
             <div class="card-main">
               <div class="card-title-row">
-                <span class="card-title">{{ item.processDefinitionName || '未命名流程' }}</span>
-                <el-tag
-                  :type="getStatusType(item.processStatus)"
-                  size="small"
-                  effect="light"
-                  round
-                >
+                <span class="card-title">{{ item.title || item.processDefinitionName || '未命名流程' }}</span>
+                <el-tag :type="getStatusType(item.processStatus)" size="small" effect="light" round>
                   {{ getStatusLabel(item.processStatus) }}
                 </el-tag>
               </div>
               <div class="card-meta">
+                <span v-if="item.code" class="meta-item id-item">
+                  <el-icon>
+                    <Link />
+                  </el-icon>
+                  {{ item.code }}
+                </span>
                 <span class="meta-item">
                   <el-icon>
                     <UserFilled />
@@ -163,30 +141,20 @@
                   <el-icon>
                     <Link />
                   </el-icon>
-                  ID：{{ shortId(item.processInstanceId) }}
+                  {{ shortId(item.processInstanceId) }}
                 </span>
               </div>
             </div>
             <div class="card-actions" @click.stop>
               <!-- 待办 -->
-              <el-button
-                v-if="queryParam.type === '2'"
-                type="primary"
-                size="small"
-                @click="handleProcess(item)"
-              >
+              <el-button v-if="queryParam.type === '2'" type="primary" size="small" @click="handleProcess(item)">
                 <el-icon>
                   <Promotion />
                 </el-icon>
                 <span>处理</span>
               </el-button>
               <!-- 待认领 -->
-              <el-button
-                v-if="queryParam.type === '3'"
-                type="success"
-                size="small"
-                @click="handleClaim(item)"
-              >
+              <el-button v-if="queryParam.type === '3'" type="success" size="small" @click="handleClaim(item)">
                 <el-icon>
                   <Pointer />
                 </el-icon>
@@ -231,50 +199,26 @@
 
         <!-- 分页 -->
         <div v-if="tableData.length > 0" class="pagination-wrapper">
-          <el-pagination
-            v-model:current-page="pageInfo.current"
-            :page-size="pageInfo.size"
-            :total="pageInfo.total"
-            layout="total, sizes, prev, pager, next, jumper"
-            :page-sizes="[10, 20, 50, 100]"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
+          <el-pagination v-model:current-page="pageInfo.current" :page-size="pageInfo.size" :total="pageInfo.total"
+            layout="total, sizes, prev, pager, next, jumper" :page-sizes="[10, 20, 50, 100]"
+            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
         </div>
       </div>
     </div>
 
     <!-- 详情对话框 -->
-    <el-dialog
-      v-model="detailDialog.open"
-      title="流程实例详情"
-      width="720px"
-      destroy-on-close
-      :close-on-click-modal="false"
-      class="detail-dialog"
-    >
+    <el-dialog v-model="detailDialog.open" title="流程实例详情" width="720px" destroy-on-close :close-on-click-modal="false"
+      class="detail-dialog">
       <ProcessInstanceInfoView :id="detailDialog.id" :key="detailDialog.id ?? ''" />
     </el-dialog>
 
     <!-- 发起流程对话框 -->
-    <el-dialog
-      v-model="createDialog.open"
-      title="发起流程"
-      width="880px"
-      destroy-on-close
-      :close-on-click-modal="false"
-      class="create-dialog"
-      @open="queryDeployList"
-    >
+    <el-dialog v-model="createDialog.open" title="发起流程" width="880px" destroy-on-close :close-on-click-modal="false"
+      class="create-dialog" @open="queryDeployList">
       <div class="create-body" v-loading="createDialog.loading" element-loading-text="加载中...">
         <div class="create-toolbar">
-          <el-input
-            v-model="createDialog.search"
-            placeholder="搜索流程名称、分类、描述..."
-            size="large"
-            clearable
-            class="create-search"
-          >
+          <el-input v-model="createDialog.search" placeholder="搜索流程名称、分类、描述..." size="large" clearable
+            class="create-search">
             <template #prefix>
               <el-icon>
                 <Search />
@@ -290,12 +234,7 @@
         </div>
 
         <div v-if="filteredDeployList.length > 0" class="def-grid">
-          <div
-            v-for="def in filteredDeployList"
-            :key="def.id"
-            class="def-card"
-            @click="handleStart(def)"
-          >
+          <div v-for="def in filteredDeployList" :key="def.id" class="def-card" @click="handleStart(def)">
             <div class="def-icon" :style="{ background: getIconBg(def) }">
               <el-icon>
                 <Document />
@@ -353,29 +292,24 @@
     </el-dialog>
 
     <!-- 发起表单对话框 -->
-    <el-dialog
-      v-model="startDialog.open"
+    <el-dialog v-model="startDialog.open"
       :title="startDialog.def ? `发起流程 · ${startDialog.def.processName || startDialog.def.processKey}` : '发起流程'"
-      width="720px"
-      destroy-on-close
-      :close-on-click-modal="false"
-      class="start-dialog"
-    >
-      <ProcessInstanceStartView
-        ref="startViewRef"
-        :def="startDialog.def"
-        @success="onStartSuccess"
-      />
+      width="720px" destroy-on-close :close-on-click-modal="false" class="start-dialog">
+      <ProcessInstanceStartView ref="startViewRef" :def="startDialog.def" @success="onStartSuccess" />
 
       <template #footer>
         <div class="start-footer">
           <el-button size="large" @click="startDialog.open = false">取消</el-button>
           <el-button size="large" :loading="startDialog.saving" @click="handleSaveDraft">
-            <el-icon><Memo /></el-icon>
+            <el-icon>
+              <Memo />
+            </el-icon>
             <span>保存</span>
           </el-button>
           <el-button type="primary" size="large" :loading="startDialog.starting" @click="handleSubmitStart">
-            <el-icon><Promotion /></el-icon>
+            <el-icon>
+              <Promotion />
+            </el-icon>
             <span>发起</span>
           </el-button>
         </div>
@@ -383,25 +317,18 @@
     </el-dialog>
 
     <!-- 认领任务对话框 -->
-    <el-dialog
-      v-model="claimDialog.open"
-      :title="claimDialog.item ? '认领任务 · ' + (claimDialog.item.processDefinitionName || '未命名流程') : '认领任务'"
-      width="560px"
-      destroy-on-close
-      :close-on-click-modal="false"
-      class="claim-dialog"
-    >
-      <ProcessInstanceClaimView
-        ref="claimViewRef"
-        :item="claimDialog.item"
-        @success="onClaimSuccess"
-      />
+    <el-dialog v-model="claimDialog.open"
+      :title="claimDialog.item ? '认领任务 · ' + (claimDialog.item.processDefinitionName || '未命名流程') : '认领任务'" width="560px"
+      destroy-on-close :close-on-click-modal="false" class="claim-dialog">
+      <ProcessInstanceClaimView ref="claimViewRef" :item="claimDialog.item" @success="onClaimSuccess" />
 
       <template #footer>
         <div class="claim-footer">
           <el-button size="large" @click="claimDialog.open = false">取消</el-button>
           <el-button type="success" size="large" :loading="claimDialog.loading" @click="handleConfirmClaim">
-            <el-icon><Pointer /></el-icon>
+            <el-icon>
+              <Pointer />
+            </el-icon>
             <span>确认认领</span>
           </el-button>
         </div>
@@ -409,25 +336,18 @@
     </el-dialog>
 
     <!-- 处理任务对话框 -->
-    <el-dialog
-      v-model="handleDialog.open"
+    <el-dialog v-model="handleDialog.open"
       :title="handleDialog.item ? '处理任务 · ' + (handleDialog.item.processDefinitionName || '未命名流程') : '处理任务'"
-      width="720px"
-      destroy-on-close
-      :close-on-click-modal="false"
-      class="handle-dialog"
-    >
-      <ProcessInstanceHandleView
-        ref="handleViewRef"
-        :item="handleDialog.item"
-        @success="onHandleSuccess"
-      />
+      width="720px" destroy-on-close :close-on-click-modal="false" class="handle-dialog">
+      <ProcessInstanceHandleView ref="handleViewRef" :item="handleDialog.item" @success="onHandleSuccess" />
 
       <template #footer>
         <div class="handle-footer">
           <el-button size="large" @click="handleDialog.open = false">取消</el-button>
           <el-button type="primary" size="large" :loading="handleDialog.loading" @click="handleConfirmHandle">
-            <el-icon><Promotion /></el-icon>
+            <el-icon>
+              <Promotion />
+            </el-icon>
             <span>通过</span>
           </el-button>
         </div>
@@ -444,6 +364,7 @@ import {
   BellFilled, Memo, Files, Plus, ArrowRight,
 } from '@element-plus/icons-vue'
 import { http, alert, confirm } from '@/utils'
+import PageHeader from '@/components/common/PageHeader.vue'
 import ProcessInstanceInfoView from './ProcessInstanceInfoView.vue'
 import ProcessInstanceStartView from './ProcessInstanceStartView.vue'
 import ProcessInstanceClaimView from './ProcessInstanceClaimView.vue'
@@ -492,6 +413,13 @@ const pageInfo = ref({
   current: 1,
   size: 10,
   total: 0,
+})
+
+const tabCounts = ref<Record<string, number>>({
+  '0': 0,
+  '1': 0,
+  '2': 0,
+  '3': 0,
 })
 
 const detailDialog = ref<{ open: boolean; id: string | number | null }>({
@@ -610,6 +538,7 @@ const queryPage = async () => {
     pageInfo.value.current = result?.current ?? 1
     pageInfo.value.size = result?.size ?? 10
     pageInfo.value.total = result?.total ?? 0
+    tabCounts.value[queryParam.value.type] = result?.total ?? 0
   } finally {
     loading.value = false
   }
@@ -774,112 +703,6 @@ onMounted(() => {
   min-height: calc(100vh - 60px);
   background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
 
-  .page-header {
-    background: var(--brand-gradient);
-    padding: 32px 0;
-    margin-bottom: 24px;
-
-    .header-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-
-      .title-icon {
-        width: 64px;
-        height: 64px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: var(--radius-lg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(10px);
-
-        .el-icon {
-          font-size: 32px;
-          color: var(--text-on-brand);
-        }
-      }
-
-      .title-text {
-        h1 {
-          margin: 0 0 8px 0;
-          font-size: var(--fs-3xl);
-          font-weight: var(--fw-semibold);
-          color: var(--text-on-brand);
-        }
-
-        p {
-          margin: 0;
-          font-size: var(--fs-md);
-          color: rgba(255, 255, 255, 0.85);
-        }
-      }
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: stretch;
-      gap: 12px;
-
-      .stat-item {
-        background: rgba(255, 255, 255, 0.18);
-        border-radius: var(--radius-lg);
-        padding: 14px 28px;
-        text-align: center;
-        backdrop-filter: blur(10px);
-        min-width: 130px;
-
-        .stat-value {
-          display: block;
-          font-size: 30px;
-          font-weight: var(--fw-bold);
-          color: var(--text-on-brand);
-          line-height: 1.1;
-        }
-
-        .stat-label {
-          display: block;
-          margin-top: 6px;
-          font-size: var(--fs-sm);
-          color: rgba(255, 255, 255, 0.85);
-        }
-      }
-
-      .create-btn {
-        background: rgba(255, 255, 255, 0.95);
-        color: var(--brand-primary);
-        border: none;
-        border-radius: var(--radius-lg);
-        padding: 0 22px;
-        font-weight: var(--fw-semibold);
-        backdrop-filter: blur(10px);
-        transition: transform var(--duration-normal) var(--ease-out),
-          box-shadow var(--duration-normal) var(--ease-out);
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-          background: #fff;
-        }
-
-        .el-icon {
-          margin-right: 6px;
-          font-size: 18px;
-        }
-      }
-    }
-  }
-
   .page-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -942,10 +765,27 @@ onMounted(() => {
         gap: 2px;
         min-width: 0;
 
-        .tab-label {
-          font-size: var(--fs-lg);
-          font-weight: var(--fw-semibold);
-          color: var(--text-primary);
+        .tab-label-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .tab-label {
+            font-size: var(--fs-lg);
+            font-weight: var(--fw-semibold);
+            color: var(--text-primary);
+          }
+
+          .tab-count {
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            background: var(--brand-gradient);
+            padding: 1px 8px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+          }
         }
 
         .tab-desc {
@@ -1487,25 +1327,6 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .process-approval-page {
-    .page-header {
-      padding: 24px 0;
-
-      .header-content {
-        flex-direction: column;
-        text-align: center;
-        padding: 0 16px;
-      }
-
-      .header-title {
-        flex-direction: column;
-        text-align: center;
-
-        .title-text h1 {
-          font-size: 22px;
-        }
-      }
-    }
-
     .page-container {
       padding: 0 16px 24px;
     }

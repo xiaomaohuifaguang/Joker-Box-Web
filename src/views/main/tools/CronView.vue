@@ -1,21 +1,7 @@
 <template>
     <div class="cron-page">
         <!-- 页面头部 -->
-        <div class="page-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <div class="title-icon">
-                        <el-icon>
-                            <Clock />
-                        </el-icon>
-                    </div>
-                    <div class="title-text">
-                        <h1>Cron 表达式工具</h1>
-                        <p>可视化生成、解析、预览 Cron 时间表达式（Quartz 风格 / 7 位）</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <PageHeader :icon="Clock" title="Cron 表达式工具" description="可视化生成、解析、预览 Cron 时间表达式（Quartz 风格 / 7 位）" />
 
         <div class="cron-container">
             <el-row :gutter="20">
@@ -233,6 +219,7 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { useClipboard } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
+import PageHeader from '@/components/common/PageHeader.vue';
 import {
     Clock,
     Edit,
@@ -728,56 +715,6 @@ const fieldRangeRows = [
     min-height: calc(100vh - 60px);
     background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
     padding-bottom: 40px;
-
-    // 页面头部
-    .page-header {
-        background: var(--brand-gradient);
-        padding: 32px 0;
-        margin-bottom: 32px;
-
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-
-            .title-icon {
-                width: 64px;
-                height: 64px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                backdrop-filter: blur(10px);
-
-                .el-icon {
-                    font-size: 32px;
-                    color: var(--text-on-brand);
-                }
-            }
-
-            .title-text {
-                h1 {
-                    margin: 0 0 8px 0;
-                    font-size: 28px;
-                    font-weight: 600;
-                    color: var(--text-on-brand);
-                }
-
-                p {
-                    margin: 0;
-                    font-size: 15px;
-                    color: rgba(255, 255, 255, 0.85);
-                }
-            }
-        }
-    }
 }
 
 .cron-container {
@@ -1213,24 +1150,6 @@ const fieldRangeRows = [
 @media (max-width: 768px) {
     .cron-page {
         padding-bottom: 24px;
-
-        .page-header {
-            padding: 24px 0;
-            margin-bottom: 24px;
-
-            .header-content {
-                padding: 0 16px;
-            }
-
-            .header-title {
-                flex-direction: column;
-                text-align: center;
-
-                .title-text h1 {
-                    font-size: 22px;
-                }
-            }
-        }
     }
 
     .cron-container {

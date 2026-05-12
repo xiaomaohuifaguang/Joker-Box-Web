@@ -1,33 +1,48 @@
 <template>
     <div class="post-view-page">
-        <div class="post-detail-container">
-            <!-- 帖子头部 -->
-            <div class="post-header-section">
-                <h1 class="post-title">{{ info.title }}</h1>
-                <div class="post-meta">
-                    <div class="meta-author">
-                        <div class="author-avatar" :style="{ background: getAvatarColor(info.createByName) }">
-                            {{ info.createByName ? info.createByName.charAt(0).toUpperCase() : '?' }}
-                        </div>
-                        <el-link :href="'/ganDaShi/' + info.createUsername" target="_blank" class="author-link">
-                            {{ info.createByName }}
-                        </el-link>
-                    </div>
-                    <div class="meta-divider"></div>
-                    <div class="meta-time">
-                        <el-icon><Clock /></el-icon>
-                        <span>{{ formatFullTime(info.createTime) }}</span>
-                    </div>
-                    <div class="meta-views">
-                        <el-icon><View /></el-icon>
-                        <span>{{ info.viewCount || 0 }} 阅读</span>
-                    </div>
-                </div>
+        <!-- 页面头部 -->
+        <PageHeader :icon="ChatDotRound" title="帖子详情" description="浏览精彩内容，参与讨论互动" />
+
+        <div class="page-container">
+            <!-- 面包屑 -->
+            <div class="breadcrumb-wrapper">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/ganDaShi' }">
+                        <el-icon><House /></el-icon>
+                        <span>干大事社区</span>
+                    </el-breadcrumb-item>
+                    <el-breadcrumb-item>帖子详情</el-breadcrumb-item>
+                </el-breadcrumb>
             </div>
 
-            <!-- 帖子内容 -->
-            <div class="post-content-section">
-                <TiptapEditor v-model="info.content" :onlyRead="true" class="post-editor" />
+            <div class="post-detail-container">
+                <!-- 帖子头部 -->
+                <div class="post-header-section">
+                    <h1 class="post-title">{{ info.title }}</h1>
+                    <div class="post-meta">
+                        <div class="meta-author">
+                            <div class="author-avatar" :style="{ background: getAvatarColor(info.createByName) }">
+                                {{ info.createByName ? info.createByName.charAt(0).toUpperCase() : '?' }}
+                            </div>
+                            <el-link :href="'/ganDaShi/' + info.createUsername" target="_blank" class="author-link">
+                                {{ info.createByName }}
+                            </el-link>
+                        </div>
+                        <div class="meta-divider"></div>
+                        <div class="meta-time">
+                            <el-icon><Clock /></el-icon>
+                            <span>{{ formatFullTime(info.createTime) }}</span>
+                        </div>
+                        <div class="meta-views">
+                            <el-icon><View /></el-icon>
+                            <span>{{ info.viewCount || 0 }} 阅读</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 帖子内容 -->
+                <div class="post-content-section">
+                    <TiptapEditor v-model="info.content" :onlyRead="true" class="post-editor" />
             </div>
 
             <!-- 评论区 -->
@@ -108,14 +123,16 @@
             </div>
         </div>
     </div>
+</div>
 </template>
 
 <script setup>
 import TiptapEditor from '@/components/editor/TiptapEditor.vue';
 import { alert, http } from '@/utils';
 import { onMounted, ref } from 'vue';
-import { Clock, View, ChatDotRound, ArrowDown, Promotion, InfoFilled, ChatLineRound } from '@element-plus/icons-vue'
+import { Clock, View, ChatDotRound, ArrowDown, Promotion, InfoFilled, ChatLineRound, House } from '@element-plus/icons-vue'
 import { useRoute } from 'vue-router'
+import PageHeader from '@/components/common/PageHeader.vue'
 import PostReplayComment from './PostReplayComment.vue';
 
 const route = useRoute()
@@ -228,7 +245,26 @@ onMounted(() => {
 .post-view-page {
     min-height: calc(100vh - 60px);
     background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
-    padding: 32px 24px;
+
+    .page-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 24px 40px;
+    }
+
+    .breadcrumb-wrapper {
+        margin-bottom: 20px;
+
+        :deep(.el-breadcrumb) {
+            font-size: 14px;
+
+            .el-breadcrumb__inner {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+        }
+    }
 
     .post-detail-container {
         max-width: 900px;
@@ -520,7 +556,9 @@ onMounted(() => {
 // 响应式适配
 @media (max-width: 768px) {
     .post-view-page {
-        padding: 16px;
+        .page-container {
+            padding: 0 16px 24px;
+        }
 
         .post-detail-container {
             .post-header-section {

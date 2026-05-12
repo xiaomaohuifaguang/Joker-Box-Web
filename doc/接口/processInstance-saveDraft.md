@@ -1,7 +1,7 @@
 # 流程实例 - 保存草稿接口
 
 > 作者：小猫会发光
-> 日期：2026-05-05
+> 日期：2026-05-09
 
 ## 基本信息
 
@@ -18,8 +18,8 @@
 > 业务流程：
 > 1. 校验流程定义存在（`cat_process_definition`），草稿不校验是否已发布；
 > 2. 校验当前用户已登录（`SecurityUtils.getLoginUser()`）；
-> 3. 若传了 `id`：更新现有草稿，校验必须是草稿状态（`processStatus = '0'`）且是当前用户的草稿；
-> 4. 若未传 `id`：新建草稿，`processStatus = '0'`（DRAFT），不启动 Flowable 引擎；
+> 3. 若传了 `id`：更新现有草稿，校验必须是草稿状态（`processStatus = '0'`）且是当前用户的草稿，同时更新 `title`；
+> 4. 若未传 `id`：新建草稿，`processStatus = '0'`（DRAFT），不启动 Flowable 引擎，写入 `title`；
 > 5. 整体在事务内，任一环节失败均回滚。
 
 ---
@@ -30,6 +30,7 @@
 | --- | --- | --- | --- | --- |
 | id | query / form | Integer | 否 | 草稿流程实例id，传则更新，不传则新建 |
 | processDefinitionId | query / form | Integer | 是 | 自建 `cat_process_definition` 主键 |
+| title | query / form | String | 否 | 流程标题，可为空 |
 
 > 新建草稿时无需传 `id`；更新草稿时需传入此前保存草稿返回的 `id`。
 
@@ -38,7 +39,7 @@
 **新建草稿**
 
 ```http
-POST /processInstance/saveDraft?processDefinitionId=48
+POST /processInstance/saveDraft?processDefinitionId=48&title=请假申请
 ```
 
 或表单：
@@ -47,13 +48,13 @@ POST /processInstance/saveDraft?processDefinitionId=48
 POST /processInstance/saveDraft
 Content-Type: application/x-www-form-urlencoded
 
-processDefinitionId=48
+processDefinitionId=48&title=请假申请
 ```
 
 **更新草稿**
 
 ```http
-POST /processInstance/saveDraft?id=101&processDefinitionId=48
+POST /processInstance/saveDraft?id=101&processDefinitionId=48&title=请假申请-修改版
 ```
 
 或表单：
@@ -62,7 +63,7 @@ POST /processInstance/saveDraft?id=101&processDefinitionId=48
 POST /processInstance/saveDraft
 Content-Type: application/x-www-form-urlencoded
 
-id=101&processDefinitionId=48
+id=101&processDefinitionId=48&title=请假申请-修改版
 ```
 
 ---
@@ -85,6 +86,8 @@ id=101&processDefinitionId=48
 | --- | --- | --- |
 | id | Integer | 自建主键，新建时由 MyBatis-Plus 自增回填 |
 | processDefinitionId | Integer | 入参回写 |
+| title | String | 流程标题，入参回写，可为 `null` |
+| code | String | 草稿状态为 `null`，正式发起后生成 |
 | processDefinitionName | String | 非 DB 字段，本接口不回填 |
 | processInstanceId | String | Flowable 引擎实例 id，草稿状态为 `null` |
 | processStatus | String | `0` 草稿（DRAFT） |
@@ -95,7 +98,7 @@ id=101&processDefinitionId=48
 | updateTime | String | 更新时间 `yyyy-MM-dd HH:mm:ss` |
 | taskId | String | 非 DB 字段，本接口不回填 |
 
-> 草稿不启动 Flowable 引擎，因此 `processInstanceId` 为 `null`。后续可通过 `/processInstance/start` 将草稿真正发起为流程。
+> 草稿不启动 Flowable 引擎，因此 `processInstanceId` 为 `null`。草稿不生成编号，因此 `code` 为 `null`。后续可通过 `/processInstance/start` 将草稿真正发起为流程。
 
 ---
 
@@ -112,14 +115,16 @@ id=101&processDefinitionId=48
   "data": {
     "id": 101,
     "processDefinitionId": 48,
+    "title": "请假申请",
+    "code": null,
     "processDefinitionName": null,
     "processInstanceId": null,
     "processStatus": "0",
     "deleted": "0",
     "createBy": "1",
     "createByName": null,
-    "createTime": "2026-05-05 09:30:00",
-    "updateTime": "2026-05-05 09:30:00",
+    "createTime": "2026-05-09 09:30:00",
+    "updateTime": "2026-05-09 09:30:00",
     "taskId": null
   }
 }
@@ -136,14 +141,16 @@ id=101&processDefinitionId=48
   "data": {
     "id": 101,
     "processDefinitionId": 48,
+    "title": "请假申请-修改版",
+    "code": null,
     "processDefinitionName": null,
     "processInstanceId": null,
     "processStatus": "0",
     "deleted": "0",
     "createBy": "1",
     "createByName": null,
-    "createTime": "2026-05-05 09:00:00",
-    "updateTime": "2026-05-05 09:30:00",
+    "createTime": "2026-05-09 09:00:00",
+    "updateTime": "2026-05-09 09:30:00",
     "taskId": null
   }
 }

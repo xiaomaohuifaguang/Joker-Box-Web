@@ -360,19 +360,45 @@ watch(() => props.replayCount, (newVal) => {
 
         .reply-list {
             background: var(--bg-overlay);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 16px;
+            position: relative;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 28px;
+                top: 16px;
+                bottom: 56px;
+                width: 2px;
+                background: linear-gradient(180deg, var(--brand-primary-light) 0%, var(--border-light) 100%);
+                border-radius: 1px;
+                opacity: 0.5;
+            }
 
             .reply-item {
-                padding: 12px 0;
+                padding: 14px 0 14px 44px;
                 border-bottom: 1px solid var(--border-light);
+                position: relative;
 
                 &:last-child {
                     border-bottom: none;
                 }
 
                 &:first-child {
-                    padding-top: 0;
+                    padding-top: 4px;
+                }
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    left: -18px;
+                    top: 24px;
+                    width: 10px;
+                    height: 2px;
+                    background: var(--brand-primary-light);
+                    border-radius: 1px;
+                    opacity: 0.6;
                 }
 
                 .reply-header {
@@ -421,13 +447,10 @@ watch(() => props.replayCount, (newVal) => {
                     line-height: 1.6;
                     color: var(--text-regular);
                     margin-bottom: 8px;
-                    padding-left: 36px;
                     word-break: break-word;
                 }
 
                 .reply-actions {
-                    padding-left: 36px;
-
                     .reply-btn {
                         font-size: 12px;
                         padding: 0;

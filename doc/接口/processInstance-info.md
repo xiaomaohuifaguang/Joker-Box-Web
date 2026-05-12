@@ -1,7 +1,7 @@
 # 流程实例 - 详情接口
 
 > 作者：小猫会发光
-> 日期：2026-05-05
+> 日期：2026-05-09
 
 ## 基本信息
 
@@ -59,6 +59,8 @@ id=101
 | --- | --- | --- |
 | id | Integer | 自建主键 |
 | processDefinitionId | Integer | 自建流程定义 id（cat_process_definition.id） |
+| title | String | 流程标题，可为 `null` |
+| code | String | 流程编号，格式 `LC-YYYYMMDD-NNNN`；草稿状态为 `null` |
 | processDefinitionName | String | 流程定义名称（非 DB 字段，本接口不回填） |
 | processInstanceId | String | Flowable 引擎流程实例 id |
 | processStatus | String | 流程状态，见下方枚举 |
@@ -95,14 +97,16 @@ id=101
   "data": {
     "id": 101,
     "processDefinitionId": 48,
+    "title": "请假申请",
+    "code": "LC-20260509-0001",
     "processDefinitionName": null,
     "processInstanceId": "9c1f2a90-aabb-11ee-9f08-00ffe9eaf737",
     "processStatus": "1",
     "deleted": "0",
     "createBy": "1",
     "createByName": null,
-    "createTime": "2026-05-05 09:30:00",
-    "updateTime": "2026-05-05 09:30:00",
+    "createTime": "2026-05-09 09:30:00",
+    "updateTime": "2026-05-09 09:30:00",
     "taskId": null
   }
 }

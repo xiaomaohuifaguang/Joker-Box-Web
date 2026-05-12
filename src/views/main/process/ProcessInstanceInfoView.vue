@@ -34,6 +34,14 @@
 
         <div class="info-grid">
           <div class="info-item">
+            <span class="info-label">流程标题</span>
+            <span class="info-value">{{ info.title || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">流程编号</span>
+            <span class="info-value mono">{{ info.code || '-' }}</span>
+          </div>
+          <div class="info-item">
             <span class="info-label">流程名称</span>
             <span class="info-value">{{ info.processDefinitionName || '-' }}</span>
           </div>

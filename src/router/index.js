@@ -257,8 +257,11 @@ router.beforeEach((to, from) => {
     // 此路由需要授权，请检查是否已登录
     let token = localStorage.getItem(CONSTANTS.SYSTEM.TOKEN)
     if (token && token != null) {
-      // return true;
-      if (!to.meta.onlyLogin && !userInfo().authPaths.includes(to.path)) {
+      const ui = userInfo()
+      if (!ui) {
+        return '/404'
+      }
+      if (!to.meta.onlyLogin && !ui.authPaths.includes(to.path)) {
         if (to.path !== '/console') {
           return '/404'
         } else {
@@ -266,13 +269,7 @@ router.beforeEach((to, from) => {
         }
       }
     } else {
-      // 如果没有，则重定向到登录页面
       return '/404'
-      // return {
-      //   path: '/login',
-      //   // 保存我们所在的位置，以便以后再来
-      //   query: { redirect: to.fullPath },
-      // }
     }
   }
 
@@ -280,8 +277,9 @@ router.beforeEach((to, from) => {
     // 此路由需要admin角色
     let token = localStorage.getItem(CONSTANTS.SYSTEM.TOKEN)
     if (token && token != null) {
-      if (!userInfo().admin) {
-        return '/403';
+      const ui = userInfo()
+      if (!ui || !ui.admin) {
+        return '/403'
       }
     } else {
       return '/404'

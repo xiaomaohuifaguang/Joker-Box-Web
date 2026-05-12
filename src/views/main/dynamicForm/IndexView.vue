@@ -1,19 +1,7 @@
 <template>
     <div class="dynamic-form-page">
         <!-- 页面头部 -->
-        <div class="page-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <div class="title-icon">
-                        <el-icon><Document /></el-icon>
-                    </div>
-                    <div class="title-text">
-                        <h1>{{ info.name || '动态表单' }}</h1>
-                        <p>{{ info.description || '请填写以下信息' }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <PageHeader :icon="Document" :title="info.name || '动态表单'" :description="info.description || '请填写以下信息'" />
 
         <div class="page-container">
             <div class="form-wrapper">
@@ -22,6 +10,7 @@
                         v-model="formData"
                         :form-fields="info.formFields"
                         :linkage-rules="info.linkageRules"
+                        :groups="info.groups"
                         type="edit"
                         ref="formMakerRef" />
                 </div>
@@ -41,8 +30,10 @@ import { http, toPath, alert } from '@/utils'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Document, Check } from '@element-plus/icons-vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 import FormMaker from '@/components/dynamicForm/FormMaker.vue'
-import type { FormField, FormLinkage } from '@/components/dynamicForm/types'
+import type { FormField, FormFieldGroup, FormLinkageRule } from '@/components/dynamicForm/types'
+import { flattenGroups } from '@/components/dynamicForm/types'
 
 const route = useRoute()
 const loading = ref(false)
@@ -58,7 +49,8 @@ interface FormInfoState {
     createTime: string
     updateTime: string
     formFields: FormField[]
-    linkageRules: FormLinkage[]
+    linkageRules: FormLinkageRule[]
+    groups?: FormFieldGroup[]
 }
 
 const info = ref<FormInfoState>({
@@ -84,10 +76,16 @@ const queryFields = async () => {
             id: route.params.id,
             version: route.params.version
         })
+        const groups = data.groups || []
+        const formFields = data.formFields || []
+        const hasGroups = groups.length > 0
         info.value = {
             ...data,
-            formFields: data.formFields || [],
-            linkageRules: data.linkageRules || []
+            formFields: hasGroups
+                ? flattenGroups(groups).concat(formFields)
+                : formFields,
+            linkageRules: data.linkageRules || [],
+            groups: hasGroups ? groups : undefined,
         }
         if (info.value.formFields.length == 0) {
             toPath('/404')
@@ -131,55 +129,6 @@ onMounted(() => {
     min-height: calc(100vh - 60px);
     background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
 
-    .page-header {
-        background: var(--brand-gradient);
-        padding: 32px 0;
-        margin-bottom: 24px;
-
-        .header-content {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-
-            .title-icon {
-                width: 64px;
-                height: 64px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                backdrop-filter: blur(10px);
-
-                .el-icon {
-                    font-size: 32px;
-                    color: var(--text-on-brand);
-                }
-            }
-
-            .title-text {
-                h1 {
-                    margin: 0 0 8px 0;
-                    font-size: 28px;
-                    font-weight: 600;
-                    color: var(--text-on-brand);
-                }
-
-                p {
-                    margin: 0;
-                    font-size: 15px;
-                    color: rgba(255, 255, 255, 0.85);
-                }
-            }
-        }
-    }
-
     .page-container {
         max-width: 900px;
         margin: 0 auto;
@@ -221,25 +170,6 @@ onMounted(() => {
 
 @media (max-width: 768px) {
     .dynamic-form-page {
-        .page-header {
-            padding: 24px 0;
-
-            .header-content {
-                padding: 0 16px;
-            }
-
-            .header-title {
-                flex-direction: column;
-                text-align: center;
-
-                .title-text {
-                    h1 {
-                        font-size: 22px;
-                    }
-                }
-            }
-        }
-
         .page-container {
             padding: 0 16px 24px;
         }

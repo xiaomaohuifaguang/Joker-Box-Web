@@ -113,13 +113,50 @@ onMounted(async () => {
             itemData.value = props.info
             itemType.value = 'process'
         })
+        const cleanOrphanGatewayDefault = () => {
+            if (!lf.value) return
+            const edges = lf.value.graphModel?.edges || []
+            const edgeIds = new Set(edges.map((edge: any) => edge.id))
+            const nodes = lf.value.graphModel?.nodes || []
+            nodes.forEach((node: any) => {
+                if (node.type === 'bpmn:exclusiveGateway' && node.properties?.default) {
+                    if (!edgeIds.has(node.properties.default)) {
+                        lf.value!.deleteProperty(node.id, 'default')
+                        if (itemType.value === 'node' && itemData.value?.id === node.id) {
+                            const newProperties = { ...itemData.value.properties }
+                            delete newProperties.default
+                            itemData.value = { ...itemData.value, properties: newProperties }
+                        }
+                    }
+                }
+            })
+        }
+        lf.value.on('edge:delete', (event) => {
+            const deletedEdgeId = event.data?.id
+            if (!deletedEdgeId || !lf.value) return
+            const nodes = lf.value.graphModel?.nodes || []
+            nodes.forEach((node: any) => {
+                if (node.type === 'bpmn:exclusiveGateway' && node.properties?.default === deletedEdgeId) {
+                    lf.value!.deleteProperty(node.id, 'default')
+                    if (itemType.value === 'node' && itemData.value?.id === node.id) {
+                        const newProperties = { ...itemData.value.properties }
+                        delete newProperties.default
+                        itemData.value = { ...itemData.value, properties: newProperties }
+                    }
+                }
+            })
+        })
+        lf.value.on('node:delete', () => {
+            cleanOrphanGatewayDefault()
+        })
         emit('update:graphRawData', lf.value.getGraphRawData())
         emit('update:graphData', lf.value.getGraphData())
+        let isCleaning = false
         lf.value.on('history:change', () => {
-            if (lf.value) {
-                emit('update:graphRawData', lf.value.getGraphRawData())
-                emit('update:graphData', lf.value.getGraphData())
-            }
+            if (!lf.value || isCleaning) return
+            cleanOrphanGatewayDefault()
+            emit('update:graphRawData', lf.value.getGraphRawData())
+            emit('update:graphData', lf.value.getGraphData())
         })
         if (props.info && props.info.processKey && props.info.processName) {
             setProcessMeta({

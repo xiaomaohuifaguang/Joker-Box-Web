@@ -32,6 +32,19 @@
                     </el-form-item>
                 </el-col>
 
+                <el-col :span="12" v-if="props.groups && props.groups.length > 0">
+                    <el-form-item label="所属分组">
+                        <el-select v-model="form.groupId" clearable placeholder="未分组" style="width: 100%">
+                            <el-option v-for="g in props.groups" :key="g.id" :label="g.name || g.id" :value="g.id" />
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12" v-else>
+                    <el-form-item label="所属分组">
+                        <el-input v-model="form.groupId" placeholder="可选，输入分组标识" clearable />
+                    </el-form-item>
+                </el-col>
+
                 <el-col :span="12">
                     <el-form-item label="是否必填">
                         <el-switch v-model="form.required" />
@@ -134,12 +147,12 @@
                     </el-form-item>
                 </el-col>
 
-                <el-col :span="12">
+                <el-col :span="12" v-if="hasPattern">
                     <el-form-item label="正则校验">
                         <el-input v-model="form.pattern" placeholder="例：^[一-龥]{2,4}$" />
                     </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="hasPattern">
                     <el-form-item label="校验提示">
                         <el-input v-model="form.patternTips" placeholder="例：格式不正确" />
                     </el-form-item>
@@ -177,6 +190,7 @@ const props = defineProps<{
     modelValue: boolean
     field?: FormField | null
     existingFieldIds: string[]
+    groups?: { id: string; name: string }[]
 }>()
 
 const emit = defineEmits<{
@@ -207,6 +221,7 @@ interface FormState {
     pattern: string
     patternTips: string
     span: number
+    groupId: string
 }
 
 const buildEmpty = (): FormState => ({
@@ -224,6 +239,7 @@ const buildEmpty = (): FormState => ({
     pattern: '',
     patternTips: '',
     span: 24,
+    groupId: '',
 })
 
 const form = ref<FormState>(buildEmpty())
@@ -250,6 +266,7 @@ watch(
                 pattern: f.pattern ?? '',
                 patternTips: f.patternTips ?? '',
                 span: f.span ?? 24,
+                groupId: f.groupId ?? '',
             }
         } else {
             originalType.value = 'INPUT'
@@ -263,6 +280,10 @@ const hasOptions = computed(() =>
     ['SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER'].includes(form.value.type),
 )
 
+const hasPattern = computed(() =>
+    ['INPUT', 'TEXTAREA'].includes(form.value.type),
+)
+
 const optionsDialog = ref(false)
 
 const onTypeChange = () => {
@@ -273,6 +294,10 @@ const onTypeChange = () => {
     form.value.max = undefined
     form.value.minLength = undefined
     form.value.maxLength = undefined
+    if (!hasPattern.value) {
+        form.value.pattern = ''
+        form.value.patternTips = ''
+    }
 }
 
 const formRef = ref<FormInstance>()
@@ -329,6 +354,7 @@ const onSubmit = async () => {
         pattern: form.value.pattern || undefined,
         patternTips: form.value.patternTips || undefined,
         span: form.value.span,
+        groupId: form.value.groupId || undefined,
     }
     emit('submit', f)
     visible.value = false

@@ -35,6 +35,15 @@
       </div>
     </div>
 
+    <!-- 流程标题 -->
+    <div class="title-input-section">
+      <el-input v-model="formTitle" placeholder="请输入流程标题（可选）" size="large" clearable maxlength="100" show-word-limit>
+        <template #prefix>
+          <el-icon><Edit /></el-icon>
+        </template>
+      </el-input>
+    </div>
+
     <!-- 草稿基础信息 -->
     <div v-if="draftInfo" class="draft-info">
       <div class="info-header">
@@ -45,6 +54,10 @@
         <div class="info-item">
           <span class="info-label">草稿 ID</span>
           <span class="info-value">{{ draftInfo.id }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">标题</span>
+          <span class="info-value">{{ draftInfo.title || '-' }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">状态</span>
@@ -92,7 +105,7 @@ const submit = async (): Promise<boolean> => {
     return false
   }
   const result = await http.post('/processInstance/start', undefined, {
-    params: { processDefinitionId: props.def.id },
+    params: { processDefinitionId: props.def.id, title: formTitle.value || undefined },
     raw: true,
   })
   if (result.code === 200) {
@@ -105,6 +118,7 @@ const submit = async (): Promise<boolean> => {
 
 const draftId = ref<number | null>(null)
 const draftInfo = ref<any | null>(null)
+const formTitle = ref('')
 
 const loadDraft = async (id: number | string) => {
   if (!id) return
@@ -112,6 +126,7 @@ const loadDraft = async (id: number | string) => {
     params: { id },
   })
   draftId.value = draftInfo.value?.id ?? null
+  formTitle.value = draftInfo.value?.title ?? ''
 }
 
 const saveDraft = async (): Promise<boolean> => {
@@ -123,6 +138,7 @@ const saveDraft = async (): Promise<boolean> => {
     params: {
       ...(draftId.value ? { id: draftId.value } : {}),
       processDefinitionId: props.def.id,
+      title: formTitle.value || undefined,
     },
     raw: true,
   })
@@ -139,6 +155,7 @@ const saveDraft = async (): Promise<boolean> => {
 const reset = () => {
   draftId.value = null
   draftInfo.value = null
+  formTitle.value = ''
 }
 
 defineExpose({ submit, saveDraft, loadDraft, reset })
@@ -146,6 +163,20 @@ defineExpose({ submit, saveDraft, loadDraft, reset })
 
 <style scoped lang="scss">
 .process-instance-start {
+  .title-input-section {
+    margin-bottom: 20px;
+
+    :deep(.el-input__wrapper) {
+      border-radius: var(--radius-lg);
+      padding-left: 12px;
+    }
+
+    .el-icon {
+      color: var(--text-secondary);
+      margin-right: 4px;
+    }
+  }
+
   .def-summary {
     display: flex;
     align-items: flex-start;

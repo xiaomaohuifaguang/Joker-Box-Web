@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { confirm, http, logout, toPath, userInfoRef } from '@/utils'
 import ThemeSelector from '@/components/common/ThemeSelector.vue'
@@ -104,7 +104,7 @@ import LogoIcon from '@/components/icon/LogoIcon.vue'
 import { HomeFilled, Expand, Fold, SwitchButton, Setting, Tools } from '@element-plus/icons-vue'
 
 const route = useRoute()
-const activeIndex = ref(route.path)
+const activeIndex = computed(() => route.path)
 const isCollapse = ref(false)
 const menuInit = ref<any[]>([])
 

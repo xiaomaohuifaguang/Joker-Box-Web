@@ -1,24 +1,6 @@
 <template>
     <div class="file-manager-container">
-        <div class="page-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <div class="title-icon">
-                        <el-icon><FolderOpened /></el-icon>
-                    </div>
-                    <div class="title-text">
-                        <h1>文件管理</h1>
-                        <p>安全存储，便捷管理</p>
-                    </div>
-                </div>
-                <div class="header-stats">
-                    <div class="stat-item">
-                        <el-icon><Document /></el-icon>
-                        <span>{{ list.length }} 个文件</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <PageHeader :icon="FolderOpened" title="文件管理" :description="`共 ${list.length} 个文件`" />
 
         <div class="content-wrapper">
             <!-- 文件上传区域 -->
@@ -213,6 +195,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import {
     UploadFilled, FolderAdd, Document, Folder, MoreFilled,
     FolderOpened, ArrowLeft, HomeFilled, Refresh, Picture,
@@ -421,75 +404,6 @@ onMounted(() => {
 .file-manager-container {
     min-height: calc(100vh - 70px);
     background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-overlay) 100%);
-}
-
-/* Page Header */
-.page-header {
-    background: var(--brand-gradient-soft);
-    border-bottom: 1px solid var(--border-light);
-    padding: 30px 0;
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-title {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-
-    .title-icon {
-        width: 56px;
-        height: 56px;
-        background: var(--brand-gradient);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--text-on-brand);
-        font-size: 28px;
-        box-shadow: var(--shadow-glow);
-    }
-
-    .title-text {
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 4px 0;
-        }
-
-        p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-    }
-}
-
-.header-stats {
-    .stat-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        background: var(--bg-container);
-        border-radius: 12px;
-        font-size: 14px;
-        color: var(--text-regular);
-        box-shadow: var(--shadow-sm);
-
-        .el-icon {
-            font-size: 18px;
-            color: var(--brand-primary);
-        }
-    }
 }
 
 /* Content Wrapper */
@@ -919,12 +833,6 @@ onMounted(() => {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: 16px;
-        text-align: center;
-    }
-
     .content-wrapper {
         padding: 16px;
     }

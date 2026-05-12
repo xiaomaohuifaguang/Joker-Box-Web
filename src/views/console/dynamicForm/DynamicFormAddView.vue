@@ -43,6 +43,7 @@
                         </div>
                         <FormMaker ref="formMakerRef" :form-fields="info.formFields" :linkage-rules="info.linkageRules"
                             v-model="formData" type="create" @update:fields="info.formFields = $event"
+                            @update:groups="info.groups = $event"
                             @update:rules="info.linkageRules = $event" />
                     </div>
                 </el-col>
@@ -68,7 +69,7 @@ import { Plus, Document, Setting, Check } from '@element-plus/icons-vue'
 import { alert, http } from '@/utils';
 import { ref } from 'vue';
 import FormMaker from '@/components/dynamicForm/FormMaker.vue';
-import type { FormField, FormLinkage } from '@/components/dynamicForm/types';
+import type { FormField, FormFieldGroup, FormLinkageRule } from '@/components/dynamicForm/types';
 import { validateTemplate } from '@/components/dynamicForm/linkage';
 
 const emit = defineEmits(['success']);
@@ -86,7 +87,8 @@ interface AddFormState {
     createTime: string
     updateTime: string
     formFields: FormField[]
-    linkageRules: FormLinkage[]
+    linkageRules: FormLinkageRule[]
+    groups?: FormFieldGroup[]
 }
 
 const info = ref<AddFormState>({
@@ -114,7 +116,12 @@ const add = async () => {
 
     loading.value = true
     try {
-        const result = await http.post('/dynamicForm/add', info.value, { raw: true })
+        const payload = {
+            ...info.value,
+            groups: info.value.groups,
+            formFields: info.value.formFields.filter(f => !f.groupId),
+        }
+        const result = await http.post('/dynamicForm/add', payload, { raw: true })
         alert(result.msg, 'success')
         emit('success');
     } catch (e: any) {

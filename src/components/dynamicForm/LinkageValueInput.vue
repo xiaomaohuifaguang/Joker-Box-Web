@@ -21,15 +21,35 @@
             <el-option v-for="op in field?.options || []" :key="String(op.value)"
                 :label="op.label" :value="String(op.value)" />
         </el-select>
-        <el-input
+        <el-select
             v-else
-            :model-value="modelValue"
-            @update:model-value="emitVal"
-            placeholder="多个值用英文逗号分隔"
-            clearable />
+            :model-value="multiValue"
+            @update:model-value="onMultiSelect"
+            multiple
+            allow-create
+            filterable
+            default-first-option
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="输入值后按回车添加多个"
+            style="width: 100%" />
     </template>
 
-    <!-- 选项类字段（SELECT/RADIO/MULTISELECT/CHECKBOX）：单选下拉 -->
+    <!-- 多选字段（MULTISELECT/CHECKBOX/MULTICASCADER）：始终多选下拉 -->
+    <el-select
+        v-else-if="hasOptions && isMultiField"
+        :model-value="multiValue"
+        @update:model-value="onMultiSelect"
+        multiple
+        collapse-tags
+        collapse-tags-tooltip
+        placeholder="选择一个或多个值"
+        style="width: 100%">
+        <el-option v-for="op in field?.options || []" :key="String(op.value)"
+            :label="op.label" :value="String(op.value)" />
+    </el-select>
+
+    <!-- 选项类字段（SELECT/RADIO/CASCADER）：单选下拉 -->
     <el-select
         v-else-if="hasOptions"
         :model-value="modelValue"
@@ -130,7 +150,12 @@ const isMultiCondition = computed(
 
 const hasOptions = computed(() => {
     if (!props.field) return false
-    return ['SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX'].includes(props.field.type)
+    return ['SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER'].includes(props.field.type)
+})
+
+const isMultiField = computed(() => {
+    if (!props.field) return false
+    return ['MULTISELECT', 'CHECKBOX', 'MULTICASCADER'].includes(props.field.type)
 })
 
 const isNumberLike = computed(() => {

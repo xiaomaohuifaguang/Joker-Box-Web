@@ -19,7 +19,7 @@
         <el-form-item label="候选人">
             <el-select v-model="candidateUsersArray" multiple filterable remote reserve-keyword
                 :remote-method="searchUsers" :loading="userLoading" placeholder="请输入用户名/昵称搜索"
-                style="width: 100%" :disabled="readonly">
+                style="width: 100%" :disabled="readonly" :key="userSelectKey">
                 <el-option v-for="item in userDisplayOptions" :key="item.id" :label="item.label"
                     :value="item.id" />
             </el-select>
@@ -27,7 +27,7 @@
         <el-form-item label="候选角色">
             <el-select v-model="candidateRolesArray" multiple filterable remote reserve-keyword
                 :remote-method="searchRoles" :loading="roleLoading" placeholder="请输入角色名搜索"
-                style="width: 100%" :disabled="readonly">
+                style="width: 100%" :disabled="readonly" :key="roleSelectKey">
                 <el-option v-for="item in roleDisplayOptions" :key="item.id" :label="item.label"
                     :value="item.id" />
             </el-select>
@@ -39,7 +39,7 @@
         <el-form-item label="候选部门">
             <el-select v-model="candidateDeptsArray" multiple filterable remote reserve-keyword
                 :remote-method="searchOrgs" :loading="orgLoading" placeholder="请输入部门名搜索"
-                style="width: 100%" :disabled="readonly">
+                style="width: 100%" :disabled="readonly" :key="orgSelectKey">
                 <el-option v-for="item in orgDisplayOptions" :key="item.id" :label="item.label"
                     :value="item.id" />
             </el-select>
@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useProperty, useSearchOptions } from './shared'
 
 const props = defineProps<{
@@ -99,6 +99,10 @@ const candidateUsersArray = makeArrayProp('candidateUsers')
 const candidateRolesArray = makeArrayProp('candidateRoles')
 const candidateGroupsArray = makeArrayProp('candidateGroups')
 const candidateDeptsArray = makeArrayProp('candidateDepts')
+
+const userSelectKey = ref(0)
+const roleSelectKey = ref(0)
+const orgSelectKey = ref(0)
 
 const actionButtonOptions = [
     { value: 'pass', label: '通过' },
@@ -226,7 +230,8 @@ const {
     userOptions, roleOptions, orgOptions,
     userLoading, roleLoading, orgLoading,
     mergeSelected,
-    searchUsers, searchRoles, searchOrgs
+    searchUsers, searchRoles, searchOrgs,
+    initUsersByIds, initRolesByIds, initOrgsByIds
 } = useSearchOptions()
 
 const userDisplayOptions = computed(() => mergeSelected(userOptions.value, candidateUsersArray.value, userCache.value))
@@ -235,10 +240,34 @@ const orgDisplayOptions = computed(() => mergeSelected(orgOptions.value, candida
 
 watch(
     () => props.data,
-    () => {
-        if (userOptions.value.length === 0) searchUsers('')
-        if (roleOptions.value.length === 0) searchRoles('')
-        if (orgOptions.value.length === 0) searchOrgs('')
+    async () => {
+        if (candidateUsersArray.value.length > 0) {
+            await initUsersByIds(candidateUsersArray.value)
+            userSelectKey.value++
+        }
+        if (candidateRolesArray.value.length > 0) {
+            await initRolesByIds(candidateRolesArray.value)
+            roleSelectKey.value++
+        }
+        if (candidateDeptsArray.value.length > 0) {
+            await initOrgsByIds(candidateDeptsArray.value)
+            orgSelectKey.value++
+        }
+    },
+    { immediate: true }
+)
+
+watch(
+    () => props.data?.properties?.approvalType,
+    (newVal, oldVal) => {
+        if (newVal === 1) {
+            const passRate = props.data?.properties?.passRate
+            if (passRate === undefined || passRate === null || passRate === '') {
+                doUpdateProperty('passRate', 1)
+            }
+        } else if (oldVal === 1) {
+            doUpdateProperty('passRate', '')
+        }
     },
     { immediate: true }
 )

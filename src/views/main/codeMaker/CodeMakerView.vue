@@ -1,19 +1,7 @@
 <template>
     <div class="code-generator-container">
         <!-- 页面头部 -->
-        <div class="page-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <div class="title-icon">
-                        <el-icon><MagicStick /></el-icon>
-                    </div>
-                    <div class="title-text">
-                        <h1>代码生成器</h1>
-                        <p>根据数据库表结构自动生成前后端代码</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <PageHeader :icon="MagicStick" title="代码生成器" description="根据数据库表结构自动生成前后端代码" />
 
         <div class="content-wrapper">
             <!-- 输入框区域 -->
@@ -21,12 +9,16 @@
                 <div class="input-card">
                     <div class="input-header">
                         <div class="input-label">
-                            <el-icon><Search /></el-icon>
+                            <el-icon>
+                                <Search />
+                            </el-icon>
                             <span>数据库表名</span>
                         </div>
                         <div class="input-actions">
                             <el-button text size="small" @click="showHistory = true" v-if="history.length > 0">
-                                <el-icon><Clock /></el-icon>
+                                <el-icon>
+                                    <Clock />
+                                </el-icon>
                                 历史记录
                             </el-button>
                         </div>
@@ -35,7 +27,9 @@
                         <el-input v-model="tableName" size="large" placeholder="请输入数据库表名，例如：sys_user" clearable
                             @keyup.enter="make" class="custom-input">
                             <template #prefix>
-                                <el-icon><Collection /></el-icon>
+                                <el-icon>
+                                    <Collection />
+                                </el-icon>
                             </template>
                         </el-input>
                         <el-button type="primary" size="large" :icon="MagicStick" @click="make" :loading="loading"
@@ -46,11 +40,15 @@
                     </div>
                     <div class="input-tips">
                         <div class="tip-item" v-if="!tableName">
-                            <el-icon><InfoFilled /></el-icon>
+                            <el-icon>
+                                <InfoFilled />
+                            </el-icon>
                             <span>输入数据库表名后点击生成按钮，系统将自动生成完整的 CRUD 代码</span>
                         </div>
                         <div class="tip-item success" v-else>
-                            <el-icon><CircleCheck /></el-icon>
+                            <el-icon>
+                                <CircleCheck />
+                            </el-icon>
                             <span>即将生成 <strong>{{ tableName }}</strong> 表的代码</span>
                         </div>
                     </div>
@@ -61,16 +59,22 @@
             <div class="code-section" v-if="hasGeneratedCode">
                 <div class="section-header">
                     <div class="header-left">
-                        <el-icon><Document /></el-icon>
+                        <el-icon>
+                            <Document />
+                        </el-icon>
                         <span>生成结果</span>
                     </div>
                     <div class="header-right">
                         <el-button text size="small" @click="downloadAll">
-                            <el-icon><Download /></el-icon>
+                            <el-icon>
+                                <Download />
+                            </el-icon>
                             下载全部
                         </el-button>
                         <el-button text size="small" @click="copyAll">
-                            <el-icon><CopyDocument /></el-icon>
+                            <el-icon>
+                                <CopyDocument />
+                            </el-icon>
                             复制全部
                         </el-button>
                     </div>
@@ -92,11 +96,15 @@
                                     <div class="filename">{{ getFilename(item) }}</div>
                                     <div class="code-actions">
                                         <el-button text size="small" @click="copyCode(item)">
-                                            <el-icon><CopyDocument /></el-icon>
+                                            <el-icon>
+                                                <CopyDocument />
+                                            </el-icon>
                                             复制
                                         </el-button>
                                         <el-button text size="small" @click="downloadCode(item)">
-                                            <el-icon><Download /></el-icon>
+                                            <el-icon>
+                                                <Download />
+                                            </el-icon>
                                             下载
                                         </el-button>
                                     </div>
@@ -104,7 +112,9 @@
                                 <CodeDisplay v-if="data[item.name]" :code="data[item.name]" :language="item.language"
                                     :filename="getFilename(item)" />
                                 <div v-else class="empty-code">
-                                    <el-icon><DocumentDelete /></el-icon>
+                                    <el-icon>
+                                        <DocumentDelete />
+                                    </el-icon>
                                     <span>暂无生成内容</span>
                                 </div>
                             </div>
@@ -126,23 +136,33 @@
                     <p>在上方输入数据库表名，系统将为您自动生成：</p>
                     <div class="feature-list">
                         <div class="feature-item">
-                            <el-icon><Check /></el-icon>
+                            <el-icon>
+                                <Check />
+                            </el-icon>
                             <span>Entity 实体类</span>
                         </div>
                         <div class="feature-item">
-                            <el-icon><Check /></el-icon>
+                            <el-icon>
+                                <Check />
+                            </el-icon>
                             <span>Controller 控制层</span>
                         </div>
                         <div class="feature-item">
-                            <el-icon><Check /></el-icon>
+                            <el-icon>
+                                <Check />
+                            </el-icon>
                             <span>Service 业务层</span>
                         </div>
                         <div class="feature-item">
-                            <el-icon><Check /></el-icon>
+                            <el-icon>
+                                <Check />
+                            </el-icon>
                             <span>Mapper 数据访问层</span>
                         </div>
                         <div class="feature-item">
-                            <el-icon><Check /></el-icon>
+                            <el-icon>
+                                <Check />
+                            </el-icon>
                             <span>Vue 前端页面</span>
                         </div>
                     </div>
@@ -155,14 +175,18 @@
             <div class="history-list">
                 <div v-for="(item, index) in history" :key="index" class="history-item" @click="selectHistory(item)">
                     <div class="history-icon">
-                        <el-icon><Clock /></el-icon>
+                        <el-icon>
+                            <Clock />
+                        </el-icon>
                     </div>
                     <div class="history-info">
                         <div class="history-name">{{ item }}</div>
                         <div class="history-time">{{ formatTime(index) }}</div>
                     </div>
                     <el-button text circle size="small" @click.stop="removeHistory(index)">
-                        <el-icon><Close /></el-icon>
+                        <el-icon>
+                            <Close />
+                        </el-icon>
                     </el-button>
                 </div>
             </div>
@@ -174,6 +198,7 @@
 import { ref, computed } from "vue";
 import { alert, http } from "@/utils";
 import CodeDisplay from "@/components/media/CodeDisplay.vue";
+import PageHeader from "@/components/common/PageHeader.vue";
 import {
     Search, MagicStick, Document, Collection, InfoFilled,
     CircleCheck, Clock, Download, CopyDocument, DocumentDelete,
@@ -186,7 +211,7 @@ const showHistory = ref(false);
 const history = ref<string[]>([]);
 
 const activeName = ref("entity");
-const data = ref({
+const data = ref<any>({
     index: "",
     add: "",
     info: "",
@@ -199,7 +224,7 @@ const data = ref({
 });
 
 const hasGeneratedCode = computed(() => {
-    return Object.values(data.value).some(code => code && code.length > 0);
+    return Object.values(data.value).some((code: any) => code && code.length > 0);
 });
 
 const tabList = [
@@ -343,53 +368,6 @@ const formatTime = (index: number) => {
 .code-generator-container {
     min-height: calc(100vh - 70px);
     background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-overlay) 100%);
-}
-
-/* Page Header */
-.page-header {
-    background: var(--brand-gradient-soft);
-    border-bottom: 1px solid var(--border-light);
-    padding: 30px 0;
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-}
-
-.header-title {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-
-    .title-icon {
-        width: 56px;
-        height: 56px;
-        background: var(--brand-gradient);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--text-on-brand);
-        font-size: 28px;
-        box-shadow: var(--shadow-glow);
-    }
-
-    .title-text {
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 4px 0;
-        }
-
-        p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-    }
 }
 
 /* Content Wrapper */
@@ -677,16 +655,35 @@ const formatTime = (index: number) => {
         border-radius: 6px;
         animation: shimmer 2s infinite;
 
-        &:nth-child(1) { width: 100%; }
-        &:nth-child(2) { width: 80%; animation-delay: 0.2s; }
-        &:nth-child(3) { width: 90%; animation-delay: 0.4s; }
-        &:nth-child(4) { width: 60%; animation-delay: 0.6s; }
+        &:nth-child(1) {
+            width: 100%;
+        }
+
+        &:nth-child(2) {
+            width: 80%;
+            animation-delay: 0.2s;
+        }
+
+        &:nth-child(3) {
+            width: 90%;
+            animation-delay: 0.4s;
+        }
+
+        &:nth-child(4) {
+            width: 60%;
+            animation-delay: 0.6s;
+        }
     }
 }
 
 @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 .empty-content {

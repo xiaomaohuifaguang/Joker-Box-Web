@@ -3,35 +3,26 @@
     <div class="form-wrapper">
       <div class="form-header">
         <div class="header-icon">
-          <el-icon><ChatLineRound /></el-icon>
+          <el-icon>
+            <ChatLineRound />
+          </el-icon>
         </div>
         <h3>添加系统提示</h3>
-        <p>配置AI系统提示词，用于指导AI模型的行为</p>
+        <p>我将告知在座的各位</p>
       </div>
 
       <el-form label-position="top" class="add-form">
         <el-row :gutter="24">
           <el-col :xs="24" :sm="24" :md="24" :lg="24">
             <el-form-item label="系统提示消息" prop="prompt">
-              <el-input
-                v-model="info.prompt"
-                :placeholder="`请输入系统提示消息`"
-                clearable
-                type="textarea"
-                :rows="4">
+              <el-input v-model="info.prompt" :placeholder="`请输入系统提示消息`" clearable type="textarea" :rows="4">
               </el-input>
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="24" :md="24" :lg="24">
             <el-form-item label="截止时间" prop="deadTime">
-              <el-date-picker
-                v-model="info.deadTime"
-                type="datetime"
-                placeholder="选择时间"
-                style="width: 100%;"
-                format="YYYY-MM-DD HH:mm:ss"
-                date-format="YYYY-MM-DD"
-                time-format="HH:mm:ss"
+              <el-date-picker v-model="info.deadTime" type="datetime" placeholder="选择时间" style="width: 100%;"
+                format="YYYY-MM-DD HH:mm:ss" date-format="YYYY-MM-DD" time-format="HH:mm:ss"
                 value-format="YYYY-MM-DD HH:mm:ss" />
             </el-form-item>
           </el-col>
@@ -40,7 +31,9 @@
 
       <div class="action-bar">
         <el-button type="primary" @click="add" class="add-button">
-          <el-icon><Plus /></el-icon>
+          <el-icon>
+            <Plus />
+          </el-icon>
           <span>确认添加</span>
         </el-button>
       </div>
@@ -56,18 +49,18 @@ import { ref } from 'vue';
 const emit = defineEmits(['success']);
 
 const info = ref({
-    // id: '',
-    prompt: '',
-    // deleted: '',
-    // createBy: '',
-    // createTime: '',
-    deadTime: '',
+  // id: '',
+  prompt: '',
+  // deleted: '',
+  // createBy: '',
+  // createTime: '',
+  deadTime: '',
 })
 
 const add = async () => {
-    const result = await http.post('/systemPrompt/add', info.value, { raw: true })
-    alert(result.msg, 'success')
-    emit('success');
+  const result = await http.post('/systemPrompt/add', info.value, { raw: true })
+  alert(result.msg, 'success')
+  emit('success');
 }
 </script>
 

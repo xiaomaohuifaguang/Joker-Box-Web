@@ -4,7 +4,9 @@
       <div class="form-wrapper">
         <div class="form-header">
           <div class="header-icon">
-            <el-icon><Cpu /></el-icon>
+            <el-icon>
+              <Cpu />
+            </el-icon>
           </div>
           <h3>{{ props.type === 'view' ? 'AI 模型详情' : '编辑 AI 模型' }}</h3>
           <p>{{ props.type === 'view' ? '查看 AI 模型详细信息' : '修改 AI 模型配置' }}</p>
@@ -23,13 +25,19 @@
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="24" :md="24" :lg="24">
-              <el-form-item label="版本">
-                <el-input v-model="info.version" :disabled="props.type !== 'edit'" :placeholder="`请输入版本`" />
+              <el-form-item label="Base URL">
+                <el-input v-model="info.baseUrl" :disabled="props.type !== 'edit'" :placeholder="`请输入 Base URL`" />
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="24" :lg="24">
+              <el-form-item label="API Key">
+                <el-input v-model="info.apiKey" :disabled="props.type !== 'edit'" :placeholder="`请输入 API Key`" show-password />
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="24" :md="24" :lg="24">
               <el-form-item label="描述">
-                <el-input v-model="info.description" :disabled="props.type !== 'edit'" :placeholder="`请输入描述`" type="textarea" :rows="3" />
+                <el-input v-model="info.description" :disabled="props.type !== 'edit'" :placeholder="`请输入描述`"
+                  type="textarea" :rows="3" />
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="24" :md="24" :lg="24">
@@ -42,7 +50,9 @@
 
         <div class="action-bar" v-if="props.type === 'edit'">
           <el-button type="primary" @click="save" class="save-button">
-            <el-icon><Check /></el-icon>
+            <el-icon>
+              <Check />
+            </el-icon>
             <span>保存修改</span>
           </el-button>
         </div>
@@ -57,39 +67,46 @@ import { alert, http } from '@/utils';
 import { onMounted, ref } from 'vue';
 
 const props = defineProps({
-    id: String,
-    type: String
+  id: String,
+  type: String
 })
 
 const loading = ref(false)
+const originalApiKey = ref('')
 
 const info = ref({
-    id: '',
-    name: '',
-    model: '',
-    version: '',
-    description: '',
-    userId: '',
-    createTime: '',
+  id: '',
+  name: '',
+  model: '',
+  baseUrl: '',
+  apiKey: '',
+  description: '',
+  userId: '',
+  createTime: '',
 })
 
 const queryInfo = async () => {
-    loading.value = true
-    info.value = await http.post('/ai/model/info', { id: props.id })
-    loading.value = false
+  loading.value = true
+  info.value = await http.post('/ai/model/info', { id: props.id })
+  originalApiKey.value = info.value.apiKey || ''
+  loading.value = false
 }
 
 const save = async () => {
-    loading.value = true
-    const result = await http.post('/ai/model/update', info.value, { raw: true })
-    alert(result.msg, 'success')
-    await queryInfo()
-    loading.value = false
+  loading.value = true
+  const data: any = { ...info.value }
+  if (data.apiKey === originalApiKey.value) {
+    delete data.apiKey
+  }
+  const result = await http.post('/ai/model/update', data, { raw: true })
+  alert(result.msg, 'success')
+  await queryInfo()
+  loading.value = false
 }
 
 onMounted(() => {
-    if (!props.id) return;
-    queryInfo()
+  if (!props.id) return;
+  queryInfo()
 })
 </script>
 

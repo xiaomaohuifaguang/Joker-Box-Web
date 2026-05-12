@@ -1,19 +1,7 @@
 <template>
     <div class="website-management-page">
         <!-- 页面头部 -->
-        <div class="page-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <div class="title-icon">
-                        <el-icon><Link /></el-icon>
-                    </div>
-                    <div class="title-text">
-                        <h1>网站收藏管理</h1>
-                        <p>管理和维护您的网站收藏</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <PageHeader :icon="Link" title="网站收藏管理" description="管理和维护您的网站收藏" />
 
         <div class="page-container">
             <!-- 面包屑导航 -->
@@ -203,6 +191,7 @@ import { alert, http, confirm } from '@/utils';
 import { onMounted, ref } from 'vue';
 import WebsiteEditView from './WebsiteEditView.vue';
 import WebsiteAddView from './WebsiteAddView.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 
 const loading = ref(false)
 const multipleSelection = ref<any[]>([])
@@ -314,55 +303,6 @@ onMounted(() => {
 .website-management-page {
     min-height: calc(100vh - 60px);
     background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
-
-    .page-header {
-        background: var(--brand-gradient);
-        padding: 32px 0;
-        margin-bottom: 24px;
-
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-
-            .title-icon {
-                width: 64px;
-                height: 64px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                backdrop-filter: blur(10px);
-
-                .el-icon {
-                    font-size: 32px;
-                    color: white;
-                }
-            }
-
-            .title-text {
-                h1 {
-                    margin: 0 0 8px 0;
-                    font-size: 28px;
-                    font-weight: 600;
-                    color: white;
-                }
-
-                p {
-                    margin: 0;
-                    font-size: 15px;
-                    color: rgba(255, 255, 255, 0.85);
-                }
-            }
-        }
-    }
 
     .page-container {
         max-width: 1400px;
@@ -571,25 +511,6 @@ onMounted(() => {
 
 @media (max-width: 768px) {
     .website-management-page {
-        .page-header {
-            padding: 24px 0;
-
-            .header-content {
-                padding: 0 16px;
-            }
-
-            .header-title {
-                flex-direction: column;
-                text-align: center;
-
-                .title-text {
-                    h1 {
-                        font-size: 22px;
-                    }
-                }
-            }
-        }
-
         .page-container {
             padding: 0 16px 24px;
         }

@@ -1,21 +1,7 @@
 <template>
     <div class="dynamic-form-management-page">
         <!-- 页面头部 -->
-        <div class="page-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <div class="title-icon">
-                        <el-icon>
-                            <Document />
-                        </el-icon>
-                    </div>
-                    <div class="title-text">
-                        <h1>动态表单管理</h1>
-                        <p>管理和配置动态表单模板</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <PageHeader :icon="Document" title="动态表单管理" description="管理和配置动态表单模板" />
 
         <div class="page-container">
             <!-- 面包屑导航 -->
@@ -249,10 +235,9 @@ import {
 } from '@element-plus/icons-vue'
 import { http, alert, confirm } from '@/utils';
 import { onMounted, ref } from 'vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import DynamicFormInfoView from './DynamicFormInfoView.vue';
 import DynamicFormAddView from './DynamicFormAddView.vue';
-import { validateTemplate } from '@/components/dynamicForm/linkage';
-
 const loading = ref(false)
 const multipleSelection = ref<any[]>([])
 const tableData = ref<any[]>([])
@@ -330,22 +315,7 @@ const remove = async (id: any) => {
 }
 
 const deploy = async (id: any) => {
-    let info: any
-    try {
-        info = await http.post('/dynamicForm/info', { id })
-    } catch {
-        return
-    }
-    const check = validateTemplate(
-        info?.name,
-        info?.formFields || [],
-        info?.linkageRules || [],
-    )
-    if (!check.ok) {
-        alert(`发布前校验失败：${check.errors[0]}`, 'warning')
-        return
-    }
-    confirm('发布表单', `确认发布表单「${info.name}」？发布后将不可修改。`, async () => {
+    confirm('发布表单', '确认发布该表单？发布后将不可修改。', async () => {
         await http.post('/dynamicForm/deploy', undefined, { params: { formId: id } })
         alert('发布成功', 'success')
         queryPage()
@@ -409,55 +379,6 @@ onMounted(() => {
 .dynamic-form-management-page {
     min-height: calc(100vh - 60px);
     background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
-
-    .page-header {
-        background: var(--brand-gradient);
-        padding: 32px 0;
-        margin-bottom: 24px;
-
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-
-            .title-icon {
-                width: 64px;
-                height: 64px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                backdrop-filter: blur(10px);
-
-                .el-icon {
-                    font-size: 32px;
-                    color: white;
-                }
-            }
-
-            .title-text {
-                h1 {
-                    margin: 0 0 8px 0;
-                    font-size: 28px;
-                    font-weight: 600;
-                    color: white;
-                }
-
-                p {
-                    margin: 0;
-                    font-size: 15px;
-                    color: rgba(255, 255, 255, 0.85);
-                }
-            }
-        }
-    }
 
     .page-container {
         max-width: 1400px;
@@ -651,25 +572,6 @@ onMounted(() => {
 
 @media (max-width: 768px) {
     .dynamic-form-management-page {
-        .page-header {
-            padding: 24px 0;
-
-            .header-content {
-                padding: 0 16px;
-            }
-
-            .header-title {
-                flex-direction: column;
-                text-align: center;
-
-                .title-text {
-                    h1 {
-                        font-size: 22px;
-                    }
-                }
-            }
-        }
-
         .page-container {
             padding: 0 16px 24px;
         }

@@ -1,7 +1,8 @@
 import type {
     FieldRuntimeState,
     FormField,
-    FormLinkage,
+    FormLinkageNode,
+    FormLinkageRule,
     LinkageCondition,
 } from './types'
 
@@ -45,7 +46,6 @@ const evalCondition = (
             return !isNaN(a) && !isNaN(b) && a <= b
         }
         case 'IN': {
-            // triggerValue 可能是数组，也可能是逗号分隔的字符串
             let list: any[] = []
             if (Array.isArray(triggerValue)) list = triggerValue
             else if (typeof triggerValue === 'string') list = triggerValue.split(',').map(s => s.trim())
@@ -82,10 +82,37 @@ const evalCondition = (
     }
 }
 
+// 递归求值条件树
+const evalConditionTree = (
+    node: FormLinkageNode | undefined,
+    formData: Record<string, any>,
+): boolean => {
+    if (!node) return false
+    if (node.nodeType === 'CONDITION') {
+        if (!node.triggerFieldId || !node.triggerCondition) return false
+        return evalCondition(
+            formData[node.triggerFieldId],
+            node.triggerCondition,
+            node.triggerValue,
+        )
+    }
+    if (node.nodeType === 'AND') {
+        const children = node.children || []
+        if (children.length === 0) return true
+        return children.every(child => evalConditionTree(child, formData))
+    }
+    if (node.nodeType === 'OR') {
+        const children = node.children || []
+        if (children.length === 0) return false
+        return children.some(child => evalConditionTree(child, formData))
+    }
+    return false
+}
+
 // 求每个字段的运行时状态：visible / required / disabled
 export const computeFieldStates = (
     fields: FormField[],
-    linkages: FormLinkage[] | undefined,
+    linkages: FormLinkageRule[] | undefined,
     formData: Record<string, any>,
 ): Record<string, FieldRuntimeState> => {
     const states: Record<string, FieldRuntimeState> = {}
@@ -106,13 +133,10 @@ export const computeFieldStates = (
     })
 
     sorted.forEach(rule => {
+        if (rule.enable === false) return
         const targetState = states[rule.targetFieldId]
         if (!targetState) return
-        const triggered = evalCondition(
-            formData[rule.triggerFieldId],
-            rule.triggerCondition,
-            rule.triggerValue,
-        )
+        const triggered = evalConditionTree(rule.conditionTree?.[0], formData)
         if (!triggered) return
         switch (rule.actionType) {
             case 'SHOW':
@@ -121,15 +145,36 @@ export const computeFieldStates = (
             case 'HIDE':
                 targetState.visible = false
                 break
-            case 'REQUIRED':
-                targetState.required = true
+            case 'REQUIRED': {
+                const val = rule.actionValue
+                targetState.required = val === undefined || val === null ? true : !!val
                 break
-            case 'DISABLED':
-                targetState.disabled = true
+            }
+            case 'DISABLED': {
+                const val = rule.actionValue
+                targetState.disabled = val === undefined || val === null ? true : !!val
                 break
+            }
             case 'ENABLED':
                 targetState.disabled = false
                 break
+            case 'SET_PATTERN': {
+                const av = rule.actionValue
+                if (av && typeof av === 'object') {
+                    targetState.pattern = av.pattern || undefined
+                    targetState.patternTips = av.patternTips || undefined
+                } else if (typeof av === 'string') {
+                    targetState.pattern = av || undefined
+                }
+                break
+            }
+            case 'SET_SPAN': {
+                const sp = Number(rule.actionValue)
+                if (!isNaN(sp) && sp >= 1 && sp <= 24) {
+                    targetState.span = sp
+                }
+                break
+            }
         }
     })
 
@@ -145,7 +190,7 @@ export interface TemplateCheckResult {
 export const validateTemplate = (
     name: string,
     fields: FormField[],
-    linkages: FormLinkage[] | undefined,
+    linkages: FormLinkageRule[] | undefined,
 ): TemplateCheckResult => {
     const errors: string[] = []
     if (!name || !name.trim()) errors.push('表单名称不能为空')
@@ -179,17 +224,69 @@ export const validateTemplate = (
         }
     })
 
-    ;(linkages || []).forEach((r, idx) => {
-        if (!r.triggerFieldId || !ids.has(r.triggerFieldId)) {
-            errors.push(`联动规则 #${idx + 1} 的触发字段不存在`)
+    // 递归校验 conditionTree
+    const validateNode = (node: FormLinkageNode | undefined, ruleIdx: number, path: string): void => {
+        if (!node) return
+        if (node.nodeType === 'CONDITION') {
+            if (!node.triggerFieldId || !ids.has(node.triggerFieldId)) {
+                errors.push(`联动规则 #${ruleIdx + 1}${path} 的触发字段不存在`)
+            }
+            if (node.triggerFieldId && node.triggerFieldId === linkages?.[ruleIdx]?.targetFieldId) {
+                errors.push(`联动规则 #${ruleIdx + 1}${path} 触发字段与目标字段相同`)
+            }
+        } else {
+            const children = node.children || []
+            children.forEach((child, i) => {
+                validateNode(child, ruleIdx, `${path}.children[${i}]`)
+            })
         }
+    }
+
+    ;(linkages || []).forEach((r, idx) => {
         if (!r.targetFieldId || !ids.has(r.targetFieldId)) {
             errors.push(`联动规则 #${idx + 1} 的目标字段不存在`)
         }
-        if (r.triggerFieldId && r.targetFieldId && r.triggerFieldId === r.targetFieldId) {
-            errors.push(`联动规则 #${idx + 1} 触发字段与目标字段相同`)
+        if (r.conditionTree && r.conditionTree.length > 0) {
+            validateNode(r.conditionTree[0], idx, '.conditionTree[0]')
+        } else {
+            errors.push(`联动规则 #${idx + 1} 缺少条件配置`)
+        }
+        if (r.actionType === 'SET_PATTERN' && r.actionValue) {
+            const pat = typeof r.actionValue === 'object' ? r.actionValue.pattern : r.actionValue
+            if (pat) {
+                try {
+                    new RegExp(String(pat))
+                } catch {
+                    errors.push(`联动规则 #${idx + 1} 的正则表达式无效`)
+                }
+            }
+        }
+        if (r.actionType === 'SET_SPAN' && r.actionValue !== undefined && r.actionValue !== null) {
+            const sp = Number(r.actionValue)
+            if (isNaN(sp) || sp < 1 || sp > 24) {
+                errors.push(`联动规则 #${idx + 1} 的 span 需在 1-24 之间`)
+            }
         }
     })
 
     return { ok: errors.length === 0, errors }
+}
+
+// 清理 conditionTree 中引用指定字段的节点
+export const cleanConditionTree = (
+    nodes: FormLinkageNode[] | undefined,
+    fieldId: string,
+): FormLinkageNode[] => {
+    if (!nodes || nodes.length === 0) return []
+    return nodes
+        .map(node => {
+            if (node.nodeType === 'CONDITION') {
+                if (node.triggerFieldId === fieldId) return null
+                return node
+            }
+            const children = cleanConditionTree(node.children, fieldId)
+            if (children.length === 0) return null
+            return { ...node, children }
+        })
+        .filter((n): n is FormLinkageNode => n !== null)
 }

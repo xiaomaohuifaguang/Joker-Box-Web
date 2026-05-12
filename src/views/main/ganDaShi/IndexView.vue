@@ -1,142 +1,136 @@
 <template>
     <div class="gandashi-page">
         <!-- 页面头部 -->
-        <div class="page-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <div class="title-icon">
-                        <el-icon><ChatDotRound /></el-icon>
-                    </div>
-                    <div class="title-text">
-                        <h1>干大事社区</h1>
-                        <p>分享想法，交流经验，共同成长</p>
-                    </div>
-                </div>
+        <PageHeader :icon="ChatDotRound" title="干大事社区" description="分享想法，交流经验，共同成长">
+            <template #extra>
                 <el-button type="primary" class="post-btn" @click="dialogAdd = true">
                     <el-icon><EditPen /></el-icon>
                     <span>发布帖子</span>
                 </el-button>
+            </template>
+        </PageHeader>
+
+    <div class="page-container">
+        <!-- 搜索区域 -->
+        <div class="search-section">
+            <div class="search-box">
+                <el-icon class="search-icon"><Search /></el-icon>
+                <el-input
+                    v-model="queryParam.search"
+                    placeholder="搜索感兴趣的帖子..."
+                    clearable
+                    class="search-input"
+                    @clear="handleSearch"
+                    @keyup.enter="handleSearch">
+                </el-input>
+                <el-button type="primary" class="search-btn" @click="handleSearch">
+                    搜索
+                </el-button>
             </div>
         </div>
 
-        <el-row>
-            <el-col :span="18" :offset="3">
-                <!-- 搜索区域 -->
-                <div class="search-section">
-                    <div class="search-box">
-                        <el-icon class="search-icon"><Search /></el-icon>
-                        <el-input 
-                            v-model="queryParam.search" 
-                            placeholder="搜索感兴趣的帖子..." 
-                            clearable 
-                            class="search-input"
-                            @clear="handleSearch" 
-                            @keyup.enter="handleSearch">
-                        </el-input>
-                        <el-button type="primary" class="search-btn" @click="handleSearch">
-                            搜索
-                        </el-button>
+        <!-- 帖子列表 -->
+        <div class="post-list-container">
+            <div v-for="item in list" :key="item.id" class="post-card" @click="handleViewPost(item)">
+                <div class="post-main">
+                    <div class="post-header-row">
+                        <h3 class="post-title" :title="item.title">
+                            <el-tag v-if="item.isTop" type="warning" size="small" effect="dark" class="top-tag">
+                                <el-icon><Top /></el-icon>
+                                置顶
+                            </el-tag>
+                            {{ truncateText(item.title, 40) }}
+                        </h3>
+                    </div>
+                    <p v-if="item.digest" class="post-digest" :title="item.digest">
+                        {{ truncateText(item.digest, 80) }}
+                    </p>
+                    <div class="post-meta">
+                        <div class="meta-item author">
+                            <div class="author-avatar" :style="{ background: getAvatarColor(item.createByName) }">
+                                {{ item.createByName ? item.createByName.charAt(0).toUpperCase() : '?' }}
+                            </div>
+                            <span class="author-name" :title="item.createByName">
+                                {{ truncateText(item.createByName, 8) }}
+                            </span>
+                        </div>
+                        <div class="meta-item time">
+                            <el-icon><Clock /></el-icon>
+                            <span :title="formatFullTime(item.createTime)">
+                                {{ formatTime(item.createTime) }}
+                            </span>
+                        </div>
+                        <div class="meta-item stats">
+                            <span class="stat">
+                                <el-icon><View /></el-icon>
+                                {{ item.viewCount || 0 }}
+                            </span>
+                            <span v-if="item.commentCount" class="stat">
+                                <el-icon><ChatDotRound /></el-icon>
+                                {{ item.commentCount }}
+                            </span>
+                        </div>
                     </div>
                 </div>
-
-                <!-- 帖子列表 -->
-                <div class="post-list-container">
-                    <div v-for="item in list" :key="item.id" class="post-card" @click="handleViewPost(item)">
-                        <div class="post-main">
-                            <div class="post-header-row">
-                                <h3 class="post-title" :title="item.title">
-                                    <el-tag v-if="item.isTop" type="warning" size="small" effect="dark" class="top-tag">
-                                        <el-icon><Top /></el-icon>
-                                        置顶
-                                    </el-tag>
-                                    {{ truncateText(item.title, 40) }}
-                                </h3>
-                            </div>
-                            <p v-if="item.digest" class="post-digest" :title="item.digest">
-                                {{ truncateText(item.digest, 80) }}
-                            </p>
-                            <div class="post-meta">
-                                <div class="meta-item author">
-                                    <div class="author-avatar" :style="{ background: getAvatarColor(item.createByName) }">
-                                        {{ item.createByName ? item.createByName.charAt(0).toUpperCase() : '?' }}
-                                    </div>
-                                    <span class="author-name" :title="item.createByName">
-                                        {{ truncateText(item.createByName, 8) }}
-                                    </span>
-                                </div>
-                                <div class="meta-item time">
-                                    <el-icon><Clock /></el-icon>
-                                    <span :title="formatFullTime(item.createTime)">
-                                        {{ formatTime(item.createTime) }}
-                                    </span>
-                                </div>
-                                <div class="meta-item stats">
-                                    <span class="stat">
-                                        <el-icon><View /></el-icon>
-                                        {{ item.viewCount || 0 }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="post-arrow">
-                            <el-icon><ArrowRight /></el-icon>
-                        </div>
-                    </div>
-
-                    <!-- 空状态 -->
-                    <div v-if="list.length === 0" class="empty-state">
-                        <div class="empty-icon">
-                            <el-icon><DocumentDelete /></el-icon>
-                        </div>
-                        <h3>暂无帖子</h3>
-                        <p>快来发布第一条帖子吧！</p>
-                    </div>
-
-                    <!-- 分页 -->
-                    <div v-if="list.length > 0" class="pagination-wrapper">
-                        <el-pagination 
-                            v-model:current-page="pageInfo.current" 
-                            v-model:page-size="pageInfo.size"
-                            :page-sizes="[10, 20, 30, 50]" 
-                            :total="pageInfo.total"
-                            layout="total, sizes, prev, pager, next, jumper" 
-                            @size-change="handleSizeChange"
-                            @current-change="handleCurrentChange" />
-                    </div>
+                <div class="post-arrow">
+                    <el-icon><ArrowRight /></el-icon>
                 </div>
+            </div>
 
-                <!-- 发帖对话框 -->
-                <el-dialog 
-                    v-model="dialogAdd" 
-                    width="850px" 
-                    :close-on-click-modal="false"
-                    :close-on-press-escape="false" 
-                    v-if="dialogAdd" 
-                    :show-close="false"
-                    destroy-on-close
-                    class="post-dialog">
-                    <template #header>
-                        <div class="dialog-header">
-                            <div class="dialog-title">
-                                <el-icon><EditPen /></el-icon>
-                                <span>发表新帖</span>
-                            </div>
-                            <el-button class="close-btn" circle @click="dialogAdd = false">
-                                <el-icon><Close /></el-icon>
-                            </el-button>
-                        </div>
-                    </template>
-                    <PostAddView @success="handlePostSuccess" />
-                </el-dialog>
-            </el-col>
-        </el-row>
+            <!-- 空状态 -->
+            <div v-if="list.length === 0" class="empty-state">
+                <div class="empty-icon">
+                    <el-icon><DocumentDelete /></el-icon>
+                </div>
+                <h3>暂无帖子</h3>
+                <p>快来发布第一条帖子吧！</p>
+            </div>
+
+            <!-- 分页 -->
+            <div v-if="list.length > 0" class="pagination-wrapper">
+                <el-pagination
+                    v-model:current-page="pageInfo.current"
+                    v-model:page-size="pageInfo.size"
+                    :page-sizes="[10, 20, 30, 50]"
+                    :total="pageInfo.total"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange" />
+            </div>
+        </div>
     </div>
+
+    <!-- 发帖对话框 -->
+    <el-dialog
+        v-model="dialogAdd"
+        width="850px"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        v-if="dialogAdd"
+        :show-close="false"
+        destroy-on-close
+        class="post-dialog">
+        <template #header>
+            <div class="dialog-header">
+                <div class="dialog-title">
+                    <el-icon><EditPen /></el-icon>
+                    <span>发表新帖</span>
+                </div>
+                <el-button class="close-btn" circle @click="dialogAdd = false">
+                    <el-icon><Close /></el-icon>
+                </el-button>
+            </div>
+        </template>
+        <PostAddView @success="handlePostSuccess" />
+    </el-dialog>
+</div>
 </template>
 
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import { Search, EditPen, Clock, View, ChatDotRound, ArrowRight, Top, Close, DocumentDelete } from '@element-plus/icons-vue';
 import PostAddView from './PostAddView.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import { http } from '@/utils';
 import { useRoute } from 'vue-router'
 const route = useRoute()
@@ -269,81 +263,10 @@ onMounted(() => {
     background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
     padding-bottom: 40px;
 
-    // 页面头部
-    .page-header {
-        background: var(--brand-gradient);
-        padding: 40px 0;
-        margin-bottom: 32px;
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-
-            .title-icon {
-                width: 64px;
-                height: 64px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                backdrop-filter: blur(10px);
-
-                .el-icon {
-                    font-size: 32px;
-                    color: var(--text-on-brand);
-                }
-            }
-
-            .title-text {
-                h1 {
-                    margin: 0 0 8px 0;
-                    font-size: 32px;
-                    font-weight: 600;
-                    color: var(--text-on-brand);
-                }
-
-                p {
-                    margin: 0;
-                    font-size: 15px;
-                    color: rgba(255, 255, 255, 0.85);
-                }
-            }
-        }
-
-        .post-btn {
-            height: 48px;
-            padding: 0 28px;
-            font-size: 16px;
-            font-weight: 500;
-            border-radius: 12px;
-            background: white;
-            color: var(--brand-primary);
-            border: none;
-            transition: all 0.3s ease;
-
-            &:hover {
-                transform: translateY(-2px);
-                box-shadow: var(--shadow-lg);
-            }
-
-            .el-icon {
-                margin-right: 8px;
-                font-size: 18px;
-            }
-        }
+    .page-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 24px 40px;
     }
 
     // 搜索区域
@@ -635,23 +558,8 @@ onMounted(() => {
 // 响应式适配
 @media (max-width: 768px) {
     .gandashi-page {
-        .page-header {
-            padding: 24px 0;
-
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .header-title {
-                flex-direction: column;
-
-                .title-text {
-                    h1 {
-                        font-size: 24px;
-                    }
-                }
-            }
+        .page-container {
+            padding: 0 16px 24px;
         }
 
         .search-section {

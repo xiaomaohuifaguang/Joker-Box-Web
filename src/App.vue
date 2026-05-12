@@ -49,24 +49,30 @@ const captureToBase64 = async () => {
 
   try {
     const canvas = await html2canvas(captureRef.value, {
-      scale: 2, // 提高分辨率（可选）
-      logging: false, // 关闭日志（可选）
-      useCORS: true, // 允许跨域图片（可选）
+      scale: 2,
+      logging: false,
+      useCORS: true,
     });
 
-    // 获取 Base64 字符串
     imageBase64.value = canvas.toDataURL('image/png');
-    // console.log('Base64:', imageBase64.value);
-    // alert('截图成功！请向下拉', 'success');
     imageDialog.value = true;
-    // 如果需要下载（可选）
-    // const link = document.createElement('a');
-    // link.download = 'capture.png';
-    // link.href = imageBase64.value;
-    // link.click();
   } catch (error) {
     console.error('Error capturing div:', error);
+    alert('截图失败，请稍后重试', 'error');
   }
+};
+
+const downloadImage = () => {
+  if (!imageBase64.value) return;
+  const link = document.createElement('a');
+  const timestamp = new Date().toLocaleString('zh-CN', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false,
+  }).replace(/[/: ]/g, '-');
+  link.download = `截图-${timestamp}.png`;
+  link.href = imageBase64.value;
+  link.click();
 };
 
 </script>
@@ -77,22 +83,32 @@ const captureToBase64 = async () => {
       <el-backtop :right="100" :bottom="100" />
       <AiChartDrawer v-model:dialog="aiChartDialog" @update:dialog="(flag) => { aiChartDialog = flag }" />
     </el-watermark>
+  </div>
 
-    <el-button v-if="userInfoRef != null && !aiChartDialog" class="ai-assistant-btn"
-      @click="aiChartDialog = !aiChartDialog;" circle>
-      <el-icon :size="40">
-        <ChatGpt />
-      </el-icon>
-    </el-button>
+  <el-button v-if="userInfoRef != null && !aiChartDialog" class="ai-assistant-btn"
+    @click="aiChartDialog = !aiChartDialog;" circle>
+    <el-icon :size="40">
+      <ChatGpt />
+    </el-icon>
+  </el-button>
+  <el-tooltip content="网页截屏" placement="left">
     <el-button class="pic-assistant-btn" @click="captureToBase64" circle>
       <el-icon :size="40">
         <CameraFilled />
       </el-icon>
     </el-button>
-  </div>
+  </el-tooltip>
 
-  <el-dialog v-model="imageDialog" title="网页截屏">
-    <img v-if="imageBase64" :src="imageBase64" alt="Captured Image" width="100%" />
+  <el-dialog v-model="imageDialog" title="网页截屏" width="80%" destroy-on-close class="capture-dialog" align-center>
+    <div class="capture-preview">
+      <img v-if="imageBase64" :src="imageBase64" alt="Captured Image" />
+    </div>
+    <template #footer>
+      <div class="capture-dialog-footer">
+        <el-button @click="imageDialog = false">关闭</el-button>
+        <el-button type="primary" :icon="Download" @click="downloadImage">下载图片</el-button>
+      </div>
+    </template>
   </el-dialog>
 
 </template>
@@ -151,9 +167,47 @@ const captureToBase64 = async () => {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
+.pic-assistant-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.pic-assistant-btn:active {
+  transform: scale(0.95);
+}
+
+.pic-assistant-btn .el-icon {
+  color: white;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
 /* 暗黑模式适配 */
 [data-theme="joker"] .ai-assistant-btn,
-[data-theme="obsidian"] .ai-assistant-btn {
+[data-theme="obsidian"] .ai-assistant-btn,
+[data-theme="joker"] .pic-assistant-btn,
+[data-theme="obsidian"] .pic-assistant-btn {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 截图弹窗样式 */
+.capture-dialog .capture-preview {
+  max-height: 65vh;
+  overflow: auto;
+  border-radius: 8px;
+  background: var(--el-fill-color-lighter);
+  padding: 8px;
+}
+
+.capture-dialog .capture-preview img {
+  width: 100%;
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.capture-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 </style>

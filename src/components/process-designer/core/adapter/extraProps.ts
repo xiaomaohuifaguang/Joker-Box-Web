@@ -16,7 +16,8 @@ const extraProps =
             "properties.actionButtons",
             "properties.backType",
             "properties.backNodeId",
-            "properties.form"
+            "properties.form",
+            "properties.isDefault"
         ]
     },
     // 指定 bpmn:sequenceFlow 类型元素的转换规则
@@ -64,24 +65,19 @@ const extraProps =
         },
         'bpmn:sequenceFlow': {
             out(data: any) { // 这里的data是LogicFlow中bpmn:sequenceFlow元素的数据
-                const { properties: { expressionType, condition } } = data;
-                // 先判断是否有condition属性
+                const { properties: { condition, isDefault } } = data;
+                let extensionElements = '';
                 if (condition) {
-                    // 再判断是否是cdata格式
-                    if (expressionType === 'cdata') {
-                        // 如果是cdata格式，需要用CDATA包裹
-                        return {
-                            json:
-                                `<bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[\${${condition
-                                }}]]></bpmn:conditionExpression>`,
-                        };
-                    }
-                    // 如果不是cdata格式，直接用普通字符串包裹
+                    extensionElements += `<flowable:conditionExpression desc="条件表达式">${condition}</flowable:conditionExpression>`;
+                }
+                if (isDefault === true) {
+                    extensionElements += `<flowable:isDefault desc="默认路径">true</flowable:isDefault>`;
+                }
+                if (extensionElements) {
                     return {
-                        json: `<bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${condition}</bpmn:conditionExpression>`,
+                        json: `  <bpmn:extensionElements>\n\t\t\t${extensionElements.replace(/></g, '>\n\t\t\t<')}\n\t\t  </bpmn:extensionElements>`,
                     };
                 }
-                // 如果没有condition属性，直接返回空字符串
                 return {
                     json: '',
                 };

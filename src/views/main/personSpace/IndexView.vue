@@ -1,19 +1,7 @@
 <template>
   <div class="person-space-page">
     <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-title">
-          <div class="title-icon">
-            <el-icon><User /></el-icon>
-          </div>
-          <div class="title-text">
-            <h1>个人中心</h1>
-            <p>管理您的个人信息和账户安全</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PageHeader :icon="User" title="个人中心" description="管理您的个人信息和账户安全" />
 
     <div class="person-space-container">
       <el-row>
@@ -57,6 +45,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import { User, Menu, UserFilled, Lock } from '@element-plus/icons-vue';
 import PersonInfoView from './PersonInfoView.vue';
 import UpdatePasswordView from './UpdatePasswordView.vue';
@@ -72,55 +61,6 @@ const handleMenuSelect = (index: string) => {
 .person-space-page {
   min-height: calc(100vh - 60px);
   background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
-
-  .page-header {
-    background: var(--brand-gradient);
-    padding: 32px 0;
-    margin-bottom: 32px;
-
-    .header-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-
-      .title-icon {
-        width: 64px;
-        height: 64px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(10px);
-
-        .el-icon {
-          font-size: 32px;
-          color: var(--text-on-brand);
-        }
-      }
-
-      .title-text {
-        h1 {
-          margin: 0 0 8px 0;
-          font-size: 28px;
-          font-weight: 600;
-          color: var(--text-on-brand);
-        }
-
-        p {
-          margin: 0;
-          font-size: 15px;
-          color: rgba(255, 255, 255, 0.85);
-        }
-      }
-    }
-  }
 
   .person-space-container {
     max-width: 1400px;
@@ -207,26 +147,6 @@ const handleMenuSelect = (index: string) => {
 
 @media (max-width: 768px) {
   .person-space-page {
-    .page-header {
-      padding: 24px 0;
-      margin-bottom: 20px;
-
-      .header-content {
-        padding: 0 16px;
-      }
-
-      .header-title {
-        flex-direction: column;
-        text-align: center;
-
-        .title-text {
-          h1 {
-            font-size: 22px;
-          }
-        }
-      }
-    }
-
     .person-space-container {
       padding: 0 16px 24px;
     }
