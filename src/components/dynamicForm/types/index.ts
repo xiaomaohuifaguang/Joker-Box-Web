@@ -158,6 +158,28 @@ export interface FieldRuntimeState {
 }
 
 // 字段类型可选项（UI 用）
+/** 有效的字段类型集合 */
+export const VALID_FIELD_TYPES: FormFieldType[] = [
+    'INPUT', 'NUMBER', 'SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX',
+    'DATE', 'DATETIME', 'TIME', 'DATERANGE', 'SWITCH', 'TEXTAREA',
+    'UPLOAD', 'RATE', 'SLIDER', 'COLOR', 'CASCADER', 'MULTICASCADER',
+]
+
+/** 需要 options 的字段类型 */
+export const OPTION_REQUIRED_TYPES: FormFieldType[] = [
+    'SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER',
+]
+
+/** 有效的联动动作集合 */
+export const VALID_LINKAGE_ACTIONS: LinkageAction[] = [
+    'SHOW', 'HIDE', 'REQUIRED', 'DISABLED', 'ENABLED', 'SET_PATTERN', 'SET_SPAN', 'OPTION', 'VALUE',
+]
+
+/** 有效的联动条件运算符集合 */
+export const VALID_LINKAGE_CONDITIONS: LinkageCondition[] = [
+    'EQ', 'NE', 'GT', 'LT', 'GE', 'LE', 'IN', 'NOT_IN', 'EMPTY', 'NOT_EMPTY', 'REGEX',
+]
+
 export const FIELD_TYPE_OPTIONS: { label: string; value: FormFieldType }[] = [
     { label: '文本输入', value: 'INPUT' },
     { label: '数字输入', value: 'NUMBER' },
@@ -193,6 +215,12 @@ export const LINKAGE_CONDITION_OPTIONS: { label: string; value: LinkageCondition
     { label: '正则 (REGEX)', value: 'REGEX' },
 ]
 
+/** 根据字段类型返回联动条件的默认选项 */
+export const getDefaultCondition = (fieldType: FormFieldType): LinkageCondition => {
+    if (fieldType === 'UPLOAD') return 'EMPTY'
+    return 'EQ'
+}
+
 export const LINKAGE_ACTION_OPTIONS: { label: string; value: LinkageAction }[] = [
     { label: '显示', value: 'SHOW' },
     { label: '隐藏', value: 'HIDE' },
@@ -204,3 +232,37 @@ export const LINKAGE_ACTION_OPTIONS: { label: string; value: LinkageAction }[] =
     { label: '修改选项', value: 'OPTION' },
     { label: '设置值', value: 'VALUE' },
 ]
+
+/** 根据字段类型返回可用的联动动作类型 */
+export const getValidActionsByFieldType = (fieldType: FormFieldType): LinkageAction[] => {
+    const common: LinkageAction[] = ['SHOW', 'HIDE', 'REQUIRED', 'DISABLED', 'ENABLED', 'SET_SPAN']
+    const withValue: LinkageAction[] = [...common, 'VALUE']
+    if (fieldType === 'UPLOAD') {
+        return common
+    }
+    if (fieldType === 'INPUT' || fieldType === 'TEXTAREA') {
+        return [...withValue, 'SET_PATTERN']
+    }
+    if (['SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER'].includes(fieldType)) {
+        return [...withValue, 'OPTION']
+    }
+    return withValue
+}
+
+/** 根据动作类型返回默认的动作参数 */
+export const getActionParamDefault = (actionType: LinkageAction): any => {
+    switch (actionType) {
+        case 'REQUIRED':
+        case 'DISABLED':
+            return true
+        case 'SET_PATTERN':
+            return { pattern: '', patternTips: '' }
+        case 'SET_SPAN':
+            return 24
+        case 'OPTION':
+        case 'VALUE':
+            return ''
+        default:
+            return undefined
+    }
+}

@@ -35,13 +35,14 @@
                 <el-col :span="12" v-if="props.groups && props.groups.length > 0">
                     <el-form-item label="所属分组">
                         <el-select v-model="form.groupId" clearable placeholder="未分组" style="width: 100%">
+                            <el-option label="未分组" value="" />
                             <el-option v-for="g in props.groups" :key="g.id" :label="g.name || g.id" :value="g.id" />
                         </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12" v-else>
                     <el-form-item label="所属分组">
-                        <el-input v-model="form.groupId" placeholder="可选，输入分组标识" clearable />
+                        <el-input v-model="form.groupId" placeholder="不填则未分组；填写则新建分组" clearable />
                     </el-form-item>
                 </el-col>
 
@@ -112,6 +113,13 @@
                 <el-col :span="12" v-if="['INPUT', 'TEXTAREA'].includes(form.type)">
                     <el-form-item label="最大长度">
                         <el-input-number v-model="form.maxLength" :min="0" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
+
+                <!-- 文件上传数量限制 -->
+                <el-col :span="12" v-if="form.type === 'UPLOAD'">
+                    <el-form-item label="最多上传数量">
+                        <el-input-number v-model="form.maxLength" :min="1" style="width: 100%" />
                     </el-form-item>
                 </el-col>
 
@@ -191,6 +199,7 @@ const props = defineProps<{
     field?: FormField | null
     existingFieldIds: string[]
     groups?: { id: string; name: string }[]
+    defaultGroupId?: string
 }>()
 
 const emit = defineEmits<{
@@ -271,6 +280,9 @@ watch(
         } else {
             originalType.value = 'INPUT'
             form.value = buildEmpty()
+            if (props.defaultGroupId) {
+                form.value.groupId = props.defaultGroupId
+            }
         }
     },
     { immediate: true },
@@ -292,8 +304,12 @@ const onTypeChange = () => {
     form.value.options = []
     form.value.min = undefined
     form.value.max = undefined
-    form.value.minLength = undefined
-    form.value.maxLength = undefined
+    if (form.value.type === 'UPLOAD') {
+        form.value.maxLength = 1
+    } else {
+        form.value.minLength = undefined
+        form.value.maxLength = undefined
+    }
     if (!hasPattern.value) {
         form.value.pattern = ''
         form.value.patternTips = ''

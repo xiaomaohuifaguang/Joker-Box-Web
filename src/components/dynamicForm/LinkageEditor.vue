@@ -48,16 +48,24 @@
                             <el-col :xs="12" :sm="6" :md="4">
                                 <div class="rule-label">动作类型</div>
                                 <el-select v-model="element.actionType" size="small" style="width: 100%">
-                                    <el-option v-for="a in LINKAGE_ACTION_OPTIONS" :key="a.value" :label="a.label"
-                                        :value="a.value" />
+                                    <el-option
+                                        v-for="a in getActionOptionsForRule(element)"
+                                        :key="a.value"
+                                        :label="a.label"
+                                        :value="a.value"
+                                    />
                                 </el-select>
                             </el-col>
                             <el-col :xs="12" :sm="9" :md="7">
                                 <div class="rule-label">目标字段</div>
                                 <el-select v-model="element.targetFieldId" placeholder="目标字段" size="small"
                                     style="width: 100%">
-                                    <el-option v-for="f in fields" :key="f.fieldId" :label="`${f.title} (${f.fieldId})`"
-                                        :value="f.fieldId" />
+                                    <el-option
+                                        v-for="f in getTargetFieldsForRule(element)"
+                                        :key="f.fieldId"
+                                        :label="`${f.title} (${f.fieldId})`"
+                                        :value="f.fieldId"
+                                    />
                                 </el-select>
                             </el-col>
                             <el-col :xs="24" :sm="9" :md="13">
@@ -113,8 +121,13 @@ import { alert } from '@/utils'
 import ConditionTreeNode from './ConditionTreeNode.vue'
 import {
     LINKAGE_ACTION_OPTIONS,
+    getDefaultCondition,
+    getValidActionsByFieldType,
+    getActionParamDefault,
     type FormField,
+    type FormFieldType,
     type FormLinkageRule,
+    type LinkageAction,
 } from './types'
 
 const props = defineProps<{
@@ -139,9 +152,42 @@ const getActionValueBool = (rule: InternalRule): boolean => {
     return v === undefined || v === null ? true : !!v
 }
 
+/** 根据目标字段过滤动作类型选项 */
+const getActionOptionsForRule = (rule: InternalRule) => {
+    const target = props.fields.find(f => f.fieldId === rule.targetFieldId)
+    if (!target) return LINKAGE_ACTION_OPTIONS
+    const valid = getValidActionsByFieldType(target.type)
+    return LINKAGE_ACTION_OPTIONS.filter(a => valid.includes(a.value))
+}
+
+/** 根据动作类型过滤目标字段选项 */
+const getTargetFieldsForRule = (rule: InternalRule) => {
+    if (!rule.actionType) return props.fields
+    return props.fields.filter(f => {
+        const valid = getValidActionsByFieldType(f.type)
+        return valid.includes(rule.actionType as LinkageAction)
+    })
+}
+
+/** 修正规则中不合法的动作类型，返回 true 表示有修改 */
+const fixInvalidAction = (rule: InternalRule): boolean => {
+    if (!rule.targetFieldId || !rule.actionType) return false
+    const target = props.fields.find(f => f.fieldId === rule.targetFieldId)
+    if (!target) return false
+    const valid = getValidActionsByFieldType(target.type)
+    if (!valid.includes(rule.actionType as LinkageAction)) {
+        rule.actionType = 'SHOW'
+        rule.actionValue = undefined
+        return true
+    }
+    return false
+}
+
 const wrap = (rules: FormLinkageRule[]): InternalRule[] =>
     (rules || []).map(r => {
         const rule: InternalRule = { ...r, _uid: ++uidSeq.value }
+        // 加载时修正不合法的动作类型
+        fixInvalidAction(rule)
         // 初始化 actionValue
         if (rule.actionType === 'SET_PATTERN') {
             if (!rule.actionValue || typeof rule.actionValue !== 'object' || Array.isArray(rule.actionValue)) {
@@ -155,15 +201,20 @@ const wrap = (rules: FormLinkageRule[]): InternalRule[] =>
             if (rule.actionValue === undefined || rule.actionValue === null) {
                 rule.actionValue = true
             }
+        } else if (rule.actionType === 'OPTION' || rule.actionType === 'VALUE') {
+            if (rule.actionValue === undefined || rule.actionValue === null) {
+                rule.actionValue = ''
+            }
         }
         // 确保 conditionTree 存在
         if (!rule.conditionTree || rule.conditionTree.length === 0) {
+            const defaultField = props.fields[0]
             rule.conditionTree = [{
                 nodeType: 'AND',
                 children: [{
                     nodeType: 'CONDITION',
-                    triggerFieldId: props.fields[0]?.fieldId || '',
-                    triggerCondition: 'EQ',
+                    triggerFieldId: defaultField?.fieldId || '',
+                    triggerCondition: getDefaultCondition(defaultField?.type || 'INPUT'),
                     triggerValue: '',
                 }],
             }]
@@ -215,7 +266,7 @@ const addRule = () => {
             children: [{
                 nodeType: 'CONDITION',
                 triggerFieldId: trigger.fieldId,
-                triggerCondition: 'EQ',
+                triggerCondition: getDefaultCondition(trigger.type || 'INPUT'),
                 triggerValue: '',
             }],
         }],
@@ -244,15 +295,21 @@ watch(
         newTypes.forEach((type, i) => {
             if (type === oldTypes[i]) return
             const rule = innerRules.value[i]
-            if (type === 'SET_PATTERN') {
-                rule.actionValue = { pattern: '', patternTips: '' }
-            } else if (type === 'SET_SPAN') {
-                rule.actionValue = 24
-            } else if (type === 'REQUIRED' || type === 'DISABLED') {
-                rule.actionValue = true
-            } else {
-                rule.actionValue = undefined
-            }
+            rule.actionValue = getActionParamDefault(type as LinkageAction)
+        })
+    },
+    { deep: true },
+)
+
+// targetFieldId 变化时，若当前 actionType 对新字段不合法则重置
+watch(
+    () => innerRules.value.map(r => r.targetFieldId),
+    (newIds, oldIds) => {
+        if (!oldIds || oldIds.length === 0) return
+        newIds.forEach((id, i) => {
+            if (id === oldIds[i]) return
+            const rule = innerRules.value[i]
+            fixInvalidAction(rule)
         })
     },
     { deep: true },

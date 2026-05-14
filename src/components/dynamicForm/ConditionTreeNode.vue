@@ -70,6 +70,7 @@ import { Plus, Delete, FolderOpened } from '@element-plus/icons-vue'
 import LinkageValueInput from './LinkageValueInput.vue'
 import {
     LINKAGE_CONDITION_OPTIONS,
+    getDefaultCondition,
     type FormField,
     type FormFieldType,
     type FormLinkageNode,
@@ -154,11 +155,12 @@ const onGroupTypeChange = (val: 'AND' | 'OR') => {
 
 // 组节点：添加条件
 const addCondition = () => {
+    const defaultField = props.fields[0]
     const children = [...(props.node.children || [])]
     children.push({
         nodeType: 'CONDITION',
-        triggerFieldId: props.fields[0]?.fieldId || '',
-        triggerCondition: 'EQ',
+        triggerFieldId: defaultField?.fieldId || '',
+        triggerCondition: getDefaultCondition(defaultField?.type || 'INPUT'),
         triggerValue: '',
     })
     emit('update:node', { ...props.node, children })
@@ -166,13 +168,14 @@ const addCondition = () => {
 
 // 组节点：添加子组
 const addGroup = () => {
+    const defaultField = props.fields[0]
     const children = [...(props.node.children || [])]
     children.push({
         nodeType: 'AND',
         children: [{
             nodeType: 'CONDITION',
-            triggerFieldId: props.fields[0]?.fieldId || '',
-            triggerCondition: 'EQ',
+            triggerFieldId: defaultField?.fieldId || '',
+            triggerCondition: getDefaultCondition(defaultField?.type || 'INPUT'),
             triggerValue: '',
         }],
     })
@@ -198,7 +201,8 @@ const onTriggerFieldChange = (fieldId: string) => {
     const field = props.fields.find(f => f.fieldId === fieldId)
     const validConds = field ? getValidConditions(field.type) : []
     const currentCond = props.node.triggerCondition
-    const nextCond = validConds.includes(currentCond as LinkageCondition) ? currentCond : 'EQ'
+    const fallbackCond = field ? getDefaultCondition(field.type) : 'EQ'
+    const nextCond = validConds.includes(currentCond as LinkageCondition) ? currentCond : fallbackCond
     emit('update:node', {
         ...props.node,
         triggerFieldId: fieldId,

@@ -199,7 +199,13 @@ const queryInfo = async () => {
 }
 
 const save = async () => {
-    const check = validateTemplate(info.value.name, info.value.formFields, info.value.linkageRules)
+    const check = validateTemplate(
+        info.value.name,
+        info.value.formFields,
+        info.value.linkageRules,
+        info.value.groups,
+        info.value.description,
+    )
     if (!check.ok) {
         alert(check.errors[0], 'warning')
         return

@@ -42,8 +42,8 @@
                             <span class="header-title">表单字段配置</span>
                         </div>
                         <FormMaker ref="formMakerRef" :form-fields="info.formFields" :linkage-rules="info.linkageRules"
-                            v-model="formData" type="create" @update:fields="info.formFields = $event"
-                            @update:groups="info.groups = $event"
+                            :groups="info.groups" v-model="formData" type="create"
+                            @update:fields="info.formFields = $event" @update:groups="info.groups = $event"
                             @update:rules="info.linkageRules = $event" />
                     </div>
                 </el-col>
@@ -108,7 +108,13 @@ const info = ref<AddFormState>({
 const formData = ref<Record<string, any>>({})
 
 const add = async () => {
-    const check = validateTemplate(info.value.name, info.value.formFields, info.value.linkageRules)
+    const check = validateTemplate(
+        info.value.name,
+        info.value.formFields,
+        info.value.linkageRules,
+        info.value.groups,
+        info.value.description,
+    )
     if (!check.ok) {
         alert(check.errors[0], 'warning')
         return

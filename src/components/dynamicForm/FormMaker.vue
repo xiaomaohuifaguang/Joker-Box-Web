@@ -86,6 +86,10 @@
                                 <span class="group-name" :title="group.name">{{ group.name || group.id }}</span>
                                 <span class="group-count">({{ group.fields.length }} 个字段)</span>
                                 <div class="group-actions">
+                                    <el-button link type="primary" :icon="Plus"
+                                        @click="onAddField(group.id)" title="添加字段">
+                                        <span class="action-text">添加字段</span>
+                                    </el-button>
                                     <el-button link :icon="Edit" @click="onRenameGroup(group)" title="重命名">
                                         <span class="action-text">重命名</span>
                                     </el-button>
@@ -215,7 +219,7 @@
         </el-tabs>
 
         <FieldEditor v-model="fieldEditorOpen" :field="editingField" :existing-field-ids="fieldIds"
-            :groups="groupOptions" @submit="onFieldSubmit" />
+            :groups="groupOptions" :default-group-id="fieldEditorDefaultGroupId" @submit="onFieldSubmit" />
     </div>
 
     <!-- 运行模式：填表 / 查看 -->
@@ -356,7 +360,10 @@ const initDesignGroups = () => {
         const grouped = JSON.parse(JSON.stringify(props.groups))
         designGroups.value = grouped.map((g: FormFieldGroup) => ({
             ...g,
-            fields: g.fields.filter(f => f.groupId),
+            fields: allFields
+                .filter(f => f.groupId === g.id)
+                .map((f, idx) => ({ ...f, sort: f.sort ?? idx }))
+                .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)),
         }))
     } else if (allFields.length > 0) {
         const grouped = buildGroups(allFields)
@@ -397,9 +404,11 @@ const emitGroups = () => {
 // 字段编辑器
 const fieldEditorOpen = ref(false)
 const editingField = ref<FormField | null>(null)
+const fieldEditorDefaultGroupId = ref<string>('')
 
-const onAddField = () => {
+const onAddField = (groupId?: string | Event) => {
     editingField.value = null
+    fieldEditorDefaultGroupId.value = typeof groupId === 'string' ? groupId : ''
     fieldEditorOpen.value = true
 }
 
@@ -486,7 +495,7 @@ const onRemoveField = (fieldId: string) => {
             ungroupedFields.value.splice(uidx, 1)
         }
     }
-    // 同步移除引用该字段的联动规则
+    // 同步移除引用该字段的联动规则（目标字段被删则整条规则删除；条件字段被删则清理条件树）
     const rules = linkageList.value
         .filter(r => r.targetFieldId !== fieldId)
         .map(r => ({
@@ -494,9 +503,7 @@ const onRemoveField = (fieldId: string) => {
             conditionTree: cleanConditionTree(r.conditionTree, fieldId),
         }))
         .filter(r => r.conditionTree.length > 0)
-    if (rules.length !== linkageList.value.length) {
-        linkageList.value = rules
-    }
+    linkageList.value = rules
     // 同步清掉 modelValue 中对应数据
     if (Object.prototype.hasOwnProperty.call(props.modelValue, fieldId)) {
         const next = { ...props.modelValue }
@@ -691,9 +698,12 @@ const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { p
         })
     }
     if (field.maxLength != null) {
+        const isUpload = field.type === 'UPLOAD'
         itemRules.push({
             max: Number(field.maxLength),
-            message: `${field.title} 长度不能大于 ${field.maxLength}`,
+            message: isUpload
+                ? `${field.title} 最多上传 ${field.maxLength} 个文件`
+                : `${field.title} 长度不能大于 ${field.maxLength}`,
             trigger: 'change',
         })
     }
