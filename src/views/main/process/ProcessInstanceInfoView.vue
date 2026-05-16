@@ -76,7 +76,8 @@
         </div>
       </div>
 
-      <!-- 后续扩展区：审批历史 / 表单数据 / 附件 / 评论 等可以在此追加新的 .info-section -->
+      <!-- 流程处理记录 -->
+      <ProcessInstanceHandleRecord :records="info.processHandleInfoList" />
     </template>
   </div>
 </template>
@@ -85,6 +86,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { Tickets, DocumentDelete } from '@element-plus/icons-vue'
 import { http } from '@/utils'
+import ProcessInstanceHandleRecord from './ProcessInstanceHandleRecord.vue'
 
 const props = defineProps<{
   id: string | number | null | undefined

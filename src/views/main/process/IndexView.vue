@@ -344,6 +344,12 @@
       <template #footer>
         <div class="handle-footer">
           <el-button size="large" @click="handleDialog.open = false">取消</el-button>
+          <el-button type="danger" size="large" :loading="handleDialog.loading" @click="handleRejectHandle">
+            <el-icon>
+              <CircleClose />
+            </el-icon>
+            <span>拒绝</span>
+          </el-button>
           <el-button type="primary" size="large" :loading="handleDialog.loading" @click="handleConfirmHandle">
             <el-icon>
               <Promotion />
@@ -360,7 +366,7 @@
 import { computed, nextTick, onMounted, ref } from 'vue'
 import {
   Tickets, Search, Refresh, List, Document, UserFilled, Clock, Timer, Link,
-  Edit, Delete, View, Pointer, DocumentDelete, Promotion,
+  Edit, Delete, View, Pointer, DocumentDelete, Promotion, CircleClose,
   BellFilled, Memo, Files, Plus, ArrowRight,
 } from '@element-plus/icons-vue'
 import { http, alert, confirm } from '@/utils'
@@ -649,6 +655,10 @@ const handleProcess = (item: any) => {
 
 const handleConfirmHandle = () => {
   handleViewRef.value?.showConfirm()
+}
+
+const handleRejectHandle = () => {
+  handleViewRef.value?.showReject()
 }
 
 const onHandleSuccess = () => {

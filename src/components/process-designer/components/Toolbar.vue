@@ -4,7 +4,7 @@
         <el-card>
             <el-button @click="lf.extension.dagre.layout({
                 rankdir: 'LR',   // 从上到下的布局方向
-                align: 'UL',     // 上左对齐
+                // align: 'UL',     // 上左对齐
                 nodesep: 60,     // 节点间距
                 ranksep: 70      // 层级间距
             })">
