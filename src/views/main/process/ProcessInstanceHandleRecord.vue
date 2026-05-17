@@ -3,7 +3,11 @@
     <div
       class="section-header"
       :class="{ clickable: collapsible !== false }"
+      role="button"
+      tabindex="0"
+      :aria-expanded="expanded"
       @click="toggleExpanded"
+      @keydown.enter.space.prevent="toggleExpanded"
     >
       <div class="section-icon record">
         <el-icon>
@@ -16,14 +20,15 @@
       </el-icon>
     </div>
 
-    <div v-show="expanded" v-if="!records || records.length === 0" class="empty-state">
-      <el-icon>
-        <DocumentDelete />
-      </el-icon>
-      <span>暂无处理记录</span>
-    </div>
+    <div v-show="expanded">
+      <div v-if="!records || records.length === 0" class="empty-state">
+        <el-icon>
+          <DocumentDelete />
+        </el-icon>
+        <span>暂无处理记录</span>
+      </div>
 
-    <div v-show="expanded" v-else class="record-list">
+      <div v-else class="record-list">
       <div
         v-for="(record, index) in records"
         :key="record.id ?? index"
@@ -100,7 +105,7 @@ const HANDLE_TYPE_MAP: Record<string, { label: string; type: 'info' | 'primary' 
   'apply': { label: '申请', type: 'primary' },
   'pass': { label: '通过', type: 'success' },
   'reject': { label: '拒绝', type: 'danger' },
-  'transfter': { label: '转办', type: 'primary' },
+  'transfer': { label: '转办', type: 'primary' },
   'delegate': { label: '委派', type: 'primary' },
   'add_sign': { label: '加签', type: 'warning' },
   'back': { label: '驳回', type: 'danger' },
