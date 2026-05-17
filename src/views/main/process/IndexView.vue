@@ -125,6 +125,12 @@
                   </el-icon>
                   申请人：{{ item.createByName || item.createBy || '-' }}
                 </span>
+                <span v-if="item.taskName" class="meta-item">
+                  <el-icon>
+                    <Document />
+                  </el-icon>
+                  任务：{{ item.taskName }}
+                </span>
                 <span class="meta-item">
                   <el-icon>
                     <Clock />
@@ -205,12 +211,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 详情对话框 -->
-    <el-dialog v-model="detailDialog.open" title="流程实例详情" width="720px" destroy-on-close :close-on-click-modal="false"
-      class="detail-dialog">
-      <ProcessInstanceInfoView :id="detailDialog.id" :key="detailDialog.id ?? ''" />
-    </el-dialog>
 
     <!-- 发起流程对话框 -->
     <el-dialog v-model="createDialog.open" title="发起流程" width="880px" destroy-on-close :close-on-click-modal="false"
@@ -316,49 +316,8 @@
       </template>
     </el-dialog>
 
-    <!-- 认领任务对话框 -->
-    <el-dialog v-model="claimDialog.open"
-      :title="claimDialog.item ? '认领任务 · ' + (claimDialog.item.processDefinitionName || '未命名流程') : '认领任务'" width="560px"
-      destroy-on-close :close-on-click-modal="false" class="claim-dialog">
-      <ProcessInstanceClaimView ref="claimViewRef" :item="claimDialog.item" @success="onClaimSuccess" />
-
-      <template #footer>
-        <div class="claim-footer">
-          <el-button size="large" @click="claimDialog.open = false">取消</el-button>
-          <el-button type="success" size="large" :loading="claimDialog.loading" @click="handleConfirmClaim">
-            <el-icon>
-              <Pointer />
-            </el-icon>
-            <span>确认认领</span>
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
-
-    <!-- 处理任务对话框 -->
-    <el-dialog v-model="handleDialog.open"
-      :title="handleDialog.item ? '处理任务 · ' + (handleDialog.item.processDefinitionName || '未命名流程') : '处理任务'"
-      width="720px" destroy-on-close :close-on-click-modal="false" class="handle-dialog">
-      <ProcessInstanceHandleView ref="handleViewRef" :item="handleDialog.item" @success="onHandleSuccess" />
-
-      <template #footer>
-        <div class="handle-footer">
-          <el-button size="large" @click="handleDialog.open = false">取消</el-button>
-          <el-button type="danger" size="large" :loading="handleDialog.loading" @click="handleRejectHandle">
-            <el-icon>
-              <CircleClose />
-            </el-icon>
-            <span>拒绝</span>
-          </el-button>
-          <el-button type="primary" size="large" :loading="handleDialog.loading" @click="handleConfirmHandle">
-            <el-icon>
-              <Promotion />
-            </el-icon>
-            <span>通过</span>
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <ProcessInstanceDetailDialog ref="detailDialogRef" @success="queryPage" />
+    <ProcessInstanceClaimDialog ref="claimDialogRef" @success="queryPage" />
   </div>
 </template>
 
@@ -366,15 +325,14 @@
 import { computed, nextTick, onMounted, ref } from 'vue'
 import {
   Tickets, Search, Refresh, List, Document, UserFilled, Clock, Timer, Link,
-  Edit, Delete, View, Pointer, DocumentDelete, Promotion, CircleClose,
+  Edit, Delete, View, Pointer, DocumentDelete, Promotion,
   BellFilled, Memo, Files, Plus, ArrowRight,
 } from '@element-plus/icons-vue'
 import { http, alert, confirm } from '@/utils'
 import PageHeader from '@/components/common/PageHeader.vue'
-import ProcessInstanceInfoView from './ProcessInstanceInfoView.vue'
 import ProcessInstanceStartView from './ProcessInstanceStartView.vue'
-import ProcessInstanceClaimView from './ProcessInstanceClaimView.vue'
-import ProcessInstanceHandleView from './ProcessInstanceHandleView.vue'
+import ProcessInstanceDetailDialog from './ProcessInstanceDetailDialog.vue'
+import ProcessInstanceClaimDialog from './ProcessInstanceClaimDialog.vue'
 
 const tabs = [
   {
@@ -428,11 +386,6 @@ const tabCounts = ref<Record<string, number>>({
   '3': 0,
 })
 
-const detailDialog = ref<{ open: boolean; id: string | number | null }>({
-  open: false,
-  id: null,
-})
-
 const createDialog = ref<{
   open: boolean
   loading: boolean
@@ -459,29 +412,8 @@ const startDialog = ref<{
 
 const startViewRef = ref<InstanceType<typeof ProcessInstanceStartView> | null>(null)
 
-const claimDialog = ref<{
-  open: boolean
-  loading: boolean
-  item: any | null
-}>({
-  open: false,
-  loading: false,
-  item: null,
-})
-
-const claimViewRef = ref<InstanceType<typeof ProcessInstanceClaimView> | null>(null)
-
-const handleDialog = ref<{
-  open: boolean
-  loading: boolean
-  item: any | null
-}>({
-  open: false,
-  loading: false,
-  item: null,
-})
-
-const handleViewRef = ref<InstanceType<typeof ProcessInstanceHandleView> | null>(null)
+const detailDialogRef = ref<InstanceType<typeof ProcessInstanceDetailDialog> | null>(null)
+const claimDialogRef = ref<InstanceType<typeof ProcessInstanceClaimDialog> | null>(null)
 
 const filteredDeployList = computed(() => {
   const kw = createDialog.value.search.trim().toLowerCase()
@@ -592,8 +524,8 @@ const getIconBg = (item: any) => {
 
 const shortId = (id: string) => (id && id.length > 12 ? id.slice(0, 8) + '…' + id.slice(-4) : id)
 
-const openDetail = (row: any) => {
-  detailDialog.value = { open: true, id: row?.id ?? null }
+const openDetail = (item: any) => {
+  detailDialogRef.value?.open(item.id, item.taskId, 'detail')
 }
 
 const openCreate = () => {
@@ -646,39 +578,12 @@ const onStartSuccess = () => {
   queryPage()
 }
 
-// 下面动作所需接口尚未在文档中提供，先以提示占位，待对应接口接入后替换实现
 const handleProcess = (item: any) => {
-  handleDialog.value.item = item
-  handleDialog.value.loading = false
-  handleDialog.value.open = true
-}
-
-const handleConfirmHandle = () => {
-  handleViewRef.value?.showConfirm()
-}
-
-const handleRejectHandle = () => {
-  handleViewRef.value?.showReject()
-}
-
-const onHandleSuccess = () => {
-  handleDialog.value.open = false
-  queryPage()
+  detailDialogRef.value?.open(item.id, item.taskId, 'handle')
 }
 
 const handleClaim = (item: any) => {
-  claimDialog.value.item = item
-  claimDialog.value.loading = false
-  claimDialog.value.open = true
-}
-
-const handleConfirmClaim = () => {
-  claimViewRef.value?.showConfirm()
-}
-
-const onClaimSuccess = () => {
-  claimDialog.value.open = false
-  queryPage()
+  claimDialogRef.value?.open(item.id, item.taskId)
 }
 
 const handleEdit = async (item: any) => {
@@ -1028,27 +933,6 @@ onMounted(() => {
   }
 }
 
-.detail-dialog {
-  :deep(.el-dialog__header) {
-    background: var(--brand-gradient);
-    margin: 0;
-    padding: 18px 24px;
-
-    .el-dialog__title {
-      color: var(--text-on-brand);
-      font-weight: var(--fw-semibold);
-    }
-
-    .el-dialog__headerbtn .el-dialog__close {
-      color: var(--text-on-brand);
-    }
-  }
-
-  :deep(.el-dialog__body) {
-    padding: 0;
-  }
-}
-
 .create-dialog {
   :deep(.el-dialog__header) {
     background: var(--brand-gradient);
@@ -1253,74 +1137,6 @@ onMounted(() => {
   }
 
   .start-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-  }
-}
-
-.claim-dialog {
-  :deep(.el-dialog__header) {
-    background: var(--brand-gradient);
-    margin: 0;
-    padding: 18px 24px;
-
-    .el-dialog__title {
-      color: var(--text-on-brand);
-      font-weight: var(--fw-semibold);
-    }
-
-    .el-dialog__headerbtn .el-dialog__close {
-      color: var(--text-on-brand);
-    }
-  }
-
-  :deep(.el-dialog__body) {
-    padding: 24px;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
-
-  :deep(.el-dialog__footer) {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border-light);
-  }
-
-  .claim-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-  }
-}
-
-.handle-dialog {
-  :deep(.el-dialog__header) {
-    background: var(--brand-gradient);
-    margin: 0;
-    padding: 18px 24px;
-
-    .el-dialog__title {
-      color: var(--text-on-brand);
-      font-weight: var(--fw-semibold);
-    }
-
-    .el-dialog__headerbtn .el-dialog__close {
-      color: var(--text-on-brand);
-    }
-  }
-
-  :deep(.el-dialog__body) {
-    padding: 24px;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
-
-  :deep(.el-dialog__footer) {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border-light);
-  }
-
-  .handle-footer {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
