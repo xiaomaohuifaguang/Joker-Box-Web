@@ -2,7 +2,7 @@
   <el-dialog
     v-model="dialog.open"
     :title="dialogTitle"
-    width="560px"
+    width="640px"
     destroy-on-close
     :close-on-click-modal="false"
     class="claim-dialog"

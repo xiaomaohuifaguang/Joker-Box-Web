@@ -50,6 +50,10 @@
         <span class="info-label">当前任务 ID</span>
         <span class="info-value mono">{{ item.taskId }}</span>
       </div>
+      <div v-if="item?.taskName" class="info-item full">
+        <span class="info-label">当前任务名称</span>
+        <span class="info-value">{{ item.taskName }}</span>
+      </div>
     </div>
   </div>
 </template>

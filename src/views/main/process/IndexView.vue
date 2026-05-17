@@ -212,127 +212,26 @@
       </div>
     </div>
 
-    <!-- 发起流程对话框 -->
-    <el-dialog v-model="createDialog.open" title="发起流程" width="880px" destroy-on-close :close-on-click-modal="false"
-      class="create-dialog" @open="queryDeployList">
-      <div class="create-body" v-loading="createDialog.loading" element-loading-text="加载中...">
-        <div class="create-toolbar">
-          <el-input v-model="createDialog.search" placeholder="搜索流程名称、分类、描述..." size="large" clearable
-            class="create-search">
-            <template #prefix>
-              <el-icon>
-                <Search />
-              </el-icon>
-            </template>
-          </el-input>
-          <el-button size="large" @click="queryDeployList">
-            <el-icon>
-              <Refresh />
-            </el-icon>
-            <span>刷新</span>
-          </el-button>
-        </div>
-
-        <div v-if="filteredDeployList.length > 0" class="def-grid">
-          <div v-for="def in filteredDeployList" :key="def.id" class="def-card" @click="handleStart(def)">
-            <div class="def-icon" :style="{ background: getIconBg(def) }">
-              <el-icon>
-                <Document />
-              </el-icon>
-            </div>
-            <div class="def-main">
-              <div class="def-title-row">
-                <span class="def-title">{{ def.processName || '未命名流程' }}</span>
-                <el-tag v-if="def.processCategory" size="small" effect="plain" round>
-                  {{ def.processCategory }}
-                </el-tag>
-              </div>
-              <p v-if="def.processDescription" class="def-desc">
-                {{ def.processDescription }}
-              </p>
-              <div class="def-meta">
-                <span class="meta-item">
-                  <el-icon>
-                    <Link />
-                  </el-icon>
-                  v{{ def.version || '1' }}
-                </span>
-                <span class="meta-item">
-                  <el-icon>
-                    <UserFilled />
-                  </el-icon>
-                  {{ def.createByName || def.createBy || '-' }}
-                </span>
-                <span class="meta-item">
-                  <el-icon>
-                    <Clock />
-                  </el-icon>
-                  {{ def.createTime || '-' }}
-                </span>
-              </div>
-            </div>
-            <div class="def-action">
-              <el-icon>
-                <ArrowRight />
-              </el-icon>
-            </div>
-          </div>
-        </div>
-
-        <div v-else-if="!createDialog.loading" class="empty-state">
-          <div class="empty-icon">
-            <el-icon>
-              <DocumentDelete />
-            </el-icon>
-          </div>
-          <h3>{{ createDialog.search ? '没有匹配的流程' : '暂无可发起的流程' }}</h3>
-          <p>{{ createDialog.search ? '换个关键词试试吧' : '请联系管理员发布流程定义' }}</p>
-        </div>
-      </div>
-    </el-dialog>
-
-    <!-- 发起表单对话框 -->
-    <el-dialog v-model="startDialog.open"
-      :title="startDialog.def ? `发起流程 · ${startDialog.def.processName || startDialog.def.processKey}` : '发起流程'"
-      width="720px" destroy-on-close :close-on-click-modal="false" class="start-dialog">
-      <ProcessInstanceStartView ref="startViewRef" :def="startDialog.def" @success="onStartSuccess" />
-
-      <template #footer>
-        <div class="start-footer">
-          <el-button size="large" @click="startDialog.open = false">取消</el-button>
-          <el-button size="large" :loading="startDialog.saving" @click="handleSaveDraft">
-            <el-icon>
-              <Memo />
-            </el-icon>
-            <span>保存</span>
-          </el-button>
-          <el-button type="primary" size="large" :loading="startDialog.starting" @click="handleSubmitStart">
-            <el-icon>
-              <Promotion />
-            </el-icon>
-            <span>发起</span>
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
-
     <ProcessInstanceDetailDialog ref="detailDialogRef" @success="queryPage" />
     <ProcessInstanceClaimDialog ref="claimDialogRef" @success="queryPage" />
+    <ProcessInstanceCreateDialog ref="createDialogRef" @select="handleStart" />
+    <ProcessInstanceStartDialog ref="startDialogRef" @success="onStartSuccess" @saved="onDraftSaved" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import {
   Tickets, Search, Refresh, List, Document, UserFilled, Clock, Timer, Link,
   Edit, Delete, View, Pointer, DocumentDelete, Promotion,
-  BellFilled, Memo, Files, Plus, ArrowRight,
+  BellFilled, Memo, Files, Plus,
 } from '@element-plus/icons-vue'
 import { http, alert, confirm } from '@/utils'
 import PageHeader from '@/components/common/PageHeader.vue'
-import ProcessInstanceStartView from './ProcessInstanceStartView.vue'
 import ProcessInstanceDetailDialog from './ProcessInstanceDetailDialog.vue'
 import ProcessInstanceClaimDialog from './ProcessInstanceClaimDialog.vue'
+import ProcessInstanceCreateDialog from './ProcessInstanceCreateDialog.vue'
+import ProcessInstanceStartDialog from './ProcessInstanceStartDialog.vue'
 
 const tabs = [
   {
@@ -386,44 +285,10 @@ const tabCounts = ref<Record<string, number>>({
   '3': 0,
 })
 
-const createDialog = ref<{
-  open: boolean
-  loading: boolean
-  search: string
-  list: any[]
-}>({
-  open: false,
-  loading: false,
-  search: '',
-  list: [],
-})
-
-const startDialog = ref<{
-  open: boolean
-  saving: boolean
-  starting: boolean
-  def: any | null
-}>({
-  open: false,
-  saving: false,
-  starting: false,
-  def: null,
-})
-
-const startViewRef = ref<InstanceType<typeof ProcessInstanceStartView> | null>(null)
-
 const detailDialogRef = ref<InstanceType<typeof ProcessInstanceDetailDialog> | null>(null)
 const claimDialogRef = ref<InstanceType<typeof ProcessInstanceClaimDialog> | null>(null)
-
-const filteredDeployList = computed(() => {
-  const kw = createDialog.value.search.trim().toLowerCase()
-  if (!kw) return createDialog.value.list
-  return createDialog.value.list.filter(d =>
-    [d.processName, d.processCategory, d.processDescription, d.processKey]
-      .filter(Boolean)
-      .some((s: string) => String(s).toLowerCase().includes(kw))
-  )
-})
+const createDialogRef = ref<InstanceType<typeof ProcessInstanceCreateDialog> | null>(null)
+const startDialogRef = ref<InstanceType<typeof ProcessInstanceStartDialog> | null>(null)
 
 const activeTab = computed(
   () => tabs.find(t => t.type === queryParam.value.type) ?? tabs[0]
@@ -529,53 +394,25 @@ const openDetail = (item: any) => {
 }
 
 const openCreate = () => {
-  createDialog.value.open = true
-  createDialog.value.search = ''
-}
-
-const queryDeployList = async () => {
-  createDialog.value.loading = true
-  try {
-    const result = await http.post('/processDefinition/deployList')
-    createDialog.value.list = result ?? []
-  } finally {
-    createDialog.value.loading = false
-  }
+  createDialogRef.value?.open()
 }
 
 const handleStart = (def: any) => {
-  startDialog.value.def = def
-  startDialog.value.saving = false
-  startDialog.value.starting = false
-  startDialog.value.open = true
-  createDialog.value.open = false
-  nextTick(() => startViewRef.value?.reset())
-}
-
-const handleSaveDraft = async () => {
-  startDialog.value.saving = true
-  try {
-    await startViewRef.value?.saveDraft()
-  } finally {
-    startDialog.value.saving = false
-  }
-}
-
-const handleSubmitStart = async () => {
-  startDialog.value.starting = true
-  try {
-    await startViewRef.value?.submit()
-  } finally {
-    startDialog.value.starting = false
-  }
+  startDialogRef.value?.open(def)
 }
 
 const onStartSuccess = () => {
-  startDialog.value.open = false
-  // 切到“全部”页签确保新发起的实例可见
+  // 切到”全部”页签确保新发起的实例可见
   queryParam.value.type = '1'
   pageInfo.value.current = 1
   queryPage()
+}
+
+const onDraftSaved = () => {
+  // 草稿保存成功，如果在草稿页签则刷新列表
+  if (queryParam.value.type === '0') {
+    queryPage()
+  }
 }
 
 const handleProcess = (item: any) => {
@@ -586,20 +423,9 @@ const handleClaim = (item: any) => {
   claimDialogRef.value?.open(item.id, item.taskId)
 }
 
-const handleEdit = async (item: any) => {
-  // 确保流程定义列表已加载，以便回显流程定义信息
-  if (createDialog.value.list.length === 0) {
-    await queryDeployList()
-  }
-  const def = createDialog.value.list.find((d: any) => d.id === item.processDefinitionId)
-  startDialog.value.def = def || { id: item.processDefinitionId, processName: '未知流程' }
-  startDialog.value.saving = false
-  startDialog.value.starting = false
-  startDialog.value.open = true
-  nextTick(() => {
-    startViewRef.value?.reset()
-    startViewRef.value?.loadDraft(item.id)
-  })
+const handleEdit = (item: any) => {
+  const def = { id: item.processDefinitionId, processName: item.processDefinitionName || '未知流程' }
+  startDialogRef.value?.open(def, item.id)
 }
 
 const confirmDelete = (item: any) => {
@@ -930,216 +756,6 @@ onMounted(() => {
       margin-top: 12px;
       border-top: 1px solid var(--border-light);
     }
-  }
-}
-
-.create-dialog {
-  :deep(.el-dialog__header) {
-    background: var(--brand-gradient);
-    margin: 0;
-    padding: 18px 24px;
-
-    .el-dialog__title {
-      color: var(--text-on-brand);
-      font-weight: var(--fw-semibold);
-    }
-
-    .el-dialog__headerbtn .el-dialog__close {
-      color: var(--text-on-brand);
-    }
-  }
-
-  :deep(.el-dialog__body) {
-    padding: 24px;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
-
-  .create-toolbar {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-
-    .create-search {
-      flex: 1;
-    }
-  }
-
-  .def-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-
-  .def-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 16px;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-lg);
-    background: var(--bg-overlay);
-    cursor: pointer;
-    transition: transform var(--duration-normal) var(--ease-out),
-      box-shadow var(--duration-normal) var(--ease-out),
-      border-color var(--duration-normal) var(--ease-out);
-
-    &:hover {
-      transform: translateY(-2px);
-      border-color: var(--brand-primary);
-      box-shadow: var(--shadow-md);
-
-      .def-action .el-icon {
-        color: var(--brand-primary);
-      }
-    }
-
-    .def-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-
-      .el-icon {
-        font-size: 22px;
-        color: #fff;
-      }
-    }
-
-    .def-main {
-      flex: 1;
-      min-width: 0;
-
-      .def-title-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 4px;
-        flex-wrap: wrap;
-
-        .def-title {
-          font-size: var(--fs-md);
-          font-weight: var(--fw-semibold);
-          color: var(--text-primary);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          max-width: 100%;
-        }
-      }
-
-      .def-desc {
-        margin: 0 0 8px;
-        font-size: var(--fs-sm);
-        color: var(--text-secondary);
-        line-height: 1.5;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .def-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        font-size: var(--fs-sm);
-        color: var(--text-secondary);
-
-        .meta-item {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-
-          .el-icon {
-            font-size: 13px;
-          }
-        }
-      }
-    }
-
-    .def-action {
-      align-self: center;
-      flex-shrink: 0;
-
-      .el-icon {
-        font-size: 18px;
-        color: var(--text-secondary);
-        transition: color var(--duration-normal) var(--ease-out);
-      }
-    }
-  }
-
-  .empty-state {
-    padding: 40px 20px;
-    text-align: center;
-    color: var(--text-secondary);
-
-    .empty-icon {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 12px;
-      border-radius: 50%;
-      background: var(--bg-overlay);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .el-icon {
-        font-size: 32px;
-        color: var(--text-secondary);
-      }
-    }
-
-    h3 {
-      margin: 0 0 6px;
-      font-size: var(--fs-lg);
-      font-weight: var(--fw-semibold);
-      color: var(--text-primary);
-    }
-
-    p {
-      margin: 0;
-      font-size: var(--fs-md);
-    }
-  }
-}
-
-.start-dialog {
-  :deep(.el-dialog__header) {
-    background: var(--brand-gradient);
-    margin: 0;
-    padding: 18px 24px;
-
-    .el-dialog__title {
-      color: var(--text-on-brand);
-      font-weight: var(--fw-semibold);
-    }
-
-    .el-dialog__headerbtn .el-dialog__close {
-      color: var(--text-on-brand);
-    }
-  }
-
-  :deep(.el-dialog__body) {
-    padding: 24px;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
-
-  :deep(.el-dialog__footer) {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border-light);
-  }
-
-  .start-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
   }
 }
 

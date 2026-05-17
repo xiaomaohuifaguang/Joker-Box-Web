@@ -2,7 +2,7 @@
   <el-dialog
     v-model="dialog.open"
     :title="dialogTitle"
-    width="720px"
+    width="840px"
     destroy-on-close
     :close-on-click-modal="false"
     class="detail-dialog"
@@ -23,7 +23,7 @@
       </div>
 
       <!-- 处理记录 -->
-      <ProcessInstanceHandleRecord :records="records" collapsible />
+      <ProcessInstanceHandleRecord :records="records" :timeline="timeline" collapsible />
     </div>
 
     <template v-if="dialog.mode === 'handle'" #footer>
@@ -126,6 +126,7 @@ const loading = ref(false)
 const actionLoading = ref(false)
 const infoData = ref<any>(null)
 const records = ref<any[]>([])
+const timeline = ref<any[]>([])
 const currentId = ref<string | number>('')
 const currentTaskId = ref<string | undefined>(undefined)
 
@@ -152,6 +153,7 @@ const loadInfo = async () => {
     if (result.code === 200) {
       infoData.value = result.data
       records.value = result.data?.processHandleInfoList ?? []
+      timeline.value = result.data?.timeline ?? []
     }
   } finally {
     loading.value = false

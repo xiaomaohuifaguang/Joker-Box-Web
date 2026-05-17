@@ -16,6 +16,7 @@ const extraProps =
             "properties.actionButtons",
             "properties.backType",
             "properties.backNodeId",
+            "properties.backAssigneePolicy",
             "properties.form",
             "properties.isDefault"
         ]
@@ -24,7 +25,7 @@ const extraProps =
     transformer: {
         'bpmn:userTask': {
             out(data: any) {
-                const { properties: { approvalType, candidateUsers, candidateRoles, candidateGroups, candidateDepts, passRate, actionButtons, backType, backNodeId } } = data;
+                const { properties: { approvalType, candidateUsers, candidateRoles, candidateGroups, candidateDepts, passRate, actionButtons, backType, backNodeId, backAssigneePolicy } } = data;
                 let extensionElements = '';
                 if (approvalType) {
                     extensionElements += `<flowable:approvalType desc="处理类型">${approvalType}</flowable:approvalType>`;
@@ -52,6 +53,9 @@ const extraProps =
                 }
                 if (backNodeId) {
                     extensionElements += `<flowable:backNodeId desc="驳回节点">${backNodeId}</flowable:backNodeId>`;
+                }
+                if (backAssigneePolicy) {
+                    extensionElements += `<flowable:backAssigneePolicy desc="回退后任务分配策略">${backAssigneePolicy}</flowable:backAssigneePolicy>`;
                 }
                 if (extensionElements) {
                     return {

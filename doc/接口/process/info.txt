@@ -1,0 +1,111 @@
+
+
+## 详情
+
+
+**接口地址**:`/joker-box/processInstance/info`
+
+
+**请求方式**:`POST`
+
+
+**请求数据类型**:`application/x-www-form-urlencoded`
+
+
+**响应数据类型**:`*/*`
+
+
+**接口描述**:
+
+
+**请求参数**:
+
+
+**请求参数**:
+
+
+| 参数名称 | 参数说明 | 请求类型    | 是否必须 | 数据类型 | schema |
+| -------- | -------- | ----- | -------- | -------- | ------ |
+|id|自建流程实例id|query|true|integer(int32)||
+
+
+**响应状态**:
+
+
+| 状态码 | 说明 | schema |
+| -------- | -------- | ----- | 
+|200|OK|HttpResultProcessInstance|
+
+
+**响应参数**:
+
+
+| 参数名称 | 参数说明 | 类型 | schema |
+| -------- | -------- | ----- |----- | 
+|code|状态码|integer(int64)|integer(int64)|
+|data||ProcessInstance|ProcessInstance|
+|&emsp;&emsp;id|流程实例|integer(int32)||
+|&emsp;&emsp;processDefinitionId|流程定义id = 自定义流程定义表对应id|integer(int32)||
+|&emsp;&emsp;title|流程标题|string||
+|&emsp;&emsp;code|流程编号|string||
+|&emsp;&emsp;processDefinitionName|流程定义名称|string||
+|&emsp;&emsp;processInstanceId|流程实例id = 流程引擎生成|string||
+|&emsp;&emsp;processStatus|流程状态|string||
+|&emsp;&emsp;deleted|逻辑删除|string||
+|&emsp;&emsp;createBy|创建人==申请人|string||
+|&emsp;&emsp;createByName|创建人昵称|string||
+|&emsp;&emsp;createTime|创建时间|string(date-time)||
+|&emsp;&emsp;updateTime|更新时间|string(date-time)||
+|&emsp;&emsp;taskId|任务id|string||
+|&emsp;&emsp;processHandleInfoList|流程处理记录|array|ProcessHandleInfo|
+|&emsp;&emsp;&emsp;&emsp;id|流程处理记录|integer||
+|&emsp;&emsp;&emsp;&emsp;processInstanceId|流程实例id|integer||
+|&emsp;&emsp;&emsp;&emsp;taskId|任务id|string||
+|&emsp;&emsp;&emsp;&emsp;taskName|任务名称|string||
+|&emsp;&emsp;&emsp;&emsp;handleUser|处理人id|string||
+|&emsp;&emsp;&emsp;&emsp;handleUserName|处理人名称|string||
+|&emsp;&emsp;&emsp;&emsp;handleType|处理类型|string||
+|&emsp;&emsp;&emsp;&emsp;remark|备注|string||
+|&emsp;&emsp;&emsp;&emsp;handleTime|处理时间|string||
+|msg|响应消息|string||
+|timestamp|时间戳|integer(int64)|integer(int64)|
+|refreshToken|续签|string||
+
+
+**响应示例**:
+```javascript
+{
+	"code": 0,
+	"data": {
+		"id": 0,
+		"processDefinitionId": 0,
+		"title": "",
+		"code": "",
+		"processDefinitionName": "",
+		"processInstanceId": "",
+		"processStatus": "",
+		"deleted": "",
+		"createBy": "",
+		"createByName": "",
+		"createTime": "",
+		"updateTime": "",
+		"taskId": "",
+		"processHandleInfoList": [
+			{
+				"id": 0,
+				"processInstanceId": 0,
+				"taskId": "",
+				"taskName": "",
+				"handleUser": "",
+				"handleUserName": "",
+				"handleType": "",
+				"remark": "",
+				"handleTime": ""
+			}
+		]
+	},
+	"msg": "",
+	"timestamp": 0,
+	"refreshToken": ""
+}
+```

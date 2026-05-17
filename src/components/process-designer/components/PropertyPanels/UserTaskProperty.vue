@@ -74,6 +74,14 @@
                     <el-option v-for="item in prevNodeOptions" :key="item.id" :label="item.label" :value="item.id" />
                 </el-select>
             </el-form-item>
+            <el-form-item label="回退后任务分配策略">
+                <el-select :model-value="data.properties?.backAssigneePolicy"
+                    @update:model-value="(v: any) => doUpdateProperty('backAssigneePolicy', v)" placeholder="请选择回退后任务分配策略"
+                    clearable style="width: 100%" :disabled="readonly">
+                    <el-option v-for="item in backAssigneePolicyOptions" :key="item.value" :label="item.label"
+                        :value="item.value" />
+                </el-select>
+            </el-form-item>
         </template>
     </el-form>
 </template>
@@ -115,6 +123,12 @@ const backTypeOptions = [
     { value: 'choose', label: '用户自选' }
 ]
 
+const backAssigneePolicyOptions = [
+    { value: 'auto', label: '智能默认：有上次办理人则派回，无则按配置重新分配' },
+    { value: 'last_handler', label: '派给上次办理人' },
+    { value: 'reassign', label: '按节点 candidate 配置重新分配' }
+]
+
 const getActionButtons = (): string[] => {
     const v = props.data?.properties?.actionButtons
     return typeof v === 'string' && v ? v.split(',').filter(Boolean) : ['pass']
@@ -136,6 +150,7 @@ const toggleActionButton = (value: string) => {
     if (!newArr.includes('back')) {
         doUpdateProperty('backType', '')
         doUpdateProperty('backNodeId', '')
+        doUpdateProperty('backAssigneePolicy', '')
     }
 }
 
@@ -332,8 +347,22 @@ watch(
             doUpdateProperty('actionButtons', arr.join(','))
             doUpdateProperty('backType', '')
             doUpdateProperty('backNodeId', '')
+            doUpdateProperty('backAssigneePolicy', '')
         }
     }
+)
+
+watch(
+    () => showBackConfig.value,
+    (newVal) => {
+        if (newVal) {
+            const policy = props.data?.properties?.backAssigneePolicy
+            if (policy === undefined || policy === null || policy === '') {
+                doUpdateProperty('backAssigneePolicy', 'auto')
+            }
+        }
+    },
+    { immediate: true }
 )
 
 watch(
