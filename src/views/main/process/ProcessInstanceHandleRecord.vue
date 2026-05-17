@@ -1,22 +1,29 @@
 <template>
   <div class="process-handle-record">
-    <div class="section-header">
+    <div
+      class="section-header"
+      :class="{ clickable: collapsible !== false }"
+      @click="toggleExpanded"
+    >
       <div class="section-icon record">
         <el-icon>
           <Timer />
         </el-icon>
       </div>
       <span class="section-title">流程处理记录</span>
+      <el-icon class="expand-icon">
+        <component :is="expanded ? ArrowUp : ArrowDown" />
+      </el-icon>
     </div>
 
-    <div v-if="!records || records.length === 0" class="empty-state">
+    <div v-show="expanded" v-if="!records || records.length === 0" class="empty-state">
       <el-icon>
         <DocumentDelete />
       </el-icon>
       <span>暂无处理记录</span>
     </div>
 
-    <div v-else class="record-list">
+    <div v-show="expanded" v-else class="record-list">
       <div
         v-for="(record, index) in records"
         :key="record.id ?? index"
@@ -61,7 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import { Timer, DocumentDelete } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+import { Timer, DocumentDelete, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 
 interface HandleRecord {
   id?: number
@@ -77,7 +85,16 @@ interface HandleRecord {
 
 const props = defineProps<{
   records: HandleRecord[] | null | undefined
+  collapsible?: boolean
 }>()
+
+const expanded = ref(true)
+
+const toggleExpanded = () => {
+  if (props.collapsible !== false) {
+    expanded.value = !expanded.value
+  }
+}
 
 const HANDLE_TYPE_MAP: Record<string, { label: string; type: 'info' | 'primary' | 'success' | 'warning' | 'danger' }> = {
   'apply': { label: '申请', type: 'primary' },
@@ -140,6 +157,17 @@ const getHandleTypeType = (type: string | undefined) => {
       font-size: var(--fs-xl);
       font-weight: var(--fw-semibold);
       color: var(--text-primary);
+    }
+
+    &.clickable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .expand-icon {
+      margin-left: auto;
+      font-size: 16px;
+      color: var(--text-secondary);
     }
   }
 
