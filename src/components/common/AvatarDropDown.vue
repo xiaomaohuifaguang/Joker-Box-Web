@@ -188,7 +188,7 @@ const clickLogout = () => {
             box-shadow var(--duration-normal) var(--ease-out);
 
         &:hover {
-            transform: translateY(-2px);
+            transform: scale(1.01);
             box-shadow: var(--shadow-glow);
         }
 
@@ -222,7 +222,7 @@ const clickLogout = () => {
     &:hover {
         background: var(--brand-gradient);
         color: var(--text-on-brand);
-        transform: translateY(-2px);
+        transform: scale(1.01);
     }
 
     .el-icon {

@@ -361,7 +361,7 @@ onBeforeUnmount(() => {
     text-align: center;
 
     &:hover {
-      transform: translateY(-4px);
+      transform: scale(1.02);
       box-shadow: var(--shadow-lg);
     }
 
@@ -438,7 +438,7 @@ onBeforeUnmount(() => {
       box-shadow var(--duration-normal) var(--ease-out);
 
     &:hover {
-      transform: translateY(-4px);
+      transform: scale(1.02);
       box-shadow: var(--shadow-lg);
     }
 

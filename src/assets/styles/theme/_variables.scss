@@ -1,6 +1,6 @@
 // ============================================================
-// 主题变量入口：将两套主题色板输出到 :root 与 [data-theme]
-// 默认主题 = joker（霓虹小丑·深色）
+// 主题变量入口：将七套主题色板输出到 :root 与 [data-theme]
+// 默认主题 = joker（午夜嘉年华·深色）
 // ============================================================
 
 @use './theme-ink' as ink;
@@ -8,6 +8,8 @@
 @use './theme-obsidian' as obsidian;
 @use './theme-cyan' as cyan;
 @use './theme-deepblue' as deepblue;
+@use './theme-dawn' as dawn;
+@use './theme-dusk' as dusk;
 
 /* 默认（无 data-theme 或未识别）= joker */
 :root {
@@ -29,14 +31,24 @@
     @include obsidian.theme-obsidian;
 }
 
-/* 显式 cyan 主题（青色纯色） */
+/* 显式 cyan 主题（沧海蓝） */
 :root[data-theme='cyan'] {
     @include cyan.theme-cyan;
 }
 
-/* 显式 deepblue 主题（深海蓝纯色） */
+/* 显式 deepblue 主题（深海蓝） */
 :root[data-theme='deepblue'] {
     @include deepblue.theme-deepblue;
+}
+
+/* 显式 dawn 主题（晨曦白） */
+:root[data-theme='dawn'] {
+    @include dawn.theme-dawn;
+}
+
+/* 显式 dusk 主题（暮夜黑） */
+:root[data-theme='dusk'] {
+    @include dusk.theme-dusk;
 }
 
 /* ============================================================
@@ -100,20 +112,18 @@ body {
 }
 
 /* ============================================================
-   通用工具类
+   通用工具类（去渐变化）
    ============================================================ */
 .brand-text {
-    background: var(--brand-gradient-text);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    color: var(--brand-primary);
+    font-weight: var(--fw-bold);
 }
 
 .brand-bg {
-    background: var(--brand-gradient);
+    background: var(--brand-primary);
 }
 
+/* 弱化的强调阴影，替代 glow */
 .glow {
     box-shadow: var(--shadow-glow);
 }

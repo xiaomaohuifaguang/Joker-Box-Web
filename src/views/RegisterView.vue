@@ -503,7 +503,6 @@ const toHome = () => {
     position: relative;
     display: flex;
     overflow: hidden;
-    backdrop-filter: blur(20px);
     animation: card-appear 0.6s ease-out;
 }
 
@@ -549,7 +548,6 @@ const toHome = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(10px);
     animation: logo-pulse 3s infinite ease-in-out;
 }
 
@@ -575,10 +573,7 @@ const toHome = () => {
     font-weight: 700;
     margin-bottom: 10px;
     letter-spacing: 2px;
-    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #fff;
 }
 
 .brand-slogan {
@@ -601,7 +596,6 @@ const toHome = () => {
     padding: 15px 20px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-md);
-    backdrop-filter: blur(10px);
     transition: all var(--duration-normal) var(--ease-out);
 }
 
@@ -800,7 +794,7 @@ const toHome = () => {
 
 .custom-input :deep(.el-input__wrapper.is-focus) {
     box-shadow: 0 6px 16px var(--bg-overlay-strong), 0 0 0 2px var(--brand-primary) inset;
-    transform: translateY(-2px);
+    transform: scale(1.01);
 }
 
 .custom-input :deep(.el-input__inner) {
@@ -826,7 +820,7 @@ const toHome = () => {
 
 .custom-form-item:focus-within .field-label {
     color: var(--brand-primary);
-    transform: translateY(-2px);
+    transform: scale(1.01);
 }
 
 .code-input-group {
@@ -854,7 +848,7 @@ const toHome = () => {
 }
 
 .code-button:hover:not(:disabled) {
-    transform: translateY(-2px);
+    transform: scale(1.01);
     box-shadow: var(--shadow-glow-strong);
 }
 
@@ -908,7 +902,7 @@ const toHome = () => {
 }
 
 .register-button:hover:not(:disabled) {
-    transform: translateY(-2px);
+    transform: scale(1.01);
     box-shadow: var(--shadow-glow-strong);
 }
 

@@ -586,7 +586,7 @@ onMounted(() => {
             border: none;
 
             &:hover {
-                transform: translateY(-2px);
+                transform: scale(1.01);
                 box-shadow: var(--shadow-glow);
             }
         }
@@ -648,7 +648,7 @@ onMounted(() => {
     position: relative;
 
     &:hover {
-        transform: translateY(-4px);
+        transform: scale(1.02);
         box-shadow: var(--shadow-lg);
         border-color: var(--bg-overlay-strong);
 

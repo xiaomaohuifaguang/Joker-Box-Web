@@ -230,7 +230,7 @@ const push = async () => {
                 transition: all 0.3s ease;
 
                 &:hover:not(:disabled) {
-                    transform: translateY(-2px);
+                    transform: scale(1.01);
                     box-shadow: var(--shadow-glow-strong);
                 }
 

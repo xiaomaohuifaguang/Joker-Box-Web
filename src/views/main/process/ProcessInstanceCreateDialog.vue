@@ -192,7 +192,7 @@ defineExpose({ open })
       border-color var(--duration-normal) var(--ease-out);
 
     &:hover {
-      transform: translateY(-2px);
+      transform: scale(1.01);
       border-color: var(--brand-primary);
       box-shadow: var(--shadow-md);
 

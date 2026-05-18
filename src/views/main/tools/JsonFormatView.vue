@@ -369,7 +369,7 @@ const handleKeyClick = ({ key, path }) => {
         transition: all 0.3s ease;
 
         &:hover {
-            transform: translateY(-2px);
+            transform: scale(1.01);
             box-shadow: var(--shadow-glow-strong);
         }
     }
@@ -382,7 +382,7 @@ const handleKeyClick = ({ key, path }) => {
         transition: all 0.3s ease;
 
         &:hover {
-            transform: translateY(-1px);
+            transform: scale(1.005);
         }
     }
 }

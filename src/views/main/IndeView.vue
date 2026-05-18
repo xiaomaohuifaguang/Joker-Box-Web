@@ -376,7 +376,6 @@ function goTo(path: string) {
     gap: 6px;
     padding: 6px 14px;
     background: var(--bg-container);
-    backdrop-filter: blur(8px);
     border-radius: var(--radius-pill);
     font-size: var(--fs-sm);
     color: var(--text-secondary);
@@ -395,10 +394,8 @@ function goTo(path: string) {
 }
 
 .brand {
-    background: var(--brand-gradient-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--brand-primary);
+    font-weight: var(--fw-bold);
 }
 
 .hero-subtitle {
@@ -413,7 +410,6 @@ function goTo(path: string) {
     text-align: right;
     padding: 16px 24px;
     background: var(--bg-container);
-    backdrop-filter: blur(8px);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-light);
@@ -423,10 +419,7 @@ function goTo(path: string) {
     font-size: 38px;
     font-weight: var(--fw-semibold);
     font-family: 'Consolas', 'Monaco', monospace;
-    background: var(--brand-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--brand-primary);
     letter-spacing: 2px;
 }
 
@@ -516,7 +509,7 @@ function goTo(path: string) {
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
+    transform: scale(1.02);
     box-shadow: var(--shadow-lg);
 }
 
@@ -607,7 +600,7 @@ function goTo(path: string) {
 }
 
 .feature-card:hover {
-    transform: translateY(-6px);
+    transform: scale(1.03);
     box-shadow: var(--shadow-lg);
 }
 

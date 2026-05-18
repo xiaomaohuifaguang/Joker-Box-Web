@@ -118,7 +118,7 @@ const diyIconList = ref([
 
 .preview-card:hover {
     border-color: rgba(102, 126, 234, 0.4);
-    transform: translateY(-2px);
+    transform: scale(1.01);
     box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
 }
 

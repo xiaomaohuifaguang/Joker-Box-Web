@@ -1,7 +1,7 @@
 // ============================================================
 // Element Plus 全局变量覆盖
-// 让 EP 自带组件（el-button、el-link、el-pagination、el-tag、
-// el-input、el-select、el-tree、el-table 等）自动跟随主题色
+// 去 AI 化：移除渐变按钮、渐变菜单、辉光效果
+// 替换为：纯色、边框变化、微妙动效
 // ============================================================
 
 /* ============================================================
@@ -104,64 +104,195 @@
 
 /* 默认 = joker（深色主题，light-N 用透明度阶梯）*/
 :root {
-    --el-color-primary: #A855F7;
-    --el-color-primary-light-3: #9333EA;
-    --el-color-primary-light-5: rgba(168, 85, 247, 0.4);
-    --el-color-primary-light-7: rgba(168, 85, 247, 0.24);
-    --el-color-primary-light-8: rgba(168, 85, 247, 0.16);
-    --el-color-primary-light-9: rgba(168, 85, 247, 0.08);
-    --el-color-primary-dark-2: #C084FC;
+    --el-color-primary: #C9A227;
+    --el-color-primary-light-3: #B8941D;
+    --el-color-primary-light-5: rgba(201, 162, 39, 0.4);
+    --el-color-primary-light-7: rgba(201, 162, 39, 0.24);
+    --el-color-primary-light-8: rgba(201, 162, 39, 0.16);
+    --el-color-primary-light-9: rgba(201, 162, 39, 0.08);
+    --el-color-primary-dark-2: #D4AF37;
 }
 
 /* ink 主题（浅色主题，light-N 用淡色阶梯）*/
 :root[data-theme='ink'] {
-    --el-color-primary: #6366F1;
-    --el-color-primary-light-3: #818CF8;
-    --el-color-primary-light-5: #A5B4FC;
-    --el-color-primary-light-7: #C7D2FE;
-    --el-color-primary-light-8: #DDD6FE;
-    --el-color-primary-light-9: #EEF2FF;
-    --el-color-primary-dark-2: #4338CA;
+    --el-color-primary: #C53D43;
+    --el-color-primary-light-3: #D6686D;
+    --el-color-primary-light-5: #E8A0A3;
+    --el-color-primary-light-7: #F0C4C6;
+    --el-color-primary-light-8: #F8E0E1;
+    --el-color-primary-light-9: #FDF0F0;
+    --el-color-primary-dark-2: #A93236;
 }
 
 /* joker 主题（显式声明，覆盖默认）*/
 :root[data-theme='joker'] {
-    --el-color-primary: #A855F7;
-    --el-color-primary-light-3: #9333EA;
-    --el-color-primary-light-5: rgba(168, 85, 247, 0.4);
-    --el-color-primary-light-7: rgba(168, 85, 247, 0.24);
-    --el-color-primary-light-8: rgba(168, 85, 247, 0.16);
-    --el-color-primary-light-9: rgba(168, 85, 247, 0.08);
-    --el-color-primary-dark-2: #C084FC;
+    --el-color-primary: #C9A227;
+    --el-color-primary-light-3: #B8941D;
+    --el-color-primary-light-5: rgba(201, 162, 39, 0.4);
+    --el-color-primary-light-7: rgba(201, 162, 39, 0.24);
+    --el-color-primary-light-8: rgba(201, 162, 39, 0.16);
+    --el-color-primary-light-9: rgba(201, 162, 39, 0.08);
+    --el-color-primary-dark-2: #D4AF37;
 }
 
-/* cyan 主题（浅色蓝色系，light-N 用淡色阶梯）*/
+/* cyan 主题（浅色海洋系，light-N 用淡色阶梯）*/
 :root[data-theme='cyan'] {
-    --el-color-primary: #2563EB;
-    --el-color-primary-light-3: #3B82F6;
-    --el-color-primary-light-5: #60A5FA;
-    --el-color-primary-light-7: #93C5FD;
-    --el-color-primary-light-8: #BFDBFE;
-    --el-color-primary-light-9: #DBEAFE;
-    --el-color-primary-dark-2: #1E40AF;
+    --el-color-primary: #2E8B57;
+    --el-color-primary-light-3: #4AA872;
+    --el-color-primary-light-5: #7AC99A;
+    --el-color-primary-light-7: #A8E0BE;
+    --el-color-primary-light-8: #D0F0DC;
+    --el-color-primary-light-9: #E8F8EE;
+    --el-color-primary-dark-2: #267A4A;
 }
 
-/* deepblue 主题（深色蓝色系，light-N 用透明度阶梯）*/
+/* deepblue 主题（深色深海系，light-N 用透明度阶梯）*/
 :root[data-theme='deepblue'] {
-    --el-color-primary: #3B82F6;
-    --el-color-primary-light-3: #2563EB;
-    --el-color-primary-light-5: rgba(59, 130, 246, 0.4);
-    --el-color-primary-light-7: rgba(59, 130, 246, 0.24);
-    --el-color-primary-light-8: rgba(59, 130, 246, 0.16);
-    --el-color-primary-light-9: rgba(59, 130, 246, 0.08);
-    --el-color-primary-dark-2: #60A5FA;
+    --el-color-primary: #00D9C0;
+    --el-color-primary-light-3: #00B8A8;
+    --el-color-primary-light-5: rgba(0, 217, 192, 0.4);
+    --el-color-primary-light-7: rgba(0, 217, 192, 0.24);
+    --el-color-primary-light-8: rgba(0, 217, 192, 0.16);
+    --el-color-primary-light-9: rgba(0, 217, 192, 0.08);
+    --el-color-primary-dark-2: #00F0D4;
+}
+
+/* obsidian 主题（深色纯黑系，light-N 用透明度阶梯）*/
+:root[data-theme='obsidian'] {
+    --el-color-primary: #E0E0E0;
+    --el-color-primary-light-3: #C0C0C0;
+    --el-color-primary-light-5: rgba(224, 224, 224, 0.4);
+    --el-color-primary-light-7: rgba(224, 224, 224, 0.24);
+    --el-color-primary-light-8: rgba(224, 224, 224, 0.16);
+    --el-color-primary-light-9: rgba(224, 224, 224, 0.08);
+    --el-color-primary-dark-2: #F0F0F0;
+}
+
+/* dawn 主题（浅色政务系，light-N 用淡色阶梯）*/
+:root[data-theme='dawn'] {
+    --el-color-primary: #1A365D;
+    --el-color-primary-light-3: #2D4A6F;
+    --el-color-primary-light-5: #4A6B8F;
+    --el-color-primary-light-7: #6A8BAF;
+    --el-color-primary-light-8: #8AABCF;
+    --el-color-primary-light-9: #C5D5E5;
+    --el-color-primary-dark-2: #112A4A;
+}
+
+/* dusk 主题（深色政务系，light-N 用透明度阶梯）*/
+:root[data-theme='dusk'] {
+    --el-color-primary: #B8A88A;
+    --el-color-primary-light-3: #A8987A;
+    --el-color-primary-light-5: rgba(184, 168, 138, 0.4);
+    --el-color-primary-light-7: rgba(184, 168, 138, 0.24);
+    --el-color-primary-light-8: rgba(184, 168, 138, 0.16);
+    --el-color-primary-light-9: rgba(184, 168, 138, 0.08);
+    --el-color-primary-dark-2: #D0C4A8;
 }
 
 /* ============================================================
-   常用组件视觉微调（消费主题变量）
+   全局组件尺寸统一（所有表单控件高度一致）
    ============================================================ */
 
-/* ---------- el-button 主按钮：使用品牌渐变 ---------- */
+/* 统一表单控件基础高度为 36px */
+.el-input,
+.el-select,
+.el-date-editor,
+.el-time-picker,
+.el-cascader,
+.el-autocomplete,
+.el-input-number {
+    --el-input-height: 36px;
+    --el-component-size: 36px;
+}
+
+.el-input__wrapper,
+.el-select .el-input__wrapper,
+.el-date-editor .el-input__wrapper,
+.el-cascader .el-input__wrapper,
+.el-autocomplete .el-input__wrapper {
+    min-height: 36px !important;
+}
+
+/* 按钮统一 36px */
+.el-button {
+    --el-button-size: 36px;
+    height: 36px;
+    padding: 0 20px;
+}
+
+.el-button--small {
+    --el-button-size: 32px;
+    height: 32px;
+    padding: 0 16px;
+    font-size: 13px;
+}
+
+.el-button--large {
+    --el-button-size: 44px;
+    height: 44px;
+    padding: 0 28px;
+    font-size: 15px;
+}
+
+/* 标签/Tag 统一 */
+.el-tag {
+    --el-tag-size: 28px;
+    height: 28px;
+    padding: 0 10px;
+    font-size: 13px;
+}
+
+/* 下拉选项统一 */
+.el-select-dropdown__item {
+    height: 36px;
+    line-height: 36px;
+    padding: 0 16px;
+    font-size: 14px;
+}
+
+/* 树形控件节点统一 */
+.el-tree-node__content {
+    height: 36px;
+}
+
+/* 分页组件统一 */
+.el-pagination .el-pager li {
+    height: 32px;
+    min-width: 32px;
+    line-height: 32px;
+    font-size: 14px;
+}
+
+.el-pagination .btn-prev,
+.el-pagination .btn-next {
+    height: 32px;
+    min-width: 32px;
+}
+
+/* 菜单项统一 */
+.el-menu-item,
+.el-sub-menu__title {
+    height: 44px;
+    line-height: 44px;
+}
+
+/* 表格行高统一 */
+.el-table .el-table__cell {
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+.el-table th.el-table__cell {
+    padding: 12px 0;
+    font-size: 14px;
+}
+
+/* ============================================================
+   常用组件视觉微调（消费主题变量，去 AI 化）
+   ============================================================ */
+
+/* ---------- el-button 主按钮：纯色替代渐变 ---------- */
 .el-button {
     border: none;
     transition: transform var(--duration-normal) var(--ease-out),
@@ -170,25 +301,22 @@
 }
 
 .el-button--primary {
-    // background: var(--brand-gradient) !important;
-    // color: var(--text-on-brand) !important;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
 }
 
 .el-button--primary:hover,
 .el-button--primary:focus {
-    // background: var(--brand-gradient-hover) !important;
-    box-shadow: var(--shadow-glow-strong);
-    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    transform: scale(1.02);
 }
 
 .el-button--primary:active {
-    transform: translateY(0);
+    transform: scale(0.98);
 }
 
 .el-button--primary.is-disabled,
 .el-button--primary.is-disabled:hover {
-    background: var(--brand-gradient) !important;
+    background: var(--el-color-primary) !important;
     opacity: 0.5;
     transform: none;
 }
@@ -278,7 +406,7 @@
 }
 
 .el-card.is-hover-shadow:hover {
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
     border-color: var(--brand-primary);
 }
 
@@ -339,8 +467,9 @@
     color: var(--brand-primary) !important;
 }
 
+/* 去渐变：激活项使用纯色背景+品牌文字色 */
 .el-menu-item.is-active {
-    background: var(--brand-gradient) !important;
+    background: var(--brand-primary) !important;
     color: var(--text-on-brand) !important;
     border-radius: var(--radius-md);
 }
@@ -376,7 +505,7 @@
 
 /* ---------- el-pagination ---------- */
 .el-pagination .el-pager li.is-active {
-    background: var(--brand-gradient) !important;
+    background: var(--brand-primary) !important;
     color: var(--text-on-brand) !important;
     border-radius: var(--radius-sm);
 }
@@ -390,7 +519,7 @@
 
 /* ---------- el-switch ---------- */
 .el-switch.is-checked .el-switch__core {
-    background: var(--brand-gradient) !important;
+    background: var(--brand-primary) !important;
     border-color: transparent !important;
 }
 
@@ -399,10 +528,10 @@
     color: var(--brand-primary) !important;
 }
 
+/* 去渐变：tabs 下划线使用纯色 */
 .el-tabs__active-bar {
-    background: var(--brand-gradient) !important;
-    height: 3px;
-    border-radius: var(--radius-pill);
+    background: var(--brand-primary) !important;
+    height: 2px;
 }
 
 /* ---------- el-dialog ---------- */

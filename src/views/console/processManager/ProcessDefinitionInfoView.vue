@@ -203,7 +203,7 @@ onMounted(() => {
 
             &:hover {
                 background: var(--brand-gradient-hover);
-                transform: translateY(-1px);
+                transform: scale(1.005);
                 box-shadow: var(--shadow-glow-strong);
             }
 

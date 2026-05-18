@@ -239,7 +239,7 @@ onBeforeUnmount(() => {
                 transition: all 0.2s;
 
                 &:hover:not(.is-disabled) {
-                    transform: translateY(-1px);
+                    transform: scale(1.005);
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 }
 

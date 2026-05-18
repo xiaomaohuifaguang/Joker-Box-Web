@@ -1,0 +1,116 @@
+// ============================================================
+// 暮夜黑主题 · 政务/金融深色
+// 极深炭黑、古铜金、直角、无辉光、夜间值守/监控场景
+// ============================================================
+
+@mixin theme-dusk {
+    /* ---------- 品牌色（古铜金， dignified 不 flashy） ---------- */
+    --brand-primary: #B8A88A;
+    --brand-primary-hover: #C9B89A;
+    --brand-primary-active: #A8987A;
+    --brand-primary-light: #D0C4A8;
+    --brand-primary-lighter: #E0D8C0;
+    --brand-secondary: #8A7D6B;
+    --brand-accent: #6B7B8C;
+
+    /* ---------- 渐变（纯色） ---------- */
+    --brand-gradient: #B8A88A;
+    --brand-gradient-hover: #C9B89A;
+    --brand-gradient-soft: rgba(184, 168, 138, 0.06);
+    --brand-gradient-text: #B8A88A;
+    --brand-gradient-border: #B8A88A;
+
+    /* ---------- 背景层级（极深炭黑，微暖调） ---------- */
+    --bg-page: #0A0A0C;
+    --bg-container: #141416;
+    --bg-elevated: #1E1E22;
+    --bg-input: #2A2A2E;
+    --bg-overlay: rgba(184, 168, 138, 0.03);
+    --bg-overlay-strong: rgba(184, 168, 138, 0.06);
+    --bg-mask: rgba(0, 0, 0, 0.70);
+
+    /* ---------- 文字层级（暖白到中灰，降低眩光） ---------- */
+    --text-primary: #E8E8E8;
+    --text-regular: #B0B0B0;
+    --text-secondary: #707070;
+    --text-placeholder: #505050;
+    --text-disabled: #3A3A3A;
+    --text-on-brand: #0A0A0C;
+    --text-on-dark: #E8E8E8;
+    --text-link: #B8A88A;
+    --text-link-hover: #D0C4A8;
+
+    /* ---------- 边框（低对比度，不抢视觉） ---------- */
+    --border-base: #2A2A2E;
+    --border-light: #1E1E22;
+    --border-strong: #404040;
+    --border-focus: #B8A88A;
+    --border-divider: #2A2A2E;
+
+    /* ---------- 功能色（去饱和，融入暗调） ---------- */
+    --success: #4A7C59;
+    --success-hover: #3D6B4C;
+    --success-bg: rgba(74, 124, 89, 0.06);
+    --success-border: rgba(74, 124, 89, 0.20);
+
+    --warning: #A68B4B;
+    --warning-hover: #967C3E;
+    --warning-bg: rgba(166, 139, 75, 0.06);
+    --warning-border: rgba(166, 139, 75, 0.20);
+
+    --danger: #8B3A3A;
+    --danger-hover: #7A3030;
+    --danger-bg: rgba(139, 58, 58, 0.06);
+    --danger-border: rgba(139, 58, 58, 0.20);
+
+    --info: #6B7B8C;
+    --info-hover: #5A6D7D;
+    --info-bg: rgba(107, 123, 140, 0.06);
+    --info-border: rgba(107, 123, 140, 0.20);
+
+    /* ---------- 阴影（极弱，仅层次不发光） ---------- */
+    --shadow-sm: 0 0 0 1px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 4px 8px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 0 1px rgba(184, 168, 138, 0.08);
+    --shadow-glow-strong: 0 0 0 2px rgba(184, 168, 138, 0.10);
+    --shadow-inner: inset 0 1px 1px rgba(0, 0, 0, 0.3);
+
+    /* ---------- 数据可视化（古铜+钢灰+暗绿） ---------- */
+    --data-1: #B8A88A;
+    --data-2: #8A7D6B;
+    --data-3: #6B7B8C;
+    --data-4: #4A7C59;
+    --data-5: #A68B4B;
+    --data-6: #8B3A3A;
+    --data-7: #707070;
+    --data-8: #505050;
+
+    --data-grad-1: #B8A88A;
+    --data-grad-2: #8A7D6B;
+    --data-grad-3: #6B7B8C;
+    --data-grad-4: #4A7C59;
+    --data-grad-5: #A68B4B;
+    --data-grad-6: #8B3A3A;
+
+    /* ---------- 登录页专用（深灰+古铜边框） ---------- */
+    --auth-bg: #0A0A0C;
+    --auth-card-bg: rgba(20, 20, 22, 0.90);
+    --auth-card-border: #2A2A2E;
+    --auth-text: #E8E8E8;
+    --auth-text-muted: #707070;
+    --auth-input-bg: #2A2A2E;
+
+    /* ---------- 滚动条 ---------- */
+    --scrollbar-thumb: #2A2A2E;
+    --scrollbar-thumb-hover: #B8A88A;
+    --scrollbar-track: transparent;
+
+    /* ---------- 政务主题专属：覆盖共享 token（直角+紧凑） ---------- */
+    --radius-xs: 0px;
+    --radius-sm: 2px;
+    --radius-md: 2px;
+    --radius-lg: 2px;
+    --radius-xl: 4px;
+}

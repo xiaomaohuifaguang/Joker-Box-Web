@@ -2,7 +2,7 @@ import { ref, watch } from 'vue'
 
 /**
  * 主题切换 composable
- * 在 ink（墨韵紫·浅色）与 joker（霓虹小丑·深色）之间切换
+ * 五套去 AI 化主题：水墨丹青、午夜嘉年华、黑曜镜面、浅海潮汐、深渊萤光
  * - 通过 :root[data-theme] 控制 CSS 变量
  * - localStorage 持久化
  */
@@ -14,19 +14,23 @@ export const THEMES = {
     OBSIDIAN: 'obsidian',
     CYAN: 'cyan',
     DEEPBLUE: 'deepblue',
+    DAWN: 'dawn',
+    DUSK: 'dusk',
 }
 
 export const THEME_LIST = [
-    { key: THEMES.INK, label: '墨韵紫', icon: 'Sunny' },
-    { key: THEMES.JOKER, label: '霓虹小丑', icon: 'Moon' },
-    { key: THEMES.OBSIDIAN, label: '曜石黑', icon: 'MoonNight' },
-    { key: THEMES.CYAN, label: '沧海蓝', icon: 'PartlyCloudy' },
-    { key: THEMES.DEEPBLUE, label: '深海蓝', icon: 'MostlyCloudy' },
+    { key: THEMES.INK, label: '水墨丹青', icon: 'Sunny' },
+    { key: THEMES.JOKER, label: '午夜嘉年华', icon: 'Moon' },
+    { key: THEMES.OBSIDIAN, label: '黑曜镜面', icon: 'MoonNight' },
+    { key: THEMES.CYAN, label: '碧波', icon: 'PartlyCloudy' },
+    { key: THEMES.DEEPBLUE, label: '深渊萤光', icon: 'MostlyCloudy' },
+    { key: THEMES.DAWN, label: '晨曦白', icon: 'Sunny' },
+    { key: THEMES.DUSK, label: '暮夜黑', icon: 'MoonNight' },
 ]
 
 const DEFAULT_THEME = THEMES.JOKER
-const VALID_THEMES = new Set([THEMES.INK, THEMES.JOKER, THEMES.OBSIDIAN, THEMES.CYAN, THEMES.DEEPBLUE])
-const DARK_THEMES = new Set([THEMES.JOKER, THEMES.OBSIDIAN, THEMES.DEEPBLUE])
+const VALID_THEMES = new Set([THEMES.INK, THEMES.JOKER, THEMES.OBSIDIAN, THEMES.CYAN, THEMES.DEEPBLUE, THEMES.DAWN, THEMES.DUSK])
+const DARK_THEMES = new Set([THEMES.JOKER, THEMES.OBSIDIAN, THEMES.DEEPBLUE, THEMES.DUSK])
 
 const isDarkTheme = (theme) => DARK_THEMES.has(theme)
 

@@ -1,43 +1,58 @@
 // ============================================================
-// 全局 mixin：渐变文字、玻璃态、辉光、滚动条等
+// 全局 mixin：去 AI 化改造
+// 移除渐变文字、毛玻璃、悬浮抬升、辉光等典型 AI 审美模式
+// 替换为：实色强调、边框变化、微妙缩放、纹理感
 // ============================================================
 
-/* ---------- 渐变文字（品牌色文字效果）---------- */
-@mixin gradient-text($gradient: var(--brand-gradient-text)) {
-    background: $gradient;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+/* ---------- 强调文字（纯色+字重，替代渐变文字） ---------- */
+@mixin accent-text($color: var(--brand-primary)) {
+    color: $color;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-wide);
 }
 
-/* ---------- 玻璃态（毛玻璃 / 半透明）---------- */
+/* 兼容旧代码：gradient-text 现在输出实色 */
+@mixin gradient-text($gradient: var(--brand-primary)) {
+    color: $gradient;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    -webkit-text-fill-color: initial;
+}
+
+/* ---------- 半透明遮罩（替代毛玻璃） ---------- */
+@mixin solid-overlay($opacity: 0.85) {
+    background: var(--bg-container);
+    opacity: $opacity;
+}
+
+/* 兼容旧代码：glass 现在使用实色半透明 */
 @mixin glass($blur: 12px, $saturate: 150%) {
-    backdrop-filter: blur($blur) saturate($saturate);
-    -webkit-backdrop-filter: blur($blur) saturate($saturate);
+    background: var(--bg-container);
+    opacity: 0.95;
+    /* backdrop-filter 已移除 */
 }
 
-/* ---------- 辉光环（聚焦/激活）---------- */
+/* ---------- 聚焦环（边框替代辉光） ---------- */
 @mixin focus-ring {
     outline: none;
+    border-color: var(--brand-primary);
     box-shadow: var(--shadow-glow);
 }
 
-/* ---------- 可点击交互（悬浮抬升 + 阴影）---------- */
-@mixin clickable($lift: 2px) {
+/* ---------- 可点击交互（缩放+边框，替代抬升） ---------- */
+@mixin clickable($lift: false) {
     cursor: pointer;
     transition: transform var(--duration-normal) var(--ease-out),
-        box-shadow var(--duration-normal) var(--ease-out),
+        border-color var(--duration-normal) var(--ease-out),
         background var(--duration-normal) var(--ease-out);
 
     &:hover {
-        transform: translateY(-#{$lift});
-        box-shadow: var(--shadow-lg);
+        transform: scale(1.01);
+        border-color: var(--brand-primary);
     }
 
     &:active {
-        transform: translateY(0);
-        box-shadow: var(--shadow-md);
+        transform: scale(0.99);
     }
 }
 
@@ -90,51 +105,50 @@
     justify-content: space-between;
 }
 
-/* ---------- 卡片基础样式 ---------- */
+/* ---------- 卡片基础样式（去悬浮抬升） ---------- */
 @mixin card($padding: var(--space-xl)) {
     background: var(--bg-container);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
     padding: $padding;
     box-shadow: var(--shadow-sm);
-    transition: box-shadow var(--duration-normal) var(--ease-out),
-        transform var(--duration-normal) var(--ease-out),
-        border-color var(--duration-normal) var(--ease-out);
+    transition: border-color var(--duration-normal) var(--ease-out),
+        box-shadow var(--duration-normal) var(--ease-out);
 }
 
+/* 可悬浮卡片：边框变色替代抬升 */
 @mixin card-hoverable {
     @include card;
 
     &:hover {
         border-color: var(--brand-primary);
-        box-shadow: var(--shadow-lg);
-        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
     }
 }
 
-/* ---------- 主按钮（品牌渐变）---------- */
+/* ---------- 主按钮（纯色替代渐变） ---------- */
 @mixin btn-primary {
-    background: var(--brand-gradient);
+    background: var(--brand-primary);
     color: var(--text-on-brand);
     border: none;
     border-radius: var(--radius-md);
     padding: var(--space-sm) var(--space-xl);
     font-weight: var(--fw-medium);
     cursor: pointer;
-    box-shadow: var(--shadow-md);
-    transition: transform var(--duration-normal) var(--ease-out),
-        box-shadow var(--duration-normal) var(--ease-out),
-        background var(--duration-normal) var(--ease-out);
+    box-shadow: var(--shadow-sm);
+    transition: background var(--duration-normal) var(--ease-out),
+        transform var(--duration-normal) var(--ease-out),
+        box-shadow var(--duration-normal) var(--ease-out);
 
     &:hover {
-        background: var(--brand-gradient-hover);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-glow-strong);
+        background: var(--brand-primary-hover);
+        transform: scale(1.02);
+        box-shadow: var(--shadow-md);
     }
 
     &:active {
-        transform: translateY(0);
-        box-shadow: var(--shadow-md);
+        transform: scale(0.98);
+        box-shadow: var(--shadow-sm);
     }
 
     &:disabled {
@@ -144,14 +158,14 @@
     }
 }
 
-/* ---------- 装饰条（顶部 / 左侧）---------- */
-@mixin decoration-bar($side: top, $size: 4px, $gradient: var(--brand-gradient-border)) {
+/* ---------- 装饰条（纯色替代渐变） ---------- */
+@mixin decoration-bar($side: top, $size: 3px, $color: var(--brand-primary)) {
     position: relative;
 
     &::before {
         content: '';
         position: absolute;
-        background: $gradient;
+        background: $color;
 
         @if $side==top {
             top: 0;
@@ -214,12 +228,13 @@
     }
 }
 
-@keyframes glowPulse {
+/* 弱化的脉动，用于需要吸引注意但不想太 AI 感的场景 */
+@keyframes subtlePulse {
     0%, 100% {
-        box-shadow: var(--shadow-glow);
+        opacity: 1;
     }
 
     50% {
-        box-shadow: var(--shadow-glow-strong);
+        opacity: 0.7;
     }
 }

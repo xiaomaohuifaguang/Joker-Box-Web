@@ -820,7 +820,7 @@ onUnmounted(() => {
     margin-top: 6px;
     padding: 0 4px;
     opacity: 0;
-    transform: translateY(-4px);
+    transform: scale(1.02);
     transition: opacity var(--duration-fast) var(--ease-out),
         transform var(--duration-fast) var(--ease-out);
 
@@ -1124,7 +1124,7 @@ onUnmounted(() => {
         &:hover {
             background: var(--brand-gradient-soft);
             color: var(--brand-primary);
-            transform: translateY(-2px);
+            transform: scale(1.01);
         }
 
         .el-icon {

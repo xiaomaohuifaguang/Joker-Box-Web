@@ -332,7 +332,7 @@ onMounted(() => {
             transition: all 0.3s ease;
 
             &:hover {
-                transform: translateY(-3px);
+                transform: scale(1.015);
                 box-shadow: var(--shadow-glow);
                 border-color: var(--brand-primary-light);
 

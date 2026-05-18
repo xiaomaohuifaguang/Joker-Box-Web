@@ -89,7 +89,6 @@ onMounted(() => {
     top: 0;
     z-index: 1000;
     background-color: var(--bg-container);
-    backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border-light);
     transition: background-color var(--duration-normal) var(--ease-out),
         border-color var(--duration-normal) var(--ease-out);
@@ -140,11 +139,9 @@ onMounted(() => {
 .logo-text {
     font-size: var(--fs-xl);
     font-weight: var(--fw-bold);
-    background: var(--brand-gradient-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--brand-primary);
     font-family: 'PixelMplus10-Regular', sans-serif;
+    letter-spacing: var(--ls-wide);
 }
 
 /* Navigation Menu */

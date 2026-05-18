@@ -202,11 +202,9 @@ const currentYear = ref(new Date().getFullYear());
         .brand-name {
             font-size: var(--fs-2xl);
             font-weight: var(--fw-bold);
-            background: var(--brand-gradient-text);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--brand-primary);
             font-family: 'PixelMplus10-Regular', sans-serif;
+            letter-spacing: var(--ls-wide);
         }
     }
 
@@ -238,10 +236,10 @@ const currentYear = ref(new Date().getFullYear());
                 box-shadow var(--duration-normal) var(--ease-out);
 
             &:hover {
-                background: var(--brand-gradient);
+                background: var(--brand-primary);
                 border-color: transparent;
                 color: var(--text-on-brand);
-                transform: translateY(-3px);
+                transform: scale(1.05);
                 box-shadow: var(--shadow-glow);
             }
 

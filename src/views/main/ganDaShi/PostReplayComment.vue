@@ -571,7 +571,7 @@ watch(() => props.replayCount, (newVal) => {
             border: none;
 
             &:hover:not(:disabled) {
-                transform: translateY(-1px);
+                transform: scale(1.005);
                 box-shadow: var(--shadow-glow);
             }
 

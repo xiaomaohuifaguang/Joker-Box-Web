@@ -238,7 +238,6 @@ onBeforeUnmount(() => {
     padding: 10px 20px;
     background: rgba(255, 255, 255, 0.15);
     border-radius: 12px;
-    backdrop-filter: blur(10px);
     color: var(--text-on-brand);
     font-size: 14px;
 
@@ -269,7 +268,7 @@ onBeforeUnmount(() => {
       box-shadow var(--duration-normal) var(--ease-out);
 
     &:hover {
-      transform: translateY(-4px);
+      transform: scale(1.02);
       box-shadow: var(--shadow-lg);
     }
 

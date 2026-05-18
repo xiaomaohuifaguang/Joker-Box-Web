@@ -185,10 +185,7 @@ import { HomeFilled, ArrowLeft, Lock, Warning } from '@element-plus/icons-vue'
         .error-code {
             font-size: 72px;
             font-weight: 800;
-            background: var(--danger-bg);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--danger);
             margin-top: 16px;
             line-height: 1;
             letter-spacing: -2px;
@@ -237,7 +234,7 @@ import { HomeFilled, ArrowLeft, Lock, Warning } from '@element-plus/icons-vue'
             transition: all 0.3s ease;
 
             &:hover {
-                transform: translateY(-2px);
+                transform: scale(1.01);
                 box-shadow: var(--shadow-glow-strong);
             }
 
@@ -256,7 +253,7 @@ import { HomeFilled, ArrowLeft, Lock, Warning } from '@element-plus/icons-vue'
             transition: all 0.3s ease;
 
             &:hover {
-                transform: translateY(-2px);
+                transform: scale(1.01);
                 background: var(--bg-overlay);
             }
 

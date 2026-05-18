@@ -344,7 +344,6 @@ const toHome = () => {
     position: relative;
     display: flex;
     overflow: hidden;
-    backdrop-filter: blur(20px);
     animation: card-appear 0.6s ease-out;
 }
 
@@ -392,7 +391,6 @@ const toHome = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(10px);
     animation: logo-pulse 3s infinite ease-in-out;
 }
 
@@ -421,10 +419,7 @@ const toHome = () => {
     font-weight: 700;
     margin-bottom: 10px;
     letter-spacing: 2px;
-    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #fff;
 }
 
 .brand-slogan {
@@ -447,7 +442,6 @@ const toHome = () => {
     padding: 15px 20px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-md);
-    backdrop-filter: blur(10px);
     transition: all var(--duration-normal) var(--ease-out);
 }
 
@@ -666,8 +660,8 @@ const toHome = () => {
 }
 
 .login-button:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-glow-strong);
+    transform: scale(1.01);
+    box-shadow: var(--shadow-md);
 }
 
 .login-button:active {
@@ -728,14 +722,14 @@ const toHome = () => {
     background: #24292e !important;
     color: #fff !important;
     border-color: #24292e !important;
-    transform: translateY(-2px);
+    transform: scale(1.01);
 }
 
 .gitee-button:hover {
     background: #c71d23 !important;
     color: #fff !important;
     border-color: #c71d23 !important;
-    transform: translateY(-2px);
+    transform: scale(1.01);
 }
 
 /* 注册链接 */

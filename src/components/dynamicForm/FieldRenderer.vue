@@ -383,7 +383,7 @@ const onUploadExceed = () => {
         background: var(--el-fill-color-light);
         border-color: var(--el-border-color);
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-        transform: translateY(-1px);
+        transform: scale(1.005);
     }
 
     .file-icon-wrap {

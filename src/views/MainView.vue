@@ -120,10 +120,9 @@ onMounted(async () => {
     pointer-events: auto;
     transition: transform var(--duration-normal) var(--ease-out),
         box-shadow var(--duration-normal) var(--ease-out);
-    backdrop-filter: blur(5px);
 
     &:hover {
-        transform: translateY(-2px);
+        transform: scale(1.01);
         box-shadow: var(--shadow-lg);
     }
 }

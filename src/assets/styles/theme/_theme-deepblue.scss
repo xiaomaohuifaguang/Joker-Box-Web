@@ -1,110 +1,110 @@
 // ============================================================
-// 🌊 深海蓝主题 · 严肃深色
-// 深蓝色系，纯色实现，克制冷静的企业级后台风格
+// 🌊 深海蓝主题 · 深渊萤光
+// 弃用企业蓝，转向真正的深海美学。
+// 绝对黑暗中的生物荧光。压力、神秘、稀疏的光。
 // ============================================================
 
 @mixin theme-deepblue {
-    /* ---------- 品牌色 ---------- */
-    --brand-primary: #3B82F6;
-    --brand-primary-hover: #2563EB;
-    --brand-primary-active: #1D4ED8;
-    --brand-primary-light: #60A5FA;
-    --brand-primary-lighter: #93C5FD;
-    --brand-secondary: #0EA5E9;
-    --brand-accent: #06B6D4;
+    /* ---------- 品牌色（生物荧光青绿） ---------- */
+    --brand-primary: #00D9C0;
+    --brand-primary-hover: #00F0D4;
+    --brand-primary-active: #00B8A8;
+    --brand-primary-light: #40E8D4;
+    --brand-primary-lighter: #80F0E0;
+    --brand-secondary: #008B8B;
+    --brand-accent: #20B2AA;
 
-    /* ---------- 渐变（纯色实现，无 linear-gradient）---------- */
-    --brand-gradient: #3B82F6;
-    --brand-gradient-hover: #2563EB;
-    --brand-gradient-soft: rgba(59, 130, 246, 0.12);
-    --brand-gradient-text: #3B82F6;
-    --brand-gradient-border: #3B82F6;
+    /* ---------- 渐变（纯色，深渊不用渐变） ---------- */
+    --brand-gradient: #00D9C0;
+    --brand-gradient-hover: #00F0D4;
+    --brand-gradient-soft: rgba(0, 217, 192, 0.08);
+    --brand-gradient-text: #00D9C0;
+    --brand-gradient-border: #00D9C0;
 
-    /* ---------- 背景层级 ---------- */
-    --bg-page: #070B14;
-    --bg-container: #0F172A;
-    --bg-elevated: #1E293B;
-    --bg-input: #334155;
-    --bg-overlay: rgba(59, 130, 246, 0.10);
-    --bg-overlay-strong: rgba(59, 130, 246, 0.20);
-    --bg-mask: rgba(0, 0, 0, 0.75);
+    /* ---------- 背景层级（深渊层级，越来越黑） ---------- */
+    --bg-page: #020408;
+    --bg-container: #0A1620;
+    --bg-elevated: #122030;
+    --bg-input: #1A3040;
+    --bg-overlay: rgba(0, 217, 192, 0.05);
+    --bg-overlay-strong: rgba(0, 217, 192, 0.10);
+    --bg-mask: rgba(0, 0, 0, 0.80);
 
-    /* ---------- 文字层级 ---------- */
-    --text-primary: #F8FAFC;
-    --text-regular: #CBD5E1;
-    --text-secondary: #94A3B8;
-    --text-placeholder: #64748B;
-    --text-disabled: #475569;
-    --text-on-brand: #FFFFFF;
-    --text-on-dark: #FFFFFF;
-    --text-link: #60A5FA;
-    --text-link-hover: #93C5FD;
+    /* ---------- 文字层级（荧光下的苍白） ---------- */
+    --text-primary: #E0F0F0;
+    --text-regular: #A0C8C8;
+    --text-secondary: #608888;
+    --text-placeholder: #406060;
+    --text-disabled: #304848;
+    --text-on-brand: #020408;
+    --text-on-dark: #E0F0F0;
+    --text-link: #00D9C0;
+    --text-link-hover: #40E8D4;
 
-    /* ---------- 边框 ---------- */
-    --border-base: #1E3A5F;
-    --border-light: #1E293B;
-    --border-strong: #334155;
-    --border-focus: #3B82F6;
-    --border-divider: #1E293B;
+    /* ---------- 边框（像深海中的矿物质结晶线） ---------- */
+    --border-base: #1A3040;
+    --border-light: #122030;
+    --border-strong: #2A4050;
+    --border-focus: #00D9C0;
+    --border-divider: #1A3040;
 
-    /* ---------- 功能色（标准饱和，克制稳重）---------- */
-    --success: #22C55E;
-    --success-hover: #16A34A;
-    --success-bg: rgba(34, 197, 94, 0.10);
-    --success-border: rgba(34, 197, 94, 0.35);
+    /* ---------- 功能色（深海生物色） ---------- */
+    --success: #3DB88A;
+    --success-hover: #2DA878;
+    --success-bg: rgba(61, 184, 138, 0.08);
+    --success-border: rgba(61, 184, 138, 0.30);
 
-    --warning: #F59E0B;
-    --warning-hover: #D97706;
-    --warning-bg: rgba(245, 158, 11, 0.10);
-    --warning-border: rgba(245, 158, 11, 0.35);
+    --warning: #D4A840;
+    --warning-hover: #C49830;
+    --warning-bg: rgba(212, 168, 64, 0.08);
+    --warning-border: rgba(212, 168, 64, 0.30);
 
-    --danger: #EF4444;
-    --danger-hover: #DC2626;
-    --danger-bg: rgba(239, 68, 68, 0.10);
-    --danger-border: rgba(239, 68, 68, 0.35);
+    --danger: #D86060;
+    --danger-hover: #C85050;
+    --danger-bg: rgba(216, 96, 96, 0.08);
+    --danger-border: rgba(216, 96, 96, 0.30);
 
-    --info: #3B82F6;
-    --info-hover: #2563EB;
-    --info-bg: rgba(59, 130, 246, 0.10);
-    --info-border: rgba(59, 130, 246, 0.35);
+    --info: #5088B8;
+    --info-hover: #4078A8;
+    --info-bg: rgba(80, 136, 184, 0.08);
+    --info-border: rgba(80, 136, 184, 0.30);
 
-    /* ---------- 阴影（低调蓝光）---------- */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 12px 32px rgba(59, 130, 246, 0.20);
-    --shadow-xl: 0 24px 48px rgba(59, 130, 246, 0.30);
-    --shadow-glow: 0 0 24px rgba(59, 130, 246, 0.30);
-    --shadow-glow-strong: 0 0 40px rgba(59, 130, 246, 0.45);
-    --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+    /* ---------- 阴影（无泛光，只有深渊的吞噬感） ---------- */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 0 2px rgba(0, 217, 192, 0.10);
+    --shadow-glow-strong: 0 0 20px rgba(0, 217, 192, 0.15);
+    --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.5);
 
-    /* ---------- 数据可视化（蓝色系纯色调色板）---------- */
-    --data-1: #3B82F6;
-    --data-2: #0EA5E9;
-    --data-3: #06B6D4;
-    --data-4: #22C55E;
-    --data-5: #F59E0B;
-    --data-6: #EF4444;
-    --data-7: #8B5CF6;
-    --data-8: #64748B;
+    /* ---------- 数据可视化（深海生物荧光色） ---------- */
+    --data-1: #00D9C0;
+    --data-2: #3DB88A;
+    --data-3: #5088B8;
+    --data-4: #D4A840;
+    --data-5: #D86060;
+    --data-6: #00B8A8;
+    --data-7: #608888;
+    --data-8: #4070A0;
 
-    /* 数据系列「渐变」也用纯色实现 */
-    --data-grad-1: #3B82F6;
-    --data-grad-2: #0EA5E9;
-    --data-grad-3: #06B6D4;
-    --data-grad-4: #22C55E;
-    --data-grad-5: #F59E0B;
-    --data-grad-6: #EF4444;
+    --data-grad-1: #00D9C0;
+    --data-grad-2: #3DB88A;
+    --data-grad-3: #5088B8;
+    --data-grad-4: #D4A840;
+    --data-grad-5: #D86060;
+    --data-grad-6: #00B8A8;
 
-    /* ---------- 登录页专用（深蓝纯色背景）---------- */
-    --auth-bg: #0F172A;
-    --auth-card-bg: rgba(15, 23, 42, 0.70);
-    --auth-card-border: rgba(59, 130, 246, 0.20);
-    --auth-text: #F8FAFC;
-    --auth-text-muted: rgba(248, 250, 252, 0.60);
-    --auth-input-bg: rgba(51, 65, 85, 0.60);
+    /* ---------- 登录页专用（深渊底部） ---------- */
+    --auth-bg: #020408;
+    --auth-card-bg: rgba(10, 22, 32, 0.75);
+    --auth-card-border: rgba(0, 217, 192, 0.15);
+    --auth-text: #E0F0F0;
+    --auth-text-muted: rgba(224, 240, 240, 0.55);
+    --auth-input-bg: rgba(26, 48, 64, 0.50);
 
     /* ---------- 滚动条 ---------- */
-    --scrollbar-thumb: #1E3A5F;
-    --scrollbar-thumb-hover: #3B82F6;
+    --scrollbar-thumb: #2A4050;
+    --scrollbar-thumb-hover: #00D9C0;
     --scrollbar-track: transparent;
 }

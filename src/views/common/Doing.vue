@@ -134,7 +134,7 @@ import { Setting, Tools, Loading, VideoPlay } from '@element-plus/icons-vue';
         max-width: 500px;
 
         &:hover {
-            transform: translateY(-5px);
+            transform: scale(1.025);
             box-shadow: 0 25px 70px var(--bg-overlay-strong);
             border-color: var(--brand-primary-light);
 

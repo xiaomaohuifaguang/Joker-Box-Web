@@ -320,7 +320,7 @@ onMounted(() => {
     &:hover {
         border-color: var(--brand-primary);
         box-shadow: var(--shadow-glow);
-        transform: translateY(-4px);
+        transform: scale(1.02);
     }
 }
 

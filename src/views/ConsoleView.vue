@@ -209,12 +209,10 @@ onMounted(() => {
 .logo-text {
     font-size: var(--fs-lg);
     font-weight: var(--fw-bold);
-    background: var(--brand-gradient-text);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--brand-primary);
     font-family: 'PixelMplus10-Regular', sans-serif;
     white-space: nowrap;
+    letter-spacing: var(--ls-wide);
 }
 
 .collapse-toggle {
@@ -412,7 +410,7 @@ onMounted(() => {
 
     &:hover {
         box-shadow: var(--shadow-md);
-        transform: translateY(-2px);
+        transform: scale(1.01);
     }
 
     &.collapsed {
@@ -503,7 +501,7 @@ onMounted(() => {
     &:hover {
         background: var(--brand-primary);
         color: var(--text-on-brand);
-        transform: translateY(-2px);
+        transform: scale(1.01);
         box-shadow: var(--shadow-glow-strong);
     }
 

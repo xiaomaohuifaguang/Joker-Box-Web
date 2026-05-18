@@ -205,10 +205,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
         .error-code {
             font-size: 72px;
             font-weight: 800;
-            background: var(--brand-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--brand-primary);
             margin-top: 24px;
             line-height: 1;
             letter-spacing: -2px;
@@ -257,7 +254,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
             transition: all 0.3s ease;
 
             &:hover {
-                transform: translateY(-2px);
+                transform: scale(1.01);
                 box-shadow: var(--shadow-glow-strong);
             }
 
@@ -276,7 +273,7 @@ import { HomeFilled, ArrowLeft, DocumentDelete, Warning } from '@element-plus/ic
             transition: all 0.3s ease;
 
             &:hover {
-                transform: translateY(-2px);
+                transform: scale(1.01);
                 background: var(--bg-overlay);
             }
 

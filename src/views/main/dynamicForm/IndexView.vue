@@ -160,7 +160,7 @@ onMounted(() => {
                 transition: all 0.3s;
 
                 &:hover {
-                    transform: translateY(-2px);
+                    transform: scale(1.01);
                     box-shadow: var(--shadow-glow-strong);
                 }
             }

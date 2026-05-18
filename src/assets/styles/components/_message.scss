@@ -1,6 +1,6 @@
 // ============================================================
-// ElMessage 与 ElMessageBox 美化（变量化）
-// 从原 el-plus.css 迁移并接入主题变量
+// ElMessage 与 ElMessageBox 美化（去 AI 化）
+// 移除毛玻璃、渐变装饰条，改为纯色+边框强调
 // ============================================================
 
 /* ============================================================
@@ -12,26 +12,24 @@
     min-width: 220px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: var(--bg-container) !important;
     transition: all var(--duration-normal) var(--ease-out);
     animation: msgSlideIn var(--duration-slow) var(--ease-bounce);
     box-shadow: var(--shadow-md);
     z-index: 9999 !important;
 }
 
+/* 左侧纯色强调条替代渐变 */
 .custom-message::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    width: 4px;
+    width: 3px;
     height: 100%;
-    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
 }
 
 .custom-message:hover {
-    transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
 
@@ -61,7 +59,7 @@
     transform: scale(1.2) rotate(90deg);
 }
 
-/* ---------- 类型色（接入主题变量） ---------- */
+/* ---------- 类型色（接入主题变量，纯色边框） ---------- */
 .custom-message.el-message--success {
     background: var(--success-bg) !important;
     border: 1px solid var(--success-border) !important;
@@ -163,15 +161,15 @@
     }
 }
 
-/* 顶部装饰条（品牌渐变） */
+/* 顶部纯色装饰条（替代渐变） */
 .custom-message-box::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: var(--brand-gradient-border);
+    height: 3px;
+    background: var(--brand-primary);
     z-index: 1;
 }
 
@@ -192,11 +190,12 @@
     width: 100%;
 }
 
+/* 去渐变：标题文字使用纯色品牌色 */
 .custom-message-box .el-message-box__title span {
-    background: var(--brand-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--brand-primary);
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    -webkit-text-fill-color: initial;
 }
 
 /* 关闭按钮 */
@@ -274,23 +273,23 @@
     margin: 0 !important;
 }
 
-/* 确认按钮（品牌渐变） */
+/* 确认按钮（纯色替代渐变） */
 .custom-message-box .el-button--primary {
-    background: var(--brand-gradient) !important;
+    background: var(--brand-primary) !important;
     border: none !important;
     color: var(--text-on-brand) !important;
-    box-shadow: var(--shadow-md) !important;
+    box-shadow: var(--shadow-sm) !important;
 }
 
 .custom-message-box .el-button--primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-glow-strong) !important;
-    background: var(--brand-gradient-hover) !important;
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md) !important;
+    background: var(--brand-primary-hover) !important;
 }
 
 .custom-message-box .el-button--primary:active {
-    transform: translateY(0);
-    box-shadow: var(--shadow-md) !important;
+    transform: scale(0.98);
+    box-shadow: var(--shadow-sm) !important;
 }
 
 /* 取消按钮 */
@@ -304,18 +303,16 @@
     background: var(--bg-input) !important;
     border-color: var(--brand-primary) !important;
     color: var(--brand-primary) !important;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md) !important;
+    transform: scale(1.02);
+    box-shadow: var(--shadow-sm) !important;
 }
 
 .custom-message-box .el-button--default:active {
-    transform: translateY(0);
+    transform: scale(0.98);
 }
 
-/* 遮罩层模糊 */
+/* 遮罩层（移除毛玻璃，使用纯色遮罩） */
 .el-overlay:has(.custom-message-box) {
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
     background-color: var(--bg-mask);
 }
 

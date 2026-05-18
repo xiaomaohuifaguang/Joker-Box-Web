@@ -1,110 +1,110 @@
 // ============================================================
-// 🌊 沧海蓝主题 · 浅色纯色
-// 蓝色系，所有渐变以纯色实现，干净克制的现代后台风格
+// 🌊 沧海蓝主题 · 浅海潮汐
+// 弃用科技蓝，转向真正的海洋美学。
+// 海藻绿、贝壳白、潮汐泡沫。自然、有机、呼吸感。
 // ============================================================
 
 @mixin theme-cyan {
-    /* ---------- 品牌色 ---------- */
-    --brand-primary: #2563EB;
-    --brand-primary-hover: #1D4ED8;
-    --brand-primary-active: #1E40AF;
-    --brand-primary-light: #3B82F6;
-    --brand-primary-lighter: #60A5FA;
-    --brand-secondary: #0EA5E9;
-    --brand-accent: #0891B2;
+    /* ---------- 品牌色（海藻绿为主，海泡为辅） ---------- */
+    --brand-primary: #2E8B57;
+    --brand-primary-hover: #267A4A;
+    --brand-primary-active: #1E663D;
+    --brand-primary-light: #4AA872;
+    --brand-primary-lighter: #7AC99A;
+    --brand-secondary: #20B2AA;
+    --brand-accent: #4ECDC4;
 
-    /* ---------- 渐变（纯色实现，无 linear-gradient）---------- */
-    --brand-gradient: #2563EB;
-    --brand-gradient-hover: #1D4ED8;
-    --brand-gradient-soft: rgba(37, 99, 235, 0.10);
-    --brand-gradient-text: #2563EB;
-    --brand-gradient-border: #2563EB;
+    /* ---------- 渐变（纯色，自然不用渐变） ---------- */
+    --brand-gradient: #2E8B57;
+    --brand-gradient-hover: #267A4A;
+    --brand-gradient-soft: rgba(46, 139, 87, 0.08);
+    --brand-gradient-text: #2E8B57;
+    --brand-gradient-border: #2E8B57;
 
-    /* ---------- 背景层级 ---------- */
-    --bg-page: #F8FAFC;
+    /* ---------- 背景层级（沙滩、泡沫、浅海） ---------- */
+    --bg-page: #F5F7F5;
     --bg-container: #FFFFFF;
-    --bg-elevated: #F1F5F9;
-    --bg-input: #E2E8F0;
-    --bg-overlay: rgba(37, 99, 235, 0.06);
-    --bg-overlay-strong: rgba(37, 99, 235, 0.12);
-    --bg-mask: rgba(15, 23, 42, 0.45);
+    --bg-elevated: #EDF2ED;
+    --bg-input: #E2E8E2;
+    --bg-overlay: rgba(46, 139, 87, 0.04);
+    --bg-overlay-strong: rgba(46, 139, 87, 0.08);
+    --bg-mask: rgba(10, 30, 20, 0.45);
 
-    /* ---------- 文字层级 ---------- */
-    --text-primary: #0F172A;
-    --text-regular: #1E293B;
-    --text-secondary: #475569;
-    --text-placeholder: #94A3B8;
-    --text-disabled: #CBD5E1;
+    /* ---------- 文字层级（深海植物般的深绿黑） ---------- */
+    --text-primary: #0A1F14;
+    --text-regular: #1E3D2A;
+    --text-secondary: #4A6B55;
+    --text-placeholder: #8AA898;
+    --text-disabled: #B8D0C0;
     --text-on-brand: #FFFFFF;
-    --text-on-dark: #FFFFFF;
-    --text-link: #2563EB;
-    --text-link-hover: #1D4ED8;
+    --text-on-dark: #F5F7F5;
+    --text-link: #2E8B57;
+    --text-link-hover: #267A4A;
 
-    /* ---------- 边框 ---------- */
-    --border-base: #E2E8F0;
-    --border-light: #F1F5F9;
-    --border-strong: #CBD5E1;
-    --border-focus: #2563EB;
-    --border-divider: #F1F5F9;
+    /* ---------- 边框（像潮线、贝壳边缘） ---------- */
+    --border-base: #D5E0D5;
+    --border-light: #E2E8E2;
+    --border-strong: #B8D0C0;
+    --border-focus: #2E8B57;
+    --border-divider: #D5E0D5;
 
-    /* ---------- 功能色 ---------- */
-    --success: #10B981;
-    --success-hover: #059669;
-    --success-bg: #ECFDF5;
-    --success-border: #A7F3D0;
+    /* ---------- 功能色（自然色系） ---------- */
+    --success: #3D8B5F;
+    --success-hover: #2D7A4F;
+    --success-bg: rgba(61, 139, 95, 0.08);
+    --success-border: rgba(61, 139, 95, 0.30);
 
-    --warning: #F59E0B;
-    --warning-hover: #D97706;
-    --warning-bg: #FFFBEB;
-    --warning-border: #FDE68A;
+    --warning: #C4A035;
+    --warning-hover: #B08C28;
+    --warning-bg: rgba(196, 160, 53, 0.08);
+    --warning-border: rgba(196, 160, 53, 0.30);
 
-    --danger: #EF4444;
-    --danger-hover: #DC2626;
-    --danger-bg: #FEF2F2;
-    --danger-border: #FECACA;
+    --danger: #B84A4A;
+    --danger-hover: #A03A3A;
+    --danger-bg: rgba(184, 74, 74, 0.08);
+    --danger-border: rgba(184, 74, 74, 0.30);
 
-    --info: #2563EB;
-    --info-hover: #1D4ED8;
-    --info-bg: #EFF6FF;
-    --info-border: #BFDBFE;
+    --info: #4A7A8A;
+    --info-hover: #3A6A7A;
+    --info-bg: rgba(74, 122, 138, 0.08);
+    --info-border: rgba(74, 122, 138, 0.30);
 
-    /* ---------- 阴影 ---------- */
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-    --shadow-lg: 0 12px 32px rgba(37, 99, 235, 0.12);
-    --shadow-xl: 0 24px 48px rgba(37, 99, 235, 0.18);
-    --shadow-glow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    --shadow-glow-strong: 0 8px 24px rgba(37, 99, 235, 0.35);
-    --shadow-inner: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+    /* ---------- 阴影（像水下的柔和折射） ---------- */
+    --shadow-sm: 0 1px 2px rgba(10, 31, 20, 0.04);
+    --shadow-md: 0 4px 12px rgba(10, 31, 20, 0.06);
+    --shadow-lg: 0 12px 32px rgba(10, 31, 20, 0.08);
+    --shadow-xl: 0 24px 48px rgba(10, 31, 20, 0.10);
+    --shadow-glow: 0 0 0 2px rgba(46, 139, 87, 0.10);
+    --shadow-glow-strong: 0 8px 24px rgba(46, 139, 87, 0.15);
+    --shadow-inner: inset 0 1px 2px rgba(10, 31, 20, 0.04);
 
-    /* ---------- 数据可视化（蓝色系纯色调色板）---------- */
-    --data-1: #2563EB;
-    --data-2: #0EA5E9;
-    --data-3: #0891B2;
-    --data-4: #6366F1;
-    --data-5: #3B82F6;
-    --data-6: #60A5FA;
-    --data-7: #1E40AF;
-    --data-8: #475569;
+    /* ---------- 数据可视化（海洋生态色） ---------- */
+    --data-1: #2E8B57;
+    --data-2: #20B2AA;
+    --data-3: #4ECDC4;
+    --data-4: #C4A035;
+    --data-5: #3D8B5F;
+    --data-6: #4A7A8A;
+    --data-7: #B84A4A;
+    --data-8: #8AA898;
 
-    /* 数据系列「渐变」也用纯色实现 */
-    --data-grad-1: #2563EB;
-    --data-grad-2: #0EA5E9;
-    --data-grad-3: #0891B2;
-    --data-grad-4: #6366F1;
-    --data-grad-5: #3B82F6;
-    --data-grad-6: #1E40AF;
+    --data-grad-1: #2E8B57;
+    --data-grad-2: #20B2AA;
+    --data-grad-3: #4ECDC4;
+    --data-grad-4: #C4A035;
+    --data-grad-5: #3D8B5F;
+    --data-grad-6: #4A7A8A;
 
-    /* ---------- 登录页专用（深蓝纯色背景）---------- */
-    --auth-bg: #1E40AF;
-    --auth-card-bg: rgba(255, 255, 255, 0.10);
-    --auth-card-border: rgba(255, 255, 255, 0.20);
+    /* ---------- 登录页专用（深海岩壁） ---------- */
+    --auth-bg: #0A1F14;
+    --auth-card-bg: rgba(255, 255, 255, 0.06);
+    --auth-card-border: rgba(46, 139, 87, 0.20);
     --auth-text: #FFFFFF;
-    --auth-text-muted: rgba(255, 255, 255, 0.70);
-    --auth-input-bg: rgba(255, 255, 255, 0.12);
+    --auth-text-muted: rgba(255, 255, 255, 0.65);
+    --auth-input-bg: rgba(255, 255, 255, 0.08);
 
     /* ---------- 滚动条 ---------- */
-    --scrollbar-thumb: #CBD5E1;
-    --scrollbar-thumb-hover: #2563EB;
+    --scrollbar-thumb: #B8D0C0;
+    --scrollbar-thumb-hover: #2E8B57;
     --scrollbar-track: transparent;
 }

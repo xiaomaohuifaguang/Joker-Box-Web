@@ -1101,7 +1101,7 @@ const fieldRangeRows = [
             transition: all 0.25s ease;
 
             &:hover {
-                transform: translateY(-2px);
+                transform: scale(1.01);
                 border-color: var(--brand-primary);
                 box-shadow: var(--shadow-glow-strong, var(--shadow-sm));
             }
