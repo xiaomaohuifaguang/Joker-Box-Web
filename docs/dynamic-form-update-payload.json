@@ -1,0 +1,429 @@
+{
+  "id": 1,
+  "name": "员工入职信息采集表",
+  "description": "用于收集新员工入职所需信息的动态表单",
+  "version": "1.2.0",
+  "status": "1",
+  "deleted": "0",
+  "createBy": "admin",
+  "createTime": "2026-05-01 10:00:00",
+  "updateTime": "2026-05-21 14:30:00",
+  "formFields": [
+    {
+      "fieldId": "hobbies",
+      "title": "兴趣爱好",
+      "type": "MULTISELECT",
+      "required": "0",
+      "defaultValue": [
+        "reading",
+        "travel"
+      ],
+      "placeholder": "请选择兴趣爱好",
+      "options": [
+        {
+          "label": "阅读",
+          "value": "reading"
+        },
+        {
+          "label": "旅行",
+          "value": "travel"
+        },
+        {
+          "label": "音乐",
+          "value": "music"
+        },
+        {
+          "label": "运动",
+          "value": "sports"
+        }
+      ],
+      "span": 12,
+      "sort": 1
+    },
+    {
+      "fieldId": "marital",
+      "title": "婚姻状况",
+      "type": "RADIO",
+      "required": "1",
+      "defaultValue": "single",
+      "placeholder": "请选择婚姻状况",
+      "options": [
+        {
+          "label": "未婚",
+          "value": "single"
+        },
+        {
+          "label": "已婚",
+          "value": "married"
+        },
+        {
+          "label": "离异",
+          "value": "divorced"
+        }
+      ],
+      "span": 12,
+      "sort": 2
+    },
+    {
+      "fieldId": "skills",
+      "title": "技能特长",
+      "type": "CHECKBOX",
+      "required": "0",
+      "defaultValue": [
+        "java",
+        "vue"
+      ],
+      "placeholder": "请选择技能特长",
+      "options": [
+        {
+          "label": "Java",
+          "value": "java"
+        },
+        {
+          "label": "Vue",
+          "value": "vue"
+        },
+        {
+          "label": "Python",
+          "value": "python"
+        },
+        {
+          "label": "Go",
+          "value": "go"
+        }
+      ],
+      "min": 1,
+      "max": 3,
+      "span": 12,
+      "sort": 3
+    },
+    {
+      "fieldId": "vacation",
+      "title": "休假区间",
+      "type": "DATERANGE",
+      "required": "0",
+      "defaultValue": [
+        "2026-06-01",
+        "2026-06-05"
+      ],
+      "placeholder": "请选择休假区间",
+      "span": 12,
+      "sort": 4
+    },
+    {
+      "fieldId": "intro",
+      "title": "个人简介",
+      "type": "TEXTAREA",
+      "required": "0",
+      "defaultValue": "",
+      "placeholder": "请简要介绍自己",
+      "minLength": 10,
+      "maxLength": 500,
+      "min": 3,
+      "max": 10,
+      "span": 24,
+      "sort": 5
+    },
+    {
+      "fieldId": "satisfaction",
+      "title": "满意度评分",
+      "type": "RATE",
+      "required": "0",
+      "defaultValue": "4",
+      "placeholder": "请评分",
+      "min": 1,
+      "max": 5,
+      "span": 12,
+      "sort": 6
+    },
+    {
+      "fieldId": "progress",
+      "title": "完成进度",
+      "type": "SLIDER",
+      "required": "0",
+      "defaultValue": "50",
+      "placeholder": "请拖动滑块",
+      "min": 0,
+      "max": 100,
+      "span": 12,
+      "sort": 7
+    },
+    {
+      "fieldId": "theme_color",
+      "title": "主题颜色",
+      "type": "COLOR",
+      "required": "0",
+      "defaultValue": "#409EFF",
+      "span": 12,
+      "sort": 8
+    },
+    {
+      "fieldId": "city",
+      "title": "所在城市",
+      "type": "CASCADER",
+      "required": "1",
+      "defaultValue": "zhejiang,hangzhou",
+      "placeholder": "请选择所在城市",
+      "options": [
+        {
+          "label": "浙江省",
+          "value": "zhejiang",
+          "children": [
+            {
+              "label": "杭州市",
+              "value": "hangzhou",
+              "children": [
+                {
+                  "label": "西湖区",
+                  "value": "xihu"
+                },
+                {
+                  "label": "拱墅区",
+                  "value": "gongshu"
+                }
+              ]
+            },
+            {
+              "label": "宁波市",
+              "value": "ningbo"
+            }
+          ]
+        },
+        {
+          "label": "江苏省",
+          "value": "jiangsu",
+          "children": [
+            {
+              "label": "南京市",
+              "value": "nanjing"
+            },
+            {
+              "label": "苏州市",
+              "value": "suzhou"
+            }
+          ]
+        }
+      ],
+      "span": 12,
+      "sort": 9
+    },
+    {
+      "fieldId": "languages",
+      "title": "掌握语言",
+      "type": "MULTICASCADER",
+      "required": "0",
+      "defaultValue": [
+        "china,zhejiang,hangzhou"
+      ],
+      "placeholder": "请选择掌握语言",
+      "options": [
+        {
+          "label": "中国",
+          "value": "china",
+          "children": [
+            {
+              "label": "浙江省",
+              "value": "zhejiang",
+              "children": [
+                {
+                  "label": "杭州话",
+                  "value": "hangzhou"
+                },
+                {
+                  "label": "温州话",
+                  "value": "wenzhou"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "span": 12,
+      "sort": 10
+    }
+  ],
+  "groups": [
+    {
+      "id": "basic_info",
+      "name": "基本信息",
+      "description": "员工的基本个人信息",
+      "sort": 1,
+      "collapsed": "0",
+      "fields": [
+        {
+          "fieldId": "name",
+          "title": "姓名",
+          "type": "INPUT",
+          "required": "1",
+          "defaultValue": "",
+          "placeholder": "请输入真实姓名",
+          "minLength": 2,
+          "maxLength": 32,
+          "pattern": "^[一-龥]{2,32}$",
+          "patternTips": "请输入2-32个汉字",
+          "span": 12,
+          "sort": 1,
+          "groupId": "basic_info"
+        },
+        {
+          "fieldId": "age",
+          "title": "年龄",
+          "type": "NUMBER",
+          "required": "0",
+          "defaultValue": "25",
+          "placeholder": "请输入年龄",
+          "min": 18,
+          "max": 65,
+          "span": 12,
+          "sort": 2,
+          "groupId": "basic_info"
+        },
+        {
+          "fieldId": "gender",
+          "title": "性别",
+          "type": "SELECT",
+          "required": "1",
+          "defaultValue": "male",
+          "placeholder": "请选择性别",
+          "options": [
+            {
+              "label": "男",
+              "value": "male"
+            },
+            {
+              "label": "女",
+              "value": "female"
+            },
+            {
+              "label": "保密",
+              "value": "secret"
+            }
+          ],
+          "span": 12,
+          "sort": 3,
+          "groupId": "basic_info"
+        },
+        {
+          "fieldId": "birthday",
+          "title": "出生日期",
+          "type": "DATE",
+          "required": "1",
+          "defaultValue": "1995-06-15",
+          "placeholder": "请选择出生日期",
+          "span": 12,
+          "sort": 4,
+          "groupId": "basic_info"
+        },
+        {
+          "fieldId": "children_count",
+          "title": "子女数量",
+          "type": "NUMBER",
+          "required": "0",
+          "defaultValue": "0",
+          "placeholder": "请输入子女数量",
+          "min": 0,
+          "max": 10,
+          "span": 12,
+          "sort": 5,
+          "groupId": "basic_info"
+        },
+        {
+          "fieldId": "guardian_name",
+          "title": "监护人姓名",
+          "type": "INPUT",
+          "required": "0",
+          "defaultValue": "",
+          "placeholder": "请输入监护人姓名",
+          "minLength": 2,
+          "maxLength": 32,
+          "span": 12,
+          "sort": 6,
+          "groupId": "basic_info"
+        }
+      ]
+    },
+    {
+      "id": "work_info",
+      "name": "工作信息",
+      "description": "员工的工作相关信息",
+      "sort": 2,
+      "collapsed": "0",
+      "fields": [
+        {
+          "fieldId": "interview_time",
+          "title": "面试时间",
+          "type": "DATETIME",
+          "required": "1",
+          "defaultValue": "2026-05-25 09:30:00",
+          "placeholder": "请选择面试时间",
+          "span": 12,
+          "sort": 1,
+          "groupId": "work_info"
+        },
+        {
+          "fieldId": "work_time",
+          "title": "上班时间",
+          "type": "TIME",
+          "required": "0",
+          "defaultValue": "09:00:00",
+          "placeholder": "请选择上班时间",
+          "span": 12,
+          "sort": 2,
+          "groupId": "work_info"
+        },
+        {
+          "fieldId": "is_fulltime",
+          "title": "是否全职",
+          "type": "SWITCH",
+          "required": "1",
+          "defaultValue": "true",
+          "span": 12,
+          "sort": 3,
+          "groupId": "work_info"
+        },
+        {
+          "fieldId": "resume",
+          "title": "简历附件",
+          "type": "UPLOAD",
+          "required": "1",
+          "defaultValue": [],
+          "placeholder": "请上传简历文件",
+          "minLength": 1,
+          "maxLength": 3,
+          "span": 24,
+          "sort": 4,
+          "groupId": "work_info"
+        },
+        {
+          "fieldId": "work_address",
+          "title": "工作地址",
+          "type": "TEXTAREA",
+          "required": "0",
+          "defaultValue": "",
+          "placeholder": "请输入工作地址",
+          "minLength": 5,
+          "maxLength": 200,
+          "min": 2,
+          "max": 6,
+          "span": 12,
+          "sort": 5,
+          "groupId": "work_info"
+        },
+        {
+          "fieldId": "skills_python",
+          "title": "Python 精通程度",
+          "type": "RATE",
+          "required": "0",
+          "defaultValue": "3",
+          "placeholder": "请评分",
+          "min": 1,
+          "max": 5,
+          "span": 12,
+          "sort": 6,
+          "groupId": "work_info"
+        }
+      ]
+    }
+  ],
+  "linkageRules": []
+}

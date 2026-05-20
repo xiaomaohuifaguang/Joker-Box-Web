@@ -1,6 +1,6 @@
 <template>
-    <el-dialog v-model="visible" :title="isEdit ? '编辑字段' : '添加字段'" width="720px"
-        :close-on-click-modal="false" destroy-on-close>
+    <el-dialog v-model="visible" :title="isEdit ? '编辑字段' : '添加字段'" width="720px" :close-on-click-modal="false"
+        destroy-on-close>
         <el-form ref="formRef" :model="form" :rules="rules" label-position="top">
             <el-row :gutter="16">
                 <el-col :span="12">
@@ -21,8 +21,8 @@
                     <el-form-item label="字段类型" prop="type">
                         <el-select v-model="form.type" :disabled="isEdit && form.type !== originalType"
                             @change="onTypeChange" style="width: 100%">
-                            <el-option v-for="item in FIELD_TYPE_OPTIONS" :key="item.value"
-                                :label="item.label" :value="item.value" />
+                            <el-option v-for="item in FIELD_TYPE_OPTIONS" :key="item.value" :label="item.label"
+                                :value="item.value" />
                         </el-select>
                     </el-form-item>
                 </el-col>
@@ -60,7 +60,9 @@
                 <el-col :span="24" v-if="hasOptions">
                     <el-form-item label="选项管理">
                         <el-button type="primary" plain @click="optionsDialog = true">
-                            <el-icon><Setting /></el-icon>
+                            <el-icon>
+                                <Setting />
+                            </el-icon>
                             <span>打开选项管理器（已配置 {{ form.options?.length || 0 }} 项）</span>
                         </el-button>
                     </el-form-item>
@@ -80,16 +82,16 @@
                 <el-col :span="24" v-if="form.type === 'SELECT' || form.type === 'RADIO'">
                     <el-form-item label="默认值">
                         <el-select v-model="form.defaultValue" clearable style="width: 100%">
-                            <el-option v-for="item in form.options || []" :key="item.value"
-                                :label="item.label" :value="item.value" />
+                            <el-option v-for="item in form.options || []" :key="item.value" :label="item.label"
+                                :value="item.value" />
                         </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col :span="24" v-if="form.type === 'MULTISELECT' || form.type === 'CHECKBOX'">
                     <el-form-item label="默认值">
                         <el-select v-model="form.defaultValue" clearable multiple style="width: 100%">
-                            <el-option v-for="item in form.options || []" :key="item.value"
-                                :label="item.label" :value="item.value" />
+                            <el-option v-for="item in form.options || []" :key="item.value" :label="item.label"
+                                :value="item.value" />
                         </el-select>
                     </el-form-item>
                 </el-col>

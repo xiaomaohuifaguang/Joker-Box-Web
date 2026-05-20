@@ -682,18 +682,28 @@ const runtimeGroups = computed(() => {
         .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
 })
 
-const ARRAY_VALUE_TYPES: FormFieldType[] = ['UPLOAD', 'CHECKBOX', 'MULTISELECT', 'MULTICASCADER']
+const ARRAY_VALUE_TYPES: FormFieldType[] = ['UPLOAD', 'CHECKBOX', 'MULTISELECT', 'CASCADER', 'MULTICASCADER']
 
 const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { pattern?: string; patternTips?: string }): FormItemRule[] => {
     const itemRules: FormItemRule[] = []
     const isArrayField = ARRAY_VALUE_TYPES.includes(field.type)
     if (requiredOverride) {
-        itemRules.push({
-            type: isArrayField ? 'array' : 'string',
-            required: true,
-            message: `${field.title}不能为空`,
-            trigger: 'change',
-        })
+        if (field.type === 'SWITCH') {
+            // SWITCH 的值是 boolean，不走 type: 'string' 转换
+            // false 也是用户的有效选择，required 只检查值是否存在
+            itemRules.push({
+                required: true,
+                message: `${field.title}不能为空`,
+                trigger: 'change',
+            })
+        } else {
+            itemRules.push({
+                type: isArrayField ? 'array' : 'string',
+                required: true,
+                message: `${field.title}不能为空`,
+                trigger: 'change',
+            })
+        }
     }
     if (field.minLength != null) {
         itemRules.push({

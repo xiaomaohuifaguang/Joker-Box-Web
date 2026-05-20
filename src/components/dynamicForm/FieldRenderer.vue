@@ -1,16 +1,16 @@
 <template>
     <el-input v-if="field.type === 'INPUT'" :model-value="modelValue" @update:model-value="onUpdate"
-        :placeholder="field.placeholder" :maxlength="field.maxLength" :minlength="field.minLength"
-        :disabled="disabled" clearable style="width: 100%;" />
+        :placeholder="field.placeholder" :maxlength="field.maxLength" :minlength="field.minLength" :disabled="disabled"
+        clearable style="width: 100%;" />
 
     <el-input-number v-else-if="field.type === 'NUMBER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :placeholder="field.placeholder" :min="field.min ?? -Infinity" :max="field.max ?? Infinity"
-        :disabled="disabled" style="width: 100%;" />
+        :placeholder="field.placeholder" :min="field.min ?? -Infinity" :max="field.max ?? Infinity" :disabled="disabled"
+        style="width: 100%;" />
 
     <el-input v-else-if="field.type === 'TEXTAREA'" :model-value="modelValue" @update:model-value="onUpdate"
         type="textarea" :autosize="{ minRows: field.min ?? 2, maxRows: field.max ?? 4 }"
-        :placeholder="field.placeholder" :minlength="field.minLength" :maxlength="field.maxLength"
-        :disabled="disabled" style="width: 100%;" />
+        :placeholder="field.placeholder" :minlength="field.minLength" :maxlength="field.maxLength" :disabled="disabled"
+        style="width: 100%;" />
 
     <el-rate v-else-if="field.type === 'RATE'" :model-value="modelValue" @update:model-value="onUpdate"
         :max="field.max || 5" :disabled="disabled" />
@@ -40,12 +40,12 @@
     </el-checkbox-group>
 
     <el-cascader v-else-if="field.type === 'CASCADER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :options="field.options" :placeholder="field.placeholder" :disabled="disabled"
-        :props="{ multiple: false }" style="width: 100%;" />
+        :options="field.options" :placeholder="field.placeholder" :disabled="disabled" :props="{ multiple: false }"
+        style="width: 100%;" />
 
     <el-cascader v-else-if="field.type === 'MULTICASCADER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :options="field.options" :placeholder="field.placeholder" :disabled="disabled"
-        :props="{ multiple: true }" style="width: 100%;" />
+        :options="field.options" :placeholder="field.placeholder" :disabled="disabled" :props="{ multiple: true }"
+        style="width: 100%;" />
 
     <el-switch v-else-if="field.type === 'SWITCH'" :model-value="modelValue" @update:model-value="onUpdate"
         :disabled="disabled" />
@@ -54,42 +54,32 @@
         :disabled="disabled" />
 
     <el-slider v-else-if="field.type === 'SLIDER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :min="field.min ?? 0" :max="field.max ?? 100" :disabled="disabled"
-        :show-input="!disabled" show-stops show-tooltip style="margin: 0 12px;" />
+        :min="field.min ?? 0" :max="field.max ?? 100" :disabled="disabled" :show-input="!disabled" show-stops
+        show-tooltip style="margin: 0 12px;" />
 
     <el-date-picker v-else-if="field.type === 'DATE'" :model-value="modelValue" @update:model-value="onUpdate"
-        type="date" :placeholder="field.placeholder" :disabled="disabled"
-        value-format="YYYY-MM-DD" style="width: 100%;" />
+        type="date" :placeholder="field.placeholder" :disabled="disabled" value-format="YYYY-MM-DD"
+        style="width: 100%;" />
 
     <el-date-picker v-else-if="field.type === 'DATETIME'" :model-value="modelValue" @update:model-value="onUpdate"
-        type="datetime" :placeholder="field.placeholder" :disabled="disabled"
-        value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%;" />
+        type="datetime" :placeholder="field.placeholder" :disabled="disabled" value-format="YYYY-MM-DD HH:mm:ss"
+        style="width: 100%;" />
 
     <el-time-picker v-else-if="field.type === 'TIME'" :model-value="modelValue" @update:model-value="onUpdate"
-        :placeholder="field.placeholder" :disabled="disabled"
-        value-format="HH:mm:ss" style="width: 100%;" />
+        :placeholder="field.placeholder" :disabled="disabled" value-format="HH:mm:ss" style="width: 100%;" />
 
     <el-date-picker v-else-if="field.type === 'DATERANGE'" :model-value="modelValue" @update:model-value="onUpdate"
         type="daterange" unlink-panels range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"
         :disabled="disabled" value-format="YYYY-MM-DD" style="width: 100%;" />
 
-    <el-upload v-else-if="field.type === 'UPLOAD'"
-        ref="uploadRef"
-        v-model:file-list="uploadFileList"
-        :action="uploadAction"
-        :headers="uploadHeaders"
-        name="uploadFile"
-        :disabled="disabled"
-        :limit="field.maxLength ?? undefined"
-        :on-success="onUploadSuccess"
-        :on-remove="onUploadRemove"
-        :on-error="onUploadError"
-        :on-exceed="onUploadExceed"
-        multiple
-        class="dynamic-form-upload"
-        drag>
+    <el-upload v-else-if="field.type === 'UPLOAD'" ref="uploadRef" v-model:file-list="uploadFileList"
+        :action="uploadAction" :headers="uploadHeaders" name="uploadFile" :disabled="disabled"
+        :limit="field.maxLength ?? undefined" :on-success="onUploadSuccess" :on-remove="onUploadRemove"
+        :on-error="onUploadError" :on-exceed="onUploadExceed" multiple class="dynamic-form-upload" drag>
         <div class="upload-trigger-area">
-            <el-icon class="upload-trigger-icon"><Upload /></el-icon>
+            <el-icon class="upload-trigger-icon">
+                <Upload />
+            </el-icon>
             <div class="upload-trigger-text">
                 <span class="upload-trigger-primary">点击或拖拽文件到此处上传</span>
                 <span v-if="field.maxLength" class="upload-trigger-hint">最多可上传 {{ field.maxLength }} 个文件</span>
@@ -98,28 +88,41 @@
         <template #file="{ file }">
             <div class="upload-file-card" :class="'is-' + file.status">
                 <div class="file-card-icon" :class="'type-' + getFileCategory(file.name)">
-                    <el-icon><component :is="fileTypeIcons[getFileCategory(file.name)] || Files" /></el-icon>
+                    <el-icon>
+                        <component :is="fileTypeIcons[getFileCategory(file.name)] || Files" />
+                    </el-icon>
                 </div>
                 <div class="file-card-body">
-                    <div class="file-card-name" :title="file.name" @click="file.url && downloadFile(file.url, file.name)">
+                    <div class="file-card-name" :title="file.name"
+                        @click="file.url && downloadFile(file.url, file.name)">
                         {{ file.name }}
                     </div>
                     <div class="file-card-meta">
-                        <span v-if="getFileMeta(file)?.contentType" class="file-meta-tag">{{ getFileMeta(file)?.contentType }}</span>
-                        <span v-if="getFileMeta(file)?.size" class="file-meta-size">{{ formatFileSize(getFileMeta(file)?.size) }}</span>
+                        <span v-if="getFileMeta(file)?.contentType" class="file-meta-tag">{{
+                            getFileMeta(file)?.contentType }}</span>
+                        <span v-if="getFileMeta(file)?.size" class="file-meta-size">{{
+                            formatFileSize(getFileMeta(file)?.size) }}</span>
                         <span v-else-if="file.status === 'uploading'" class="file-meta-uploading">上传中...</span>
                     </div>
                 </div>
                 <div class="file-card-actions">
                     <template v-if="file.status === 'uploading'">
-                        <el-icon class="is-loading"><Loading /></el-icon>
+                        <el-icon class="is-loading">
+                            <Loading />
+                        </el-icon>
                     </template>
                     <template v-else>
-                        <span v-if="file.url" class="file-action-btn file-action-download" @click.stop="downloadFile(file.url, file.name)" title="下载">
-                            <el-icon><Download /></el-icon>
+                        <span v-if="file.url" class="file-action-btn file-action-download"
+                            @click.stop="downloadFile(file.url, file.name)" title="下载">
+                            <el-icon>
+                                <Download />
+                            </el-icon>
                         </span>
-                        <span v-if="!disabled" class="file-action-btn file-action-remove" @click.stop="handleFileRemove(file)" title="删除">
-                            <el-icon><Close /></el-icon>
+                        <span v-if="!disabled" class="file-action-btn file-action-remove"
+                            @click.stop="handleFileRemove(file)" title="删除">
+                            <el-icon>
+                                <Close />
+                            </el-icon>
                         </span>
                     </template>
                 </div>
@@ -553,8 +556,15 @@ const onUploadExceed = () => {
 }
 
 @keyframes upload-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 /* ---------- 文件类型图标 ---------- */
