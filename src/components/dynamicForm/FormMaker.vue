@@ -1315,6 +1315,40 @@ defineExpose({
     margin-bottom: 12px;
 }
 
+/* ============================================================
+   运行时表单（填表 / 查看模式）
+   ============================================================ */
+.runtime {
+    padding: var(--space-lg);
+
+    :deep(.el-form-item) {
+        margin-bottom: var(--space-lg);
+    }
+
+    :deep(.el-form-item__label) {
+        font-size: var(--fs-sm);
+        font-weight: var(--fw-medium);
+        color: var(--text-primary);
+        padding-bottom: var(--space-xs);
+        line-height: var(--lh-tight);
+    }
+
+    :deep(.el-form-item.is-required .el-form-item__label) {
+        &::after {
+            content: '*';
+            color: var(--danger);
+            margin-left: 2px;
+        }
+    }
+
+    /* 查看模式只读态 */
+    :deep(.el-input.is-disabled .el-input__inner),
+    :deep(.el-textarea.is-disabled .el-textarea__inner) {
+        background: var(--bg-elevated);
+        color: var(--text-regular);
+    }
+}
+
 @media (max-width: 768px) {
     .design .field-col {
         width: 100% !important;
