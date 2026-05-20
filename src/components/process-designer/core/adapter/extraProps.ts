@@ -18,7 +18,8 @@ const extraProps =
             "properties.backNodeId",
             "properties.backAssigneePolicy",
             "properties.form",
-            "properties.isDefault"
+            "properties.isDefault",
+            "properties.direction"
         ]
     },
     // 指定 bpmn:sequenceFlow 类型元素的转换规则
@@ -86,6 +87,18 @@ const extraProps =
                     json: '',
                 };
             },
+        },
+        // 包容网关默认路径扩展属性
+        'bpmn:inclusiveGateway': {
+            out(data: any) {
+                const { properties: { default: defaultFlow } } = data;
+                if (defaultFlow) {
+                    return {
+                        json: `  <bpmn:extensionElements>\n\t\t\t<flowable:default desc="默认路径">${defaultFlow}</flowable:default>\n\t\t  </bpmn:extensionElements>`,
+                    };
+                }
+                return { json: '' };
+            }
         },
     },
 }

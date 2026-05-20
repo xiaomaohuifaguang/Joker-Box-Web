@@ -1,0 +1,74 @@
+import LogicFlow, {
+    h,
+    GraphModel,
+    PolygonNode,
+    PolygonNodeModel,
+} from '@logicflow/core'
+import { genBpmnId } from '@logicflow/extension/lib/bpmn-elements/utils'
+
+import NodeConfig = LogicFlow.NodeConfig
+
+export class ParallelGatewayModel extends PolygonNodeModel {
+    static extendKey = 'ParallelGatewayModel'
+
+    constructor(data: NodeConfig, graphModel: GraphModel) {
+        if (!data.id) {
+            data.id = `Gateway_${genBpmnId()}`
+        }
+        if (!data.text) {
+            data.text = ''
+        }
+        if (data.text && typeof data.text === 'string') {
+            data.text = {
+                value: data.text,
+                x: data.x,
+                y: data.y + 40,
+            }
+        }
+        super(data, graphModel)
+        this.points = [
+            [25, 0],
+            [50, 25],
+            [25, 50],
+            [0, 25],
+        ]
+    }
+}
+
+export class ParallelGatewayView extends PolygonNode {
+    static extendKey = 'ParallelGatewayNode'
+
+    getShape(): h.JSX.Element {
+        const { model } = this.props
+        const { x, y, width, height, points } = model as PolygonNodeModel
+        const style = model.getNodeStyle()
+        return h(
+            'g',
+            {
+                transform: `matrix(1 0 0 1 ${x - width / 2} ${y - height / 2})`,
+            },
+            // @ts-ignore
+            h('polygon', {
+                ...style,
+                x,
+                y,
+                points,
+            }),
+            // "+" 号：垂直线 + 水平线
+            h('path', {
+                d: 'M 25 12 L 25 38 M 12 25 L 38 25',
+                stroke: style.stroke || '#000',
+                'stroke-width': 3,
+                fill: 'none',
+            }),
+        )
+    }
+}
+
+export const ParallelGateway = {
+    type: 'bpmn:parallelGateway',
+    view: ParallelGatewayView,
+    model: ParallelGatewayModel,
+}
+
+export default ParallelGateway

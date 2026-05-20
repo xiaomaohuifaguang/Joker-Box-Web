@@ -25,10 +25,13 @@ const emit = defineEmits<{
 
 const { elementText, doUpdateElementText, doUpdateProperty } = useProperty(props, emit)
 
+// 支持条件表达式的网关类型
+const CONDITIONAL_GATEWAYS = ['bpmn:exclusiveGateway', 'bpmn:inclusiveGateway']
+
 const shouldShowCondition = computed(() => {
     if (!props.lf || !props.data?.sourceNodeId) return false
     const sourceNode = props.lf.graphModel?.nodes?.find((node: any) => node.id === props.data.sourceNodeId)
-    if (sourceNode?.type !== 'bpmn:exclusiveGateway') return false
+    if (!CONDITIONAL_GATEWAYS.includes(sourceNode?.type)) return false
     if (sourceNode.properties?.default === props.data.id) return false
     return true
 })

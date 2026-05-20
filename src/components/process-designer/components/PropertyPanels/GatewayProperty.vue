@@ -8,7 +8,7 @@
         <el-form-item label="名称">
             <el-input :model-value="elementText" @update:model-value="doUpdateElementText" :disabled="readonly" />
         </el-form-item>
-        <el-form-item label="默认路径">
+        <el-form-item label="默认路径" v-if="showDefaultFlow">
             <el-select v-model="defaultFlow" clearable placeholder="请选择默认路径" :disabled="readonly">
                 <el-option v-for="item in outgoingEdges" :key="item.id" :label="item.label" :value="item.id" />
             </el-select>
@@ -33,22 +33,18 @@ const emit = defineEmits<{
 const { elementText, doUpdateElementText, doUpdateProperty } = useProperty(props, emit)
 
 const options = [
-    {
-        value: 'bpmn:startEvent',
-        label: '开始节点',
-    },
-    {
-        value: 'bpmn:userTask',
-        label: '用户任务',
-    },
-    {
-        value: 'bpmn:endEvent',
-        label: '结束节点',
-    }, {
-        value: 'bpmn:exclusiveGateway',
-        label: '排他网关',
-    }
+    { value: 'bpmn:startEvent', label: '开始节点' },
+    { value: 'bpmn:userTask', label: '用户任务' },
+    { value: 'bpmn:endEvent', label: '结束节点' },
+    { value: 'bpmn:exclusiveGateway', label: '排他网关' },
+    { value: 'bpmn:parallelGateway', label: '并行网关' },
+    { value: 'bpmn:inclusiveGateway', label: '包容网关' },
 ]
+
+// 是否显示默认路径：排他网关和包容网关显示，并行网关不显示
+const showDefaultFlow = computed(() =>
+    props.data?.type === 'bpmn:exclusiveGateway' || props.data?.type === 'bpmn:inclusiveGateway'
+)
 
 const outgoingEdges = computed(() => {
     if (!props.lf || !props.data?.id) return []

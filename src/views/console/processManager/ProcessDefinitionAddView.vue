@@ -24,6 +24,7 @@
 <script setup lang="ts">
 import { Check, InfoFilled } from '@element-plus/icons-vue'
 import { alert, confirm, http } from '@/utils';
+import { ElMessageBox } from 'element-plus'
 import { ref } from 'vue';
 import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
 
@@ -45,13 +46,41 @@ const info = ref({
     rawData: {},
 })
 
-const add = () => {
-    confirm("提示", "确认添加？", async () => {
-        const result = await http.post('/processDefinition/add', info.value, { raw: true })
-        alert(result.msg, 'success')
-        emit('success');
-    })
+const validateUserTasks = (rawData: any) => {
+    if (!rawData?.nodes) return []
+    return rawData.nodes
+        .filter((node: any) => node.type === 'bpmn:userTask' && !node.properties?.approvalType)
+        .map((node: any) => node.text?.value || node.id)
+}
 
+const doAdd = async () => {
+    const result = await http.post('/processDefinition/add', info.value, { raw: true })
+    alert(result.msg, 'success')
+    emit('success');
+}
+
+const add = () => {
+    const missingTasks = validateUserTasks(info.value.rawData)
+    if (missingTasks.length > 0) {
+        const taskList = missingTasks.map((name: string) => `「${name}」`).join('、')
+        ElMessageBox.confirm(
+            `以下用户任务未设置处理类型，请检查：\n${taskList}`,
+            '校验提示',
+            {
+                confirmButtonText: '确认继续',
+                cancelButtonText: '取消',
+                closeOnClickModal: false,
+                closeOnPressEscape: true,
+                type: 'warning',
+            }
+        ).then(() => {
+            doAdd()
+        }).catch(() => {})
+        return
+    }
+    confirm("提示", "确认添加？", async () => {
+        doAdd()
+    })
 }
 </script>
 

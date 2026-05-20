@@ -113,13 +113,15 @@ onMounted(async () => {
             itemData.value = props.info
             itemType.value = 'process'
         })
+        const GATEWAY_TYPES_WITH_DEFAULT = ['bpmn:exclusiveGateway', 'bpmn:inclusiveGateway']
+
         const cleanOrphanGatewayDefault = () => {
             if (!lf.value) return
             const edges = lf.value.graphModel?.edges || []
             const edgeIds = new Set(edges.map((edge: any) => edge.id))
             const nodes = lf.value.graphModel?.nodes || []
             nodes.forEach((node: any) => {
-                if (node.type === 'bpmn:exclusiveGateway' && node.properties?.default) {
+                if (GATEWAY_TYPES_WITH_DEFAULT.includes(node.type) && node.properties?.default) {
                     if (!edgeIds.has(node.properties.default)) {
                         lf.value!.deleteProperty(node.id, 'default')
                         if (itemType.value === 'node' && itemData.value?.id === node.id) {
@@ -136,7 +138,7 @@ onMounted(async () => {
             if (!deletedEdgeId || !lf.value) return
             const nodes = lf.value.graphModel?.nodes || []
             nodes.forEach((node: any) => {
-                if (node.type === 'bpmn:exclusiveGateway' && node.properties?.default === deletedEdgeId) {
+                if (GATEWAY_TYPES_WITH_DEFAULT.includes(node.type) && node.properties?.default === deletedEdgeId) {
                     lf.value!.deleteProperty(node.id, 'default')
                     if (itemType.value === 'node' && itemData.value?.id === node.id) {
                         const newProperties = { ...itemData.value.properties }

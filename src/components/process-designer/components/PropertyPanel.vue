@@ -10,8 +10,8 @@
                     @change="handleChange" />
                 <EndEventProperty v-else-if="data.type === 'bpmn:endEvent'" :lf="lf" :data="data" :readonly="readonly"
                     @change="handleChange" />
-                <GatewayProperty v-else-if="data.type === 'bpmn:exclusiveGateway'" :lf="lf" :data="data" :readonly="readonly"
-                    @change="handleChange" />
+                <GatewayProperty v-else-if="['bpmn:exclusiveGateway', 'bpmn:parallelGateway', 'bpmn:inclusiveGateway'].includes(data.type)"
+                    :lf="lf" :data="data" :readonly="readonly" @change="handleChange" />
             </template>
             <EdgePropertyPanel v-if="itemType == 'edge'" :lf="lf" :data="data" :readonly="readonly" @change="handleChange" />
         </el-form>

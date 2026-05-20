@@ -34,6 +34,7 @@
 <script setup lang="ts">
 import { Document, Check, InfoFilled, View } from '@element-plus/icons-vue'
 import { alert, confirm, http } from '@/utils';
+import { ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue';
 import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
 
@@ -72,14 +73,42 @@ const queryInfo = async () => {
     reloadKey.value++
 }
 
-const save = () => {
-    confirm("提示", "确认保存？", async () => {
-        loading.value = true
-        const result = await http.post('/processDefinition/save', info.value, { raw: true })
-        alert(result.msg, 'success')
-        queryInfo()
-    })
+const validateUserTasks = (rawData: any) => {
+    if (!rawData?.nodes) return []
+    return rawData.nodes
+        .filter((node: any) => node.type === 'bpmn:userTask' && !node.properties?.approvalType)
+        .map((node: any) => node.text?.value || node.id)
+}
 
+const doSave = async () => {
+    loading.value = true
+    const result = await http.post('/processDefinition/save', info.value, { raw: true })
+    alert(result.msg, 'success')
+    queryInfo()
+}
+
+const save = () => {
+    const missingTasks = validateUserTasks(info.value.rawData)
+    if (missingTasks.length > 0) {
+        const taskList = missingTasks.map((name: string) => `「${name}」`).join('、')
+        ElMessageBox.confirm(
+            `以下用户任务未设置处理类型，请检查：\n${taskList}`,
+            '校验提示',
+            {
+                confirmButtonText: '确认继续',
+                cancelButtonText: '取消',
+                closeOnClickModal: false,
+                closeOnPressEscape: true,
+                type: 'warning',
+            }
+        ).then(() => {
+            doSave()
+        }).catch(() => {})
+        return
+    }
+    confirm("提示", "确认保存？", async () => {
+        doSave()
+    })
 }
 
 onMounted(() => {

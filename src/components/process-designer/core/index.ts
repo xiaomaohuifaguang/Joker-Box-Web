@@ -3,6 +3,8 @@ import EndEvent from "./nodes/EndEvent"
 import UserTask from "./nodes/UserTask";
 import SequenceFlow from "./edges/SequenceFlow";
 import ExclusiveGateway from './nodes/ExclusiveGateway'
+import ParallelGateway from './nodes/ParallelGateway'
+import InclusiveGateway from './nodes/InclusiveGateway'
 import LogicFlow from "@logicflow/core";
 
 export const registerCustomElement = (lf: LogicFlow) => {
@@ -12,5 +14,7 @@ export const registerCustomElement = (lf: LogicFlow) => {
     lf.register(UserTask);
     lf.register(SequenceFlow);
     lf.register(ExclusiveGateway);
+    lf.register(ParallelGateway);
+    lf.register(InclusiveGateway);
 
 }
