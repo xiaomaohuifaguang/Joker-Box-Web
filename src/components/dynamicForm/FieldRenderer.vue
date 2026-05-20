@@ -184,7 +184,11 @@ const extractFileIds = (val: any): string[] => {
         if (val[0]?.raw) {
             return val.map((it: any) => it.raw?.data?.id || it.raw?.id).filter(Boolean)
         }
-        // 对象格式兼容: [{ fileId, filename }]
+        // 新格式完整对象: [{ id, filename, contentType, ... }]
+        if (val[0]?.id) {
+            return val.map((it: any) => it.id)
+        }
+        // 旧对象格式兼容: [{ fileId, filename }]
         if (val[0]?.fileId) {
             return val.map((it: any) => it.fileId)
         }
@@ -224,8 +228,19 @@ const buildUploadFileList = (val: any): UploadFile[] => {
                     } as UploadFile)
                 }
             })
+        } else if (val.length > 0 && val[0]?.id) {
+            // 新格式完整对象: [{ id, filename, contentType, ... }]
+            val.forEach((it: any, idx: number) => {
+                list.push({
+                    name: it.filename || it.id,
+                    url: `${CONSTANTS.HTTP.BASEURL}/file/downloadDynamicForm?fileId=${it.id}`,
+                    uid: -(idx + 1),
+                    status: 'success',
+                    percentage: 100,
+                } as UploadFile)
+            })
         } else if (val.length > 0 && val[0]?.fileId) {
-            // 对象格式
+            // 旧对象格式兼容: [{ fileId, filename }]
             val.forEach((it: any, idx: number) => {
                 list.push({
                     name: it.filename || it.fileId,
@@ -273,8 +288,8 @@ watch(() => props.modelValue, (val) => {
 }, { immediate: true })
 
 const onUploadSuccess = (response: any, file: UploadFile) => {
-    const fileId = response?.data?.id
-    const filename = response?.data?.filename
+    const data = response?.data
+    const fileId = data?.id
     if (!fileId) {
         alert('上传失败：未获取到文件ID', 'error')
         const idx = uploadFileList.value.findIndex(f => f.uid === file.uid)
@@ -283,17 +298,31 @@ const onUploadSuccess = (response: any, file: UploadFile) => {
     }
     const item = uploadFileList.value.find(f => f.uid === file.uid)
     if (item) {
-        item.name = filename || item.name
+        item.name = data?.filename || item.name
         item.url = `${CONSTANTS.HTTP.BASEURL}/file/downloadDynamicForm?fileId=${fileId}`
     }
-    const ids = uploadFileList.value.map(extractFileIdFromUploadFile).filter(Boolean) as string[]
-    emit('update:modelValue', ids)
+    // 保留已有文件的完整元数据，追加新文件
+    const existing = Array.isArray(props.modelValue) ? [...props.modelValue] : []
+    const normalized = existing
+        .map((it: any) => {
+            if (typeof it === 'string') return { id: it, filename: it }
+            if (it.fileId && !it.id) return { ...it, id: it.fileId }
+            return it
+        })
+        .filter((it: any) => it.id !== fileId)
+    normalized.push(data)
+    emit('update:modelValue', normalized)
 }
 
-const onUploadRemove = (_file: UploadFile) => {
-    // v-model:file-list 已自动同步删除后的列表
-    const ids = uploadFileList.value.map(extractFileIdFromUploadFile).filter(Boolean) as string[]
-    emit('update:modelValue', ids)
+const onUploadRemove = (file: UploadFile) => {
+    const removedId = extractFileIdFromUploadFile(file)
+    if (!removedId) return
+    const existing = Array.isArray(props.modelValue) ? [...props.modelValue] : []
+    const filtered = existing.filter((it: any) => {
+        if (typeof it === 'string') return it !== removedId
+        return (it.id || it.fileId) !== removedId
+    })
+    emit('update:modelValue', filtered)
 }
 
 const onUploadError = (_error: any, file: UploadFile) => {

@@ -286,6 +286,7 @@ import {
     type FormField,
     type FormFieldGroup,
     type FormLinkageRule,
+    type FormFieldType,
     flattenGroups,
     buildGroups,
 } from './types'
@@ -681,10 +682,14 @@ const runtimeGroups = computed(() => {
         .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
 })
 
+const ARRAY_VALUE_TYPES: FormFieldType[] = ['UPLOAD', 'CHECKBOX', 'MULTISELECT', 'MULTICASCADER']
+
 const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { pattern?: string; patternTips?: string }): FormItemRule[] => {
     const itemRules: FormItemRule[] = []
+    const isArrayField = ARRAY_VALUE_TYPES.includes(field.type)
     if (requiredOverride) {
         itemRules.push({
+            type: isArrayField ? 'array' : 'string',
             required: true,
             message: `${field.title}不能为空`,
             trigger: 'change',
@@ -692,6 +697,7 @@ const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { p
     }
     if (field.minLength != null) {
         itemRules.push({
+            type: isArrayField ? 'array' : 'string',
             min: Number(field.minLength),
             message: `${field.title} 长度不能小于 ${field.minLength}`,
             trigger: 'change',
@@ -700,6 +706,7 @@ const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { p
     if (field.maxLength != null) {
         const isUpload = field.type === 'UPLOAD'
         itemRules.push({
+            type: isArrayField ? 'array' : 'string',
             max: Number(field.maxLength),
             message: isUpload
                 ? `${field.title} 最多上传 ${field.maxLength} 个文件`
