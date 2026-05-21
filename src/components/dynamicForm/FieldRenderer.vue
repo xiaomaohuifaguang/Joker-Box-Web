@@ -17,60 +17,80 @@
 
     <el-select v-else-if="field.type === 'SELECT'" :model-value="modelValue" @update:model-value="onUpdate"
         :placeholder="field.placeholder" :disabled="disabled" clearable style="width: 100%;">
-        <el-option v-for="item in field.options || []" :key="item.value" :label="item.label" :value="item.value" />
+        <el-option v-for="item in fieldOptions" :key="item.value" :label="item.label" :value="item.value" />
     </el-select>
 
-    <el-select v-else-if="field.type === 'MULTISELECT'" :model-value="modelValue" @update:model-value="onUpdate"
+    <el-select v-else-if="field.type === 'MULTISELECT'" :model-value="modelValue || []" @update:model-value="onUpdate"
         :placeholder="field.placeholder" :disabled="disabled" clearable multiple style="width: 100%;">
-        <el-option v-for="item in field.options || []" :key="item.value" :label="item.label" :value="item.value" />
+        <el-option v-for="item in fieldOptions" :key="item.value" :label="item.label" :value="item.value" />
     </el-select>
 
-    <el-radio-group v-else-if="field.type === 'RADIO'" :model-value="modelValue" @update:model-value="onUpdate"
-        :disabled="disabled" style="width: 100%;">
-        <el-radio v-for="item in field.options || []" :key="item.value" :value="item.value">
-            {{ item.label }}
-        </el-radio>
-    </el-radio-group>
+    <div v-else-if="field.type === 'RADIO'" class="field-with-clear">
+        <el-radio-group :model-value="modelValue" @update:model-value="onUpdate" :disabled="disabled"
+            style="flex: 1;">
+            <el-radio v-for="item in fieldOptions" :key="item.value" :value="item.value"
+                style="margin-bottom: 4px"">
+                {{ item.label }}
+            </el-radio>
+        </el-radio-group>
+        <el-button v-if="modelValue !== null && modelValue !== undefined && modelValue !== ''" link type="primary"
+            size="small" @click="onUpdate(null)"
+            style="margin-left: 8px; white-space: nowrap;"">清空</el-button>
+    </div>
 
-    <el-checkbox-group v-else-if="field.type === 'CHECKBOX'" :model-value="modelValue" @update:model-value="onUpdate"
-        :disabled="disabled" :min="field.min" :max="field.max" style="width: 100%;">
-        <el-checkbox v-for="item in field.options || []" :key="item.value" :value="item.value">
+    <el-checkbox-group v-else-if="field.type === 'CHECKBOX'" :model-value="modelValue || []" @update:model-value="onUpdate"
+        :disabled="disabled" :min="field.min ?? undefined" :max="field.max ?? undefined" style="width: 100%;">
+        <el-checkbox v-for="item in fieldOptions" :key="item.value" :value="item.value">
             {{ item.label }}
         </el-checkbox>
     </el-checkbox-group>
 
     <el-cascader v-else-if="field.type === 'CASCADER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :options="field.options" :placeholder="field.placeholder" :disabled="disabled" :props="{ multiple: false }"
-        style="width: 100%;" />
+        :options="fieldOptions" :placeholder="field.placeholder" :disabled="disabled"
+        :props="{ multiple: false, ...(field.props || {}) }"
+        :show-all-levels="field.props?.showAllLevels"
+        clearable style="width: 100%;" />
 
-    <el-cascader v-else-if="field.type === 'MULTICASCADER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :options="field.options" :placeholder="field.placeholder" :disabled="disabled" :props="{ multiple: true }"
-        style="width: 100%;" />
+    <el-cascader v-else-if="field.type === 'MULTICASCADER'" :model-value="modelValue || []" @update:model-value="onUpdate"
+        :options="fieldOptions" :placeholder="field.placeholder" :disabled="disabled"
+        :props="{ multiple: true, ...(field.props || {}) }"
+        :show-all-levels="field.props?.showAllLevels"
+        clearable style="width: 100%;" />
 
     <el-switch v-else-if="field.type === 'SWITCH'" :model-value="modelValue" @update:model-value="onUpdate"
         :disabled="disabled" />
 
-    <el-color-picker v-else-if="field.type === 'COLOR'" :model-value="modelValue" @update:model-value="onUpdate"
-        :disabled="disabled" />
+    <div v-else-if="field.type === 'COLOR'" class="field-with-clear">
+        <el-color-picker :model-value="modelValue" @update:model-value="onUpdate" :disabled="disabled" show-alpha />
+        <el-button v-if="modelValue !== null && modelValue !== undefined && modelValue !== ''" link type="primary"
+            size="small" @click="onUpdate(null)"
+            style="margin-left: 8px; white-space: nowrap;">清空</el-button>
+    </div>
 
-    <el-slider v-else-if="field.type === 'SLIDER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :min="field.min ?? 0" :max="field.max ?? 100" :disabled="disabled" :show-input="!disabled" show-stops
-        show-tooltip style="margin: 0 12px;" />
+    <div v-else-if="field.type === 'SLIDER'" class="field-with-clear">
+        <el-slider :model-value="modelValue" @update:model-value="onUpdate" :min="field.min ?? 0"
+            :max="field.max ?? 100" :disabled="disabled" :show-input="!disabled" show-stops show-tooltip
+            style="flex: 1; margin: 0 12px;" />
+        <el-button v-if="modelValue !== null && modelValue !== undefined && modelValue !== ''" link type="primary"
+            size="small" @click="onUpdate(null)"
+            style="margin-left: 8px; white-space: nowrap;">重置</el-button>
+    </div>
 
     <el-date-picker v-else-if="field.type === 'DATE'" :model-value="modelValue" @update:model-value="onUpdate"
         type="date" :placeholder="field.placeholder" :disabled="disabled" value-format="YYYY-MM-DD"
-        style="width: 100%;" />
+        clearable style="width: 100%;" />
 
     <el-date-picker v-else-if="field.type === 'DATETIME'" :model-value="modelValue" @update:model-value="onUpdate"
         type="datetime" :placeholder="field.placeholder" :disabled="disabled" value-format="YYYY-MM-DD HH:mm:ss"
-        style="width: 100%;" />
+        clearable style="width: 100%;" />
 
     <el-time-picker v-else-if="field.type === 'TIME'" :model-value="modelValue" @update:model-value="onUpdate"
-        :placeholder="field.placeholder" :disabled="disabled" value-format="HH:mm:ss" style="width: 100%;" />
+        :placeholder="field.placeholder" :disabled="disabled" value-format="HH:mm:ss" clearable
+        style="width: 100%;" />
 
     <el-date-picker v-else-if="field.type === 'DATERANGE'" :model-value="modelValue" @update:model-value="onUpdate"
         type="daterange" unlink-panels range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"
-        :disabled="disabled" value-format="YYYY-MM-DD" style="width: 100%;" />
+        :disabled="disabled" value-format="YYYY-MM-DD" clearable style="width: 100%;" />
 
     <el-upload v-else-if="field.type === 'UPLOAD'" ref="uploadRef" v-model:file-list="uploadFileList"
         :action="uploadAction" :headers="uploadHeaders" name="uploadFile" :disabled="disabled"
@@ -141,7 +161,7 @@ import {
     Files
 } from '@element-plus/icons-vue'
 import type { UploadFile } from 'element-plus'
-import type { FormField } from './types'
+import type { FormField, FormFieldOption } from './types'
 import axios from 'axios'
 import { CONSTANTS, getToken, alert } from '@/utils'
 
@@ -149,7 +169,10 @@ const props = defineProps<{
     field: FormField
     modelValue: any
     disabled?: boolean
+    runtimeOptions?: FormFieldOption[]
 }>()
+
+const fieldOptions = computed(() => props.runtimeOptions ?? props.field.options ?? [])
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: any): void
@@ -210,7 +233,7 @@ const getFileMeta = (file: UploadFile): any => {
     if (!fileId || !Array.isArray(props.modelValue)) return null
     return props.modelValue.find((it: any) => {
         if (typeof it === 'string') return it === fileId
-        return (it.id || it.fileId) === fileId
+        return it.id === fileId
     })
 }
 
@@ -242,22 +265,14 @@ const uploadHeaders = computed(() => ({
     authorization: CONSTANTS.SYSTEM.TOKEN_TYPE + ' ' + getToken(),
 }))
 
-/** 从各种格式的 modelValue 中提取 fileId 列表 */
+/** 从 modelValue 中提取 fileId 列表 */
 const extractFileIds = (val: any): string[] => {
     if (!val) return []
     if (Array.isArray(val)) {
         if (val.length === 0) return []
-        // 旧格式兼容: [{ name, url, raw }]
-        if (val[0]?.raw) {
-            return val.map((it: any) => it.raw?.data?.id || it.raw?.id).filter(Boolean)
-        }
-        // 新格式完整对象: [{ id, filename, contentType, ... }]
+        // 完整对象: [{ id, filename, contentType, ... }]
         if (val[0]?.id) {
             return val.map((it: any) => it.id)
-        }
-        // 旧对象格式兼容: [{ fileId, filename }]
-        if (val[0]?.fileId) {
-            return val.map((it: any) => it.fileId)
         }
         // 字符串数组
         return val.filter((it: any) => typeof it === 'string')
@@ -281,37 +296,12 @@ const extractFileIdFromUploadFile = (file: UploadFile): string | undefined => {
 const buildUploadFileList = (val: any): UploadFile[] => {
     const list: UploadFile[] = []
     if (Array.isArray(val)) {
-        if (val.length > 0 && val[0]?.raw) {
-            // 旧格式
-            val.forEach((it: any, idx: number) => {
-                const fileId = it.raw?.data?.id || it.raw?.id
-                if (fileId) {
-                    list.push({
-                        name: it.name || fileId,
-                        url: `${CONSTANTS.HTTP.BASEURL}/file/downloadDynamicForm?fileId=${fileId}`,
-                        uid: -(idx + 1),
-                        status: 'success',
-                        percentage: 100,
-                    } as UploadFile)
-                }
-            })
-        } else if (val.length > 0 && val[0]?.id) {
-            // 新格式完整对象: [{ id, filename, contentType, ... }]
+        if (val.length > 0 && val[0]?.id) {
+            // 完整对象: [{ id, filename, contentType, ... }]
             val.forEach((it: any, idx: number) => {
                 list.push({
                     name: it.filename || it.id,
                     url: `${CONSTANTS.HTTP.BASEURL}/file/downloadDynamicForm?fileId=${it.id}`,
-                    uid: -(idx + 1),
-                    status: 'success',
-                    percentage: 100,
-                } as UploadFile)
-            })
-        } else if (val.length > 0 && val[0]?.fileId) {
-            // 旧对象格式兼容: [{ fileId, filename }]
-            val.forEach((it: any, idx: number) => {
-                list.push({
-                    name: it.filename || it.fileId,
-                    url: `${CONSTANTS.HTTP.BASEURL}/file/downloadDynamicForm?fileId=${it.fileId}`,
                     uid: -(idx + 1),
                     status: 'success',
                     percentage: 100,
@@ -370,13 +360,7 @@ const onUploadSuccess = (response: any, file: UploadFile) => {
     }
     // 保留已有文件的完整元数据，追加新文件
     const existing = Array.isArray(props.modelValue) ? [...props.modelValue] : []
-    const normalized = existing
-        .map((it: any) => {
-            if (typeof it === 'string') return { id: it, filename: it }
-            if (it.fileId && !it.id) return { ...it, id: it.fileId }
-            return it
-        })
-        .filter((it: any) => it.id !== fileId)
+    const normalized = existing.filter((it: any) => it.id !== fileId)
     normalized.push(data)
     emit('update:modelValue', normalized)
 }
@@ -387,7 +371,7 @@ const onUploadRemove = (file: UploadFile) => {
     const existing = Array.isArray(props.modelValue) ? [...props.modelValue] : []
     const filtered = existing.filter((it: any) => {
         if (typeof it === 'string') return it !== removedId
-        return (it.id || it.fileId) !== removedId
+        return it.id !== removedId
     })
     emit('update:modelValue', filtered)
 }
@@ -710,6 +694,12 @@ const onUploadExceed = () => {
         color: var(--danger);
         background: var(--danger-bg);
     }
+}
+
+.field-with-clear {
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
 /* ---------- 响应式 ---------- */

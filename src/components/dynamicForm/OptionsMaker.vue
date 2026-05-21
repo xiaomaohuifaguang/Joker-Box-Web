@@ -22,7 +22,7 @@
         <div class="options-management">
             <div class="management-header">
                 <span class="title">选项管理</span>
-                <el-button type="primary" size="small" @click="addOption(null)">
+                <el-button type="primary" @click="addOption(null)">
                     <el-icon>
                         <Plus />
                     </el-icon> 添加选项
@@ -100,6 +100,7 @@ export default defineComponent({
             const newOption = {
                 label: `选项${Date.now()}`,
                 value: id,
+                visible: true,
             }
 
             if (isCascaderType.value) {

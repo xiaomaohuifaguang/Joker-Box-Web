@@ -24,6 +24,7 @@ export interface FormFieldOption {
     label: string
     value: string | number
     children?: FormFieldOption[]
+    visible?: boolean
 }
 
 // 表单项配置（DynamicFormField）
@@ -44,6 +45,7 @@ export interface FormField {
     span?: number
     sort?: number
     groupId?: string
+    props?: Record<string, any>
 }
 
 // 字段分组（DynamicFormFieldGroup）
@@ -155,6 +157,8 @@ export interface FieldRuntimeState {
     pattern?: string
     patternTips?: string
     span?: number
+    options?: FormFieldOption[] // OPTION 动作覆盖的选项
+    value?: any // VALUE 动作建议的值
 }
 
 // 字段类型可选项（UI 用）
@@ -258,11 +262,19 @@ export const getActionParamDefault = (actionType: LinkageAction): any => {
         case 'SET_PATTERN':
             return { pattern: '', patternTips: '' }
         case 'SET_SPAN':
-            return 24
+            return { span: 24 }
         case 'OPTION':
+            return []
         case 'VALUE':
-            return ''
+            return undefined
         default:
             return undefined
     }
+}
+
+/** 解析 SWITCH 类型值，兼容 boolean / string / number */
+export const parseSwitchValue = (v: any): boolean => {
+    if (v === true || v === 'true' || v === '1' || v === 1) return true
+    if (v === false || v === 'false' || v === '0' || v === 0) return false
+    return !!v
 }

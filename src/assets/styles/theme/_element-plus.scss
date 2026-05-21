@@ -208,10 +208,15 @@
 
 .el-input__wrapper,
 .el-select .el-input__wrapper,
+.el-select__wrapper,
 .el-date-editor .el-input__wrapper,
 .el-cascader .el-input__wrapper,
-.el-autocomplete .el-input__wrapper {
+.el-cascader__wrapper,
+.el-autocomplete .el-input__wrapper,
+.el-input-number .el-input__wrapper {
+    height: 36px !important;
     min-height: 36px !important;
+    box-sizing: border-box;
 }
 
 /* 按钮统一 36px */

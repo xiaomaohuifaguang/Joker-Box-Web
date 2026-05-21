@@ -1,11 +1,18 @@
 <template>
     <div class="option-item">
         <div class="option-content">
-            <el-input v-model="option.label" placeholder="标签" size="small" @change="$emit('update-parent')" />
-            <el-input v-model="option.value" placeholder="值" size="small" @change="$emit('update-parent')" />
-            <el-button type="danger" size="small" :icon="Delete" circle
+            <el-input v-model="option.label" placeholder="标签" @change="$emit('update-parent')" />
+            <el-input v-model="option.value" placeholder="值" @change="$emit('update-parent')" />
+            <el-switch
+                :model-value="option.visible !== false"
+                @update:model-value="option.visible = $event; $emit('update-parent')"
+                active-text="显"
+                inactive-text="隐"
+                inline-prompt
+            />
+            <el-button type="danger" :icon="Delete" circle
                 @click="$emit('remove-option', [...path, index])" />
-            <el-button v-if="isCascaderType" type="primary" size="small" :icon="Plus" circle
+            <el-button v-if="isCascaderType" type="primary" :icon="Plus" circle
                 @click="$emit('add-option', [...path, index])" />
         </div>
 

@@ -32,7 +32,7 @@ import { useRoute } from 'vue-router'
 import { Document, Check } from '@element-plus/icons-vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import FormMaker from '@/components/dynamicForm/FormMaker.vue'
-import type { FormField, FormFieldGroup, FormLinkageRule } from '@/components/dynamicForm/types'
+import type { FormField, FormFieldGroup, FormLinkageRule, FieldRuntimeState } from '@/components/dynamicForm/types'
 import { flattenGroups } from '@/components/dynamicForm/types'
 
 const route = useRoute()
@@ -97,6 +97,43 @@ const queryFields = async () => {
     }
 }
 
+/** 按字段类型转换提交数据，与后端值类型保持一致；过滤隐藏字段 */
+const convertSubmitData = (data: Record<string, any>, fields: FormField[], states?: Record<string, FieldRuntimeState>): Record<string, any> => {
+    const result: Record<string, any> = {}
+    fields.forEach(field => {
+        // 过滤隐藏字段
+        if (states && states[field.fieldId]?.visible === false) {
+            return
+        }
+        const val = data[field.fieldId]
+        if (val === undefined || val === null) {
+            result[field.fieldId] = null
+            return
+        }
+        switch (field.type) {
+            case 'NUMBER':
+            case 'RATE':
+            case 'SLIDER':
+                result[field.fieldId] = String(val)
+                break
+            case 'SWITCH':
+                result[field.fieldId] = val === true || val === 'true' ? 'true' : 'false'
+                break
+            case 'CHECKBOX':
+            case 'MULTISELECT':
+            case 'CASCADER':
+            case 'MULTICASCADER':
+            case 'UPLOAD':
+            case 'DATERANGE':
+                result[field.fieldId] = val
+                break
+            default:
+                result[field.fieldId] = String(val)
+        }
+    })
+    return result
+}
+
 const submit = async () => {
     const verifyFlag = await formMakerRef.value?.verify();
     if (!verifyFlag) {
@@ -105,11 +142,12 @@ const submit = async () => {
 
     loading.value = true
     try {
+        const states = formMakerRef.value?.runtimeStates
         await http.post("/dynamicForm/submit", {
             formId: info.value.id,
             version: route.params.version,
             formInstanceId: null,
-            data: formData.value
+            data: convertSubmitData(formData.value, info.value.formFields, states)
         })
         alert('提交成功', 'success')
     } catch (e: any) {

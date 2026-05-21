@@ -36,26 +36,32 @@ const evalCondition = (
     switch (condition) {
         case 'EQ': {
             if (Array.isArray(fieldValue) && Array.isArray(triggerValue)) {
-                return fieldValue.length === triggerValue.length &&
-                    fieldValue.every((v, i) => String(v) === String(triggerValue[i]))
+                return JSON.stringify(fieldValue) === JSON.stringify(triggerValue)
             }
             if (Array.isArray(fieldValue)) {
+                const fieldStr = fieldValue.map(String).join(',')
+                if (fieldStr === String(triggerValue ?? '')) return true
                 return fieldValue.length === 1 && String(fieldValue[0]) === String(triggerValue ?? '')
             }
             if (Array.isArray(triggerValue)) {
+                const triggerStr = triggerValue.map(String).join(',')
+                if (triggerStr === String(fieldValue ?? '')) return true
                 return triggerValue.length === 1 && String(triggerValue[0]) === String(fieldValue ?? '')
             }
             return String(fieldValue ?? '') === String(triggerValue ?? '')
         }
         case 'NE': {
             if (Array.isArray(fieldValue) && Array.isArray(triggerValue)) {
-                return fieldValue.length !== triggerValue.length ||
-                    fieldValue.some((v, i) => String(v) !== String(triggerValue[i]))
+                return JSON.stringify(fieldValue) !== JSON.stringify(triggerValue)
             }
             if (Array.isArray(fieldValue)) {
+                const fieldStr = fieldValue.map(String).join(',')
+                if (fieldStr === String(triggerValue ?? '')) return false
                 return fieldValue.length !== 1 || String(fieldValue[0]) !== String(triggerValue ?? '')
             }
             if (Array.isArray(triggerValue)) {
+                const triggerStr = triggerValue.map(String).join(',')
+                if (triggerStr === String(fieldValue ?? '')) return false
                 return triggerValue.length !== 1 || String(triggerValue[0]) !== String(fieldValue ?? '')
             }
             return String(fieldValue ?? '') !== String(triggerValue ?? '')
@@ -103,7 +109,10 @@ const evalCondition = (
         case 'REGEX': {
             if (triggerValue === null || triggerValue === undefined) return false
             try {
-                return new RegExp(String(triggerValue)).test(String(fieldValue ?? ''))
+                const regex = new RegExp(String(triggerValue))
+                const strValue = String(fieldValue ?? '')
+                const match = regex.exec(strValue)
+                return match !== null && match[0].length === strValue.length
             } catch {
                 return false
             }
@@ -152,6 +161,7 @@ export const computeFieldStates = (
             visible: true,
             required: f.required === '1',
             disabled: false,
+            options: f.options?.filter(opt => opt.visible !== false) || f.options,
         }
     })
 
@@ -200,10 +210,40 @@ export const computeFieldStates = (
                 break
             }
             case 'SET_SPAN': {
-                const sp = Number(rule.actionValue)
+                let sp: number | undefined
+                if (rule.actionValue && typeof rule.actionValue === 'object' && !Array.isArray(rule.actionValue)) {
+                    sp = Number((rule.actionValue as Record<string, any>).span)
+                } else {
+                    sp = Number(rule.actionValue)
+                }
                 if (!isNaN(sp) && sp >= 1 && sp <= 24) {
                     targetState.span = sp
                 }
+                break
+            }
+            case 'OPTION': {
+                const av = rule.actionValue
+                if (Array.isArray(av)) {
+                    const values = av.map(item => typeof item === 'string' ? item : item.value).filter(Boolean)
+                    const originalOptions = fields.find(f => f.fieldId === rule.targetFieldId)?.options || []
+                    // 递归过滤选项树：父节点不在列表中则整个分支丢弃
+                    const filterTree = (opts: typeof originalOptions): typeof originalOptions => {
+                        return opts
+                            .filter(opt => values.includes(String(opt.value)))
+                            .map(opt => {
+                                const filtered = { ...opt }
+                                if (opt.children && opt.children.length > 0) {
+                                    filtered.children = filterTree(opt.children)
+                                }
+                                return filtered
+                            })
+                    }
+                    targetState.options = filterTree(originalOptions)
+                }
+                break
+            }
+            case 'VALUE': {
+                targetState.value = rule.actionValue
                 break
             }
         }
@@ -526,9 +566,46 @@ export const validateTemplate = (
             }
         }
         if (r.actionType === 'SET_SPAN' && r.actionValue !== undefined && r.actionValue !== null) {
-            const sp = Number(r.actionValue)
+            let sp: number
+            if (typeof r.actionValue === 'object' && !Array.isArray(r.actionValue)) {
+                sp = Number((r.actionValue as Record<string, any>).span)
+            } else {
+                sp = Number(r.actionValue)
+            }
             if (isNaN(sp) || sp < 1 || sp > 24) {
                 errors.push(`联动规则 #${idx + 1} 的 span 需在 1-24 之间`)
+            }
+        }
+
+        // OPTION actionValue 校验（值字符串数组）
+        if (r.actionType === 'OPTION') {
+            if (!Array.isArray(r.actionValue)) {
+                errors.push(`联动规则 #${idx + 1} 的选项必须是数组`)
+            } else {
+                (r.actionValue as any[]).forEach((val, valIdx) => {
+                    if (val === undefined || val === null || String(val).trim() === '') {
+                        errors.push(`联动规则 #${idx + 1} 选项值[${valIdx}] 不能为空`)
+                    }
+                })
+            }
+        }
+
+        // VALUE actionValue 类型校验
+        if (r.actionType === 'VALUE' && r.actionValue !== undefined && r.actionValue !== null) {
+            const targetType = fieldIdToType.get(r.targetFieldId)
+            if (targetType) {
+                const v = r.actionValue
+                const isArrayType = ['CHECKBOX', 'MULTISELECT', 'MULTICASCADER', 'DATERANGE'].includes(targetType)
+                const isNumberType = ['NUMBER', 'SLIDER', 'RATE'].includes(targetType)
+                if (isArrayType && !Array.isArray(v)) {
+                    errors.push(`联动规则 #${idx + 1} 目标字段类型 "${targetType}" 的值应为数组`)
+                }
+                if (isNumberType && typeof v !== 'number') {
+                    errors.push(`联动规则 #${idx + 1} 目标字段类型 "${targetType}" 的值应为数字`)
+                }
+                if (targetType === 'SWITCH' && typeof v !== 'boolean') {
+                    errors.push(`联动规则 #${idx + 1} 目标字段类型 "SWITCH" 的值应为布尔值`)
+                }
             }
         }
 

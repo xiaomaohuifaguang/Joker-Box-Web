@@ -77,7 +77,7 @@ const loading = ref(false)
 const formMakerRef = ref<InstanceType<typeof FormMaker> | null>(null)
 
 interface AddFormState {
-    id: number
+    id: number | null
     name: string
     description: string
     version: string
@@ -92,7 +92,7 @@ interface AddFormState {
 }
 
 const info = ref<AddFormState>({
-    id: -1,
+    id: null,
     name: '',
     description: '',
     version: '',

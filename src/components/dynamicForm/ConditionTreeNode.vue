@@ -4,18 +4,17 @@
         <template v-if="isGroup">
             <div class="group-header">
                 <el-radio-group :model-value="node.nodeType" @update:model-value="onGroupTypeChange"
-                    size="small">
+                   >
                     <el-radio-button value="AND">且</el-radio-button>
                     <el-radio-button value="OR">或</el-radio-button>
                 </el-radio-group>
-                <el-button type="primary" link :icon="Plus" size="small" @click="addCondition">
+                <el-button type="primary" link :icon="Plus" @click="addCondition">
                     添加条件
                 </el-button>
-                <el-button type="primary" link :icon="FolderOpened" size="small" @click="addGroup">
+                <el-button type="primary" link :icon="FolderOpened" @click="addGroup">
                     添加组
                 </el-button>
-                <el-button v-if="!isRoot" type="danger" link :icon="Delete" size="small"
-                    @click="$emit('remove')">
+                <el-button v-if="!isRoot" type="danger" link :icon="Delete"                     @click="$emit('remove')">
                     删除
                 </el-button>
             </div>
@@ -34,25 +33,34 @@
         <!-- CONDITION 叶子节点 -->
         <template v-else>
             <div class="condition-row">
-                <el-select :model-value="node.triggerFieldId"
-                    @update:model-value="onTriggerFieldChange" placeholder="触发字段" size="small"
-                    style="width: 180px; flex-shrink: 0">
-                    <el-option v-for="f in fields" :key="f.fieldId"
-                        :label="`${f.title} (${f.fieldId})`" :value="f.fieldId" />
-                </el-select>
-                <el-select :model-value="node.triggerCondition"
-                    @update:model-value="onTriggerConditionChange" size="small"
-                    style="width: 140px; flex-shrink: 0">
-                    <el-option v-for="c in conditionOptions" :key="c.value" :label="c.label"
-                        :value="c.value" />
-                </el-select>
-                <div class="condition-value-wrap">
-                    <LinkageValueInput v-if="needsTriggerValue" :model-value="triggerValueStr"
-                        @update:model-value="onTriggerValueChange" :field="triggerField"
-                        :condition="node.triggerCondition || 'EQ'" style="width: 100%" />
-                    <span v-else class="condition-placeholder">无需输入值</span>
+                <div class="condition-field">
+                    <div class="field-label">触发字段</div>
+                    <el-select :model-value="node.triggerFieldId"
+                        @update:model-value="onTriggerFieldChange" placeholder="触发字段"
+                        class="trigger-field-select">
+                        <el-option v-for="f in fields" :key="f.fieldId"
+                            :label="`${f.title} (${f.fieldId})`" :value="f.fieldId" />
+                    </el-select>
                 </div>
-                <el-button type="danger" link :icon="Delete" size="small" @click="$emit('remove')"
+                <div class="condition-field">
+                    <div class="field-label">比较方式</div>
+                    <el-select :model-value="node.triggerCondition"
+                        @update:model-value="onTriggerConditionChange"
+                        class="condition-select">
+                        <el-option v-for="c in conditionOptions" :key="c.value" :label="c.label"
+                            :value="c.value" />
+                    </el-select>
+                </div>
+                <div class="condition-field condition-value-field">
+                    <div class="field-label">比较值</div>
+                    <div class="condition-value-wrap">
+                        <LinkageValueInput v-if="needsTriggerValue" :model-value="triggerValueStr"
+                            @update:model-value="onTriggerValueChange" :field="triggerField"
+                            :condition="node.triggerCondition || 'EQ'" />
+                        <span v-else class="condition-placeholder">无需输入值</span>
+                    </div>
+                </div>
+                <el-button type="danger" link :icon="Delete" @click="$emit('remove')"
                     class="remove-btn" />
             </div>
         </template>
@@ -268,23 +276,74 @@ const onTriggerValueChange = (val: string) => {
 
 .condition-row {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: stretch;
+    gap: 12px;
     flex-wrap: wrap;
 
-    .condition-value-wrap {
+    .condition-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .field-label {
+        font-size: 12px;
+        color: var(--el-text-color-secondary);
+        margin-bottom: 4px;
+        flex-shrink: 0;
+    }
+
+    .trigger-field-select {
+        width: 180px;
+    }
+
+    .condition-select {
+        width: 140px;
+    }
+
+    .condition-value-field {
         flex: 1;
         min-width: 120px;
     }
 
+    .condition-value-wrap {
+        display: flex;
+        align-items: center;
+        min-height: 36px;
+        width: 100%;
+
+        /* 统一比较值输入组件宽度 */
+        :deep(.el-input),
+        :deep(.el-select),
+        :deep(.el-date-editor),
+        :deep(.el-input-number) {
+            width: 100% !important;
+        }
+
+        :deep(.el-slider) {
+            width: 100%;
+        }
+
+        :deep(.el-color-picker) {
+            vertical-align: middle;
+        }
+    }
+
     .condition-placeholder {
-        color: var(--el-text-color-secondary);
+        color: var(--el-text-color-placeholder);
         font-size: 12px;
-        padding: 5px 0;
+        line-height: 24px;
+        background: var(--el-fill-color-light);
+        border: 1px solid var(--el-border-color-light);
+        border-radius: 4px;
+        padding: 3px 11px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .remove-btn {
         flex-shrink: 0;
+        align-self: center;
+        margin-top: 18px;
     }
 }
 </style>

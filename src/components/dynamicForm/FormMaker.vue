@@ -174,11 +174,12 @@
                     <el-row v-if="ungroupedPreviewFields.length > 0" :gutter="16">
                         <el-col v-for="field in ungroupedPreviewFields" :key="field.fieldId"
                             :span="previewStates[field.fieldId]?.span ?? field.span ?? 24">
-                            <el-form-item :label="field.title" :prop="field.fieldId"
+                            <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
                                 :required="previewStates[field.fieldId]?.required">
                                 <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
                                     @update:model-value="previewData[field.fieldId] = $event"
-                                    :disabled="previewStates[field.fieldId]?.disabled" />
+                                    :disabled="previewStates[field.fieldId]?.disabled"
+                                :runtime-options="previewStates[field.fieldId]?.options" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -190,11 +191,12 @@
                                 <el-row :gutter="16">
                                     <el-col v-for="field in g.fields" :key="field.fieldId"
                                         :span="previewStates[field.fieldId]?.span ?? field.span ?? 24">
-                                        <el-form-item :label="field.title" :prop="field.fieldId"
+                                        <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
                                             :required="previewStates[field.fieldId]?.required">
                                             <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
                                                 @update:model-value="previewData[field.fieldId] = $event"
-                                                :disabled="previewStates[field.fieldId]?.disabled" />
+                                                :disabled="previewStates[field.fieldId]?.disabled"
+                                :runtime-options="previewStates[field.fieldId]?.options" />
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -205,11 +207,12 @@
                     <el-row v-if="previewGroups.length === 0 && ungroupedPreviewFields.length === 0" :gutter="16">
                         <el-col v-for="field in visibleFieldsForPreview" :key="field.fieldId"
                             :span="previewStates[field.fieldId]?.span ?? field.span ?? 24">
-                            <el-form-item :label="field.title" :prop="field.fieldId"
+                            <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
                                 :required="previewStates[field.fieldId]?.required">
                                 <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
                                     @update:model-value="previewData[field.fieldId] = $event"
-                                    :disabled="previewStates[field.fieldId]?.disabled" />
+                                    :disabled="previewStates[field.fieldId]?.disabled"
+                                :runtime-options="previewStates[field.fieldId]?.options" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -229,7 +232,7 @@
             <el-row v-if="ungroupedRuntimeFields.length > 0" :gutter="16">
                 <el-col v-for="field in ungroupedRuntimeFields" :key="field.fieldId"
                     :span="runtimeStates[field.fieldId]?.span ?? field.span ?? 24">
-                    <el-form-item :label="field.title" :prop="field.fieldId"
+                    <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
                         :required="runtimeStates[field.fieldId]?.required">
                         <FieldRenderer :field="field" :model-value="modelValue[field.fieldId]"
                             @update:model-value="onRuntimeFieldUpdate(field.fieldId, $event)"
@@ -245,11 +248,12 @@
                         <el-row :gutter="16">
                             <el-col v-for="field in g.fields" :key="field.fieldId"
                                 :span="runtimeStates[field.fieldId]?.span ?? field.span ?? 24">
-                                <el-form-item :label="field.title" :prop="field.fieldId"
+                                <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
                                     :required="runtimeStates[field.fieldId]?.required">
                                     <FieldRenderer :field="field" :model-value="modelValue[field.fieldId]"
                                         @update:model-value="onRuntimeFieldUpdate(field.fieldId, $event)"
-                                        :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled" />
+                                        :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled"
+                                :runtime-options="runtimeStates[field.fieldId]?.options" />
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -260,7 +264,7 @@
             <el-row v-if="runtimeGroups.length === 0 && ungroupedRuntimeFields.length === 0" :gutter="16">
                 <el-col v-for="field in visibleFieldsForRuntime" :key="field.fieldId"
                     :span="runtimeStates[field.fieldId]?.span ?? field.span ?? 24">
-                    <el-form-item :label="field.title" :prop="field.fieldId"
+                    <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
                         :required="runtimeStates[field.fieldId]?.required">
                         <FieldRenderer :field="field" :model-value="modelValue[field.fieldId]"
                             @update:model-value="onRuntimeFieldUpdate(field.fieldId, $event)"
@@ -273,7 +277,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import draggable from 'vuedraggable'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 import { Plus, Edit, Delete, Rank, InfoFilled, FolderAdd, ArrowDown, ArrowRight } from '@element-plus/icons-vue'
@@ -289,6 +293,7 @@ import {
     type FormFieldType,
     flattenGroups,
     buildGroups,
+    parseSwitchValue,
 } from './types'
 import { computeFieldStates, validateTemplate, cleanConditionTree } from './linkage'
 
@@ -616,7 +621,7 @@ const syncDefaultValues = (fields: FormField[]) => {
                 next[field.fieldId] = Number(field.defaultValue) || 0
                 break
             case 'SWITCH':
-                next[field.fieldId] = !!field.defaultValue
+                next[field.fieldId] = parseSwitchValue(field.defaultValue)
                 break
             default:
                 next[field.fieldId] = field.defaultValue
@@ -657,6 +662,72 @@ const runtimeStates = computed(() =>
     computeFieldStates(props.formFields, props.linkageRules, props.modelValue),
 )
 
+/** 获取字段默认值（VALUE 恢复时用） */
+const getDefaultValue = (field: FormField): any => {
+    if (field.defaultValue === undefined || field.defaultValue === null) {
+        switch (field.type) {
+            case 'CHECKBOX':
+            case 'MULTISELECT':
+            case 'MULTICASCADER':
+                return []
+            case 'NUMBER':
+            case 'SLIDER':
+            case 'RATE':
+                return 0
+            case 'SWITCH':
+                return false
+            default:
+                return null
+        }
+    }
+    switch (field.type) {
+        case 'CHECKBOX':
+        case 'MULTISELECT':
+        case 'MULTICASCADER':
+            return Array.isArray(field.defaultValue) ? field.defaultValue : []
+        case 'NUMBER':
+        case 'SLIDER':
+        case 'RATE':
+            return Number(field.defaultValue) || 0
+        case 'SWITCH':
+            return parseSwitchValue(field.defaultValue)
+        default:
+            return field.defaultValue
+    }
+}
+
+/** VALUE 动作：条件满足时自动填充，不满足时恢复默认值 */
+watch(
+    runtimeStates,
+    (newStates, oldStates) => {
+        const next = { ...props.modelValue }
+        let changed = false
+        props.formFields.forEach(field => {
+            const newState = newStates[field.fieldId]
+            const oldState = oldStates?.[field.fieldId]
+            // VALUE 动作触发
+            if (newState?.value !== undefined) {
+                if (next[field.fieldId] !== newState.value) {
+                    next[field.fieldId] = newState.value
+                    changed = true
+                }
+            }
+            // VALUE 动作恢复：之前被覆盖，现在没有了
+            else if (oldState?.value !== undefined) {
+                const defaultVal = getDefaultValue(field)
+                if (next[field.fieldId] !== defaultVal) {
+                    next[field.fieldId] = defaultVal
+                    changed = true
+                }
+            }
+        })
+        if (changed) {
+            emit('update:modelValue', next)
+        }
+    },
+    { deep: true },
+)
+
 const visibleFieldsForRuntime = computed(() =>
     props.formFields.filter(f => runtimeStates.value[f.fieldId]?.visible !== false),
 )
@@ -688,9 +759,8 @@ const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { p
     const itemRules: FormItemRule[] = []
     const isArrayField = ARRAY_VALUE_TYPES.includes(field.type)
     if (requiredOverride) {
-        if (field.type === 'SWITCH') {
-            // SWITCH 的值是 boolean，不走 type: 'string' 转换
-            // false 也是用户的有效选择，required 只检查值是否存在
+        // 布尔 / 数值字段不走 type: 'string'，避免 false/0 被判定为空值
+        if (['SWITCH', 'NUMBER', 'RATE', 'SLIDER'].includes(field.type)) {
             itemRules.push({
                 required: true,
                 message: `${field.title}不能为空`,
@@ -706,10 +776,13 @@ const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { p
         }
     }
     if (field.minLength != null) {
+        const isUpload = field.type === 'UPLOAD'
         itemRules.push({
             type: isArrayField ? 'array' : 'string',
             min: Number(field.minLength),
-            message: `${field.title} 长度不能小于 ${field.minLength}`,
+            message: isUpload
+                ? `${field.title} 最少上传 ${field.minLength} 个文件`
+                : `${field.title} 长度不能小于 ${field.minLength}`,
             trigger: 'change',
         })
     }
@@ -774,6 +847,15 @@ const verify = async (): Promise<boolean> => {
         if (groupIdsToOpen.size > 0) {
             activeGroupIds.value = [...new Set([...activeGroupIds.value, ...groupIdsToOpen])]
         }
+        const firstFieldId = failedFields[0]
+        if (firstFieldId) {
+            nextTick(() => {
+                const el = document.getElementById(`form-item-${firstFieldId}`)
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }
+            })
+        }
         return false
     }
 }
@@ -795,6 +877,35 @@ watch(
 
 const previewStates = computed(() =>
     computeFieldStates(props.formFields, linkageList.value, previewData.value),
+)
+
+/** 预览模式 VALUE 动作 */
+watch(
+    previewStates,
+    (newStates, oldStates) => {
+        const next = { ...previewData.value }
+        let changed = false
+        props.formFields.forEach(field => {
+            const newState = newStates[field.fieldId]
+            const oldState = oldStates?.[field.fieldId]
+            if (newState?.value !== undefined) {
+                if (next[field.fieldId] !== newState.value) {
+                    next[field.fieldId] = newState.value
+                    changed = true
+                }
+            } else if (oldState?.value !== undefined) {
+                const defaultVal = getDefaultValue(field)
+                if (next[field.fieldId] !== defaultVal) {
+                    next[field.fieldId] = defaultVal
+                    changed = true
+                }
+            }
+        })
+        if (changed) {
+            previewData.value = next
+        }
+    },
+    { deep: true },
 )
 
 const visibleFieldsForPreview = computed(() =>
@@ -851,6 +962,15 @@ const verifyPreview = async () => {
         if (groupIdsToOpen.size > 0) {
             activePreviewGroupIds.value = [...new Set([...activePreviewGroupIds.value, ...groupIdsToOpen])]
         }
+        const firstFieldId = failedFields[0]
+        if (firstFieldId) {
+            nextTick(() => {
+                const el = document.getElementById(`form-item-${firstFieldId}`)
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }
+            })
+        }
         alert('表单校验失败', 'error')
     }
 }
@@ -862,6 +982,7 @@ const validateTpl = (name?: string) =>
 defineExpose({
     verify, // 运行时表单校验
     validateTpl, // 模板预校验
+    runtimeStates, // 运行时状态（用于提交时过滤隐藏字段）
 })
 </script>
 

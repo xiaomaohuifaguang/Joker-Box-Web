@@ -27,11 +27,9 @@
                             </el-icon>
                         </span>
                         <span class="rule-index">#{{ index + 1 }}</span>
-                        <el-input v-model="element.name" placeholder="规则名称（可选）" size="small" style="width: 200px" />
-                        <el-switch v-model="element.enable" active-text="启用" inactive-text="禁用" size="small"
-                            style="margin-left: auto" />
-                        <el-button type="danger" link :icon="Delete" size="small"
-                            @click="removeRule(index)">删除</el-button>
+                        <el-input v-model="element.name" placeholder="规则名称（可选）" style="width: 200px" />
+                        <el-switch v-model="element.enable" active-text="启用" inactive-text="禁用"                             style="margin-left: auto" />
+                        <el-button type="danger" link :icon="Delete"                             @click="removeRule(index)">删除</el-button>
                     </div>
 
                     <!-- 条件区域 -->
@@ -47,7 +45,7 @@
                         <el-row :gutter="12" class="action-row">
                             <el-col :xs="12" :sm="6" :md="4">
                                 <div class="rule-label">动作类型</div>
-                                <el-select v-model="element.actionType" size="small" style="width: 100%">
+                                <el-select v-model="element.actionType" class="w-full">
                                     <el-option
                                         v-for="a in getActionOptionsForRule(element)"
                                         :key="a.value"
@@ -58,8 +56,7 @@
                             </el-col>
                             <el-col :xs="12" :sm="9" :md="7">
                                 <div class="rule-label">目标字段</div>
-                                <el-select v-model="element.targetFieldId" placeholder="目标字段" size="small"
-                                    style="width: 100%">
+                                <el-select v-model="element.targetFieldId" placeholder="目标字段"                                     class="w-full">
                                     <el-option
                                         v-for="f in getTargetFieldsForRule(element)"
                                         :key="f.fieldId"
@@ -74,31 +71,106 @@
                                     <template v-if="element.actionType === 'REQUIRED'">
                                         <el-switch :model-value="getActionValueBool(element)"
                                             @update:model-value="element.actionValue = $event" active-text="必填"
-                                            inactive-text="非必填" size="small" />
+                                            inactive-text="非必填" />
                                     </template>
                                     <template v-else-if="element.actionType === 'DISABLED'">
                                         <el-switch :model-value="getActionValueBool(element)"
                                             @update:model-value="element.actionValue = $event" active-text="禁用"
-                                            inactive-text="不禁用" size="small" />
+                                            inactive-text="不禁用" />
                                     </template>
                                     <template v-else-if="element.actionType === 'SET_PATTERN'">
-                                        <el-input v-model="element.actionValue.pattern" placeholder="正则表达式" size="small"
-                                            style="flex: 1" />
+                                        <el-input v-model="element.actionValue.pattern" placeholder="正则表达式"                                             style="flex: 1" />
                                         <el-input v-model="element.actionValue.patternTips" placeholder="提示信息"
-                                            size="small" style="flex: 1" />
+                                            style="flex: 1" />
                                     </template>
                                     <template v-else-if="element.actionType === 'SET_SPAN'">
-                                        <el-input-number v-model="element.actionValue" :min="1" :max="24"
-                                            :controls="false" size="small" style="width: 80px" />
+                                        <el-input-number v-model="element.actionValue.span" :min="1" :max="24"
+                                            :controls="false" style="width: 80px" />
                                         <span class="action-unit">span（1-24）</span>
                                     </template>
                                     <template v-else-if="element.actionType === 'OPTION'">
-                                        <el-input v-model="element.actionValue" placeholder="选项JSON数组" size="small"
-                                            style="width: 100%" />
+                                        <el-button type="primary" plain @click="openOptionDialog(element)"
+                                            style="width: 100%"
+                                        >
+                                            配置选项显隐
+                                            <el-tag
+                                                v-if="getOptionValueList(element.actionValue).length > 0"
+                                                type="info" size="small" style="margin-left: 8px"
+                                            >
+                                                已选 {{ getOptionValueList(element.actionValue).length }} 项
+                                            </el-tag>
+                                        </el-button>
                                     </template>
                                     <template v-else-if="element.actionType === 'VALUE'">
-                                        <el-input v-model="element.actionValue" placeholder="设定值" size="small"
-                                            style="width: 100%" />
+                                        <template
+                                            v-if="getTargetFieldType(element) === 'INPUT' || getTargetFieldType(element) === 'TEXTAREA'">
+                                            <el-input v-model="element.actionValue" placeholder="输入值"                                                 :maxlength="getTargetField(element)?.maxLength"
+                                                :show-word-limit="!!getTargetField(element)?.maxLength"
+                                            />
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'NUMBER'">
+                                            <el-input-number v-model="element.actionValue"
+                                                :min="getTargetField(element)?.min ?? -Infinity"
+                                                :max="getTargetField(element)?.max ?? Infinity" :controls="false"
+                                                />
+                                        </template>
+                                        <template
+                                            v-else-if="['SELECT', 'RADIO'].includes(getTargetFieldType(element) || '')">
+                                            <el-select v-model="element.actionValue" placeholder="选择值">
+                                                <el-option v-for="opt in getTargetField(element)?.options || []"
+                                                    :key="opt.value" :label="opt.label" :value="opt.value" />
+                                            </el-select>
+                                        </template>
+                                        <template
+                                            v-else-if="['MULTISELECT', 'CHECKBOX'].includes(getTargetFieldType(element) || '')">
+                                            <el-select v-model="element.actionValue" placeholder="选择值"                                                 multiple>
+                                                <el-option v-for="opt in getTargetField(element)?.options || []"
+                                                    :key="opt.value" :label="opt.label" :value="opt.value" />
+                                            </el-select>
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'SWITCH'">
+                                            <el-switch v-model="element.actionValue" active-text="开"
+                                                inactive-text="关" />
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'DATE'">
+                                            <el-date-picker v-model="element.actionValue" type="date"
+                                                placeholder="选择日期" value-format="YYYY-MM-DD"
+                                            />
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'DATETIME'">
+                                            <el-date-picker v-model="element.actionValue" type="datetime"
+                                                placeholder="选择日期时间"                                                 value-format="YYYY-MM-DD HH:mm:ss" />
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'TIME'">
+                                            <el-time-picker v-model="element.actionValue" placeholder="选择时间"
+                                                value-format="HH:mm:ss" />
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'DATERANGE'">
+                                            <el-date-picker v-model="element.actionValue" type="daterange"
+                                                range-separator="至" start-placeholder="开始" end-placeholder="结束"
+                                                value-format="YYYY-MM-DD" />
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'COLOR'">
+                                            <el-color-picker v-model="element.actionValue" show-alpha />
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'SLIDER'">
+                                            <el-slider v-model="element.actionValue"
+                                                :min="getTargetField(element)?.min ?? 0"
+                                                :max="getTargetField(element)?.max ?? 100"                                             />
+                                        </template>
+                                        <template v-else-if="getTargetFieldType(element) === 'RATE'">
+                                            <el-rate v-model="element.actionValue"
+                                                :max="getTargetField(element)?.max ?? 5" />
+                                        </template>
+                                        <template
+                                            v-else-if="['CASCADER', 'MULTICASCADER'].includes(getTargetFieldType(element) || '')">
+                                            <el-cascader v-model="element.actionValue"
+                                                :options="getTargetField(element)?.options || []"                                                 :props="{ multiple: getTargetFieldType(element) === 'MULTICASCADER' }"
+                                            />
+                                        </template>
+                                        <template v-else>
+                                            <el-input v-model="element.actionValue" placeholder="设定值"                                             />
+                                        </template>
                                     </template>
                                     <template v-else>
                                         <span class="action-hint">无需额外参数</span>
@@ -111,6 +183,14 @@
             </template>
         </draggable>
     </div>
+
+    <OptionVisibilityDialog
+        v-model="optionDialogVisible"
+        :options="optionDialogOptions"
+        :selected-values="optionDialogSelected"
+        :is-cascader-type="optionDialogIsCascader"
+        @submit="onOptionDialogSubmit"
+    />
 </template>
 
 <script setup lang="ts">
@@ -119,6 +199,7 @@ import draggable from 'vuedraggable'
 import { Plus, Delete, Rank, InfoFilled } from '@element-plus/icons-vue'
 import { alert } from '@/utils'
 import ConditionTreeNode from './ConditionTreeNode.vue'
+import OptionVisibilityDialog from './OptionVisibilityDialog.vue'
 import {
     LINKAGE_ACTION_OPTIONS,
     getDefaultCondition,
@@ -146,10 +227,101 @@ interface InternalRule extends FormLinkageRule {
 const uidSeq = ref(0)
 const innerRules = ref<InternalRule[]>([])
 
+// 选项显隐对话框状态
+const optionDialogVisible = ref(false)
+const optionDialogOptions = ref<any[]>([])
+const optionDialogSelected = ref<string[]>([])
+const optionDialogIsCascader = ref(false)
+const currentOptionRule = ref<InternalRule | null>(null)
+
+const openOptionDialog = (rule: InternalRule) => {
+    currentOptionRule.value = rule
+    const target = getTargetField(rule)
+    optionDialogOptions.value = target?.options ? JSON.parse(JSON.stringify(target.options)) : []
+    optionDialogSelected.value = getOptionValueList(rule.actionValue)
+    optionDialogIsCascader.value = ['CASCADER', 'MULTICASCADER'].includes(target?.type || '')
+    optionDialogVisible.value = true
+}
+
+const onOptionDialogSubmit = (values: string[]) => {
+    if (!currentOptionRule.value) return
+    currentOptionRule.value.actionValue = values
+}
+
 // 辅助：获取 boolean 类型的 actionValue 默认值 true
 const getActionValueBool = (rule: InternalRule): boolean => {
     const v = rule.actionValue
     return v === undefined || v === null ? true : !!v
+}
+
+/** 获取规则的目标字段 */
+const getTargetField = (rule: InternalRule): FormField | undefined =>
+    props.fields.find(f => f.fieldId === rule.targetFieldId)
+
+/** 获取规则的目标字段类型 */
+const getTargetFieldType = (rule: InternalRule): FormFieldType | undefined =>
+    getTargetField(rule)?.type
+
+/** 兼容旧数据：提取 actionValue 中的 value 列表 */
+const getOptionValueList = (actionValue: any): string[] => {
+    if (!Array.isArray(actionValue)) return []
+    return actionValue.map(item => typeof item === 'string' ? item : String(item.value || '')).filter(Boolean)
+}
+
+/** 根据字段类型返回 VALUE 动作的默认值 */
+const getDefaultValueForFieldType = (fieldType?: FormFieldType): any => {
+    switch (fieldType) {
+        case 'CHECKBOX':
+        case 'MULTISELECT':
+        case 'MULTICASCADER':
+        case 'DATERANGE':
+            return []
+        case 'NUMBER':
+        case 'SLIDER':
+        case 'RATE':
+            return 0
+        case 'SWITCH':
+            return false
+        case 'DATE':
+        case 'DATETIME':
+        case 'TIME':
+            return null
+        default:
+            return ''
+    }
+}
+
+/** 当目标字段变化时，规范化 VALUE 的 actionValue */
+const normalizeValueAction = (rule: InternalRule) => {
+    if (rule.actionType !== 'VALUE') return
+    const fieldType = getTargetFieldType(rule)
+    const current = rule.actionValue
+    // 数组字段 → 非数组时重置
+    if (['CHECKBOX', 'MULTISELECT', 'MULTICASCADER', 'DATERANGE'].includes(fieldType || '')) {
+        if (!Array.isArray(current)) {
+            rule.actionValue = getDefaultValueForFieldType(fieldType)
+        }
+        return
+    }
+    // 数值字段 → 非数值时重置
+    if (['NUMBER', 'SLIDER', 'RATE'].includes(fieldType || '')) {
+        if (typeof current !== 'number') {
+            const n = Number(current)
+            rule.actionValue = isNaN(n) ? getDefaultValueForFieldType(fieldType) : n
+        }
+        return
+    }
+    // 布尔字段 → 非布尔时重置
+    if (fieldType === 'SWITCH') {
+        if (typeof current !== 'boolean') {
+            rule.actionValue = getDefaultValueForFieldType(fieldType)
+        }
+        return
+    }
+    // 其他字段 → 字符串化
+    if (current === undefined || current === null || typeof current === 'object') {
+        rule.actionValue = getDefaultValueForFieldType(fieldType)
+    }
 }
 
 /** 根据目标字段过滤动作类型选项 */
@@ -194,16 +366,29 @@ const wrap = (rules: FormLinkageRule[]): InternalRule[] =>
                 rule.actionValue = { pattern: String(rule.actionValue || ''), patternTips: '' }
             }
         } else if (rule.actionType === 'SET_SPAN') {
-            if (rule.actionValue === undefined || rule.actionValue === null) {
-                rule.actionValue = 24
+            if (!rule.actionValue || typeof rule.actionValue !== 'object' || Array.isArray(rule.actionValue)) {
+                const sp = Number(rule.actionValue)
+                rule.actionValue = { span: !isNaN(sp) && sp >= 1 && sp <= 24 ? sp : 24 }
             }
         } else if (rule.actionType === 'REQUIRED' || rule.actionType === 'DISABLED') {
             if (rule.actionValue === undefined || rule.actionValue === null) {
                 rule.actionValue = true
             }
-        } else if (rule.actionType === 'OPTION' || rule.actionType === 'VALUE') {
+        } else if (rule.actionType === 'OPTION') {
+            if (typeof rule.actionValue === 'string') {
+                try {
+                    const parsed = JSON.parse(rule.actionValue)
+                    rule.actionValue = Array.isArray(parsed) ? parsed : []
+                } catch {
+                    rule.actionValue = []
+                }
+            } else if (!Array.isArray(rule.actionValue)) {
+                rule.actionValue = []
+            }
+        } else if (rule.actionType === 'VALUE') {
+            const target = props.fields.find(f => f.fieldId === rule.targetFieldId)
             if (rule.actionValue === undefined || rule.actionValue === null) {
-                rule.actionValue = ''
+                rule.actionValue = getDefaultValueForFieldType(target?.type)
             }
         }
         // 确保 conditionTree 存在
@@ -217,6 +402,13 @@ const wrap = (rules: FormLinkageRule[]): InternalRule[] =>
                     triggerCondition: getDefaultCondition(defaultField?.type || 'INPUT'),
                     triggerValue: '',
                 }],
+            }]
+        }
+        // 兼容旧数据：单条件作为根节点时自动包一层 AND
+        if (rule.conditionTree[0]?.nodeType === 'CONDITION') {
+            rule.conditionTree = [{
+                nodeType: 'AND',
+                children: [rule.conditionTree[0]],
             }]
         }
         if (rule.enable === undefined) rule.enable = true
@@ -296,6 +488,9 @@ watch(
             if (type === oldTypes[i]) return
             const rule = innerRules.value[i]
             rule.actionValue = getActionParamDefault(type as LinkageAction)
+            if (type === 'VALUE') {
+                normalizeValueAction(rule)
+            }
         })
     },
     { deep: true },
@@ -310,6 +505,7 @@ watch(
             if (id === oldIds[i]) return
             const rule = innerRules.value[i]
             fixInvalidAction(rule)
+            normalizeValueAction(rule)
         })
     },
     { deep: true },
@@ -416,12 +612,46 @@ watch(
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-    min-height: 32px;
+    min-height: 36px;
+    width: 100%;
+}
+
+/* 统一动作参数区域内所有输入组件的宽度 */
+.action-value-wrap :deep(.el-input),
+.action-value-wrap :deep(.el-select),
+.action-value-wrap :deep(.el-date-editor),
+.action-value-wrap :deep(.el-input-number) {
+    width: 100% !important;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.action-value-wrap :deep(.el-slider) {
+    width: 100%;
+    flex: 1;
+}
+
+.action-value-wrap :deep(.el-color-picker) {
+    vertical-align: middle;
+}
+
+.action-value-wrap :deep(.el-switch) {
+    white-space: nowrap;
+}
+
+/* 动作参数单行容器 */
+.action-value-wrap .param-box {
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .action-unit {
     font-size: 12px;
     color: var(--el-text-color-secondary);
+    white-space: nowrap;
 }
 
 .action-hint {
@@ -434,5 +664,48 @@ watch(
     font-size: 12px;
     color: var(--el-text-color-secondary);
     margin-bottom: 4px;
+}
+
+/* 简单选项编辑器 */
+.option-editor-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.option-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.option-row :deep(.el-input) {
+    width: auto !important;
+    flex: 1;
+}
+
+/* 限制级联选项编辑器在联动规则中的高度 */
+.action-value-wrap :deep(.dynamic-options) {
+    width: 100%;
+}
+
+.action-value-wrap :deep(.dynamic-options .preview-component) {
+    display: none;
+}
+
+.action-value-wrap :deep(.dynamic-options .options-management) {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+}
+
+.action-value-wrap :deep(.dynamic-options .management-header) {
+    margin-bottom: 8px;
+}
+
+.action-value-wrap :deep(.dynamic-options .options-list) {
+    max-height: 200px;
+    overflow-y: auto;
 }
 </style>

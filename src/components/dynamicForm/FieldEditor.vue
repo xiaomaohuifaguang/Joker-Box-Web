@@ -68,6 +68,14 @@
                     </el-form-item>
                 </el-col>
 
+                <!-- 级联配置 -->
+                <el-col :span="12" v-if="['CASCADER', 'MULTICASCADER'].includes(form.type)">
+                    <el-form-item label="允许选择中间节点">
+                        <el-switch :model-value="form.props?.checkStrictly ?? false"
+                            @update:model-value="(v: boolean) => setProp('checkStrictly', v)" />
+                    </el-form-item>
+                </el-col>
+
                 <!-- 默认值（按类型分支） -->
                 <el-col :span="24" v-if="['INPUT', 'TEXTAREA'].includes(form.type)">
                     <el-form-item label="默认值">
@@ -105,6 +113,26 @@
                         <el-color-picker v-model="form.defaultValue" />
                     </el-form-item>
                 </el-col>
+                <el-col :span="24" v-if="form.type === 'DATE'">
+                    <el-form-item label="默认值">
+                        <el-date-picker v-model="form.defaultValue" type="date" value-format="YYYY-MM-DD" placeholder="选择默认日期" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" v-if="form.type === 'DATETIME'">
+                    <el-form-item label="默认值">
+                        <el-date-picker v-model="form.defaultValue" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="选择默认日期时间" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" v-if="form.type === 'TIME'">
+                    <el-form-item label="默认值">
+                        <el-time-picker v-model="form.defaultValue" value-format="HH:mm:ss" placeholder="选择默认时间" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" v-if="form.type === 'DATERANGE'">
+                    <el-form-item label="默认值">
+                        <el-date-picker v-model="form.defaultValue" type="daterange" value-format="YYYY-MM-DD" start-placeholder="开始日期" end-placeholder="结束日期" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
 
                 <!-- 长度限制（INPUT/TEXTAREA） -->
                 <el-col :span="12" v-if="['INPUT', 'TEXTAREA'].includes(form.type)">
@@ -119,6 +147,11 @@
                 </el-col>
 
                 <!-- 文件上传数量限制 -->
+                <el-col :span="12" v-if="form.type === 'UPLOAD'">
+                    <el-form-item label="最少上传数量">
+                        <el-input-number v-model="form.minLength" :min="0" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
                 <el-col :span="12" v-if="form.type === 'UPLOAD'">
                     <el-form-item label="最多上传数量">
                         <el-input-number v-model="form.maxLength" :min="1" style="width: 100%" />
@@ -194,6 +227,7 @@ import {
     FIELD_TYPE_OPTIONS,
     type FormField,
     type FormFieldType,
+    parseSwitchValue,
 } from './types'
 
 const props = defineProps<{
@@ -233,6 +267,7 @@ interface FormState {
     patternTips: string
     span: number
     groupId: string
+    props: Record<string, any>
 }
 
 const buildEmpty = (): FormState => ({
@@ -251,6 +286,7 @@ const buildEmpty = (): FormState => ({
     patternTips: '',
     span: 24,
     groupId: '',
+    props: {},
 })
 
 const form = ref<FormState>(buildEmpty())
@@ -267,7 +303,7 @@ watch(
                 title: f.title,
                 type: f.type,
                 required: f.required === '1',
-                defaultValue: f.defaultValue ?? null,
+                defaultValue: f.type === 'SWITCH' ? parseSwitchValue(f.defaultValue) : (f.defaultValue ?? null),
                 placeholder: f.placeholder ?? '',
                 options: f.options ? JSON.parse(JSON.stringify(f.options)) : [],
                 minLength: f.minLength,
@@ -278,6 +314,7 @@ watch(
                 patternTips: f.patternTips ?? '',
                 span: f.span ?? 24,
                 groupId: f.groupId ?? '',
+                props: f.props || {},
             }
         } else {
             originalType.value = 'INPUT'
@@ -306,6 +343,7 @@ const onTypeChange = () => {
     form.value.options = []
     form.value.min = undefined
     form.value.max = undefined
+    form.value.props = {}
     if (form.value.type === 'UPLOAD') {
         form.value.maxLength = 1
     } else {
@@ -316,6 +354,10 @@ const onTypeChange = () => {
         form.value.pattern = ''
         form.value.patternTips = ''
     }
+}
+
+const setProp = (key: string, value: any) => {
+    form.value.props = { ...form.value.props, [key]: value }
 }
 
 const formRef = ref<FormInstance>()
@@ -373,6 +415,7 @@ const onSubmit = async () => {
         patternTips: form.value.patternTips || undefined,
         span: form.value.span,
         groupId: form.value.groupId || undefined,
+        props: Object.keys(form.value.props).length > 0 ? form.value.props : undefined,
     }
     emit('submit', f)
     visible.value = false

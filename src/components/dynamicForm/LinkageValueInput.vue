@@ -5,7 +5,8 @@
         :model-value="modelValue"
         @update:model-value="emitVal"
         placeholder="正则表达式"
-        clearable />
+        clearable
+                style="width: 100%" />
 
     <!-- IN / NOT_IN：多值 -->
     <template v-else-if="isMultiCondition">
@@ -17,7 +18,7 @@
             collapse-tags
             collapse-tags-tooltip
             placeholder="选择一个或多个值"
-            style="width: 100%">
+                        style="width: 100%">
             <el-option v-for="op in field?.options || []" :key="String(op.value)"
                 :label="op.label" :value="String(op.value)" />
         </el-select>
@@ -32,7 +33,7 @@
             collapse-tags
             collapse-tags-tooltip
             placeholder="输入值后按回车添加多个"
-            style="width: 100%" />
+                        style="width: 100%" />
     </template>
 
     <!-- 多选字段（MULTISELECT/CHECKBOX/MULTICASCADER）：始终多选下拉 -->
@@ -44,7 +45,7 @@
         collapse-tags
         collapse-tags-tooltip
         placeholder="选择一个或多个值"
-        style="width: 100%">
+                style="width: 100%">
         <el-option v-for="op in field?.options || []" :key="String(op.value)"
             :label="op.label" :value="String(op.value)" />
     </el-select>
@@ -56,7 +57,7 @@
         @update:model-value="emitVal"
         placeholder="选择值"
         clearable
-        style="width: 100%">
+                style="width: 100%">
         <el-option v-for="op in field?.options || []" :key="String(op.value)"
             :label="op.label" :value="String(op.value)" />
     </el-select>
@@ -67,7 +68,7 @@
         :model-value="modelValue"
         @update:model-value="emitVal"
         placeholder="选择"
-        style="width: 100%">
+                style="width: 100%">
         <el-option label="是 (true)" value="true" />
         <el-option label="否 (false)" value="false" />
     </el-select>
@@ -80,7 +81,7 @@
         :min="field?.min"
         :max="field?.max"
         controls-position="right"
-        style="width: 100%" />
+                style="width: 100%" />
 
     <!-- 日期 -->
     <el-date-picker
@@ -90,7 +91,7 @@
         type="date"
         value-format="YYYY-MM-DD"
         placeholder="选择日期"
-        style="width: 100%" />
+                style="width: 100%" />
 
     <!-- 日期时间 -->
     <el-date-picker
@@ -100,7 +101,7 @@
         type="datetime"
         value-format="YYYY-MM-DD HH:mm:ss"
         placeholder="选择日期时间"
-        style="width: 100%" />
+                style="width: 100%" />
 
     <!-- 时间 -->
     <el-time-picker
@@ -109,13 +110,14 @@
         @update:model-value="emitVal"
         value-format="HH:mm:ss"
         placeholder="选择时间"
-        style="width: 100%" />
+                style="width: 100%" />
 
     <!-- 颜色 -->
     <el-color-picker
         v-else-if="field?.type === 'COLOR'"
         :model-value="modelValue"
-        @update:model-value="emitVal" />
+        @update:model-value="emitVal"
+        />
 
     <!-- 兜底：纯文本 -->
     <el-input
@@ -123,7 +125,8 @@
         :model-value="modelValue"
         @update:model-value="emitVal"
         :placeholder="field ? `请输入${field.title}的比较值` : '值'"
-        clearable />
+        clearable
+        />
 </template>
 
 <script setup lang="ts">
