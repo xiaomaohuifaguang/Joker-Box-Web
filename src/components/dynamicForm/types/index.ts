@@ -18,6 +18,7 @@ export type FormFieldType =
     | 'COLOR'
     | 'CASCADER'
     | 'MULTICASCADER'
+    | 'TABLE'
 
 // 表单项选项
 export interface FormFieldOption {
@@ -25,6 +26,11 @@ export interface FormFieldOption {
     value: string | number
     children?: FormFieldOption[]
     visible?: boolean
+}
+
+export interface FormTableColumn {
+    key: string
+    title: string
 }
 
 // 表单项配置（DynamicFormField）
@@ -46,6 +52,7 @@ export interface FormField {
     sort?: number
     groupId?: string
     props?: Record<string, any>
+    columns?: FormTableColumn[]
 }
 
 // 字段分组（DynamicFormFieldGroup）
@@ -166,7 +173,7 @@ export interface FieldRuntimeState {
 export const VALID_FIELD_TYPES: FormFieldType[] = [
     'INPUT', 'NUMBER', 'SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX',
     'DATE', 'DATETIME', 'TIME', 'DATERANGE', 'SWITCH', 'TEXTAREA',
-    'UPLOAD', 'RATE', 'SLIDER', 'COLOR', 'CASCADER', 'MULTICASCADER',
+    'UPLOAD', 'RATE', 'SLIDER', 'COLOR', 'CASCADER', 'MULTICASCADER', 'TABLE',
 ]
 
 /** 需要 options 的字段类型 */
@@ -203,6 +210,7 @@ export const FIELD_TYPE_OPTIONS: { label: string; value: FormFieldType }[] = [
     { label: '颜色', value: 'COLOR' },
     { label: '级联单选', value: 'CASCADER' },
     { label: '级联多选', value: 'MULTICASCADER' },
+    { label: '动态表格', value: 'TABLE' },
 ]
 
 export const LINKAGE_CONDITION_OPTIONS: { label: string; value: LinkageCondition }[] = [
@@ -222,6 +230,7 @@ export const LINKAGE_CONDITION_OPTIONS: { label: string; value: LinkageCondition
 /** 根据字段类型返回联动条件的默认选项 */
 export const getDefaultCondition = (fieldType: FormFieldType): LinkageCondition => {
     if (fieldType === 'UPLOAD') return 'EMPTY'
+    if (fieldType === 'TABLE') return 'EMPTY'
     return 'EQ'
 }
 
@@ -242,6 +251,9 @@ export const getValidActionsByFieldType = (fieldType: FormFieldType): LinkageAct
     const common: LinkageAction[] = ['SHOW', 'HIDE', 'REQUIRED', 'DISABLED', 'ENABLED', 'SET_SPAN']
     const withValue: LinkageAction[] = [...common, 'VALUE']
     if (fieldType === 'UPLOAD') {
+        return common
+    }
+    if (fieldType === 'TABLE') {
         return common
     }
     if (fieldType === 'INPUT' || fieldType === 'TEXTAREA') {
