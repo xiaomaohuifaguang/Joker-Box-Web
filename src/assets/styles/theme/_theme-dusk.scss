@@ -14,19 +14,19 @@
     --brand-accent: #6B7B8C;
 
     /* ---------- 渐变（纯色） ---------- */
-    --brand-gradient: #B8A88A;
-    --brand-gradient-hover: #C9B89A;
-    --brand-gradient-soft: rgba(184, 168, 138, 0.06);
-    --brand-gradient-text: #B8A88A;
-    --brand-gradient-border: #B8A88A;
+    --brand-gradient: #C0B090;
+    --brand-gradient-hover: #D0C0A0;
+    --brand-gradient-soft: rgba(192, 176, 144, 0.06);
+    --brand-gradient-text: #C0B090;
+    --brand-gradient-border: #C0B090;
 
     /* ---------- 背景层级（极深炭黑，微暖调） ---------- */
     --bg-page: #0A0A0C;
     --bg-container: #141416;
     --bg-elevated: #1E1E22;
     --bg-input: #2A2A2E;
-    --bg-overlay: rgba(184, 168, 138, 0.03);
-    --bg-overlay-strong: rgba(184, 168, 138, 0.06);
+    --bg-overlay: rgba(192, 176, 144, 0.03);
+    --bg-overlay-strong: rgba(192, 176, 144, 0.06);
     --bg-mask: rgba(0, 0, 0, 0.70);
 
     /* ---------- 文字层级（暖白到中灰，降低眩光） ---------- */
@@ -37,14 +37,14 @@
     --text-disabled: #3A3A3A;
     --text-on-brand: #0A0A0C;
     --text-on-dark: #E8E8E8;
-    --text-link: #B8A88A;
+    --text-link: #C0B090;
     --text-link-hover: #D0C4A8;
 
     /* ---------- 边框（低对比度，不抢视觉） ---------- */
     --border-base: #303030;
     --border-light: #222226;
     --border-strong: #404040;
-    --border-focus: #B8A88A;
+    --border-focus: #C0B090;
     --border-divider: #2A2A2E;
 
     /* ---------- 功能色（去饱和，融入暗调） ---------- */
@@ -73,12 +73,12 @@
     --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.4);
     --shadow-xl: 0 4px 8px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 0 1px rgba(184, 168, 138, 0.12);
-    --shadow-glow-strong: 0 0 0 2px rgba(184, 168, 138, 0.18);
+    --shadow-glow: 0 0 0 1px rgba(192, 176, 144, 0.12);
+    --shadow-glow-strong: 0 0 0 2px rgba(192, 176, 144, 0.18);
     --shadow-inner: inset 0 1px 1px rgba(0, 0, 0, 0.3);
 
     /* ---------- 数据可视化（古铜+钢灰+暗绿） ---------- */
-    --data-1: #B8A88A;
+    --data-1: #C0B090;
     --data-2: #8A7D6B;
     --data-3: #6B7B8C;
     --data-4: #4A7C59;
@@ -87,7 +87,7 @@
     --data-7: #707070;
     --data-8: #505050;
 
-    --data-grad-1: #B8A88A;
+    --data-grad-1: #C0B090;
     --data-grad-2: #8A7D6B;
     --data-grad-3: #6B7B8C;
     --data-grad-4: #4A7C59;
@@ -104,7 +104,7 @@
 
     /* ---------- 滚动条 ---------- */
     --scrollbar-thumb: #2A2A2E;
-    --scrollbar-thumb-hover: #B8A88A;
+    --scrollbar-thumb-hover: #C0B090;
     --scrollbar-track: transparent;
 
     /* ---------- 政务主题专属：覆盖共享 token（直角+紧凑） ---------- */

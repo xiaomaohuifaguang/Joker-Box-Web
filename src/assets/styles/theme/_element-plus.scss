@@ -148,13 +148,13 @@
 
 /* deepblue 主题（深色深海系，light-N 用透明度阶梯）*/
 :root[data-theme='deepblue'] {
-    --el-color-primary: #00D9C0;
-    --el-color-primary-light-3: #00B8A8;
-    --el-color-primary-light-5: rgba(0, 217, 192, 0.4);
-    --el-color-primary-light-7: rgba(0, 217, 192, 0.24);
-    --el-color-primary-light-8: rgba(0, 217, 192, 0.16);
-    --el-color-primary-light-9: rgba(0, 217, 192, 0.08);
-    --el-color-primary-dark-2: #00F0D4;
+    --el-color-primary: #00E5C8;
+    --el-color-primary-light-3: #00C8B0;
+    --el-color-primary-light-5: rgba(0, 229, 200, 0.4);
+    --el-color-primary-light-7: rgba(0, 229, 200, 0.24);
+    --el-color-primary-light-8: rgba(0, 229, 200, 0.16);
+    --el-color-primary-light-9: rgba(0, 229, 200, 0.08);
+    --el-color-primary-dark-2: #00F8DC;
 }
 
 /* obsidian 主题（深色纯黑系，light-N 用透明度阶梯）*/
@@ -181,13 +181,13 @@
 
 /* dusk 主题（深色政务系，light-N 用透明度阶梯）*/
 :root[data-theme='dusk'] {
-    --el-color-primary: #B8A88A;
-    --el-color-primary-light-3: #A8987A;
-    --el-color-primary-light-5: rgba(184, 168, 138, 0.4);
-    --el-color-primary-light-7: rgba(184, 168, 138, 0.24);
-    --el-color-primary-light-8: rgba(184, 168, 138, 0.16);
-    --el-color-primary-light-9: rgba(184, 168, 138, 0.08);
-    --el-color-primary-dark-2: #D0C4A8;
+    --el-color-primary: #C0B090;
+    --el-color-primary-light-3: #B0A080;
+    --el-color-primary-light-5: rgba(192, 176, 144, 0.4);
+    --el-color-primary-light-7: rgba(192, 176, 144, 0.24);
+    --el-color-primary-light-8: rgba(192, 176, 144, 0.16);
+    --el-color-primary-light-9: rgba(192, 176, 144, 0.08);
+    --el-color-primary-dark-2: #D0C0A0;
 }
 
 /* matrix 主题（深色黑客矩阵系，light-N 用透明度阶梯）*/

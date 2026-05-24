@@ -15,19 +15,19 @@
     --brand-accent: #20B2AA;
 
     /* ---------- 渐变（纯色，深渊不用渐变） ---------- */
-    --brand-gradient: #00D9C0;
+    --brand-gradient: #00E5C8;
     --brand-gradient-hover: #00F0D4;
-    --brand-gradient-soft: rgba(0, 217, 192, 0.08);
-    --brand-gradient-text: #00D9C0;
-    --brand-gradient-border: #00D9C0;
+    --brand-gradient-soft: rgba(0, 229, 200, 0.08);
+    --brand-gradient-text: #00E5C8;
+    --brand-gradient-border: #00E5C8;
 
     /* ---------- 背景层级（深渊层级，越来越黑） ---------- */
     --bg-page: #030610;
     --bg-container: #0A1620;
     --bg-elevated: #122030;
     --bg-input: #1A3040;
-    --bg-overlay: rgba(0, 217, 192, 0.05);
-    --bg-overlay-strong: rgba(0, 217, 192, 0.10);
+    --bg-overlay: rgba(0, 229, 200, 0.05);
+    --bg-overlay-strong: rgba(0, 229, 200, 0.10);
     --bg-mask: rgba(0, 0, 0, 0.80);
 
     /* ---------- 文字层级（荧光下的苍白） ---------- */
@@ -38,14 +38,14 @@
     --text-disabled: #304848;
     --text-on-brand: #020408;
     --text-on-dark: #E0F0F0;
-    --text-link: #00D9C0;
+    --text-link: #00E5C8;
     --text-link-hover: #40E8D4;
 
     /* ---------- 边框（像深海中的矿物质结晶线） ---------- */
     --border-base: #1E3545;
     --border-light: #152535;
     --border-strong: #2A4050;
-    --border-focus: #00D9C0;
+    --border-focus: #00E5C8;
     --border-divider: #1A3040;
 
     /* ---------- 功能色（深海生物色） ---------- */
@@ -74,12 +74,12 @@
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
     --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
     --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 0 2px rgba(0, 217, 192, 0.10);
-    --shadow-glow-strong: 0 0 20px rgba(0, 217, 192, 0.15);
+    --shadow-glow: 0 0 0 2px rgba(0, 229, 200, 0.10);
+    --shadow-glow-strong: 0 0 20px rgba(0, 229, 200, 0.15);
     --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.5);
 
     /* ---------- 数据可视化（深海生物荧光色） ---------- */
-    --data-1: #00D9C0;
+    --data-1: #00E5C8;
     --data-2: #3DB88A;
     --data-3: #5088B8;
     --data-4: #D4A840;
@@ -88,7 +88,7 @@
     --data-7: #608888;
     --data-8: #4070A0;
 
-    --data-grad-1: #00D9C0;
+    --data-grad-1: #00E5C8;
     --data-grad-2: #3DB88A;
     --data-grad-3: #5088B8;
     --data-grad-4: #D4A840;
@@ -98,13 +98,13 @@
     /* ---------- 登录页专用（深渊底部） ---------- */
     --auth-bg: #020408;
     --auth-card-bg: rgba(10, 22, 32, 0.75);
-    --auth-card-border: rgba(0, 217, 192, 0.15);
+    --auth-card-border: rgba(0, 229, 200, 0.15);
     --auth-text: #E0F0F0;
     --auth-text-muted: rgba(224, 240, 240, 0.55);
     --auth-input-bg: rgba(26, 48, 64, 0.50);
 
     /* ---------- 滚动条 ---------- */
     --scrollbar-thumb: #2A4050;
-    --scrollbar-thumb-hover: #00D9C0;
+    --scrollbar-thumb-hover: #00E5C8;
     --scrollbar-track: transparent;
 }
