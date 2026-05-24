@@ -16,6 +16,7 @@ export const THEMES = {
     DEEPBLUE: 'deepblue',
     DAWN: 'dawn',
     DUSK: 'dusk',
+    MATRIX: 'matrix',
 }
 
 export const THEME_LIST = [
@@ -26,11 +27,12 @@ export const THEME_LIST = [
     { key: THEMES.DEEPBLUE, label: '深渊萤光', icon: 'MostlyCloudy' },
     { key: THEMES.DAWN, label: '晨曦白', icon: 'Sunny' },
     { key: THEMES.DUSK, label: '暮夜黑', icon: 'MoonNight' },
+    { key: THEMES.MATRIX, label: '黑客矩阵', icon: 'Monitor' },
 ]
 
 const DEFAULT_THEME = THEMES.JOKER
-const VALID_THEMES = new Set([THEMES.INK, THEMES.JOKER, THEMES.OBSIDIAN, THEMES.CYAN, THEMES.DEEPBLUE, THEMES.DAWN, THEMES.DUSK])
-const DARK_THEMES = new Set([THEMES.JOKER, THEMES.OBSIDIAN, THEMES.DEEPBLUE, THEMES.DUSK])
+const VALID_THEMES = new Set([THEMES.INK, THEMES.JOKER, THEMES.OBSIDIAN, THEMES.CYAN, THEMES.DEEPBLUE, THEMES.DAWN, THEMES.DUSK, THEMES.MATRIX])
+const DARK_THEMES = new Set([THEMES.JOKER, THEMES.OBSIDIAN, THEMES.DEEPBLUE, THEMES.DUSK, THEMES.MATRIX])
 
 const isDarkTheme = (theme) => DARK_THEMES.has(theme)
 

@@ -28,10 +28,10 @@
 
 <script setup>
 import { computed } from 'vue'
-import { Sunny, Moon, MoonNight, PartlyCloudy, MostlyCloudy, Check } from '@element-plus/icons-vue'
+import { Sunny, Moon, MoonNight, PartlyCloudy, MostlyCloudy, Monitor, Check } from '@element-plus/icons-vue'
 import { useTheme } from '@/composables/useTheme'
 
-const ICON_MAP = { Sunny, Moon, MoonNight, PartlyCloudy, MostlyCloudy }
+const ICON_MAP = { Sunny, Moon, MoonNight, PartlyCloudy, MostlyCloudy, Monitor }
 
 const { theme, setTheme, THEME_LIST } = useTheme()
 

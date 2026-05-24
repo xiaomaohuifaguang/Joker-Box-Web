@@ -10,6 +10,7 @@
 @use './theme-deepblue' as deepblue;
 @use './theme-dawn' as dawn;
 @use './theme-dusk' as dusk;
+@use './theme-matrix' as matrix;
 
 /* 默认（无 data-theme 或未识别）= joker */
 :root {
@@ -49,6 +50,11 @@
 /* 显式 dusk 主题（暮夜黑） */
 :root[data-theme='dusk'] {
     @include dusk.theme-dusk;
+}
+
+/* 显式 matrix 主题（黑客矩阵） */
+:root[data-theme='matrix'] {
+    @include matrix.theme-matrix;
 }
 
 /* ============================================================
