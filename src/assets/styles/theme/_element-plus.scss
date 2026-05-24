@@ -190,6 +190,17 @@
     --el-color-primary-dark-2: #D0C4A8;
 }
 
+/* matrix 主题（深色黑客矩阵系，light-N 用透明度阶梯）*/
+:root[data-theme='matrix'] {
+    --el-color-primary: #00FF41;
+    --el-color-primary-light-3: #00CC33;
+    --el-color-primary-light-5: rgba(0, 255, 65, 0.4);
+    --el-color-primary-light-7: rgba(0, 255, 65, 0.24);
+    --el-color-primary-light-8: rgba(0, 255, 65, 0.16);
+    --el-color-primary-light-9: rgba(0, 255, 65, 0.08);
+    --el-color-primary-dark-2: #33FF66;
+}
+
 /* ============================================================
    全局组件尺寸统一（所有表单控件高度一致）
    ============================================================ */
