@@ -210,6 +210,12 @@ const router = createRouter({
           meta: { title: '系统提示' },
         },
         {
+          path: 'system/code-table',
+          name: 'code-table',
+          component: () => import('@/views/console/code/IndexView.vue'),
+          meta: { title: '码表管理' },
+        },
+        {
           path: 'mail-manager',
           name: 'mail-manager',
           component: () => import('@/views/console/mail/IndexView.vue'),

@@ -159,7 +159,7 @@
             </el-tab-pane>
 
             <el-tab-pane :label="`联动规则 (${linkageList.length})`" name="linkage">
-                <LinkageEditor :rules="linkageList" :fields="fieldList" @update:rules="linkageList = $event" />
+                <LinkageEditor :rules="linkageList" :fields="designFieldsWithLoadedOptions" @update:rules="linkageList = $event" />
             </el-tab-pane>
 
             <el-tab-pane label="表单预览" name="preview">
@@ -179,7 +179,10 @@
                                 <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
                                     @update:model-value="previewData[field.fieldId] = $event"
                                     :disabled="previewStates[field.fieldId]?.disabled"
-                                :runtime-options="previewStates[field.fieldId]?.options" />
+                                :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
+                                    :option-loading="remoteOptionLoading[field.fieldId]"
+                                    :option-error="remoteOptionErrors[field.fieldId]"
+                                    @retry-options="reloadFieldOptions(field)" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -196,7 +199,10 @@
                                             <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
                                                 @update:model-value="previewData[field.fieldId] = $event"
                                                 :disabled="previewStates[field.fieldId]?.disabled"
-                                :runtime-options="previewStates[field.fieldId]?.options" />
+                                :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
+                                    :option-loading="remoteOptionLoading[field.fieldId]"
+                                    :option-error="remoteOptionErrors[field.fieldId]"
+                                    @retry-options="reloadFieldOptions(field)" />
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -212,7 +218,10 @@
                                 <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
                                     @update:model-value="previewData[field.fieldId] = $event"
                                     :disabled="previewStates[field.fieldId]?.disabled"
-                                :runtime-options="previewStates[field.fieldId]?.options" />
+                                :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
+                                    :option-loading="remoteOptionLoading[field.fieldId]"
+                                    :option-error="remoteOptionErrors[field.fieldId]"
+                                    @retry-options="reloadFieldOptions(field)" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -236,7 +245,11 @@
                         :required="runtimeStates[field.fieldId]?.required">
                         <FieldRenderer :field="field" :model-value="modelValue[field.fieldId]"
                             @update:model-value="onRuntimeFieldUpdate(field.fieldId, $event)"
-                            :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled" />
+                            :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled"
+                            :runtime-options="getEffectiveOptions(field, runtimeStates[field.fieldId]?.options)"
+                            :option-loading="remoteOptionLoading[field.fieldId]"
+                            :option-error="remoteOptionErrors[field.fieldId]"
+                            @retry-options="reloadFieldOptions(field)" />
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -253,7 +266,10 @@
                                     <FieldRenderer :field="field" :model-value="modelValue[field.fieldId]"
                                         @update:model-value="onRuntimeFieldUpdate(field.fieldId, $event)"
                                         :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled"
-                                :runtime-options="runtimeStates[field.fieldId]?.options" />
+                                :runtime-options="getEffectiveOptions(field, runtimeStates[field.fieldId]?.options)"
+                            :option-loading="remoteOptionLoading[field.fieldId]"
+                            :option-error="remoteOptionErrors[field.fieldId]"
+                            @retry-options="reloadFieldOptions(field)" />
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -268,7 +284,11 @@
                         :required="runtimeStates[field.fieldId]?.required">
                         <FieldRenderer :field="field" :model-value="modelValue[field.fieldId]"
                             @update:model-value="onRuntimeFieldUpdate(field.fieldId, $event)"
-                            :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled" />
+                            :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled"
+                            :runtime-options="getEffectiveOptions(field, runtimeStates[field.fieldId]?.options)"
+                            :option-loading="remoteOptionLoading[field.fieldId]"
+                            :option-error="remoteOptionErrors[field.fieldId]"
+                            @retry-options="reloadFieldOptions(field)" />
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -293,9 +313,11 @@ import {
     type FormFieldType,
     flattenGroups,
     buildGroups,
+    isApiOptionSource,
     parseSwitchValue,
 } from './types'
 import { computeFieldStates, validateTemplate, cleanConditionTree } from './linkage'
+import { collectRemoteOptionParamRefs, loadRemoteOptions } from './remoteOptions'
 
 interface Props {
     formFields: FormField[]
@@ -332,6 +354,78 @@ const fieldIds = computed(() => [
     ...flattenGroups(designGroups.value).map(f => f.fieldId),
     ...ungroupedFields.value.map(f => f.fieldId),
 ])
+
+const previewData = ref<Record<string, any>>({})
+
+const remoteOptions = ref<Record<string, any[]>>({})
+const remoteOptionLoading = ref<Record<string, boolean>>({})
+const remoteOptionErrors = ref<Record<string, string>>({})
+const remoteOptionRequestSeq = ref<Record<string, number>>({})
+
+const withLoadedOptions = (fields: FormField[]): FormField[] => fields.map(field => {
+    if (!isApiOptionSource(field)) return field
+    return { ...field, options: remoteOptions.value[field.fieldId] || [] }
+})
+
+const formFieldsWithLoadedOptions = computed(() => withLoadedOptions(props.formFields))
+const designFieldsWithLoadedOptions = computed(() => withLoadedOptions(fieldList.value))
+
+const getRemoteOptionFormData = () => props.type === 'create' ? previewData.value : props.modelValue
+
+const loadFieldOptions = async (field: FormField) => {
+    if (!isApiOptionSource(field)) return
+    const seq = (remoteOptionRequestSeq.value[field.fieldId] || 0) + 1
+    remoteOptionRequestSeq.value = { ...remoteOptionRequestSeq.value, [field.fieldId]: seq }
+    remoteOptionLoading.value = { ...remoteOptionLoading.value, [field.fieldId]: true }
+    remoteOptionErrors.value = { ...remoteOptionErrors.value, [field.fieldId]: '' }
+    try {
+        const result = await loadRemoteOptions(field, getRemoteOptionFormData())
+        if (remoteOptionRequestSeq.value[field.fieldId] !== seq) return
+        remoteOptions.value = { ...remoteOptions.value, [field.fieldId]: result.options }
+    } catch (e: any) {
+        if (remoteOptionRequestSeq.value[field.fieldId] !== seq) return
+        remoteOptionErrors.value = { ...remoteOptionErrors.value, [field.fieldId]: e?.message || '选项加载失败' }
+    } finally {
+        if (remoteOptionRequestSeq.value[field.fieldId] === seq) {
+            remoteOptionLoading.value = { ...remoteOptionLoading.value, [field.fieldId]: false }
+        }
+    }
+}
+
+const reloadFieldOptions = (field: FormField) => {
+    loadFieldOptions(field)
+}
+
+const getEffectiveOptions = (field: FormField, stateOptions?: any[]) => {
+    if (stateOptions) return stateOptions
+    if (isApiOptionSource(field)) return remoteOptions.value[field.fieldId] || []
+    return field.options
+}
+
+const getRemoteOptionLoadKey = (field: FormField) => {
+    const formData = getRemoteOptionFormData()
+    const refValues = collectRemoteOptionParamRefs(field.optionSource?.params).reduce<Record<string, any>>((acc, fieldId) => {
+        acc[fieldId] = formData?.[fieldId]
+        return acc
+    }, {})
+    return JSON.stringify({
+        fieldId: field.fieldId,
+        optionSource: field.optionSource,
+        refValues,
+    })
+}
+
+watch(
+    () => props.formFields.map(getRemoteOptionLoadKey),
+    () => {
+        props.formFields.forEach(field => {
+            if (isApiOptionSource(field)) {
+                loadFieldOptions(field)
+            }
+        })
+    },
+    { immediate: true },
+)
 
 const groupOptions = computed(() =>
     designGroups.value.map(g => ({ id: g.id, name: g.name || g.id }))
@@ -380,6 +474,22 @@ const initDesignGroups = () => {
     ungroupedFields.value = ungrouped
     activeDesignGroupIds.value = designGroups.value.map(g => g.id)
 }
+
+watch(
+    () => props.formFields.map(f => `${f.fieldId}:${f.options?.length}:${f.optionSource?.type}:${f.columns?.length}`),
+    () => {
+        const allFields = props.formFields
+        const ungrouped = allFields.filter(f => !f.groupId).map((f, i) => ({ ...f, sort: i }))
+        ungroupedFields.value = ungrouped
+        designGroups.value.forEach(g => {
+            g.fields = allFields
+                .filter(f => f.groupId === g.id)
+                .map((f, idx) => ({ ...f, sort: f.sort ?? idx }))
+                .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+        })
+        activeDesignGroupIds.value = designGroups.value.map(g => g.id)
+    },
+)
 
 watch(
     () => ({ groupsLen: props.groups?.length ?? 0, fieldsLen: props.formFields.length }),
@@ -659,7 +769,7 @@ watch(
 
 // 运行模式：联动求值 + 校验规则
 const runtimeStates = computed(() =>
-    computeFieldStates(props.formFields, props.linkageRules, props.modelValue),
+    computeFieldStates(formFieldsWithLoadedOptions.value, props.linkageRules, props.modelValue),
 )
 
 /** 获取字段默认值（VALUE 恢复时用） */
@@ -669,6 +779,7 @@ const getDefaultValue = (field: FormField): any => {
             case 'CHECKBOX':
             case 'MULTISELECT':
             case 'MULTICASCADER':
+            case 'TABLE':
                 return []
             case 'NUMBER':
             case 'SLIDER':
@@ -684,6 +795,7 @@ const getDefaultValue = (field: FormField): any => {
         case 'CHECKBOX':
         case 'MULTISELECT':
         case 'MULTICASCADER':
+        case 'TABLE':
             return Array.isArray(field.defaultValue) ? field.defaultValue : []
         case 'NUMBER':
         case 'SLIDER':
@@ -753,7 +865,7 @@ const runtimeGroups = computed(() => {
         .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
 })
 
-const ARRAY_VALUE_TYPES: FormFieldType[] = ['UPLOAD', 'CHECKBOX', 'MULTISELECT', 'CASCADER', 'MULTICASCADER']
+const ARRAY_VALUE_TYPES: FormFieldType[] = ['UPLOAD', 'CHECKBOX', 'MULTISELECT', 'CASCADER', 'MULTICASCADER', 'TABLE']
 
 const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { pattern?: string; patternTips?: string }): FormItemRule[] => {
     const itemRules: FormItemRule[] = []
@@ -796,6 +908,24 @@ const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { p
                 : `${field.title} 长度不能大于 ${field.maxLength}`,
             trigger: 'change',
         })
+    }
+    if (field.type === 'TABLE') {
+        if (field.min != null && field.min > 0) {
+            itemRules.push({
+                type: 'array',
+                min: Number(field.min),
+                message: `${field.title} 至少需要 ${field.min} 行`,
+                trigger: 'change',
+            })
+        }
+        if (field.max != null) {
+            itemRules.push({
+                type: 'array',
+                max: Number(field.max),
+                message: `${field.title} 最多 ${field.max} 行`,
+                trigger: 'change',
+            })
+        }
     }
     const pat = state?.pattern ?? field.pattern
     if (pat) {
@@ -861,8 +991,6 @@ const verify = async (): Promise<boolean> => {
 }
 
 // 设计模式：预览
-const previewData = ref<Record<string, any>>({})
-
 watch(
     () => props.formFields,
     fields => {
@@ -876,7 +1004,7 @@ watch(
 )
 
 const previewStates = computed(() =>
-    computeFieldStates(props.formFields, linkageList.value, previewData.value),
+    computeFieldStates(formFieldsWithLoadedOptions.value, linkageList.value, previewData.value),
 )
 
 /** 预览模式 VALUE 动作 */

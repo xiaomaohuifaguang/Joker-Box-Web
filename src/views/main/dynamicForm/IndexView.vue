@@ -125,6 +125,7 @@ const convertSubmitData = (data: Record<string, any>, fields: FormField[], state
             case 'MULTICASCADER':
             case 'UPLOAD':
             case 'DATERANGE':
+            case 'TABLE':
                 result[field.fieldId] = val
                 break
             default:

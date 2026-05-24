@@ -1,6 +1,6 @@
 <template>
     <div class="detail-form-container">
-        <div v-loading="loading" element-loading-text="加载中...">
+        <div v-loading.fullscreen.lock="loading" element-loading-text="加载中...">
             <div class="content-wrapper">
                 <el-row :gutter="20">
                     <el-col :xs="24" :sm="24" :md="6" :lg="6">

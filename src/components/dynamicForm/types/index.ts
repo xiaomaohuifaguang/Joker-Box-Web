@@ -33,6 +33,23 @@ export interface FormTableColumn {
     title: string
 }
 
+export type FormOptionSourceType = 'STATIC' | 'API'
+
+export interface FormOptionMapping {
+    listPath: string
+    labelPath: string
+    valuePath: string
+    childrenPath?: string
+}
+
+export interface FormOptionSource {
+    type?: FormOptionSourceType
+    url?: string
+    method?: 'GET' | 'POST'
+    params?: Record<string, any>
+    mapping?: FormOptionMapping
+}
+
 // 表单项配置（DynamicFormField）
 export interface FormField {
     fieldId: string
@@ -53,6 +70,7 @@ export interface FormField {
     groupId?: string
     props?: Record<string, any>
     columns?: FormTableColumn[]
+    optionSource?: FormOptionSource
 }
 
 // 字段分组（DynamicFormFieldGroup）
@@ -181,6 +199,14 @@ export const OPTION_REQUIRED_TYPES: FormFieldType[] = [
     'SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER',
 ]
 
+export const OPTION_SOURCE_FIELD_TYPES: FormFieldType[] = [
+    'SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER',
+]
+
+export const isApiOptionSource = (field: FormField): boolean => field.optionSource?.type === 'API'
+
+export const supportsOptionSource = (fieldType: FormFieldType): boolean => OPTION_SOURCE_FIELD_TYPES.includes(fieldType)
+
 /** 有效的联动动作集合 */
 export const VALID_LINKAGE_ACTIONS: LinkageAction[] = [
     'SHOW', 'HIDE', 'REQUIRED', 'DISABLED', 'ENABLED', 'SET_PATTERN', 'SET_SPAN', 'OPTION', 'VALUE',
@@ -232,6 +258,26 @@ export const getDefaultCondition = (fieldType: FormFieldType): LinkageCondition 
     if (fieldType === 'UPLOAD') return 'EMPTY'
     if (fieldType === 'TABLE') return 'EMPTY'
     return 'EQ'
+}
+
+/** 根据字段类型返回可用的联动条件 */
+export const getValidConditionsByFieldType = (fieldType: FormFieldType): LinkageCondition[] => {
+    const numericOrDate: FormFieldType[] = ['NUMBER', 'SLIDER', 'RATE', 'DATE', 'DATETIME', 'TIME', 'DATERANGE']
+    if (numericOrDate.includes(fieldType)) {
+        return ['EQ', 'NE', 'GT', 'LT', 'GE', 'LE', 'EMPTY', 'NOT_EMPTY', 'IN', 'NOT_IN']
+    }
+    const textLike: FormFieldType[] = ['INPUT', 'TEXTAREA', 'COLOR']
+    if (textLike.includes(fieldType)) {
+        return ['EQ', 'NE', 'EMPTY', 'NOT_EMPTY', 'REGEX', 'IN', 'NOT_IN']
+    }
+    const optionLike: FormFieldType[] = ['SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER']
+    if (optionLike.includes(fieldType)) {
+        return ['EQ', 'NE', 'EMPTY', 'NOT_EMPTY', 'IN', 'NOT_IN']
+    }
+    if (fieldType === 'SWITCH') {
+        return ['EQ', 'NE', 'EMPTY', 'NOT_EMPTY']
+    }
+    return ['EMPTY', 'NOT_EMPTY']
 }
 
 export const LINKAGE_ACTION_OPTIONS: { label: string; value: LinkageAction }[] = [

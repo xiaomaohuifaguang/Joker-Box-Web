@@ -79,8 +79,8 @@ import LinkageValueInput from './LinkageValueInput.vue'
 import {
     LINKAGE_CONDITION_OPTIONS,
     getDefaultCondition,
+    getValidConditionsByFieldType,
     type FormField,
-    type FormFieldType,
     type FormLinkageNode,
     type LinkageCondition,
 } from './types'
@@ -129,30 +129,10 @@ const triggerValueStr = computed(() => {
     return String(v)
 })
 
-// 根据字段类型返回可用的比较条件
-const getValidConditions = (fieldType: FormFieldType): LinkageCondition[] => {
-    const numericOrDate: FormFieldType[] = ['NUMBER', 'SLIDER', 'RATE', 'DATE', 'DATETIME', 'TIME', 'DATERANGE']
-    if (numericOrDate.includes(fieldType)) {
-        return ['EQ', 'NE', 'GT', 'LT', 'GE', 'LE', 'EMPTY', 'NOT_EMPTY', 'IN', 'NOT_IN']
-    }
-    const textLike: FormFieldType[] = ['INPUT', 'TEXTAREA', 'COLOR']
-    if (textLike.includes(fieldType)) {
-        return ['EQ', 'NE', 'EMPTY', 'NOT_EMPTY', 'REGEX', 'IN', 'NOT_IN']
-    }
-    const optionLike: FormFieldType[] = ['SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER']
-    if (optionLike.includes(fieldType)) {
-        return ['EQ', 'NE', 'EMPTY', 'NOT_EMPTY', 'IN', 'NOT_IN']
-    }
-    if (fieldType === 'SWITCH') {
-        return ['EQ', 'NE', 'EMPTY', 'NOT_EMPTY']
-    }
-    return ['EMPTY', 'NOT_EMPTY']
-}
-
 const conditionOptions = computed(() => {
     const field = triggerField.value
     if (!field) return LINKAGE_CONDITION_OPTIONS
-    const valid = getValidConditions(field.type)
+    const valid = getValidConditionsByFieldType(field.type)
     return LINKAGE_CONDITION_OPTIONS.filter(c => valid.includes(c.value))
 })
 
@@ -207,7 +187,7 @@ const removeChild = (index: number) => {
 // 条件节点：字段变化
 const onTriggerFieldChange = (fieldId: string) => {
     const field = props.fields.find(f => f.fieldId === fieldId)
-    const validConds = field ? getValidConditions(field.type) : []
+    const validConds = field ? getValidConditionsByFieldType(field.type) : []
     const currentCond = props.node.triggerCondition
     const fallbackCond = field ? getDefaultCondition(field.type) : 'EQ'
     const nextCond = validConds.includes(currentCond as LinkageCondition) ? currentCond : fallbackCond

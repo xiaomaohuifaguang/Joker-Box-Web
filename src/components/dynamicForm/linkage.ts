@@ -8,7 +8,9 @@ import type {
 } from './types'
 import {
     getValidActionsByFieldType,
+    isApiOptionSource,
     OPTION_REQUIRED_TYPES,
+    supportsOptionSource,
     VALID_FIELD_TYPES,
     VALID_LINKAGE_ACTIONS,
     VALID_LINKAGE_CONDITIONS,
@@ -377,8 +379,39 @@ export const validateTemplate = (
         }
 
         // ===== Step 3.1: 按类型差异化校验 =====
+        const usesApiOptions = isApiOptionSource(f)
+        if (f.optionSource?.type && !['STATIC', 'API'].includes(f.optionSource.type)) {
+            errors.push(`字段 "${f.title || f.fieldId}" 选项来源类型无效: ${f.optionSource.type}`)
+        }
+        if (usesApiOptions) {
+            if (!supportsOptionSource(f.type)) {
+                errors.push(`字段 "${f.title || f.fieldId}" 不支持远程选项数据源`)
+            }
+            const source = f.optionSource!
+            if (!source.url || !source.url.trim()) {
+                errors.push(`字段 "${f.title || f.fieldId}" 远程选项 URL 不能为空`)
+            } else if (!source.url.startsWith('/') || source.url.startsWith('//') || /^https?:\/\//i.test(source.url)) {
+                errors.push(`字段 "${f.title || f.fieldId}" 远程选项 URL 只能是同源相对路径`)
+            }
+            if (source.method !== 'GET' && source.method !== 'POST') {
+                errors.push(`字段 "${f.title || f.fieldId}" 远程选项请求方式只能是 GET 或 POST`)
+            }
+            if (!source.mapping) {
+                errors.push(`字段 "${f.title || f.fieldId}" 远程选项映射不能为空`)
+            } else {
+                if (!source.mapping.listPath || !source.mapping.listPath.trim()) {
+                    errors.push(`字段 "${f.title || f.fieldId}" 远程选项 listPath 不能为空`)
+                }
+                if (!source.mapping.labelPath || !source.mapping.labelPath.trim()) {
+                    errors.push(`字段 "${f.title || f.fieldId}" 远程选项 labelPath 不能为空`)
+                }
+                if (!source.mapping.valuePath || !source.mapping.valuePath.trim()) {
+                    errors.push(`字段 "${f.title || f.fieldId}" 远程选项 valuePath 不能为空`)
+                }
+            }
+        }
         // options 必填检查
-        if (OPTION_REQUIRED_TYPES.includes(f.type) && (!f.options || f.options.length === 0)) {
+        if (!usesApiOptions && OPTION_REQUIRED_TYPES.includes(f.type) && (!f.options || f.options.length === 0)) {
             errors.push(`字段 "${f.title || f.fieldId}" 缺少选项`)
         }
 
@@ -484,6 +517,59 @@ export const validateTemplate = (
                 errors.push(`字段 "${f.title || f.fieldId}" 日期区间默认值应为数组`)
             }
         }
+
+        // TABLE 专用校验
+        if (f.type === 'TABLE') {
+            if (!f.columns || f.columns.length === 0) {
+                errors.push(`字段 "${f.title || f.fieldId}" 必须定义至少一列`)
+            } else {
+                const colKeys = new Set<string>()
+                f.columns.forEach((col, ci) => {
+                    if (!col.key || !col.key.trim()) {
+                        errors.push(`字段 "${f.title || f.fieldId}" 列[${ci}] 标识不能为空`)
+                    } else if (!/^[a-zA-Z][a-zA-Z0-9_]{0,31}$/.test(col.key)) {
+                        errors.push(`字段 "${f.title || f.fieldId}" 列[${ci}] 标识格式错误：以字母开头，仅含字母数字下划线，最长32字符`)
+                    } else if (colKeys.has(col.key)) {
+                        errors.push(`字段 "${f.title || f.fieldId}" 列标识重复: ${col.key}`)
+                    } else {
+                        colKeys.add(col.key)
+                    }
+                    if (!col.title || !col.title.trim()) {
+                        errors.push(`字段 "${f.title || f.fieldId}" 列[${ci}] 标题不能为空`)
+                    } else if (col.title.trim().length > 32) {
+                        errors.push(`字段 "${f.title || f.fieldId}" 列[${ci}] 标题长度不能超过32字符`)
+                    }
+                })
+            }
+            if (f.min != null && f.min < 0) {
+                errors.push(`字段 "${f.title || f.fieldId}" 最少行数不能为负数`)
+            }
+            if (f.max != null && f.max < 1) {
+                errors.push(`字段 "${f.title || f.fieldId}" 最多行数不能小于1`)
+            }
+            if (f.min != null && f.max != null && f.max < f.min) {
+                errors.push(`字段 "${f.title || f.fieldId}" 最多行数不能小于最少行数`)
+            }
+            // defaultValue 校验
+            if (f.defaultValue != null) {
+                if (!Array.isArray(f.defaultValue)) {
+                    errors.push(`字段 "${f.title || f.fieldId}" 默认值应为行数组`)
+                } else {
+                    const colKeys = f.columns?.map(c => c.key) || []
+                    f.defaultValue.forEach((row: any, ri: number) => {
+                        if (!row || typeof row !== 'object' || Array.isArray(row)) {
+                            errors.push(`字段 "${f.title || f.fieldId}" 默认值行[${ri}] 必须是对象`)
+                        } else {
+                            Object.keys(row).forEach(k => {
+                                if (!colKeys.includes(k)) {
+                                    errors.push(`字段 "${f.title || f.fieldId}" 默认值行[${ri}] 包含未定义的列: ${k}`)
+                                }
+                            })
+                        }
+                    })
+                }
+            }
+        }
     })
 
     // ===== Step 4: 联动规则校验 =====
@@ -504,6 +590,12 @@ export const validateTemplate = (
                 errors.push(`联动规则 #${ruleIdx + 1}${path} 缺少条件运算符`)
             } else if (!VALID_LINKAGE_CONDITIONS.includes(node.triggerCondition)) {
                 errors.push(`联动规则 #${ruleIdx + 1}${path} 条件运算符无效: ${node.triggerCondition}`)
+            }
+            if (node.triggerFieldId && node.triggerCondition) {
+                const triggerType = fieldIdToType.get(node.triggerFieldId)
+                if (triggerType === 'TABLE' && !['EMPTY', 'NOT_EMPTY'].includes(node.triggerCondition)) {
+                    errors.push(`联动规则 #${ruleIdx + 1}${path} TABLE 字段仅支持 EMPTY/NOT_EMPTY 条件`)
+                }
             }
             // REGEX 条件值校验
             if (node.triggerCondition === 'REGEX' && node.triggerValue !== undefined && node.triggerValue !== null && String(node.triggerValue) !== '') {

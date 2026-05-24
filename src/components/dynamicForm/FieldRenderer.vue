@@ -15,47 +15,65 @@
     <el-rate v-else-if="field.type === 'RATE'" :model-value="modelValue" @update:model-value="onUpdate"
         :max="field.max || 5" :disabled="disabled" />
 
-    <el-select v-else-if="field.type === 'SELECT'" :model-value="modelValue" @update:model-value="onUpdate"
-        :placeholder="field.placeholder" :disabled="disabled" clearable style="width: 100%;">
-        <el-option v-for="item in fieldOptions" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select>
-
-    <el-select v-else-if="field.type === 'MULTISELECT'" :model-value="modelValue || []" @update:model-value="onUpdate"
-        :placeholder="field.placeholder" :disabled="disabled" clearable multiple style="width: 100%;">
-        <el-option v-for="item in fieldOptions" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select>
-
-    <div v-else-if="field.type === 'RADIO'" class="field-with-clear">
-        <el-radio-group :model-value="modelValue" @update:model-value="onUpdate" :disabled="disabled"
-            style="flex: 1;">
-            <el-radio v-for="item in fieldOptions" :key="item.value" :value="item.value"
-                style="margin-bottom: 4px"">
-                {{ item.label }}
-            </el-radio>
-        </el-radio-group>
-        <el-button v-if="modelValue !== null && modelValue !== undefined && modelValue !== ''" link type="primary"
-            size="small" @click="onUpdate(null)"
-            style="margin-left: 8px; white-space: nowrap;"">清空</el-button>
+    <div v-else-if="field.type === 'SELECT'" class="option-field-wrapper">
+        <el-select :model-value="modelValue" @update:model-value="onUpdate"
+            :placeholder="field.placeholder" :disabled="optionDisabled" clearable style="width: 100%;">
+            <el-option v-for="item in fieldOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <RemoteOptionStatus v-if="showOptionStatus" :loading="optionLoading" :error="optionError" @retry="retryOptions" />
     </div>
 
-    <el-checkbox-group v-else-if="field.type === 'CHECKBOX'" :model-value="modelValue || []" @update:model-value="onUpdate"
-        :disabled="disabled" :min="field.min ?? undefined" :max="field.max ?? undefined" style="width: 100%;">
-        <el-checkbox v-for="item in fieldOptions" :key="item.value" :value="item.value">
-            {{ item.label }}
-        </el-checkbox>
-    </el-checkbox-group>
+    <div v-else-if="field.type === 'MULTISELECT'" class="option-field-wrapper">
+        <el-select :model-value="modelValue || []" @update:model-value="onUpdate"
+            :placeholder="field.placeholder" :disabled="optionDisabled" clearable multiple style="width: 100%;">
+            <el-option v-for="item in fieldOptions" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <RemoteOptionStatus v-if="showOptionStatus" :loading="optionLoading" :error="optionError" @retry="retryOptions" />
+    </div>
 
-    <el-cascader v-else-if="field.type === 'CASCADER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :options="fieldOptions" :placeholder="field.placeholder" :disabled="disabled"
-        :props="{ multiple: false, ...(field.props || {}) }"
-        :show-all-levels="field.props?.showAllLevels"
-        clearable style="width: 100%;" />
+    <div v-else-if="field.type === 'RADIO'" class="option-field-wrapper">
+        <div class="field-with-clear">
+            <el-radio-group :model-value="modelValue" @update:model-value="onUpdate" :disabled="optionDisabled"
+                style="flex: 1;">
+                <el-radio v-for="item in fieldOptions" :key="item.value" :value="item.value"
+                    style="margin-bottom: 4px">
+                    {{ item.label }}
+                </el-radio>
+            </el-radio-group>
+            <el-button v-if="modelValue !== null && modelValue !== undefined && modelValue !== ''" link type="primary"
+                size="small" @click="onUpdate(null)"
+                style="margin-left: 8px; white-space: nowrap;">清空</el-button>
+        </div>
+        <RemoteOptionStatus v-if="showOptionStatus" :loading="optionLoading" :error="optionError" @retry="retryOptions" />
+    </div>
 
-    <el-cascader v-else-if="field.type === 'MULTICASCADER'" :model-value="modelValue || []" @update:model-value="onUpdate"
-        :options="fieldOptions" :placeholder="field.placeholder" :disabled="disabled"
-        :props="{ multiple: true, ...(field.props || {}) }"
-        :show-all-levels="field.props?.showAllLevels"
-        clearable style="width: 100%;" />
+    <div v-else-if="field.type === 'CHECKBOX'" class="option-field-wrapper">
+        <el-checkbox-group :model-value="modelValue || []" @update:model-value="onUpdate"
+            :disabled="optionDisabled" :min="field.min ?? undefined" :max="field.max ?? undefined" style="width: 100%;">
+            <el-checkbox v-for="item in fieldOptions" :key="item.value" :value="item.value">
+                {{ item.label }}
+            </el-checkbox>
+        </el-checkbox-group>
+        <RemoteOptionStatus v-if="showOptionStatus" :loading="optionLoading" :error="optionError" @retry="retryOptions" />
+    </div>
+
+    <div v-else-if="field.type === 'CASCADER'" class="option-field-wrapper">
+        <el-cascader :model-value="modelValue" @update:model-value="onUpdate"
+            :options="fieldOptions" :placeholder="field.placeholder" :disabled="optionDisabled"
+            :props="{ multiple: false, ...(field.props || {}) }"
+            :show-all-levels="field.props?.showAllLevels"
+            clearable style="width: 100%;" />
+        <RemoteOptionStatus v-if="showOptionStatus" :loading="optionLoading" :error="optionError" @retry="retryOptions" />
+    </div>
+
+    <div v-else-if="field.type === 'MULTICASCADER'" class="option-field-wrapper">
+        <el-cascader :model-value="modelValue || []" @update:model-value="onUpdate"
+            :options="fieldOptions" :placeholder="field.placeholder" :disabled="optionDisabled"
+            :props="{ multiple: true, ...(field.props || {}) }"
+            :show-all-levels="field.props?.showAllLevels"
+            clearable style="width: 100%;" />
+        <RemoteOptionStatus v-if="showOptionStatus" :loading="optionLoading" :error="optionError" @retry="retryOptions" />
+    </div>
 
     <el-switch v-else-if="field.type === 'SWITCH'" :model-value="modelValue" @update:model-value="onUpdate"
         :disabled="disabled" />
@@ -150,11 +168,14 @@
         </template>
     </el-upload>
 
+    <TableRenderer v-else-if="field.type === 'TABLE'" :field="field" :model-value="modelValue"
+        @update:model-value="onUpdate" :disabled="disabled" />
+
     <span v-else style="color: var(--el-color-warning);">未支持的字段类型: {{ field.type }}</span>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, defineComponent, h, ref, watch } from 'vue'
 import {
     Upload, Document, Loading, Download, Close,
     Picture, VideoPlay, Headset, Grid, Box, Monitor,
@@ -162,6 +183,7 @@ import {
 } from '@element-plus/icons-vue'
 import type { UploadFile } from 'element-plus'
 import type { FormField, FormFieldOption } from './types'
+import TableRenderer from './TableRenderer.vue'
 import axios from 'axios'
 import { CONSTANTS, getToken, alert } from '@/utils'
 
@@ -170,13 +192,45 @@ const props = defineProps<{
     modelValue: any
     disabled?: boolean
     runtimeOptions?: FormFieldOption[]
+    optionLoading?: boolean
+    optionError?: string
 }>()
 
 const fieldOptions = computed(() => props.runtimeOptions ?? props.field.options ?? [])
+const optionDisabled = computed(() => props.disabled || props.optionLoading || !!props.optionError)
+const showOptionStatus = computed(() => props.optionLoading || !!props.optionError)
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: any): void
+    (e: 'retry-options'): void
 }>()
+
+const retryOptions = () => emit('retry-options')
+
+const RemoteOptionStatus = defineComponent({
+    props: {
+        loading: Boolean,
+        error: String,
+    },
+    emits: ['retry'],
+    setup(statusProps, { emit }) {
+        return () => h('div', {
+            class: ['remote-option-status', statusProps.loading ? 'is-loading' : 'is-error'],
+        }, statusProps.loading
+            ? [
+                h('span', { class: 'remote-option-icon' }, [h(Loading)]),
+                h('span', { class: 'remote-option-message' }, '选项加载中...'),
+            ]
+            : [
+                h('span', { class: 'remote-option-icon' }, '!'),
+                h('span', { class: 'remote-option-message' }, statusProps.error || '选项加载失败'),
+                h('button', { class: 'remote-option-retry', type: 'button', onClick: () => emit('retry') }, [
+                    h('span', { class: 'remote-option-retry-icon' }, '↻'),
+                    h('span', '重试'),
+                ]),
+            ])
+    },
+})
 
 const onUpdate = (val: any) => {
     emit('update:modelValue', val)
@@ -696,16 +750,125 @@ const onUploadExceed = () => {
     }
 }
 
+.field-with-clear,
+.option-field-wrapper {
+    width: 100%;
+}
+
 .field-with-clear {
     display: flex;
     align-items: center;
-    width: 100%;
 }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 768px) {
     .dynamic-form-upload :deep(.el-upload-list) {
         grid-template-columns: 1fr;
+    }
+}
+.remote-option-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.remote-option-status.is-loading {
+    color: var(--el-text-color-secondary);
+    background: var(--el-fill-color-light);
+    border: 1px solid var(--el-border-color-lighter);
+}
+
+.remote-option-status.is-error {
+    color: var(--el-color-danger);
+    background: var(--el-color-danger-light-9);
+    border: 1px solid var(--el-color-danger-light-7);
+}
+
+.remote-option-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.remote-option-status.is-loading .remote-option-icon {
+    color: var(--el-color-primary);
+    animation: remote-option-spin 1s linear infinite;
+}
+
+.remote-option-status.is-error .remote-option-icon {
+    color: #fff;
+    background: var(--el-color-danger);
+}
+
+.remote-option-message {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.remote-option-retry {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-shrink: 0;
+    min-height: 24px;
+    padding: 3px 10px;
+    border: 1px solid var(--el-color-danger-light-5);
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--el-bg-color), var(--el-color-danger-light-9));
+    box-shadow: 0 1px 2px rgba(245, 108, 108, 0.12);
+    color: var(--el-color-danger);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    transition: all 0.16s ease;
+}
+
+.remote-option-retry:hover {
+    color: #fff;
+    border-color: var(--el-color-danger);
+    background: linear-gradient(180deg, var(--el-color-danger-light-3), var(--el-color-danger));
+    box-shadow: 0 4px 10px rgba(245, 108, 108, 0.24);
+    transform: translateY(-1px);
+}
+
+.remote-option-retry:active {
+    box-shadow: 0 1px 3px rgba(245, 108, 108, 0.2);
+    transform: translateY(0);
+}
+
+.remote-option-retry-icon {
+    font-size: 13px;
+    line-height: 1;
+    transition: transform 0.16s ease;
+}
+
+.remote-option-retry:hover .remote-option-retry-icon {
+    transform: rotate(180deg);
+}
+
+@keyframes remote-option-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
     }
 }
 </style>

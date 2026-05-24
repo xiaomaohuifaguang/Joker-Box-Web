@@ -58,6 +58,83 @@
                 </el-col>
 
                 <el-col :span="24" v-if="hasOptions">
+                    <el-form-item label="选项来源">
+                        <el-radio-group v-model="form.optionSourceType" @change="onOptionSourceChange">
+                            <el-radio-button label="STATIC">静态选项</el-radio-button>
+                            <el-radio-button label="API">远程 API</el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <template v-if="hasOptions && form.optionSourceType === 'API'">
+                    <el-col :span="24">
+                        <div class="remote-option-section-header">
+                            <div class="section-header-left">
+                                <el-icon class="section-header-icon"><Connection /></el-icon>
+                                <span class="section-header-title">远程选项配置</span>
+                            </div>
+                            <el-button size="small" round @click="remoteOptionHelpDialog = true">
+                                <el-icon style="margin-right: 4px"><QuestionFilled /></el-icon>
+                                使用说明
+                            </el-button>
+                        </div>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="API 地址">
+                            <el-input v-model="form.optionSource.url" placeholder="/api/common/options/users" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="请求方式">
+                            <el-select v-model="form.optionSource.method" style="width: 100%">
+                                <el-option label="GET" value="GET" />
+                                <el-option label="POST" value="POST" />
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="请求参数">
+                            <div class="param-builder">
+                                <div v-for="(param, idx) in form.optionParams" :key="idx" class="param-row">
+                                    <el-input v-model="param.key" placeholder="参数名" class="param-key" />
+                                    <el-select v-model="param.valueType" class="param-type" @change="param.valueType === 'ref' && (param.staticValue = '')">
+                                        <el-option label="静态值" value="static" />
+                                        <el-option label="引用字段" value="ref" />
+                                    </el-select>
+                                    <el-select v-if="param.valueType === 'ref'" v-model="param.refFieldId"
+                                        placeholder="选择字段" filterable clearable class="param-value">
+                                        <el-option v-for="f in existingFieldIds" :key="f" :label="f" :value="f" />
+                                    </el-select>
+                                    <el-input v-else v-model="param.staticValue" placeholder="值" class="param-value" />
+                                    <el-button type="danger" :icon="Delete" circle @click="form.optionParams.splice(idx, 1)" />
+                                </div>
+                                <el-button type="primary" plain size="small" @click="form.optionParams.push({ key: '', valueType: 'static', staticValue: '', refFieldId: '' })">
+                                    + 添加参数
+                                </el-button>
+                            </div>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="选项数组路径">
+                            <el-input v-model="optionMapping.listPath" placeholder="例如 data，根数组填 $" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="显示文本路径">
+                            <el-input v-model="optionMapping.labelPath" placeholder="例如 name" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="提交值路径">
+                            <el-input v-model="optionMapping.valuePath" placeholder="例如 id" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12" v-if="['CASCADER', 'MULTICASCADER'].includes(form.type)">
+                        <el-form-item label="子选项路径">
+                            <el-input v-model="optionMapping.childrenPath" placeholder="例如 children" />
+                        </el-form-item>
+                    </el-col>
+                </template>
+                <el-col :span="24" v-if="hasOptions && form.optionSourceType === 'STATIC'">
                     <el-form-item label="选项管理">
                         <el-button type="primary" plain @click="optionsDialog = true">
                             <el-icon>
@@ -76,6 +153,18 @@
                     </el-form-item>
                 </el-col>
 
+                <!-- 动态表格列管理 -->
+                <el-col :span="24" v-if="hasColumns">
+                    <el-form-item label="列管理">
+                        <el-button type="primary" plain @click="columnsDialog = true">
+                            <el-icon>
+                                <Setting />
+                            </el-icon>
+                            <span>配置表格列（已配置 {{ form.columns?.length || 0 }} 列）</span>
+                        </el-button>
+                    </el-form-item>
+                </el-col>
+
                 <!-- 默认值（按类型分支） -->
                 <el-col :span="24" v-if="['INPUT', 'TEXTAREA'].includes(form.type)">
                     <el-form-item label="默认值">
@@ -89,7 +178,8 @@
                 </el-col>
                 <el-col :span="24" v-if="form.type === 'SELECT' || form.type === 'RADIO'">
                     <el-form-item label="默认值">
-                        <el-select v-model="form.defaultValue" clearable style="width: 100%">
+                        <el-input v-if="form.optionSourceType === 'API'" v-model="form.defaultValue" placeholder="远程选项默认值（可选）" />
+                        <el-select v-else v-model="form.defaultValue" clearable style="width: 100%">
                             <el-option v-for="item in form.options || []" :key="item.value" :label="item.label"
                                 :value="item.value" />
                         </el-select>
@@ -158,6 +248,25 @@
                     </el-form-item>
                 </el-col>
 
+                <!-- TABLE 行数约束 -->
+                <el-col :span="12" v-if="form.type === 'TABLE'">
+                    <el-form-item label="最少行数">
+                        <el-input-number v-model="form.min" :min="0" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12" v-if="form.type === 'TABLE'">
+                    <el-form-item label="最多行数">
+                        <el-input-number v-model="form.max" :min="1" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="24" v-if="form.type === 'TABLE'">
+                    <el-form-item label="默认行数据">
+                        <el-button type="primary" plain @click="defaultRowsDialog = true">
+                            配置默认行（已配置 {{ Array.isArray(form.defaultValue) ? form.defaultValue.length : 0 }} 行）
+                        </el-button>
+                    </el-form-item>
+                </el-col>
+
                 <!-- 数值范围（NUMBER/SLIDER/RATE/CHECKBOX） -->
                 <el-col :span="12" v-if="['NUMBER', 'SLIDER', 'RATE'].includes(form.type)">
                     <el-form-item label="最小值">
@@ -214,19 +323,99 @@
                 <el-button type="primary" @click="optionsDialog = false">完成</el-button>
             </template>
         </el-dialog>
+
+        <el-dialog v-model="columnsDialog" title="配置表格列" width="500px" append-to-body destroy-on-close>
+            <div class="columns-editor">
+                <div v-for="(col, idx) in form.columns" :key="idx" class="column-row">
+                    <el-input v-model="col.key" placeholder="列标识（如 name）" style="flex: 1" />
+                    <el-input v-model="col.title" placeholder="列标题（如 姓名）" style="flex: 1" />
+                    <el-button type="danger" :icon="Delete" circle @click="form.columns.splice(idx, 1)" />
+                </div>
+                <el-button type="primary" plain @click="addColumn" style="width: 100%">添加列</el-button>
+            </div>
+            <template #footer>
+                <el-button type="primary" @click="columnsDialog = false">完成</el-button>
+            </template>
+        </el-dialog>
+
+        <el-dialog v-model="defaultRowsDialog" title="配置默认行数据" width="700px" append-to-body destroy-on-close>
+            <div v-if="form.columns && form.columns.length > 0" class="default-rows-editor">
+                <el-table :data="form.defaultValue || []" border style="width: 100%">
+                    <el-table-column v-for="col in form.columns" :key="col.key" :label="col.title" :prop="col.key"
+                        min-width="120">
+                        <template #default="{ row }">
+                            <el-input v-model="row[col.key]" placeholder="可选" />
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="60" fixed="right">
+                        <template #default="{ $index }">
+                            <el-button type="danger" :icon="Delete" circle @click="removeDefaultRow($index)" />
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-button type="primary" plain @click="addDefaultRow" style="margin-top: 10px; width: 100%">
+                    添加默认行
+                </el-button>
+            </div>
+            <el-empty v-else description="请先配置表格列" />
+            <template #footer>
+                <el-button type="primary" @click="defaultRowsDialog = false">完成</el-button>
+            </template>
+        </el-dialog>
+
+        <el-dialog v-model="remoteOptionHelpDialog" title="远程选项配置说明" width="680px" append-to-body>
+            <div class="remote-option-help-content">
+                <section>
+                    <h4>1. 请求参数 JSON</h4>
+                    <p>左侧 key 是发给后端的参数名，<code>{ "$field": "字段ID" }</code> 表示取表单内某个字段的当前值。</p>
+                    <pre>{
+  "departmentId": { "$field": "deptId" },
+  "enabled": true
+}</pre>
+                    <p>如果表单当前值为 <code>{ "deptId": 1001 }</code>，实际请求参数就是 <code>{ "departmentId": 1001, "enabled": true }</code>。</p>
+                </section>
+                <section>
+                    <h4>2. 返回数据路径</h4>
+                    <p>“选项数组路径”表示从接口响应中哪里取选项数组；根响应就是数组时填 <code>$</code>。</p>
+                    <pre>{
+  "data": [
+    { "id": 1, "name": "张三" },
+    { "id": 2, "name": "李四" }
+  ]
+}</pre>
+                    <p>对应配置：选项数组路径 <code>data</code>，显示文本路径 <code>name</code>，提交值路径 <code>id</code>。</p>
+                </section>
+                <section>
+                    <h4>3. 级联选项</h4>
+                    <p>级联字段需要配置“子选项路径”，通常填 <code>children</code>。</p>
+                    <pre>{
+  "listPath": "data",
+  "labelPath": "name",
+  "valuePath": "code",
+  "childrenPath": "children"
+}</pre>
+                </section>
+            </div>
+            <template #footer>
+                <el-button type="primary" @click="remoteOptionHelpDialog = false">知道了</el-button>
+            </template>
+        </el-dialog>
     </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { Setting } from '@element-plus/icons-vue'
+import { Delete, Setting, Connection, QuestionFilled } from '@element-plus/icons-vue'
 import { alert, randomId } from '@/utils'
 import OptionsMaker from './OptionsMaker.vue'
 import {
     FIELD_TYPE_OPTIONS,
     type FormField,
     type FormFieldType,
+    type FormOptionMapping,
+    type FormOptionSource,
+    type FormTableColumn,
     parseSwitchValue,
 } from './types'
 
@@ -251,6 +440,13 @@ const visible = computed({
 const isEdit = computed(() => !!props.field)
 const originalType = ref<FormFieldType>('INPUT')
 
+interface ParamItem {
+    key: string
+    valueType: 'static' | 'ref'
+    staticValue: string
+    refFieldId: string
+}
+
 interface FormState {
     fieldId: string
     title: string
@@ -268,6 +464,10 @@ interface FormState {
     span: number
     groupId: string
     props: Record<string, any>
+    columns: FormTableColumn[]
+    optionSourceType: 'STATIC' | 'API'
+    optionSource: FormOptionSource
+    optionParams: ParamItem[]
 }
 
 const buildEmpty = (): FormState => ({
@@ -287,7 +487,31 @@ const buildEmpty = (): FormState => ({
     span: 24,
     groupId: '',
     props: {},
+    columns: [],
+    optionSourceType: 'STATIC',
+    optionSource: {
+        type: 'STATIC',
+        url: '/code-table/options',
+        method: 'GET',
+        mapping: {
+            listPath: '$',
+            labelPath: 'label',
+            valuePath: 'value',
+            childrenPath: 'children',
+        },
+    },
+    optionParams: [{ key: 'code', valueType: 'static', staticValue: '', refFieldId: '' }],
 })
+
+const parseParamsToItems = (params: Record<string, any> | undefined): ParamItem[] => {
+    if (!params || typeof params !== 'object') return []
+    return Object.entries(params).map(([key, value]) => {
+        if (value && typeof value === 'object' && !Array.isArray(value) && typeof value.$field === 'string') {
+            return { key, valueType: 'ref' as const, staticValue: '', refFieldId: value.$field }
+        }
+        return { key, valueType: 'static' as const, staticValue: value == null ? '' : String(value), refFieldId: '' }
+    })
+}
 
 const form = ref<FormState>(buildEmpty())
 
@@ -315,6 +539,10 @@ watch(
                 span: f.span ?? 24,
                 groupId: f.groupId ?? '',
                 props: f.props || {},
+                columns: f.columns ? JSON.parse(JSON.stringify(f.columns)) : [],
+                optionSourceType: f.optionSource?.type === 'API' ? 'API' : 'STATIC',
+                optionSource: f.optionSource ? JSON.parse(JSON.stringify(f.optionSource)) : buildEmpty().optionSource,
+                optionParams: parseParamsToItems(f.optionSource?.params),
             }
         } else {
             originalType.value = 'INPUT'
@@ -335,7 +563,35 @@ const hasPattern = computed(() =>
     ['INPUT', 'TEXTAREA'].includes(form.value.type),
 )
 
+const hasColumns = computed(() => form.value.type === 'TABLE')
+const optionMapping = computed<FormOptionMapping>(() => {
+    if (!form.value.optionSource.mapping) {
+        form.value.optionSource.mapping = {
+            listPath: 'data',
+            labelPath: 'label',
+            valuePath: 'value',
+            childrenPath: 'children',
+        }
+    }
+    return form.value.optionSource.mapping
+})
+
 const optionsDialog = ref(false)
+const columnsDialog = ref(false)
+const defaultRowsDialog = ref(false)
+const remoteOptionHelpDialog = ref(false)
+
+const onOptionSourceChange = (val: 'STATIC' | 'API') => {
+    if (val === 'STATIC') {
+        form.value.optionSource = { ...buildEmpty().optionSource }
+        form.value.optionParams = []
+    } else {
+        form.value.options = []
+        form.value.optionSource = { ...buildEmpty().optionSource, type: 'API' }
+        form.value.optionParams = [{ key: 'code', valueType: 'static', staticValue: '', refFieldId: '' }]
+        form.value.defaultValue = null
+    }
+}
 
 const onTypeChange = () => {
     // 切换类型时清空与类型强相关的属性
@@ -344,6 +600,10 @@ const onTypeChange = () => {
     form.value.min = undefined
     form.value.max = undefined
     form.value.props = {}
+    form.value.columns = []
+    form.value.optionSourceType = 'STATIC'
+    form.value.optionSource = buildEmpty().optionSource
+    form.value.optionParams = [{ key: 'code', valueType: 'static', staticValue: '', refFieldId: '' }]
     if (form.value.type === 'UPLOAD') {
         form.value.maxLength = 1
     } else {
@@ -358,6 +618,27 @@ const onTypeChange = () => {
 
 const setProp = (key: string, value: any) => {
     form.value.props = { ...form.value.props, [key]: value }
+}
+
+const addColumn = () => {
+    form.value.columns.push({ key: `col_${Date.now()}`, title: '' })
+}
+
+const addDefaultRow = () => {
+    if (!form.value.columns || form.value.columns.length === 0) return
+    if (!Array.isArray(form.value.defaultValue)) {
+        form.value.defaultValue = []
+    }
+    const row: Record<string, string> = {}
+    form.value.columns.forEach(col => {
+        row[col.key] = ''
+    })
+    form.value.defaultValue.push(row)
+}
+
+const removeDefaultRow = (index: number) => {
+    if (!Array.isArray(form.value.defaultValue)) return
+    form.value.defaultValue.splice(index, 1)
 }
 
 const formRef = ref<FormInstance>()
@@ -395,8 +676,38 @@ const onSubmit = async () => {
         alert('请检查字段配置', 'warning')
         return
     }
-    if (hasOptions.value && (!form.value.options || form.value.options.length === 0)) {
+    if (hasOptions.value && form.value.optionSourceType === 'STATIC' && (!form.value.options || form.value.options.length === 0)) {
         alert('请添加至少一个选项', 'warning')
+        return
+    }
+    let optionParams: Record<string, any> | undefined
+    if (hasOptions.value && form.value.optionSourceType === 'API') {
+        const items = form.value.optionParams
+        if (items.length > 0) {
+            optionParams = {}
+            for (const item of items) {
+                if (!item.key.trim()) {
+                    alert('请求参数名不能为空', 'warning')
+                    return
+                }
+                if (item.valueType === 'ref') {
+                    if (!item.refFieldId.trim()) {
+                        alert(`参数「${item.key}」引用的字段 ID 不能为空`, 'warning')
+                        return
+                    }
+                    optionParams[item.key.trim()] = { $field: item.refFieldId.trim() }
+                } else {
+                    let val: any = item.staticValue
+                    if (val === 'true') val = true
+                    else if (val === 'false') val = false
+                    else if (val !== '' && !isNaN(Number(val))) val = Number(val)
+                    optionParams[item.key.trim()] = val
+                }
+            }
+        }
+    }
+    if (hasColumns.value && (!form.value.columns || form.value.columns.length === 0)) {
+        alert('请添加至少一列', 'warning')
         return
     }
     const f: FormField = {
@@ -416,8 +727,136 @@ const onSubmit = async () => {
         span: form.value.span,
         groupId: form.value.groupId || undefined,
         props: Object.keys(form.value.props).length > 0 ? form.value.props : undefined,
+        columns: hasColumns.value ? form.value.columns : undefined,
+        optionSource: hasOptions.value && form.value.optionSourceType === 'API'
+            ? {
+                type: 'API',
+                url: form.value.optionSource.url,
+                method: form.value.optionSource.method || 'GET',
+                params: optionParams,
+                mapping: form.value.optionSource.mapping,
+            }
+            : undefined,
     }
     emit('submit', f)
     visible.value = false
 }
 </script>
+
+<style scoped>
+.param-builder {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.param-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.param-key {
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.param-type {
+    width: 110px;
+    flex-shrink: 0;
+}
+
+.param-value {
+    flex: 1;
+    min-width: 0;
+}
+
+.columns-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.column-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.default-rows-editor {
+    width: 100%;
+}
+
+.remote-option-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 6px 0 10px;
+    padding: 12px 16px;
+    border-left: 4px solid var(--el-color-primary);
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--el-color-primary-light-9), var(--el-fill-color-blank));
+}
+
+.section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-header-icon {
+    font-size: 18px;
+    color: var(--el-color-primary);
+}
+
+.section-header-title {
+    color: var(--el-text-color-primary);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.remote-option-help-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.remote-option-help-content section {
+    padding: 12px 14px;
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 10px;
+    background: var(--el-fill-color-lighter);
+}
+
+.remote-option-help-content h4 {
+    margin: 0 0 8px;
+    color: var(--el-text-color-primary);
+    font-size: 14px;
+}
+
+.remote-option-help-content p {
+    margin: 6px 0;
+    color: var(--el-text-color-regular);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.remote-option-help-content code {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--el-fill-color-darker);
+    color: var(--el-color-primary);
+}
+
+.remote-option-help-content pre {
+    margin: 8px 0;
+    padding: 10px 12px;
+    overflow-x: auto;
+    border-radius: 8px;
+    background: #1f2937;
+    color: #e5e7eb;
+    font-size: 12px;
+    line-height: 1.6;
+}
+</style>

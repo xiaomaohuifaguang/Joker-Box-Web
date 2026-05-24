@@ -16,7 +16,7 @@
             <el-empty description="暂无联动规则" />
         </div>
 
-        <draggable v-else v-model="innerRules" item-key="_uid" handle=".drag-handle" @end="onSorted" class="rule-list">
+        <draggable v-else ref="ruleListRef" v-model="innerRules" item-key="_uid" handle=".drag-handle" @end="onSorted" class="rule-list">
             <template #item="{ element, index }">
                 <div class="rule-card">
                     <!-- 规则头部 -->
@@ -194,7 +194,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
 import { Plus, Delete, Rank, InfoFilled } from '@element-plus/icons-vue'
 import { alert } from '@/utils'
@@ -226,6 +226,7 @@ interface InternalRule extends FormLinkageRule {
 
 const uidSeq = ref(0)
 const innerRules = ref<InternalRule[]>([])
+const ruleListRef = ref<any>(null)
 
 // 选项显隐对话框状态
 const optionDialogVisible = ref(false)
@@ -439,6 +440,13 @@ watch(
     { deep: true },
 )
 
+const scrollRuleListToBottom = async () => {
+    await nextTick()
+    const el = ruleListRef.value?.$el || ruleListRef.value
+    if (!el) return
+    el.scrollTop = el.scrollHeight
+}
+
 const addRule = () => {
     if (props.fields.length < 2) {
         alert('请先添加至少 2 个字段', 'warning')
@@ -463,6 +471,7 @@ const addRule = () => {
             }],
         }],
     })
+    scrollRuleListToBottom()
 }
 
 const removeRule = (index: number) => {
@@ -546,6 +555,9 @@ watch(
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-height: 620px;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .rule-card {
