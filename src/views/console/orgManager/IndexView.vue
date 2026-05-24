@@ -250,6 +250,7 @@ const getOrgColor = (name: string) => {
 
 const handleTreeSelect = (name: string) => {
     selectOrg.value.parentName = name
+    // parentId 已通过 v-model:selected-id 同步更新
     queryParam.value.parentId = selectOrg.value.parentId
     queryPage()
 }

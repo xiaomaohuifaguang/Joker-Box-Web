@@ -33,7 +33,7 @@
                 node-key="id"
                 :default-expanded-keys="defaultExpanded"
                 highlight-current
-                draggable
+                :draggable="draggable"
                 :allow-drop="allowDrop"
                 @node-click="handleNodeClick"
                 @node-contextmenu="handleContextMenu"
@@ -103,6 +103,7 @@ import type { ElTree } from 'element-plus'
 const props = defineProps<{
     treeData: any[]
     selectedId: string
+    draggable?: boolean
 }>()
 
 const emit = defineEmits<{
