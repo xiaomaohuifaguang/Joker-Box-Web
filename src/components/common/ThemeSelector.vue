@@ -9,6 +9,7 @@
             <el-dropdown-menu class="theme-menu">
                 <el-dropdown-item v-for="item in THEME_LIST" :key="item.key" :command="item.key"
                     :class="{ active: theme === item.key }">
+                    <span class="theme-item__dot" :style="{ background: item.dotColor }"></span>
                     <span class="theme-item__icon">
                         <el-icon :size="16">
                             <component :is="resolveIcon(item.icon)" />
@@ -56,7 +57,7 @@ const handleCommand = (cmd) => {
     width: 36px;
     height: 36px;
     padding: 0;
-    border: none;
+    border: 1px solid transparent;
     background: transparent;
     cursor: pointer;
     display: inline-flex;
@@ -66,16 +67,25 @@ const handleCommand = (cmd) => {
     color: var(--text-regular);
     transition: background-color var(--duration-normal) var(--ease-out),
         color var(--duration-normal) var(--ease-out),
-        box-shadow var(--duration-normal) var(--ease-out);
+        box-shadow var(--duration-normal) var(--ease-out),
+        border-color var(--duration-normal) var(--ease-out),
+        transform var(--duration-fast) var(--ease-out);
 }
 
 .theme-trigger:hover {
     background: var(--bg-overlay);
     color: var(--brand-primary);
+    border-color: var(--border-base);
+    box-shadow: var(--shadow-glow);
+}
+
+.theme-trigger:active {
+    transform: scale(0.95);
 }
 
 .theme-trigger:focus-visible {
     outline: none;
+    border-color: var(--brand-primary);
     box-shadow: var(--shadow-glow);
 }
 </style>
@@ -106,8 +116,9 @@ const handleCommand = (cmd) => {
     font-size: var(--fs-sm);
     color: var(--text-regular);
     transition: background-color var(--duration-fast) var(--ease-out),
-        color var(--duration-fast) var(--ease-out);
-    min-width: 140px;
+        color var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-fast) var(--ease-out);
+    min-width: 160px;
 }
 
 .theme-menu .el-dropdown-menu__item:hover {
@@ -119,6 +130,7 @@ const handleCommand = (cmd) => {
     background: var(--brand-gradient-soft);
     color: var(--brand-primary);
     font-weight: var(--fw-semibold);
+    box-shadow: var(--shadow-glow);
 }
 
 .theme-item__icon {
@@ -131,12 +143,22 @@ const handleCommand = (cmd) => {
     background: var(--bg-overlay);
     color: var(--text-secondary);
     flex-shrink: 0;
+    transition: background var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
 }
 
 .theme-menu .el-dropdown-menu__item:hover .theme-item__icon,
 .theme-menu .el-dropdown-menu__item.active .theme-item__icon {
     background: var(--brand-gradient);
     color: var(--text-on-brand);
+}
+
+/* 主题色小圆点 */
+.theme-item__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    flex-shrink: 0;
 }
 
 .theme-item__label {

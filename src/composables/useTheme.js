@@ -20,14 +20,14 @@ export const THEMES = {
 }
 
 export const THEME_LIST = [
-    { key: THEMES.INK, label: '水墨丹青', icon: 'Sunny' },
-    { key: THEMES.JOKER, label: '午夜嘉年华', icon: 'Moon' },
-    { key: THEMES.OBSIDIAN, label: '黑曜镜面', icon: 'MoonNight' },
-    { key: THEMES.CYAN, label: '碧波', icon: 'PartlyCloudy' },
-    { key: THEMES.DEEPBLUE, label: '深渊萤光', icon: 'MostlyCloudy' },
-    { key: THEMES.DAWN, label: '晨曦白', icon: 'Sunny' },
-    { key: THEMES.DUSK, label: '暮夜黑', icon: 'MoonNight' },
-    { key: THEMES.MATRIX, label: '黑客矩阵', icon: 'Monitor' },
+    { key: THEMES.INK, label: '水墨丹青', icon: 'Sunny', dotColor: '#C53D43' },
+    { key: THEMES.JOKER, label: '午夜嘉年华', icon: 'Moon', dotColor: '#C9A227' },
+    { key: THEMES.OBSIDIAN, label: '黑曜镜面', icon: 'MoonNight', dotColor: '#E0E0E0' },
+    { key: THEMES.CYAN, label: '碧波', icon: 'PartlyCloudy', dotColor: '#2E8B57' },
+    { key: THEMES.DEEPBLUE, label: '深渊萤光', icon: 'MostlyCloudy', dotColor: '#00E5C8' },
+    { key: THEMES.DAWN, label: '晨曦白', icon: 'Sunny', dotColor: '#1A365D' },
+    { key: THEMES.DUSK, label: '暮夜黑', icon: 'MoonNight', dotColor: '#B8A88A' },
+    { key: THEMES.MATRIX, label: '黑客矩阵', icon: 'Monitor', dotColor: '#00FF41' },
 ]
 
 const DEFAULT_THEME = THEMES.JOKER
