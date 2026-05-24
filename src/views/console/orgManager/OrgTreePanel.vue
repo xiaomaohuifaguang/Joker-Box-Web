@@ -27,6 +27,7 @@
         <div class="tree-body" v-show="!isEmpty">
             <el-tree
                 ref="treeRef"
+                :class="{ 'is-dragging': isDragging }"
                 :data="treeData"
                 :props="{ children: 'children', label: 'name' }"
                 node-key="id"
@@ -43,7 +44,7 @@
                 class="org-tree">
                 <template #default="{ node, data }">
                     <span class="tree-node" :class="{ 'is-selected': selectedId === data.id }">
-                        <span class="node-indicator" :style="{ background: getNodeColor(node.level) }" />
+                        <span class="node-indicator" :style="{ background: selectedId === data.id ? 'var(--brand-primary)' : getNodeColor(node.level) }" />
                         <span class="node-icon" :style="{ background: getNodeColor(node.level) }">
                             <el-icon><OfficeBuilding /></el-icon>
                         </span>
@@ -110,6 +111,7 @@ const emit = defineEmits<{
     (e: 'add', parentId: string, parentName: string): void
     (e: 'edit', id: string): void
     (e: 'delete', id: string): void
+    (e: 'drop', draggingNode: any, dropNode: any, dropType: string): void
 }>()
 
 const treeRef = ref<InstanceType<typeof ElTree>>()
@@ -207,7 +209,8 @@ const allowDrop = (_draggingNode: any, _dropNode: any, type: string) => {
 const onDragStart = () => { isDragging.value = true }
 const onDragEnd = () => { isDragging.value = false }
 
-const onNodeDrop = (_draggingNode: any, dropNode: any, _dropType: string) => {
+const onNodeDrop = (draggingNode: any, dropNode: any, dropType: string) => {
+    emit('drop', draggingNode, dropNode, dropType)
     emit('update:selectedId', dropNode.data.id)
     emit('update:selectedName', dropNode.data.name)
 }
@@ -314,11 +317,19 @@ watch(filterText, () => {
                     .node-indicator {
                         opacity: 1;
                     }
+
+                    .node-icon {
+                        box-shadow: 0 0 8px var(--brand-primary);
+                    }
                 }
             }
 
             .el-tree-node__expand-icon {
                 transition: transform var(--duration-normal) var(--ease-out);
+            }
+
+            &.is-dragging .el-tree-node.is-dragging > .el-tree-node__content {
+                opacity: 0.5;
             }
         }
     }
@@ -380,6 +391,10 @@ watch(filterText, () => {
 
             .node-indicator {
                 opacity: 1;
+            }
+
+            .node-icon {
+                box-shadow: 0 0 8px var(--brand-primary);
             }
         }
     }
