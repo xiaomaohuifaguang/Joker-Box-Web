@@ -21,8 +21,9 @@
     <div class="page-container">
       <!-- 分类标签 -->
       <div class="tabs-section">
-        <div v-for="tab in tabs" :key="tab.type" :class="['tab-item', { active: queryParam.type === tab.type }]"
-          @click="switchTab(tab.type)">
+        <div v-for="tab in tabs" :key="tab.type"
+          :class="['tab-item', { active: activeMainTab === tab.type }]"
+          @click="switchTab(tab.subTabs ? tab.subTabs[0].type : tab.type)">
           <div class="tab-icon" :style="{ background: tab.bg }">
             <el-icon>
               <component :is="tab.icon" />
@@ -35,6 +36,15 @@
             </div>
             <span class="tab-desc">{{ tab.desc }}</span>
           </div>
+        </div>
+      </div>
+
+      <!-- 我发起的 子Tab -->
+      <div v-if="['1', '5'].includes(queryParam.type)" class="sub-tabs">
+        <div v-for="sub in (tabs.find(t => t.type === '1')?.subTabs ?? [])" :key="sub.type"
+          :class="['sub-tab-item', { active: queryParam.type === sub.type }]"
+          @click="switchTab(sub.type)">
+          {{ sub.label }}
         </div>
       </div>
 
@@ -73,6 +83,33 @@
                 </el-icon>
                 <span>重置</span>
               </el-button>
+            </el-col>
+          </el-row>
+          <el-row v-if="showAdvancedFilter" :gutter="16" class="advanced-filters">
+            <el-col :xs="24" :sm="12" :md="6">
+              <el-select v-model="queryParam.processDefinitionId" placeholder="流程类型" size="large" clearable
+                @change="handleSearch" style="width: 100%">
+                <el-option v-for="def in processDefinitions" :key="def.id" :label="def.processName" :value="def.id" />
+              </el-select>
+            </el-col>
+            <el-col :xs="24" :sm="12" :md="6" v-if="showStatusFilter">
+              <el-select v-model="queryParam.processStatus" placeholder="流程状态" size="large" clearable
+                @change="handleSearch" style="width: 100%">
+                <el-option label="审批中" value="1" />
+                <el-option label="已完成" value="10" />
+                <el-option label="已终止" value="11" />
+                <el-option label="已挂起" value="20" />
+              </el-select>
+            </el-col>
+            <el-col :xs="24" :sm="12" :md="showStatusFilter ? 6 : 8">
+              <el-date-picker v-model="queryParam.startTime" type="datetime" placeholder="开始时间"
+                size="large" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%"
+                @change="handleSearch" />
+            </el-col>
+            <el-col :xs="24" :sm="12" :md="showStatusFilter ? 6 : 8">
+              <el-date-picker v-model="queryParam.endTime" type="datetime" placeholder="结束时间"
+                size="large" value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%"
+                @change="handleSearch" />
             </el-col>
           </el-row>
         </div>
@@ -233,7 +270,16 @@ import ProcessInstanceClaimDialog from './ProcessInstanceClaimDialog.vue'
 import ProcessInstanceCreateDialog from './ProcessInstanceCreateDialog.vue'
 import ProcessInstanceStartDialog from './ProcessInstanceStartDialog.vue'
 
-const tabs = [
+interface TabItem {
+  type: string
+  label: string
+  desc: string
+  icon: any
+  bg: string
+  subTabs?: { type: string; label: string }[]
+}
+
+const tabs: TabItem[] = [
   {
     type: '2',
     label: '待办',
@@ -249,20 +295,31 @@ const tabs = [
     bg: 'linear-gradient(135deg, #f59e0b 0%, #fb923c 100%)',
   },
   {
-    type: '0',
-    label: '草稿',
-    desc: '我创建未提交的草稿',
-    icon: Memo,
-    bg: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-  },
-  {
-    type: '1',
-    label: '全部',
-    desc: '我参与的所有流程',
+    type: '4',
+    label: '已办',
+    desc: '我处理过的任务',
     icon: Files,
     bg: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
   },
-] as const
+  {
+    type: '1',
+    label: '我发起的',
+    desc: '我创建的流程',
+    icon: Document,
+    bg: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+    subTabs: [
+      { type: '1', label: '进行中' },
+      { type: '5', label: '全部' },
+    ],
+  },
+  {
+    type: '0',
+    label: '草稿箱',
+    desc: '未提交的草稿',
+    icon: Memo,
+    bg: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+  },
+]
 
 const loading = ref(false)
 const tableData = ref<any[]>([])
@@ -270,6 +327,10 @@ const tableData = ref<any[]>([])
 const queryParam = ref({
   type: '2',
   search: '',
+  processDefinitionId: null as number | null,
+  processStatus: null as string | null,
+  startTime: null as string | null,
+  endTime: null as string | null,
 })
 
 const pageInfo = ref({
@@ -283,6 +344,8 @@ const tabCounts = ref<Record<string, number>>({
   '1': 0,
   '2': 0,
   '3': 0,
+  '4': 0,
+  '5': 0,
 })
 
 const detailDialogRef = ref<InstanceType<typeof ProcessInstanceDetailDialog> | null>(null)
@@ -294,6 +357,16 @@ const activeTab = computed(
   () => tabs.find(t => t.type === queryParam.value.type) ?? tabs[0]
 )
 
+const showAdvancedFilter = computed(() => !['2', '3'].includes(queryParam.value.type))
+const showStatusFilter = computed(() => !['0', '2', '3'].includes(queryParam.value.type))
+
+const processDefinitions = ref<any[]>([])
+
+const activeMainTab = computed(() => {
+  if (['1', '5'].includes(queryParam.value.type)) return '1'
+  return queryParam.value.type
+})
+
 const emptyTitle = computed(() => {
   if (queryParam.value.search) return '没有匹配的流程'
   return `暂无${activeTab.value.label}流程`
@@ -304,8 +377,10 @@ const emptyDesc = computed(() => {
   const tipMap: Record<string, string> = {
     '2': '当前没有需要您审批的任务',
     '3': '当前没有可认领的任务',
+    '4': '您还没有处理过任何任务',
+    '1': '您还没有发起任何流程',
+    '5': '您还没有发起任何流程',
     '0': '您还没有创建草稿',
-    '1': '您还没有参与任何流程',
   }
   return tipMap[queryParam.value.type] ?? ''
 })
@@ -313,6 +388,10 @@ const emptyDesc = computed(() => {
 const switchTab = (type: string) => {
   if (queryParam.value.type === type) return
   queryParam.value.type = type
+  queryParam.value.processStatus = null
+  queryParam.value.processDefinitionId = null
+  queryParam.value.startTime = null
+  queryParam.value.endTime = null
   pageInfo.value.current = 1
   queryPage()
 }
@@ -324,6 +403,10 @@ const handleSearch = () => {
 
 const resetQuery = () => {
   queryParam.value.search = ''
+  queryParam.value.processDefinitionId = null
+  queryParam.value.processStatus = null
+  queryParam.value.startTime = null
+  queryParam.value.endTime = null
   pageInfo.value.current = 1
   queryPage()
 }
@@ -336,6 +419,10 @@ const queryPage = async () => {
       size: pageInfo.value.size,
       search: queryParam.value.search,
       type: queryParam.value.type,
+      processDefinitionId: queryParam.value.processDefinitionId,
+      processStatus: queryParam.value.processStatus,
+      startTime: queryParam.value.startTime,
+      endTime: queryParam.value.endTime,
     })
     tableData.value = result?.records ?? []
     pageInfo.value.current = result?.current ?? 1
@@ -402,7 +489,6 @@ const handleStart = (def: any) => {
 }
 
 const onStartSuccess = () => {
-  // 切到”全部”页签确保新发起的实例可见
   queryParam.value.type = '1'
   pageInfo.value.current = 1
   queryPage()
@@ -434,8 +520,16 @@ const confirmDelete = (item: any) => {
   })
 }
 
+const queryDeployList = async () => {
+  try {
+    const result = await http.post('/processDefinition/deployList')
+    processDefinitions.value = result ?? []
+  } catch { /* ignore */ }
+}
+
 onMounted(() => {
   queryPage()
+  queryDeployList()
 })
 </script>
 
@@ -452,7 +546,7 @@ onMounted(() => {
 
   .tabs-section {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 16px;
     margin-bottom: 24px;
 
@@ -540,6 +634,38 @@ onMounted(() => {
     }
   }
 
+  .sub-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    padding: 4px;
+    background: var(--bg-container);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    width: fit-content;
+
+    .sub-tab-item {
+      padding: 6px 20px;
+      border-radius: var(--radius-md);
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
+
+      &:hover {
+        color: var(--text-primary);
+        background: var(--bg-overlay);
+      }
+
+      &.active {
+        background: var(--brand-gradient);
+        color: var(--text-on-brand);
+      }
+    }
+  }
+
   .section-header {
     display: flex;
     align-items: center;
@@ -597,6 +723,10 @@ onMounted(() => {
     margin-bottom: 24px;
 
     .search-form {
+      .advanced-filters {
+        margin-top: 12px;
+      }
+
       .search-actions {
         display: flex;
         justify-content: flex-end;
@@ -755,6 +885,14 @@ onMounted(() => {
       padding-top: 20px;
       margin-top: 12px;
       border-top: 1px solid var(--border-light);
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .process-approval-page {
+    .tabs-section {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 }
