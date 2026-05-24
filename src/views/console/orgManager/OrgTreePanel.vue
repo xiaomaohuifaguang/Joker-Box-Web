@@ -97,7 +97,7 @@ import {
     Expand,
     Fold
 } from '@element-plus/icons-vue'
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { ElTree } from 'element-plus'
 
 const props = defineProps<{
@@ -194,17 +194,14 @@ const closeContextMenu = () => {
     contextMenu.value.visible = false
 }
 
-document.addEventListener('click', closeContextMenu)
-onBeforeUnmount(() => {
-    document.removeEventListener('click', closeContextMenu)
-})
+onMounted(() => document.addEventListener('click', closeContextMenu))
+onBeforeUnmount(() => document.removeEventListener('click', closeContextMenu))
 
 // --- 拖拽 ---
 const isDragging = ref(false)
 
-const allowDrop = (_draggingNode: any, _dropNode: any, type: string) => {
-    return ['inner', 'prev', 'next'].includes(type)
-}
+// allow-drop 默认允许所有放置类型，后续可按需限制
+const allowDrop = () => true
 
 const onDragStart = () => { isDragging.value = true }
 const onDragEnd = () => { isDragging.value = false }
