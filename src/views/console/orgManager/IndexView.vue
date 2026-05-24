@@ -395,6 +395,36 @@ onMounted(() => {
             height: calc(100vh - 280px);
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow: hidden;
+
+            // decorative corner ornaments — theatre ticket feel
+            &::before,
+            &::after {
+                content: '';
+                position: absolute;
+                width: 24px;
+                height: 24px;
+                border-color: var(--brand-primary);
+                opacity: 0.15;
+                pointer-events: none;
+            }
+
+            &::before {
+                top: 12px;
+                right: 12px;
+                border-top: 2px solid;
+                border-right: 2px solid;
+                border-radius: 0 8px 0 0;
+            }
+
+            &::after {
+                bottom: 12px;
+                left: 12px;
+                border-bottom: 2px solid;
+                border-left: 2px solid;
+                border-radius: 0 0 0 8px;
+            }
 
             .card-header {
                 display: flex;
@@ -402,7 +432,19 @@ onMounted(() => {
                 gap: 10px;
                 margin-bottom: 16px;
                 padding-bottom: 16px;
-                border-bottom: 1px solid var(--border-light);
+                position: relative;
+
+                // ornamental divider — gold gradient line
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 1px;
+                    background: linear-gradient(90deg, transparent 0%, var(--border-base) 15%, var(--brand-primary) 50%, var(--border-base) 85%, transparent 100%);
+                    opacity: 0.5;
+                }
 
                 .header-icon {
                     width: 36px;
@@ -411,14 +453,27 @@ onMounted(() => {
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    position: relative;
 
                     &.tree {
                         background: var(--data-grad-4);
+
+                        // subtle glow beneath icon
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            inset: 2px;
+                            border-radius: inherit;
+                            background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 50%);
+                            pointer-events: none;
+                        }
                     }
 
                     .el-icon {
                         font-size: 18px;
                         color: white;
+                        position: relative;
+                        z-index: 1;
                     }
                 }
 
@@ -426,6 +481,7 @@ onMounted(() => {
                     font-size: 16px;
                     font-weight: 600;
                     color: var(--text-primary);
+                    letter-spacing: 0.02em;
                 }
             }
 

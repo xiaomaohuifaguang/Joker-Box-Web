@@ -230,15 +230,42 @@ watch(filterText, () => {
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: relative;
+
+    // subtle top glow — theatre spotlight from above
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 60px;
+        background: radial-gradient(ellipse at center, var(--brand-primary) 0%, transparent 70%);
+        opacity: 0.04;
+        pointer-events: none;
+    }
 
     // --- 工具栏 ---
     .panel-toolbar {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding-bottom: 12px;
-        margin-bottom: 12px;
-        border-bottom: 1px solid var(--border-light);
+        padding-bottom: 14px;
+        margin-bottom: 14px;
+        position: relative;
+
+        // ornamental divider — thin gold line with diamond center
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--border-base) 20%, var(--brand-primary) 50%, var(--border-base) 80%, transparent 100%);
+            opacity: 0.6;
+        }
 
         .tree-search {
             flex: 1;
@@ -249,17 +276,25 @@ watch(filterText, () => {
             }
 
             :deep(.el-input__wrapper) {
-                border-radius: var(--radius-lg);
+                border-radius: var(--radius-xl);
                 background: var(--bg-input);
-                box-shadow: 0 0 0 1px var(--border-light) inset;
+                box-shadow: 0 0 0 1px var(--border-base) inset;
                 transition: all var(--duration-normal) var(--ease-out);
 
                 &:hover {
                     box-shadow: 0 0 0 1px var(--brand-primary) inset;
+                    background: color-mix(in srgb, var(--bg-input) 90%, var(--brand-primary) 10%);
                 }
 
                 &.is-focus {
-                    box-shadow: 0 0 0 2px var(--brand-primary) inset;
+                    box-shadow: 0 0 0 1px var(--brand-primary) inset, 0 0 12px -4px var(--brand-primary);
+                }
+            }
+
+            :deep(.el-input__inner) {
+                &::placeholder {
+                    color: var(--text-placeholder);
+                    font-size: var(--fs-sm);
                 }
             }
         }
@@ -270,15 +305,35 @@ watch(filterText, () => {
             flex-shrink: 0;
 
             .toolbar-btn {
-                border: 1px solid var(--border-light);
+                border: 1px solid var(--border-base);
                 background: var(--bg-input);
                 color: var(--text-secondary);
                 transition: all var(--duration-fast) var(--ease-out);
+                position: relative;
+                overflow: hidden;
+
+                // hover shimmer — a brief gold sweep
+                &::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(120deg, transparent 30%, var(--brand-primary) 50%, transparent 70%);
+                    opacity: 0;
+                    transition: opacity var(--duration-fast) var(--ease-out);
+                }
 
                 &:hover {
                     color: var(--brand-primary);
                     border-color: var(--brand-primary);
-                    background: var(--brand-primary-lighter);
+                    background: var(--bg-input);
+
+                    &::after {
+                        opacity: 0.08;
+                    }
+                }
+
+                &:active {
+                    transform: scale(0.95);
                 }
             }
         }
@@ -288,15 +343,31 @@ watch(filterText, () => {
     .tree-body {
         flex: 1;
         overflow: auto;
+        padding: 4px 0;
+
+        // subtle scroll indicator
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--border-base);
+            border-radius: var(--radius-pill);
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
         :deep(.el-tree) {
             background: transparent;
 
             .el-tree-node__content {
-                height: 38px;
+                height: 40px;
                 padding-right: 8px;
-                border-radius: var(--radius-md);
+                border-radius: var(--radius-lg);
                 transition: all var(--duration-fast) var(--ease-out);
+                position: relative;
 
                 &:hover {
                     background: var(--bg-overlay) !important;
@@ -304,7 +375,18 @@ watch(filterText, () => {
             }
 
             .el-tree-node.is-current > .el-tree-node__content {
-                background: var(--brand-primary-lighter) !important;
+                background: var(--bg-overlay-strong) !important;
+                box-shadow: inset 3px 0 0 var(--brand-primary);
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    border-radius: inherit;
+                    background: linear-gradient(90deg, var(--brand-primary) 0%, transparent 30%);
+                    opacity: 0.06;
+                    pointer-events: none;
+                }
 
                 .tree-node {
                     .node-label {
@@ -314,16 +396,27 @@ watch(filterText, () => {
 
                     .node-indicator {
                         opacity: 1;
+                        background: var(--brand-primary) !important;
                     }
 
                     .node-icon {
-                        box-shadow: 0 0 8px var(--brand-primary);
+                        box-shadow: 0 0 10px -2px var(--brand-primary);
+                        transform: scale(1.05);
                     }
                 }
             }
 
             .el-tree-node__expand-icon {
-                transition: transform var(--duration-normal) var(--ease-out);
+                color: var(--text-secondary);
+                transition: transform var(--duration-normal) var(--ease-out), color var(--duration-fast);
+
+                &.is-leaf {
+                    color: transparent;
+                }
+            }
+
+            .el-tree-node:focus > .el-tree-node__content {
+                background: var(--bg-overlay) !important;
             }
 
             &.is-dragging .el-tree-node.is-dragging > .el-tree-node__content {
@@ -336,49 +429,63 @@ watch(filterText, () => {
     .tree-node {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         flex: 1;
         position: relative;
         padding: 2px 0;
 
         .node-indicator {
             position: absolute;
-            left: -16px;
-            top: 4px;
-            bottom: 4px;
+            left: -18px;
+            top: 6px;
+            bottom: 6px;
             width: 3px;
             border-radius: 2px;
             opacity: 0;
-            transition: opacity var(--duration-fast) var(--ease-out);
+            transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out);
         }
 
         .node-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: var(--radius-md);
+            width: 26px;
+            height: 26px;
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: transform var(--duration-fast) var(--ease-bounce);
+            transition: transform var(--duration-fast) var(--ease-bounce), box-shadow var(--duration-fast) var(--ease-out);
+            position: relative;
 
             .el-icon {
                 font-size: 12px;
                 color: white;
+                position: relative;
+                z-index: 1;
+            }
+
+            // inner highlight — gives depth like a lacquered button
+            &::after {
+                content: '';
+                position: absolute;
+                inset: 1px;
+                border-radius: inherit;
+                background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+                pointer-events: none;
             }
         }
 
         &:hover .node-icon {
-            transform: scale(1.08);
+            transform: scale(1.1);
         }
 
         .node-label {
             font-size: var(--fs-md);
             color: var(--text-regular);
-            transition: all var(--duration-fast) var(--ease-out);
+            transition: color var(--duration-fast) var(--ease-out);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            letter-spacing: 0.01em;
         }
 
         &.is-selected {
@@ -389,10 +496,11 @@ watch(filterText, () => {
 
             .node-indicator {
                 opacity: 1;
+                background: var(--brand-primary) !important;
             }
 
             .node-icon {
-                box-shadow: 0 0 8px var(--brand-primary);
+                box-shadow: 0 0 10px -2px var(--brand-primary);
             }
         }
     }
@@ -403,11 +511,30 @@ watch(filterText, () => {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 40px 0;
+        padding: 48px 0;
+        flex-direction: column;
 
-        :deep(.el-empty__description p) {
+        // decorative ornament — a faint diamond shape
+        &::before {
+            content: '◇';
+            font-size: 28px;
             color: var(--text-placeholder);
-            font-size: var(--fs-sm);
+            opacity: 0.3;
+            margin-bottom: 8px;
+        }
+
+        :deep(.el-empty) {
+            padding: 0;
+
+            .el-empty__image {
+                display: none;
+            }
+
+            .el-empty__description p {
+                color: var(--text-placeholder);
+                font-size: var(--fs-sm);
+                letter-spacing: 0.04em;
+            }
         }
     }
 }
@@ -417,32 +544,56 @@ watch(filterText, () => {
 .tree-context-menu {
     position: fixed;
     z-index: var(--z-dropdown);
-    min-width: 160px;
+    min-width: 168px;
     background: var(--bg-elevated);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg), 0 0 20px -8px var(--brand-primary);
     padding: 6px 0;
-    animation: menuFadeIn var(--duration-fast) var(--ease-out);
+    animation: menuReveal var(--duration-normal) var(--ease-out);
+    overflow: hidden;
 
-    @keyframes menuFadeIn {
-        from { opacity: 0; transform: scale(0.95) translateY(-4px); }
-        to { opacity: 1; transform: scale(1) translateY(0); }
+    // top gold accent line
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 16px;
+        right: 16px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--brand-primary), transparent);
+        opacity: 0.5;
+    }
+
+    @keyframes menuReveal {
+        from {
+            opacity: 0;
+            transform: scale(0.92) translateY(-6px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
     }
 
     .menu-item {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
+        gap: 10px;
+        padding: 9px 18px;
         font-size: var(--fs-sm);
         color: var(--text-regular);
         cursor: pointer;
         transition: all var(--duration-fast) var(--ease-out);
+        position: relative;
 
         &:hover {
             background: var(--bg-overlay);
             color: var(--brand-primary);
+
+            .el-icon {
+                transform: scale(1.1);
+            }
         }
 
         &.danger:hover {
@@ -452,13 +603,14 @@ watch(filterText, () => {
 
         .el-icon {
             font-size: 14px;
+            transition: transform var(--duration-fast) var(--ease-bounce);
         }
     }
 
     .menu-divider {
         height: 1px;
-        background: var(--border-light);
-        margin: 4px 12px;
+        background: linear-gradient(90deg, transparent 8px, var(--border-base) 8px, var(--border-base) calc(100% - 8px), transparent calc(100% - 8px));
+        margin: 4px 0;
     }
 }
 </style>
