@@ -5,8 +5,8 @@
 
 @mixin theme-dusk {
     /* ---------- 品牌色（古铜金， dignified 不 flashy） ---------- */
-    --brand-primary: #B8A88A;
-    --brand-primary-hover: #C9B89A;
+    --brand-primary: #C0B090;
+    --brand-primary-hover: #D0C0A0;
     --brand-primary-active: #A8987A;
     --brand-primary-light: #D0C4A8;
     --brand-primary-lighter: #E0D8C0;
@@ -32,7 +32,7 @@
     /* ---------- 文字层级（暖白到中灰，降低眩光） ---------- */
     --text-primary: #E8E8E8;
     --text-regular: #B0B0B0;
-    --text-secondary: #707070;
+    --text-secondary: #808080;
     --text-placeholder: #505050;
     --text-disabled: #3A3A3A;
     --text-on-brand: #0A0A0C;
@@ -41,8 +41,8 @@
     --text-link-hover: #D0C4A8;
 
     /* ---------- 边框（低对比度，不抢视觉） ---------- */
-    --border-base: #2A2A2E;
-    --border-light: #1E1E22;
+    --border-base: #303030;
+    --border-light: #222226;
     --border-strong: #404040;
     --border-focus: #B8A88A;
     --border-divider: #2A2A2E;
@@ -73,8 +73,8 @@
     --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.4);
     --shadow-xl: 0 4px 8px rgba(0, 0, 0, 0.5);
-    --shadow-glow: 0 0 0 1px rgba(184, 168, 138, 0.08);
-    --shadow-glow-strong: 0 0 0 2px rgba(184, 168, 138, 0.10);
+    --shadow-glow: 0 0 0 1px rgba(184, 168, 138, 0.12);
+    --shadow-glow-strong: 0 0 0 2px rgba(184, 168, 138, 0.18);
     --shadow-inner: inset 0 1px 1px rgba(0, 0, 0, 0.3);
 
     /* ---------- 数据可视化（古铜+钢灰+暗绿） ---------- */

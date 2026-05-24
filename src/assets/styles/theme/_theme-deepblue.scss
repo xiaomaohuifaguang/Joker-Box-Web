@@ -6,9 +6,9 @@
 
 @mixin theme-deepblue {
     /* ---------- 品牌色（生物荧光青绿） ---------- */
-    --brand-primary: #00D9C0;
-    --brand-primary-hover: #00F0D4;
-    --brand-primary-active: #00B8A8;
+    --brand-primary: #00E5C8;
+    --brand-primary-hover: #00F8DC;
+    --brand-primary-active: #00C8B0;
     --brand-primary-light: #40E8D4;
     --brand-primary-lighter: #80F0E0;
     --brand-secondary: #008B8B;
@@ -22,7 +22,7 @@
     --brand-gradient-border: #00D9C0;
 
     /* ---------- 背景层级（深渊层级，越来越黑） ---------- */
-    --bg-page: #020408;
+    --bg-page: #030610;
     --bg-container: #0A1620;
     --bg-elevated: #122030;
     --bg-input: #1A3040;
@@ -33,7 +33,7 @@
     /* ---------- 文字层级（荧光下的苍白） ---------- */
     --text-primary: #E0F0F0;
     --text-regular: #A0C8C8;
-    --text-secondary: #608888;
+    --text-secondary: #5A7878;
     --text-placeholder: #406060;
     --text-disabled: #304848;
     --text-on-brand: #020408;
@@ -42,8 +42,8 @@
     --text-link-hover: #40E8D4;
 
     /* ---------- 边框（像深海中的矿物质结晶线） ---------- */
-    --border-base: #1A3040;
-    --border-light: #122030;
+    --border-base: #1E3545;
+    --border-light: #152535;
     --border-strong: #2A4050;
     --border-focus: #00D9C0;
     --border-divider: #1A3040;
