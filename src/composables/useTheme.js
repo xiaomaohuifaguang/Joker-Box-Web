@@ -81,6 +81,11 @@ export function useTheme() {
 
     function setTheme(t) {
         if (VALID_THEMES.has(t)) {
+            if (t === THEMES.MATRIX) {
+                const root = document.documentElement
+                root.classList.add('theme-transitioning')
+                setTimeout(() => root.classList.remove('theme-transitioning'), 300)
+            }
             _theme.value = t
         }
     }

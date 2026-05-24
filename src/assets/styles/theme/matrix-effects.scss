@@ -1,0 +1,117 @@
+// ============================================================
+// Matrix 主题专属动效
+// 仅 data-theme="matrix" 时生效，不影响其他主题
+// ============================================================
+
+/* ---------- Keyframes ---------- */
+
+@keyframes matrixGlowPulse {
+    0%, 100% {
+        box-shadow: 0 0 12px rgba(0, 255, 65, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 24px rgba(0, 255, 65, 0.6), 0 0 48px rgba(0, 255, 65, 0.15);
+    }
+}
+
+@keyframes matrixScanLine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes matrixBorderBreath {
+    0%, 100% {
+        border-color: rgba(0, 255, 65, 0.3);
+    }
+    50% {
+        border-color: #00FF41;
+    }
+}
+
+@keyframes matrixActiveGlow {
+    0%, 100% {
+        box-shadow: var(--shadow-glow);
+    }
+    50% {
+        box-shadow: var(--shadow-glow-strong);
+    }
+}
+
+@keyframes matrixFlashIn {
+    0% {
+        opacity: 0;
+        filter: brightness(2);
+    }
+    30% {
+        opacity: 1;
+        filter: brightness(1.5);
+    }
+    100% {
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+/* ---------- 条件加载：仅 matrix 主题生效 ---------- */
+
+:root[data-theme='matrix'] {
+    /* 1. 辉光脉动 — primary 按钮 hover */
+    .el-button--primary:hover,
+    .el-button--primary:focus {
+        animation: matrixGlowPulse 2s ease-in-out infinite;
+    }
+
+    /* 2. 扫描线焦点 — input focus */
+    .el-input__wrapper.is-focus,
+    .el-textarea__inner:focus {
+        position: relative;
+        overflow: hidden;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--scan-line-color), transparent);
+            animation: matrixScanLine 2s linear infinite;
+            pointer-events: none;
+        }
+    }
+
+    /* 3. 代码雨过渡 — 切换到 matrix 时的闪烁 */
+    &.theme-transitioning {
+        animation: matrixFlashIn 0.3s ease-out;
+    }
+
+    /* 4. 边框呼吸 — 卡片 hover */
+    .el-card:hover {
+        animation: matrixBorderBreath 2s ease-in-out infinite;
+    }
+
+    /* 5. 选中扫描 — active menu/tag */
+    .el-menu-item.is-active {
+        animation: matrixActiveGlow 2.5s ease-in-out infinite;
+    }
+
+    .el-tag {
+        &.is-active,
+        &[aria-selected='true'] {
+            animation: matrixActiveGlow 2.5s ease-in-out infinite;
+        }
+    }
+
+    /* 主题切换过渡增强 */
+    &,
+    html,
+    body {
+        transition: background-color 0.4s var(--ease-out),
+            color 0.4s var(--ease-out),
+            border-color 0.4s var(--ease-out);
+    }
+}

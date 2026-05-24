@@ -15,3 +15,6 @@
 
 /* ---------- 4. 组件级样式覆盖 ---------- */
 @use './components/message';
+
+/* ---------- 5. Matrix 主题专属动效（条件加载）---------- */
+@use './theme/matrix-effects';
