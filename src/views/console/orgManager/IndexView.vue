@@ -29,26 +29,14 @@
                                 <span class="header-title">机构树</span>
                             </div>
                             <div class="tree-wrapper">
-                                <el-tree
-                                    :data="orgTree"
-                                    :props="{
-                                        children: 'children',
-                                        label: 'name',
-                                    }"
-                                    @node-click="handleNodeClick"
-                                    node-key="id"
-                                    :default-expanded-keys="[-1]"
-                                    highlight-current
-                                    class="org-tree">
-                                    <template #default="{ node, data }">
-                                        <span class="tree-node" :class="{ 'is-active': selectOrg.parentId === data.id }">
-                                            <div class="node-icon" :style="{ background: getNodeColor(node.level) }">
-                                                <el-icon><OfficeBuilding /></el-icon>
-                                            </div>
-                                            <span class="tree-label">{{ node.label }}</span>
-                                        </span>
-                                    </template>
-                                </el-tree>
+                                <OrgTreePanel
+                                    :tree-data="orgTree"
+                                    v-model:selected-id="selectOrg.parentId"
+                                    @update:selected-name="handleTreeSelect"
+                                    @add="handleTreeAdd"
+                                    @edit="handleTreeEdit"
+                                    @delete="handleTreeDelete"
+                                />
                             </div>
                         </div>
                     </el-col>
@@ -223,6 +211,7 @@ import { http, alert, confirm } from '@/utils';
 import { onMounted, ref } from 'vue';
 import OrgInfoView from './OrgInfoView.vue';
 import OrgAddView from './OrgAddView.vue';
+import OrgTreePanel from './OrgTreePanel.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 
 const loading = ref(false)
@@ -252,11 +241,6 @@ const dialogAdd = ref(false)
 const orgTree = ref<any[]>([])
 const selectOrg = ref({ parentId: '', parentName: '' })
 
-const getNodeColor = (level: number) => {
-    const colors = ['var(--data-1)', 'var(--data-2)', 'var(--data-3)', 'var(--data-4)', 'var(--data-5)']
-    return colors[(level - 1) % colors.length]
-}
-
 const getOrgColor = (name: string) => {
     if (!name) return 'var(--text-secondary)'
     const colors = ['var(--data-1)', 'var(--data-2)', 'var(--data-3)', 'var(--data-4)', 'var(--data-5)', 'var(--data-6)', 'var(--data-7)', 'var(--data-8)']
@@ -264,11 +248,24 @@ const getOrgColor = (name: string) => {
     return colors[index]
 }
 
-const handleNodeClick = (data: any) => {
-    selectOrg.value.parentId = data.id
-    selectOrg.value.parentName = data.name
-    queryParam.value.parentId = data.id
+const handleTreeSelect = (name: string) => {
+    selectOrg.value.parentName = name
+    queryParam.value.parentId = selectOrg.value.parentId
     queryPage()
+}
+
+const handleTreeAdd = (parentId: string, parentName: string) => {
+    selectOrg.value.parentId = parentId
+    selectOrg.value.parentName = parentName
+    dialogAdd.value = true
+}
+
+const handleTreeEdit = (id: string) => {
+    openDialog(id, 'edit')
+}
+
+const handleTreeDelete = (id: string) => {
+    confirmDelete(id)
 }
 
 const handleSelectionChange = (val: any) => {
@@ -434,41 +431,6 @@ onMounted(() => {
             .tree-wrapper {
                 flex: 1;
                 overflow: auto;
-
-                .org-tree {
-                    .tree-node {
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 4px 0;
-
-                        &.is-active {
-                            .tree-label {
-                                color: var(--brand-primary);
-                                font-weight: 600;
-                            }
-                        }
-
-                        .node-icon {
-                            width: 24px;
-                            height: 24px;
-                            border-radius: 6px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-
-                            .el-icon {
-                                font-size: 12px;
-                                color: white;
-                            }
-                        }
-
-                        .tree-label {
-                            font-size: 14px;
-                            transition: all 0.3s;
-                        }
-                    }
-                }
             }
         }
     }
