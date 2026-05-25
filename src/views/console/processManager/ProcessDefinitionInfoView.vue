@@ -2,6 +2,7 @@
     <div class="add-process-view" v-loading="loading" element-loading-text="加载中...">
         <div class="editor-area">
             <ProcessEditor v-if="loaded" :key="reloadKey" :info="info" :readonly="type === 'view'"
+                v-model:node-config="nodeConfig"
                 @update:graphRawData="(data: any) => info.rawData = data"
                 @update:graphData="(data: any) => info.xmlStr = data" />
             <div v-else class="editor-placeholder">
@@ -66,12 +67,22 @@ const info = ref({
     rawData: {},
 })
 
+const nodeConfig = ref({
+    globalFormBinding: null as any,
+    nodeFormBindings: [] as any[],
+    nodeFieldPermissions: [] as any[],
+})
+
 const queryInfo = async () => {
     loading.value = true
     loaded.value = false
     const params: any = { id: props.id }
     if (props.version) params.version = props.version
-    info.value = await http.post('/processDefinition/info', params)
+    const result = await http.post('/processDefinition/info', params)
+    info.value = result
+    nodeConfig.value.globalFormBinding = result.globalFormBinding ?? null
+    nodeConfig.value.nodeFormBindings = result.nodeFormBindings ?? []
+    nodeConfig.value.nodeFieldPermissions = result.nodeFieldPermissions ?? []
     loading.value = false
     loaded.value = true
     reloadKey.value++
@@ -86,7 +97,13 @@ const validateUserTasks = (rawData: any) => {
 
 const doSave = async () => {
     loading.value = true
-    const result = await http.post('/processDefinition/save', info.value, { raw: true })
+    const payload = {
+        ...info.value,
+        globalFormBinding: nodeConfig.value.globalFormBinding,
+        nodeFormBindings: nodeConfig.value.nodeFormBindings,
+        nodeFieldPermissions: nodeConfig.value.nodeFieldPermissions,
+    }
+    const result = await http.post('/processDefinition/save', payload, { raw: true })
     alert(result.msg, 'success')
     queryInfo()
 }

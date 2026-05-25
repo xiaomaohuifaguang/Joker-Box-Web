@@ -9,6 +9,7 @@ export default defineConfig({
   base: "",
   server: {
     host: '0.0.0.0',
+    port: 5199,
     proxy: {
       // 代理配置
       '/joker-box': {

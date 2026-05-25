@@ -17,23 +17,13 @@
         <!-- 全局表单绑定 -->
         <el-divider />
         <el-form-item label="全局表单">
-            <FormSelector v-model="globalFormId" :disabled="readonly || !processDefinitionId"
-                @change="onFormChange" />
+            <FormSelector v-model="globalFormId" :disabled="readonly" @change="onFormChange" />
         </el-form-item>
-        <el-form-item v-if="processDefinitionId && !readonly">
-            <el-button type="primary" size="small" @click="saveGlobalFormBinding" :disabled="saving"
-                :loading="saving">
-                保存全局绑定
-            </el-button>
-        </el-form-item>
-        <el-alert v-if="!processDefinitionId" title="请先保存流程后再配置全局表单" type="info" :closable="false"
-            show-icon />
     </el-form>
 </template>
 
 <script setup lang="ts">
-import { http, alert } from '@/utils';
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { setProcessMeta } from '../../core/adapter/CatBPMNAdapter'
 import FormSelector from '../FormSelector.vue'
 
@@ -42,15 +32,17 @@ const props = defineProps<{
     data: any,
     readonly?: boolean
     processDefinitionId?: string | number
+    nodeConfig?: {
+        globalFormBinding: any
+        nodeFormBindings: any[]
+        nodeFieldPermissions: any[]
+    }
 }>()
 
 const emit = defineEmits<{
     (e: 'change'): void
+    (e: 'update:nodeConfig', data: any): void
 }>()
-
-const globalFormId = ref('')
-const globalFormVersion = ref('')
-const saving = ref(false)
 
 const syncProcessMeta = () => {
     if (!props.data) return
@@ -63,48 +55,33 @@ const syncProcessMeta = () => {
     emit('change')
 }
 
+// 从 nodeConfig 中读取当前全局表单绑定
+const globalFormBinding = computed(() => props.nodeConfig?.globalFormBinding)
+const globalFormId = ref('')
+const globalFormVersion = ref('')
+
 const onFormChange = (form: { id: string; name: string; version: string } | null) => {
     globalFormVersion.value = form?.version ?? ''
+    updateGlobalFormBinding()
 }
 
-const queryGlobalFormBinding = async () => {
-    if (!props.processDefinitionId) return
-    try {
-        const result = await http.post('/processDefinition/globalFormBinding', null, {
-            params: { processDefinitionId: props.processDefinitionId }
-        })
-        if (result) {
-            globalFormId.value = result.formId || ''
-            globalFormVersion.value = result.formVersion || ''
-        } else {
-            globalFormId.value = ''
-            globalFormVersion.value = ''
-        }
-    } catch {
-        globalFormId.value = ''
-        globalFormVersion.value = ''
-    }
+const updateGlobalFormBinding = () => {
+    if (!props.nodeConfig) return
+    const binding = globalFormId.value
+        ? { formId: globalFormId.value, formVersion: globalFormVersion.value }
+        : null
+    emit('update:nodeConfig', {
+        ...props.nodeConfig,
+        globalFormBinding: binding
+    })
 }
 
-const saveGlobalFormBinding = async () => {
-    if (!props.processDefinitionId) return
-    saving.value = true
-    try {
-        await http.post('/processDefinition/saveGlobalFormBinding', {
-            processDefinitionId: props.processDefinitionId,
-            formId: globalFormId.value,
-            formVersion: globalFormVersion.value,
-        })
-        alert('全局表单绑定保存成功', 'success')
-    } finally {
-        saving.value = false
-    }
-}
-
+// 同步外部 nodeConfig 到本地状态
 watch(
-    () => props.processDefinitionId,
-    () => {
-        queryGlobalFormBinding()
+    () => globalFormBinding.value,
+    (binding) => {
+        globalFormId.value = binding?.formId || ''
+        globalFormVersion.value = binding?.formVersion || ''
     },
     { immediate: true }
 )

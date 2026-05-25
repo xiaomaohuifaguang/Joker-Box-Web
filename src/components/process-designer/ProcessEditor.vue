@@ -16,7 +16,8 @@
             </el-col>
             <el-col :span="4">
                 <PropertyPanel class="diagram-panel" :lf="lf" :data="itemData" :itemType="itemType" :readonly="readonly"
-                    :process-definition-id="info?.id" @change="onPropertyChange" />
+                    :process-definition-id="info?.id" :node-config="nodeConfig"
+                    @change="onPropertyChange" @update:node-config="onNodeConfigChange" />
             </el-col>
         </el-row>
 
@@ -67,17 +68,28 @@ const props = withDefaults(defineProps<{
         processDescription?: string,
         rawData?: any
     },
-    readonly?: boolean
+    readonly?: boolean,
+    nodeConfig?: {
+        globalFormBinding: any,
+        nodeFormBindings: any[],
+        nodeFieldPermissions: any[]
+    }
 }>(), {
     info: () => ({
         rawData: () => ({ nodes: [], edges: [] })
     }),
-    readonly: false
+    readonly: false,
+    nodeConfig: () => ({
+        globalFormBinding: null,
+        nodeFormBindings: [],
+        nodeFieldPermissions: []
+    })
 })
 
 const emit = defineEmits<{
     (e: 'update:graphRawData', data: any): void,
-    (e: 'update:graphData', data: any): void
+    (e: 'update:graphData', data: any): void,
+    (e: 'update:nodeConfig', data: any): void
 }>()
 
 
@@ -149,7 +161,17 @@ onMounted(async () => {
                 }
             })
         })
-        lf.value.on('node:delete', () => {
+        lf.value.on('node:delete', (event: any) => {
+            const deletedNodeId = event?.data?.id
+            if (deletedNodeId && props.nodeConfig) {
+                const newBindings = props.nodeConfig.nodeFormBindings.filter((b: any) => String(b.nodeId) !== String(deletedNodeId))
+                const newPermissions = props.nodeConfig.nodeFieldPermissions.filter((p: any) => String(p.nodeId) !== String(deletedNodeId))
+                emit('update:nodeConfig', {
+                    ...props.nodeConfig,
+                    nodeFormBindings: newBindings,
+                    nodeFieldPermissions: newPermissions,
+                })
+            }
             cleanOrphanGatewayDefault()
         })
         emit('update:graphRawData', lf.value.getGraphRawData())
@@ -192,6 +214,10 @@ const onPropertyChange = () => {
         emit('update:graphRawData', lf.value.getGraphRawData())
         emit('update:graphData', lf.value.getGraphData())
     }
+}
+
+const onNodeConfigChange = (data: any) => {
+    emit('update:nodeConfig', data)
 }
 
 </script>

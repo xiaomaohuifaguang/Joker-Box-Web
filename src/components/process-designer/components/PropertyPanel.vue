@@ -3,12 +3,15 @@
     <div class="diagram-panel">
         <el-form label-position="top" :model="data" v-if="itemType != 'init' && data">
             <ProcessPropertyPanel v-if="itemType == 'process'" :lf="lf" :data="data" :readonly="readonly"
-                :process-definition-id="processDefinitionId" @change="handleChange" />
+                :process-definition-id="processDefinitionId" :node-config="nodeConfig"
+                @change="handleChange" @update:node-config="onNodeConfigChange" />
             <template v-if="itemType == 'node'">
-                <StartEventProperty v-if="data.type === 'bpmn:startEvent'" :lf="lf" :data="data" :readonly="readonly"
-                    @change="handleChange" />
-                <UserTaskProperty v-else-if="data.type === 'bpmn:userTask'" :lf="lf" :data="data" :readonly="readonly"
-                    :process-definition-id="processDefinitionId" @change="handleChange" />
+                <StartEventProperty v-if="data.type === 'bpmn:startEvent'" :key="data?.id" :lf="lf" :data="data"
+                    :readonly="readonly" :process-definition-id="processDefinitionId" :node-config="nodeConfig"
+                    @change="handleChange" @update:node-config="onNodeConfigChange" />
+                <UserTaskProperty v-else-if="data.type === 'bpmn:userTask'" :key="data?.id"
+                    :lf="lf" :data="data" :readonly="readonly" :process-definition-id="processDefinitionId"
+                    :node-config="nodeConfig" @change="handleChange" @update:node-config="onNodeConfigChange" />
                 <EndEventProperty v-else-if="data.type === 'bpmn:endEvent'" :lf="lf" :data="data" :readonly="readonly"
                     @change="handleChange" />
                 <GatewayProperty v-else-if="['bpmn:exclusiveGateway', 'bpmn:parallelGateway', 'bpmn:inclusiveGateway'].includes(data.type)"
@@ -32,15 +35,25 @@ const props = defineProps<{
     data: any,
     itemType: 'process' | 'node' | 'edge' | 'init',
     readonly?: boolean,
-    processDefinitionId?: string | number
+    processDefinitionId?: string | number,
+    nodeConfig?: {
+        globalFormBinding: any,
+        nodeFormBindings: any[],
+        nodeFieldPermissions: any[]
+    }
 }>()
 
 const emit = defineEmits<{
     (e: 'change'): void
+    (e: 'update:nodeConfig', data: any): void
 }>()
 
 const handleChange = () => {
     emit('change')
+}
+
+const onNodeConfigChange = (data: any) => {
+    emit('update:nodeConfig', data)
 }
 </script>
 
