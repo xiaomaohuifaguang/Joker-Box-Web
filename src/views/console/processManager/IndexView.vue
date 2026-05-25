@@ -114,7 +114,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
                     <span>版本历史</span>
                   </el-button>
                   <el-button type="danger" link size="small" @click="confirmDelete(scope.row.id)"
-                    v-if="scope.row.status == '0'">
+                    v-if="scope.row.deletable">
                     <el-icon>
                       <Delete />
                     </el-icon>
