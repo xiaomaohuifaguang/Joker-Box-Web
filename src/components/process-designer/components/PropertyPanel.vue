@@ -2,12 +2,13 @@
     <!-- 右侧属性面板 -->
     <div class="diagram-panel">
         <el-form label-position="top" :model="data" v-if="itemType != 'init' && data">
-            <ProcessPropertyPanel v-if="itemType == 'process'" :lf="lf" :data="data" :readonly="readonly" @change="handleChange" />
+            <ProcessPropertyPanel v-if="itemType == 'process'" :lf="lf" :data="data" :readonly="readonly"
+                :process-definition-id="processDefinitionId" @change="handleChange" />
             <template v-if="itemType == 'node'">
                 <StartEventProperty v-if="data.type === 'bpmn:startEvent'" :lf="lf" :data="data" :readonly="readonly"
                     @change="handleChange" />
                 <UserTaskProperty v-else-if="data.type === 'bpmn:userTask'" :lf="lf" :data="data" :readonly="readonly"
-                    @change="handleChange" />
+                    :process-definition-id="processDefinitionId" @change="handleChange" />
                 <EndEventProperty v-else-if="data.type === 'bpmn:endEvent'" :lf="lf" :data="data" :readonly="readonly"
                     @change="handleChange" />
                 <GatewayProperty v-else-if="['bpmn:exclusiveGateway', 'bpmn:parallelGateway', 'bpmn:inclusiveGateway'].includes(data.type)"
@@ -30,7 +31,8 @@ const props = defineProps<{
     lf: any,
     data: any,
     itemType: 'process' | 'node' | 'edge' | 'init',
-    readonly?: boolean
+    readonly?: boolean,
+    processDefinitionId?: string | number
 }>()
 
 const emit = defineEmits<{

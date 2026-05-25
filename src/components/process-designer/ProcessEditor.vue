@@ -16,7 +16,7 @@
             </el-col>
             <el-col :span="4">
                 <PropertyPanel class="diagram-panel" :lf="lf" :data="itemData" :itemType="itemType" :readonly="readonly"
-                    @change="onPropertyChange" />
+                    :process-definition-id="info?.id" @change="onPropertyChange" />
             </el-col>
         </el-row>
 
@@ -60,6 +60,7 @@ LogicFlow.use(CatBPMNAdapter, extraProps)
 
 const props = withDefaults(defineProps<{
     info?: {
+        id?: string | number,
         processKey?: string,
         processName?: string,
         prcessCategory?: string

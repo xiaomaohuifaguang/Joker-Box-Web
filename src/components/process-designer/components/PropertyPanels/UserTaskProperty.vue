@@ -83,17 +83,49 @@
                 </el-select>
             </el-form-item>
         </template>
+
+        <!-- 节点表单绑定 -->
+        <el-divider />
+        <el-form-item label="绑定表单">
+            <FormSelector v-model="nodeFormId" :disabled="readonly || !processDefinitionId"
+                @change="onNodeFormChange" />
+        </el-form-item>
+        <el-form-item>
+            <el-checkbox v-model="inheritMainForm" :disabled="readonly || !processDefinitionId">
+                继承主表单字段
+            </el-checkbox>
+        </el-form-item>
+        <el-form-item v-if="processDefinitionId && !readonly">
+            <el-button type="primary" size="small" @click="saveNodeFormBinding" :disabled="nodeSaving"
+                :loading="nodeSaving">
+                保存绑定
+            </el-button>
+            <el-button v-if="nodeFormId" type="default" size="small" @click="showPermissionDialog = true"
+                :disabled="!processDefinitionId">
+                配置字段权限
+            </el-button>
+        </el-form-item>
+        <el-alert v-if="!processDefinitionId" title="请先保存流程后再配置节点表单" type="info" :closable="false"
+            show-icon />
+
+        <FieldPermissionDialog v-model="showPermissionDialog" :process-definition-id="processDefinitionId"
+            :node-id="data?.id" :form-id="nodeFormId" :inherit-main-form="inheritMainForm ? '1' : '0'"
+            :readonly="readonly" />
     </el-form>
 </template>
 
 <script setup lang="ts">
+import { http, alert } from '@/utils';
 import { computed, ref, watch } from 'vue'
 import { useProperty, useSearchOptions } from './shared'
+import FormSelector from '../FormSelector.vue'
+import FieldPermissionDialog from '../FieldPermissionDialog.vue'
 
 const props = defineProps<{
     lf: any,
     data: any,
     readonly?: boolean
+    processDefinitionId?: string | number
 }>()
 
 const emit = defineEmits<{
@@ -106,6 +138,13 @@ const candidateUsersArray = makeArrayProp('candidateUsers')
 const candidateRolesArray = makeArrayProp('candidateRoles')
 const candidateGroupsArray = makeArrayProp('candidateGroups')
 const candidateDeptsArray = makeArrayProp('candidateDepts')
+
+// 节点表单绑定
+const nodeFormId = ref('')
+const nodeFormVersion = ref('')
+const inheritMainForm = ref(false)
+const nodeSaving = ref(false)
+const showPermissionDialog = ref(false)
 
 const userSelectKey = ref(0)
 const roleSelectKey = ref(0)
@@ -376,6 +415,64 @@ watch(
         } else if (oldVal === 1) {
             doUpdateProperty('passRate', '')
         }
+    },
+    { immediate: true }
+)
+
+// 节点表单绑定
+const onNodeFormChange = (form: { id: string; name: string; version: string } | null) => {
+    nodeFormVersion.value = form?.version ?? ''
+}
+
+const queryNodeFormBinding = async () => {
+    if (!props.processDefinitionId || !props.data?.id) {
+        nodeFormId.value = ''
+        nodeFormVersion.value = ''
+        inheritMainForm.value = false
+        return
+    }
+    try {
+        const result = await http.post('/processDefinition/nodeFormBinding', null, {
+            params: { processDefinitionId: props.processDefinitionId, nodeId: props.data.id }
+        })
+        if (result) {
+            nodeFormId.value = result.formId || ''
+            nodeFormVersion.value = result.formVersion || ''
+            inheritMainForm.value = result.inheritMainForm === '1'
+        } else {
+            nodeFormId.value = ''
+            nodeFormVersion.value = ''
+            inheritMainForm.value = false
+        }
+    } catch {
+        nodeFormId.value = ''
+        nodeFormVersion.value = ''
+        inheritMainForm.value = false
+    }
+}
+
+const saveNodeFormBinding = async () => {
+    if (!props.processDefinitionId || !props.data?.id) return
+    nodeSaving.value = true
+    try {
+        await http.post('/processDefinition/saveNodeFormBinding', {
+            processDefinitionId: props.processDefinitionId,
+            formId: nodeFormId.value,
+            formVersion: nodeFormVersion.value,
+            bindType: 'NODE',
+            nodeId: props.data.id,
+            inheritMainForm: inheritMainForm.value ? '1' : '0',
+        })
+        alert('节点表单绑定保存成功', 'success')
+    } finally {
+        nodeSaving.value = false
+    }
+}
+
+watch(
+    () => props.data?.id,
+    () => {
+        queryNodeFormBinding()
     },
     { immediate: true }
 )
