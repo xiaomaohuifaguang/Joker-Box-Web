@@ -77,7 +77,7 @@
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="sendTime" label="发送时间" min-width="170">
+                        <el-table-column prop="sendTime" label="发送时间" min-width="170" show-overflow-tooltip>
                             <template #default="scope">
                                 <div class="time-cell">
                                     <el-icon><Clock /></el-icon>
@@ -364,8 +364,9 @@ onMounted(() => {
 
                 .action-buttons {
                     display: flex;
+                    flex-wrap: wrap;
                     justify-content: center;
-                    gap: 4px;
+                    gap: 4px 8px;
                 }
             }
         }

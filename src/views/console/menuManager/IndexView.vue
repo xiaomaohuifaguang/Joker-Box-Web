@@ -468,8 +468,9 @@ onMounted(() => {
 
                 .action-buttons {
                     display: flex;
+                    flex-wrap: wrap;
                     justify-content: center;
-                    gap: 8px;
+                    gap: 4px 8px;
                 }
             }
         }

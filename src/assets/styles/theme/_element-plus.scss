@@ -519,6 +519,19 @@
     border-color: var(--border-light) !important;
 }
 
+/* 操作列按钮：允许换行，防止溢出 */
+.el-table .action-buttons {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    justify-content: center;
+}
+
+/* 时间列：禁止换行，防止日期折行 */
+.el-table .time-cell {
+    white-space: nowrap;
+}
+
 /* ---------- el-pagination ---------- */
 .el-pagination .el-pager li.is-active {
     background: var(--brand-primary) !important;

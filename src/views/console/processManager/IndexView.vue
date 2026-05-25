@@ -87,8 +87,8 @@ ACT_RE_PROCDEF" min-width="150" /> -->
               </template>
             </el-table-column>
             <!-- <el-table-column prop="createBy" label="创建人userid" min-width="150" /> -->
-            <el-table-column prop="createTime" label="创建时间" min-width="150" />
-            <el-table-column prop="updateTime" label="更新时间" min-width="150" />
+            <el-table-column prop="createTime" label="创建时间" min-width="170" show-overflow-tooltip />
+            <el-table-column prop="updateTime" label="更新时间" min-width="170" show-overflow-tooltip />
             <!-- <el-table-column prop="deleted" label="逻辑删除" min-width="150" /> -->
             <el-table-column label="操作" fixed="right" width="280" align="center">
               <template #default="scope">
@@ -170,7 +170,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
               V{{ scope.row.version }}
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="部署时间" min-width="160" />
+          <el-table-column prop="createTime" label="部署时间" min-width="160" show-overflow-tooltip />
           <el-table-column prop="createBy" label="操作人" min-width="100" />
           <el-table-column label="操作" width="150" align="center">
             <template #default="scope">
@@ -482,8 +482,9 @@ onMounted(() => {
 
         .action-buttons {
           display: flex;
+          flex-wrap: wrap;
           justify-content: center;
-          gap: 8px;
+          gap: 4px 8px;
         }
       }
     }

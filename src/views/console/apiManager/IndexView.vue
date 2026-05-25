@@ -136,7 +136,7 @@
                                 </el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="createTime" label="创建时间" sortable="custom" width="170">
+                        <el-table-column prop="createTime" label="创建时间" sortable="custom" width="170" show-overflow-tooltip>
                             <template #default="scope">
                                 <div class="time-cell">
                                     <el-icon><Clock /></el-icon>
@@ -144,7 +144,7 @@
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="updateTime" label="更新时间" sortable="custom" width="170">
+                        <el-table-column prop="updateTime" label="更新时间" sortable="custom" width="170" show-overflow-tooltip>
                             <template #default="scope">
                                 <div class="time-cell">
                                     <el-icon><Timer /></el-icon>
@@ -537,8 +537,9 @@ onMounted(() => {
 
                 .action-buttons {
                     display: flex;
+                    flex-wrap: wrap;
                     justify-content: center;
-                    gap: 8px;
+                    gap: 4px 8px;
                 }
             }
         }

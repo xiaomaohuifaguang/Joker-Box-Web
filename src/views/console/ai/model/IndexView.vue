@@ -79,7 +79,7 @@
             <el-table-column prop="apiKey" label="API Key" min-width="180" />
             <el-table-column prop="description" label="描述" min-width="180" />
             <el-table-column prop="userId" label="创建人" min-width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="170">
+            <el-table-column prop="createTime" label="创建时间" min-width="170" show-overflow-tooltip>
               <template #default="scope">
                 <div class="time-cell">
                   <el-icon>
@@ -375,8 +375,9 @@ onMounted(() => {
 
         .action-buttons {
           display: flex;
+          flex-wrap: wrap;
           justify-content: center;
-          gap: 8px;
+          gap: 4px 8px;
         }
       }
     }
