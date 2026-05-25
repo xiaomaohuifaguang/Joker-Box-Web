@@ -18,6 +18,7 @@
                     <View v-else />
                 </el-icon>
                 <span v-if="type === 'edit'">请完成流程设计后点击右侧按钮确认保存</span>
+                <span v-else-if="version">正在查看 V{{ version }} 版本，只读预览模式</span>
                 <span v-else>当前为只读预览模式，无法编辑</span>
             </div>
             <el-button type="primary" size="large" @click="save" class="confirm-button" v-if="type === 'edit'"
@@ -41,7 +42,8 @@ import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
 
 const props = defineProps({
     id: { type: [String, Number], default: '' },
-    type: { type: String, default: '' }
+    type: { type: String, default: '' },
+    version: { type: String, default: undefined },
 })
 
 const loading = ref(false)
@@ -67,7 +69,9 @@ const info = ref({
 const queryInfo = async () => {
     loading.value = true
     loaded.value = false
-    info.value = await http.post('/processDefinition/info', { id: props.id })
+    const params: any = { id: props.id }
+    if (props.version) params.version = props.version
+    info.value = await http.post('/processDefinition/info', params)
     loading.value = false
     loaded.value = true
     reloadKey.value++

@@ -72,7 +72,12 @@
 ACT_RE_PROCDEF" min-width="150" /> -->
             <el-table-column prop="processName" label="流程名称" min-width="150" />
             <el-table-column prop="processDescription" label="流程描述" min-width="150" />
-            <el-table-column prop="version" label="使用版本" min-width="150" />
+            <el-table-column prop="version" label="版本" min-width="80" align="center">
+              <template #default="scope">
+                <span v-if="scope.row.version === 'DRAFT'">草稿</span>
+                <span v-else>V{{ scope.row.version }}</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="status" label="流程状态" min-width="120">
               <template #default="scope">
                 <el-tag v-if="scope.row.status == '0'" type="info">草稿</el-tag>
@@ -85,7 +90,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
             <el-table-column prop="createTime" label="创建时间" min-width="150" />
             <el-table-column prop="updateTime" label="更新时间" min-width="150" />
             <!-- <el-table-column prop="deleted" label="逻辑删除" min-width="150" /> -->
-            <el-table-column label="操作" fixed="right" width="220" align="center">
+            <el-table-column label="操作" fixed="right" width="280" align="center">
               <template #default="scope">
                 <div class="action-buttons">
                   <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'view')">
@@ -100,6 +105,13 @@ ACT_RE_PROCDEF" min-width="150" /> -->
                       <Edit />
                     </el-icon>
                     <span>编辑</span>
+                  </el-button>
+                  <el-button type="primary" link size="small" @click="openVersionHistory(scope.row.id)"
+                    v-if="scope.row.version !== 'DRAFT'">
+                    <el-icon>
+                      <Clock />
+                    </el-icon>
+                    <span>版本历史</span>
                   </el-button>
                   <el-button type="danger" link size="small" @click="confirmDelete(scope.row.id)"
                     v-if="scope.row.status == '0'">
@@ -140,7 +152,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
     <!-- 详情/编辑对话框 -->
     <el-dialog v-model="dialogEdit.open" fullscreen :title="dialogEdit.title" center destroy-on-close
       @closed="closeDialog" class="custom-dialog">
-      <ProcessDefinitionInfoView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :key="dialogEdit.id" />
+      <ProcessDefinitionInfoView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :version="dialogEdit.version" :key="dialogEdit.id + (dialogEdit.version ?? '')" />
     </el-dialog>
 
     <!-- 添加对话框 -->
@@ -148,11 +160,36 @@ ACT_RE_PROCDEF" min-width="150" /> -->
       class="custom-dialog">
       <ProcessDefinitionAddView @success="handleAddSuccess" />
     </el-dialog>
+
+    <!-- 版本历史对话框 -->
+    <el-dialog v-model="versionDialog.open" title="版本历史" width="600px" destroy-on-close class="custom-dialog">
+      <div v-loading="versionDialog.loading">
+        <el-table :data="versionDialog.list" style="width: 100%">
+          <el-table-column prop="version" label="版本" width="80" align="center">
+            <template #default="scope">
+              V{{ scope.row.version }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="部署时间" min-width="160" />
+          <el-table-column prop="createBy" label="操作人" min-width="100" />
+          <el-table-column label="操作" width="150" align="center">
+            <template #default="scope">
+              <el-button type="primary" link size="small" @click="viewVersion(scope.row.version)">
+                查看
+              </el-button>
+              <el-button type="warning" link size="small" @click="confirmRollback(scope.row.version)">
+                回滚
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { House, Search, Plus, View, Edit, Delete, Document, List, Promotion } from '@element-plus/icons-vue'
+import { House, Search, Plus, View, Edit, Delete, Document, List, Promotion, Clock } from '@element-plus/icons-vue'
 import { http, alert, confirm } from '@/utils';
 import { onMounted, ref } from 'vue';
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -179,6 +216,7 @@ const dialogEdit = ref({
   title: '',
   id: '',
   type: 'view',
+  version: undefined as string | undefined,
 })
 
 const dialogAdd = ref(false)
@@ -238,7 +276,8 @@ const openDialog = (id: string | number, type: string) => {
     open: true,
     title: type === 'view' ? '流程定义详情' : '流程定义编辑',
     id: String(id),
-    type
+    type,
+    version: undefined,
   }
 }
 
@@ -247,7 +286,8 @@ const closeDialog = () => {
     open: false,
     title: '',
     id: '',
-    type: 'view'
+    type: 'view',
+    version: undefined,
   }
   queryPage()
 }
@@ -272,6 +312,55 @@ const confirmDeploy = (id: string) => {
 const confirmStop = (id: string) => {
   confirm('提示', '确定停用该流程吗？', () => {
     stop(id)
+  })
+}
+
+// 版本历史
+const versionDialog = ref({
+  open: false,
+  loading: false,
+  processDefinitionId: null as number | null,
+  list: [] as any[],
+})
+
+const openVersionHistory = async (id: number) => {
+  versionDialog.value.processDefinitionId = id
+  versionDialog.value.open = true
+  versionDialog.value.loading = true
+  versionDialog.value.list = []
+  try {
+    const result = await http.post('/processDefinition/versionList', null, {
+      params: { processDefinitionId: id }
+    })
+    versionDialog.value.list = result ?? []
+  } finally {
+    versionDialog.value.loading = false
+  }
+}
+
+const viewVersion = (version: string) => {
+  versionDialog.value.open = false
+  dialogEdit.value = {
+    open: true,
+    title: `流程定义详情 - V${version}`,
+    id: String(versionDialog.value.processDefinitionId),
+    type: 'view',
+    version,
+  }
+}
+
+const rollback = async (processDefinitionId: number, targetVersion: string) => {
+  await http.post('/processDefinition/rollback', null, {
+    params: { processDefinitionId, targetVersion }
+  })
+  alert('回滚成功，流程已变为草稿状态', 'success')
+  versionDialog.value.open = false
+  queryPage()
+}
+
+const confirmRollback = (targetVersion: string) => {
+  confirm('提示', `确认回滚到 V${targetVersion}？回滚后流程变为草稿状态`, () => {
+    rollback(versionDialog.value.processDefinitionId!, targetVersion)
   })
 }
 
