@@ -67,10 +67,10 @@
           <el-table :data="tableData" stripe style="width: 100%" @selection-change="handleSelectionChange"
             @sort-change="handleSortChange" :default-sort="{ prop: 'createTime', order: 'descending' }">
             <el-table-column type="selection" width="50" align="center" />
-            <el-table-column prop="id" label="流程id" min-width="150" />
+            <el-table-column prop="id" label="流程id" min-width="75" />
             <!-- <el-table-column prop="processKey" label="流程定义key
 ACT_RE_PROCDEF" min-width="150" /> -->
-            <el-table-column prop="processName" label="流程名称" min-width="150" />
+            <el-table-column prop="processName" label="流程名称" min-width="100" />
             <el-table-column prop="processDescription" label="流程描述" min-width="150" />
             <el-table-column prop="version" label="版本" min-width="80" align="center">
               <template #default="scope">
@@ -90,7 +90,7 @@ ACT_RE_PROCDEF" min-width="150" /> -->
             <el-table-column prop="createTime" label="创建时间" min-width="170" show-overflow-tooltip />
             <el-table-column prop="updateTime" label="更新时间" min-width="170" show-overflow-tooltip />
             <!-- <el-table-column prop="deleted" label="逻辑删除" min-width="150" /> -->
-            <el-table-column label="操作" fixed="right" width="280" align="center">
+            <el-table-column label="操作" fixed="right" width="400" align="center">
               <template #default="scope">
                 <div class="action-buttons">
                   <el-button type="primary" link size="small" @click="openDialog(scope.row.id, 'view')">
@@ -152,7 +152,8 @@ ACT_RE_PROCDEF" min-width="150" /> -->
     <!-- 详情/编辑对话框 -->
     <el-dialog v-model="dialogEdit.open" fullscreen :title="dialogEdit.title" center destroy-on-close
       @closed="closeDialog" class="custom-dialog">
-      <ProcessDefinitionInfoView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :version="dialogEdit.version" :key="dialogEdit.id + (dialogEdit.version ?? '')" />
+      <ProcessDefinitionInfoView v-model:id="dialogEdit.id" v-model:type="dialogEdit.type" :version="dialogEdit.version"
+        :key="dialogEdit.id + (dialogEdit.version ?? '')" />
     </el-dialog>
 
     <!-- 添加对话框 -->
