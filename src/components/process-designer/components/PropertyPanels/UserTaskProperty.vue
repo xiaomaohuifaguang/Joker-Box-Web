@@ -87,7 +87,7 @@
         <!-- 节点表单绑定 -->
         <el-divider />
         <el-form-item label="绑定表单">
-            <FormSelector v-model="nodeFormId" :disabled="readonly" @change="onNodeFormChange" />
+            <FormSelector v-model="nodeFormId" v-model:model-version="nodeFormVersion" :disabled="readonly" @change="onNodeFormChange" />
         </el-form-item>
         <el-form-item>
             <el-checkbox v-model="inheritMainForm" :disabled="readonly || !nodeConfig?.globalFormBinding?.formId"
@@ -432,10 +432,11 @@ const updateNodeBinding = () => {
     const bindings = [...props.nodeConfig.nodeFormBindings]
     const idx = bindings.findIndex((b: any) => String(b.nodeId) === nodeId)
     const oldFormId = idx >= 0 ? bindings[idx].formId : ''
+    const oldVersion = idx >= 0 ? bindings[idx].formVersion : ''
     const newFormId = nodeFormId.value
 
     let newPermissions = props.nodeConfig.nodeFieldPermissions
-    if (oldFormId !== newFormId) {
+    if (oldFormId !== newFormId || oldVersion !== nodeFormVersion.value) {
         newPermissions = newPermissions.filter((p: any) => String(p.nodeId) !== nodeId)
     }
 
