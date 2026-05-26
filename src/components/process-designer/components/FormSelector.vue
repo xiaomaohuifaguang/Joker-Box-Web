@@ -1,102 +1,111 @@
 <template>
-    <el-select :model-value="modelValue" @update:model-value="onSelect" filterable remote reserve-keyword
-        :remote-method="searchForms" :loading="loading" placeholder="请选择表单" style="width: 100%"
-        :disabled="disabled" clearable>
-        <el-option v-for="item in formOptions" :key="item.id" :label="item.name" :value="item.id" />
-    </el-select>
+    <div class="form-selector">
+        <el-select :model-value="modelValue" @update:model-value="onFormSelect" filterable
+            :loading="loading" placeholder="请选择表单" style="flex: 1; min-width: 0"
+            :disabled="disabled" clearable>
+            <el-option v-for="item in formOptions" :key="item.formId" :label="item.formName"
+                :value="item.formId" />
+        </el-select>
+        <el-select v-if="modelValue && versionOptions.length > 0"
+            :model-value="modelVersion" @update:model-value="onVersionSelect"
+            :loading="loading" placeholder="版本" style="width: 140px; flex-shrink: 0"
+            :disabled="disabled">
+            <el-option v-for="v in versionOptions" :key="v.version"
+                :label="v.version === currentLatest ? `${v.version} (最新)` : v.version"
+                :value="v.version" />
+        </el-select>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { http } from '@/utils';
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+
+interface PublishedForm {
+    formId: string
+    formName: string
+    latestVersion: string
+    versions: { version: string; publishTime: string }[]
+}
 
 const props = defineProps<{
     modelValue?: string
+    modelVersion?: string
     disabled?: boolean
 }>()
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void
+    (e: 'update:modelVersion', value: string): void
     (e: 'change', form: { id: string; name: string; version: string } | null): void
 }>()
 
 const loading = ref(false)
-const formOptions = ref<any[]>([])
-const allForms = ref<any[]>([])
+const formOptions = ref<PublishedForm[]>([])
 
-const queryForms = async (keyword = '') => {
+const currentLatest = computed(() => {
+    if (!props.modelValue) return ''
+    const form = formOptions.value.find(f => f.formId === props.modelValue)
+    return form?.latestVersion ?? ''
+})
+
+const versionOptions = computed(() => {
+    if (!props.modelValue) return []
+    const form = formOptions.value.find(f => f.formId === props.modelValue)
+    return form?.versions ?? []
+})
+
+const loadForms = async () => {
     loading.value = true
     try {
-        const result = await http.post('/dynamicForm/queryPage', {
-            current: 1,
-            size: 100,
-            search: keyword,
-        })
-        const records = (result?.records || []).filter((f: any) => f.status === '1')
-        return records
+        const result = await http.post('/dynamicForm/publishedForms')
+        formOptions.value = result || []
     } finally {
         loading.value = false
     }
 }
 
-const searchForms = async (keyword: string) => {
-    const records = await queryForms(keyword)
-    formOptions.value = records
-}
-
-const loadInitialForms = async () => {
-    const records = await queryForms()
-    allForms.value = records
-    formOptions.value = records
-    return records
-}
-
-const queryFormById = async (id: string) => {
-    try {
-        return await http.post('/dynamicForm/info', { id })
-    } catch {
-        return null
+const onFormSelect = (formId: string) => {
+    emit('update:modelValue', formId)
+    if (!formId) {
+        emit('update:modelVersion', '')
+        emit('change', null)
+        return
     }
-}
-
-const onSelect = (id: string) => {
-    emit('update:modelValue', id)
-    const form = allForms.value.find((f) => f.id === id)
+    const form = formOptions.value.find(f => f.formId === formId)
     if (form) {
-        emit('change', { id: form.id, name: form.name, version: form.version })
-    } else if (id) {
-        // 不在缓存中，异步查询后 emit
-        queryFormById(id).then((data) => {
-            if (data) {
-                emit('change', { id: data.id, name: data.name, version: data.version })
-            }
-        })
+        emit('update:modelVersion', form.latestVersion)
+        emit('change', { id: form.formId, name: form.formName, version: form.latestVersion })
     } else {
+        emit('update:modelVersion', '')
         emit('change', null)
     }
 }
 
-// 初始加载 + 处理外部传入的 modelValue
+const onVersionSelect = (version: string) => {
+    emit('update:modelVersion', version)
+    const form = formOptions.value.find(f => f.formId === props.modelValue)
+    if (form) {
+        emit('change', { id: form.formId, name: form.formName, version })
+    }
+}
+
+// Load on mount; if modelValue exists, ensure it's in the list
 watch(
     () => props.modelValue,
-    async (id) => {
-        if (!id) {
-            if (formOptions.value.length === 0) {
-                await loadInitialForms()
-            }
-            return
-        }
-        const records = await loadInitialForms()
-        const found = records.find((f: any) => f.id === id)
-        if (!found) {
-            // 不在列表中，单独查询补充
-            const data = await queryFormById(id)
-            if (data && data.status === '1') {
-                allForms.value.push(data)
-                formOptions.value = [...allForms.value]
-            }
+    async () => {
+        if (formOptions.value.length === 0) {
+            await loadForms()
         }
     },
     { immediate: true }
 )
 </script>
+
+<style scoped>
+.form-selector {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+</style>
