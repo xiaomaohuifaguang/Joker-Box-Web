@@ -106,7 +106,7 @@
         </el-form-item>
 
         <FieldPermissionDialog v-model="showPermissionDialog" :node-config="nodeConfig" :node-id="data?.id"
-            :form-id="nodeFormId" :inherit-main-form="inheritMainForm ? '1' : '0'" :readonly="readonly"
+            :form-id="nodeFormId" :form-version="nodeFormVersion" :inherit-main-form="inheritMainForm ? '1' : '0'" :readonly="readonly"
             @update:node-config="onPermissionUpdate" />
     </el-form>
 </template>
