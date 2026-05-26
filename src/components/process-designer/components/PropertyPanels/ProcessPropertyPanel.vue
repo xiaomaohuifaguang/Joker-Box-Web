@@ -17,7 +17,7 @@
         <!-- 全局表单绑定 -->
         <el-divider />
         <el-form-item label="全局表单">
-            <FormSelector v-model="globalFormId" :disabled="readonly" @change="onFormChange" />
+            <FormSelector v-model="globalFormId" v-model:model-version="globalFormVersion" :disabled="readonly" @change="onFormChange" />
         </el-form-item>
     </el-form>
 </template>
@@ -61,18 +61,30 @@ const globalFormId = ref('')
 const globalFormVersion = ref('')
 
 const onFormChange = (form: { id: string; name: string; version: string } | null) => {
+    const oldVersion = globalFormVersion.value
     globalFormVersion.value = form?.version ?? ''
-    updateGlobalFormBinding()
+    const versionChanged = !!(oldVersion && oldVersion !== globalFormVersion.value)
+    updateGlobalFormBinding(versionChanged)
 }
 
-const updateGlobalFormBinding = () => {
+const updateGlobalFormBinding = (clearInheritedPermissions = false) => {
     if (!props.nodeConfig) return
     const binding = globalFormId.value
         ? { formId: globalFormId.value, formVersion: globalFormVersion.value }
         : null
+    let newPermissions = props.nodeConfig.nodeFieldPermissions
+    if (clearInheritedPermissions && binding) {
+        const inheritedNodeIds = props.nodeConfig.nodeFormBindings
+            .filter((b: any) => b.inheritMainForm === '1')
+            .map((b: any) => String(b.nodeId))
+        newPermissions = newPermissions.filter(
+            (p: any) => !inheritedNodeIds.includes(String(p.nodeId))
+        )
+    }
     emit('update:nodeConfig', {
         ...props.nodeConfig,
-        globalFormBinding: binding
+        globalFormBinding: binding,
+        nodeFieldPermissions: newPermissions,
     })
 }
 
