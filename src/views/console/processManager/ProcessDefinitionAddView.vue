@@ -1,7 +1,8 @@
 <template>
     <div class="add-process-view">
         <div class="editor-area">
-            <ProcessEditor :info="info" @update:graphRawData="(data) => info.rawData = data"
+            <ProcessEditor :info="info" v-model:node-config="nodeConfig"
+                @update:graphRawData="(data) => info.rawData = data"
                 @update:graphData="(data) => info.xmlStr = data" />
         </div>
         <div class="action-bar">
@@ -46,6 +47,12 @@ const info = ref({
     rawData: {},
 })
 
+const nodeConfig = ref({
+    globalFormBinding: null as any,
+    nodeFormBindings: [] as any[],
+    nodeFieldPermissions: [] as any[],
+})
+
 const validateUserTasks = (rawData: any) => {
     if (!rawData?.nodes) return []
     return rawData.nodes
@@ -54,7 +61,13 @@ const validateUserTasks = (rawData: any) => {
 }
 
 const doAdd = async () => {
-    const result = await http.post('/processDefinition/add', info.value, { raw: true })
+    const payload = {
+        ...info.value,
+        globalFormBinding: nodeConfig.value.globalFormBinding,
+        nodeFormBindings: nodeConfig.value.nodeFormBindings,
+        nodeFieldPermissions: nodeConfig.value.nodeFieldPermissions,
+    }
+    const result = await http.post('/processDefinition/add', payload, { raw: true })
     alert(result.msg, 'success')
     emit('success');
 }
