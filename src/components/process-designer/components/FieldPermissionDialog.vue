@@ -91,6 +91,7 @@ const props = defineProps<{
     }
     nodeId?: string
     formId?: string
+    formVersion?: string
     inheritMainForm?: string
     readonly?: boolean
 }>()
@@ -190,7 +191,7 @@ const loadPermissions = async () => {
 
         // 1. 加载节点表单字段
         if (hasNodeForm) {
-            const data = await http.post('/dynamicForm/info', { id: props.formId })
+            const data = await http.post('/dynamicForm/info', { id: props.formId, version: props.formVersion })
             const fields = buildFieldsFromFormData(data).map(f => ({
                 ...f,
                 permission: permMap[f.fieldId] || null
@@ -203,7 +204,8 @@ const loadPermissions = async () => {
 
         // 2. 加载全局表单字段
         if (hasGlobalForm) {
-            const data = await http.post('/dynamicForm/info', { id: globalFormId })
+            const globalFormVersion = props.nodeConfig?.globalFormBinding?.formVersion
+            const data = await http.post('/dynamicForm/info', { id: globalFormId, version: globalFormVersion })
             const fields = buildFieldsFromFormData(data).map(f => ({
                 ...f,
                 permission: permMap[f.fieldId] || null
@@ -261,7 +263,7 @@ const batchSet = (source: 'node' | 'global', permission: string | null) => {
 }
 
 watch(
-    () => [props.modelValue, props.formId, props.nodeId, props.inheritMainForm, props.nodeConfig?.globalFormBinding?.formId],
+    () => [props.modelValue, props.formId, props.formVersion, props.nodeId, props.inheritMainForm, props.nodeConfig?.globalFormBinding?.formId, props.nodeConfig?.globalFormBinding?.formVersion],
     ([v]) => {
         const globalFormId = props.nodeConfig?.globalFormBinding?.formId
         const hasGlobalForm = !!globalFormId && props.inheritMainForm === '1'
