@@ -2,7 +2,7 @@
   <el-dialog
     v-model="dialog.open"
     :title="dialogTitle"
-    width="840px"
+    width="max(60vw, min(1400px, 90vw))"
     destroy-on-close
     :close-on-click-modal="false"
     class="detail-dialog"
@@ -15,12 +15,52 @@
         icon-bg="linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)"
       />
 
-      <!-- 表单占位（handle 模式） -->
-      <div v-if="dialog.mode === 'handle'" class="form-placeholder">
-        <el-icon class="placeholder-icon"><Edit /></el-icon>
-        <p>表单内容待接入</p>
-        <span>后续在此处填入表单数据等内容</span>
-      </div>
+      <!-- 表单区（handle 模式） -->
+      <template v-if="dialog.mode === 'handle'">
+        <template v-if="hasForm">
+          <div v-if="globalForm" class="form-section">
+            <div class="form-section-header" @click="globalCollapsed = !globalCollapsed">
+              <div class="header-left">
+                <el-icon><Collection /></el-icon>
+                <span>{{ globalForm.name || '全局表单' }}</span>
+              </div>
+              <el-icon class="collapse-icon" :class="{ collapsed: globalCollapsed }"><ArrowDown /></el-icon>
+            </div>
+            <FormMaker
+              v-show="!globalCollapsed"
+              ref="globalFormRef"
+              type="edit"
+              v-model="globalFormData"
+              :form-fields="globalForm.formFields"
+              :groups="globalForm.groups"
+              :linkage-rules="globalForm.linkageRules"
+            />
+          </div>
+          <div v-if="nodeForm" class="form-section">
+            <div class="form-section-header" @click="nodeCollapsed = !nodeCollapsed">
+              <div class="header-left">
+                <el-icon><Document /></el-icon>
+                <span>{{ nodeForm.name || '表单' }}</span>
+              </div>
+              <el-icon class="collapse-icon" :class="{ collapsed: nodeCollapsed }"><ArrowDown /></el-icon>
+            </div>
+            <FormMaker
+              v-show="!nodeCollapsed"
+              ref="nodeFormRef"
+              type="edit"
+              v-model="nodeFormData"
+              :form-fields="nodeForm.formFields"
+              :groups="nodeForm.groups"
+              :linkage-rules="nodeForm.linkageRules"
+            />
+          </div>
+        </template>
+        <div v-else-if="!loading" class="form-placeholder">
+          <el-icon class="placeholder-icon"><Edit /></el-icon>
+          <p>该任务未配置表单</p>
+          <span>直接进行审批操作即可</span>
+        </div>
+      </template>
 
       <!-- 处理记录 -->
       <ProcessInstanceHandleRecord :records="records" :timeline="timeline" collapsible />
@@ -108,10 +148,12 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Promotion, Tickets, Edit, CircleClose, RefreshLeft } from '@element-plus/icons-vue'
+import { Promotion, Tickets, Edit, CircleClose, RefreshLeft, Document, Collection, ArrowDown } from '@element-plus/icons-vue'
 import { http, alert } from '@/utils'
 import ProcessInstanceBaseInfo from './ProcessInstanceBaseInfo.vue'
 import ProcessInstanceHandleRecord from './ProcessInstanceHandleRecord.vue'
+import FormMaker from '@/components/dynamicForm/FormMaker.vue'
+import { flattenGroups } from '@/components/dynamicForm/types'
 
 const emit = defineEmits<{
   (e: 'success'): void
@@ -129,6 +171,61 @@ const records = ref<any[]>([])
 const timeline = ref<any[]>([])
 const currentId = ref<string | number>('')
 const currentTaskId = ref<string | undefined>(undefined)
+
+// 表单相关（handle 模式）
+const taskForm = computed(() => infoData.value?.taskForm)
+const nodeForm = computed(() => taskForm.value?.nodeForm)
+const globalForm = computed(() => taskForm.value?.globalForm)
+const hasForm = computed(() => !!nodeForm.value || !!globalForm.value)
+
+const nodeFormData = ref<Record<string, any>>({})
+const globalFormData = ref<Record<string, any>>({})
+const nodeFormRef = ref<InstanceType<typeof FormMaker> | null>(null)
+const globalFormRef = ref<InstanceType<typeof FormMaker> | null>(null)
+
+// 表单折叠状态
+const globalCollapsed = ref(false)
+const nodeCollapsed = ref(false)
+
+const applyPermission = (field: any): any => {
+  const f = { ...field }
+  switch (f.permission) {
+    case 'HIDDEN':
+      f._hidden = true
+      break
+    case 'READONLY':
+      f._readonly = true
+      break
+    case 'REQUIRED':
+      f.required = '1'
+      break
+    case 'VISIBLE':
+    default:
+      break
+  }
+  delete f.permission
+  return f
+}
+
+const initFormData = (fields: any[]): Record<string, any> => {
+  const data: Record<string, any> = {}
+  fields.forEach((f: any) => {
+    if (f._hidden) return
+    data[f.fieldId] = f.value ?? f.defaultValue ?? null
+  })
+  return data
+}
+
+const initForm = (form: any): Record<string, any> => {
+  if (!form) return {}
+  form.formFields = (form.formFields || []).map(applyPermission).filter((f: any) => !f._hidden)
+  form.groups = (form.groups || []).map((g: any) => ({
+    ...g,
+    fields: (g.fields || []).map(applyPermission).filter((f: any) => !f._hidden)
+  }))
+  form.formFields = flattenGroups(form.groups).concat(form.formFields)
+  return initFormData(form.formFields)
+}
 
 const dialogTitle = computed(() => {
   const name = infoData.value?.processDefinitionName || '未命名流程'
@@ -154,6 +251,13 @@ const loadInfo = async () => {
       infoData.value = result.data
       records.value = result.data?.processHandleInfoList ?? []
       timeline.value = result.data?.timeline ?? []
+
+      // 初始化任务表单
+      const tf = result.data?.taskForm
+      if (tf) {
+        if (tf.nodeForm) nodeFormData.value = initForm(tf.nodeForm)
+        if (tf.globalForm) globalFormData.value = initForm(tf.globalForm)
+      }
     }
   } finally {
     loading.value = false
@@ -253,6 +357,47 @@ defineExpose({ open })
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+
+.form-section {
+  margin-bottom: 24px;
+  .form-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+    padding: 10px 14px;
+    background: var(--bg-overlay);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    user-select: none;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .el-icon {
+        font-size: 18px;
+        color: var(--brand-primary);
+      }
+    }
+
+    .collapse-icon {
+      font-size: 16px;
+      color: var(--text-secondary);
+      transition: transform 0.2s ease;
+
+      &.collapsed {
+        transform: rotate(-90deg);
+      }
+    }
+  }
 }
 
 .form-placeholder {

@@ -2,7 +2,7 @@
   <el-dialog
     v-model="dialog.open"
     :title="dialogTitle"
-    width="720px"
+    width="max(60vw, min(1400px, 90vw))"
     destroy-on-close
     :close-on-click-modal="false"
     class="start-dialog"
@@ -66,6 +66,8 @@ const open = (def: any, draftId?: string | number) => {
     startViewRef.value?.reset()
     if (draftId) {
       startViewRef.value?.loadDraft(draftId)
+    } else if (def?.id) {
+      startViewRef.value?.loadStartInfo(def.id)
     }
   })
 }

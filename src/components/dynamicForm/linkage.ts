@@ -162,7 +162,7 @@ export const computeFieldStates = (
         states[f.fieldId] = {
             visible: true,
             required: f.required === '1',
-            disabled: false,
+            disabled: !!(f as any)._readonly,
             options: f.options?.filter(opt => opt.visible !== false) || f.options,
         }
     })

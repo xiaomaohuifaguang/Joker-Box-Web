@@ -2,7 +2,7 @@
   <el-dialog
     v-model="dialog.open"
     title="发起流程"
-    width="880px"
+    width="max(60vw, min(1400px, 90vw))"
     destroy-on-close
     :close-on-click-modal="false"
     class="create-dialog"
