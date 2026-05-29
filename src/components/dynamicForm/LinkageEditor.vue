@@ -79,7 +79,13 @@
                                             inactive-text="不禁用" />
                                     </template>
                                     <template v-else-if="element.actionType === 'SET_PATTERN'">
-                                        <el-input v-model="element.actionValue.pattern" placeholder="正则表达式"                                             style="flex: 1" />
+                                        <el-input v-model="element.actionValue.pattern" placeholder="正则表达式"                                             style="flex: 1">
+                                            <template #append>
+                                                <el-button @click="openPatternPicker(element)" title="选择常用正则">
+                                                    <el-icon><Collection /></el-icon>
+                                                </el-button>
+                                            </template>
+                                        </el-input>
                                         <el-input v-model="element.actionValue.patternTips" placeholder="提示信息"
                                             style="flex: 1" />
                                     </template>
@@ -191,15 +197,26 @@
         :is-cascader-type="optionDialogIsCascader"
         @submit="onOptionDialogSubmit"
     />
+
+    <PatternPresetPicker
+        v-model="patternPickerVisible"
+        @select="({ pattern, patternTips }) => {
+            if (activePatternRule.value) {
+                activePatternRule.value.actionValue.pattern = pattern
+                activePatternRule.value.actionValue.patternTips = patternTips
+            }
+        }"
+    />
 </template>
 
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
-import { Plus, Delete, Rank, InfoFilled } from '@element-plus/icons-vue'
+import { Plus, Delete, Rank, InfoFilled, Collection } from '@element-plus/icons-vue'
 import { alert } from '@/utils'
 import ConditionTreeNode from './ConditionTreeNode.vue'
 import OptionVisibilityDialog from './OptionVisibilityDialog.vue'
+import PatternPresetPicker from './PatternPresetPicker.vue'
 import {
     LINKAGE_ACTION_OPTIONS,
     getDefaultCondition,
@@ -235,6 +252,9 @@ const optionDialogSelected = ref<string[]>([])
 const optionDialogIsCascader = ref(false)
 const currentOptionRule = ref<InternalRule | null>(null)
 
+const patternPickerVisible = ref(false)
+const activePatternRule = ref<InternalRule | null>(null)
+
 const openOptionDialog = (rule: InternalRule) => {
     currentOptionRule.value = rule
     const target = getTargetField(rule)
@@ -242,6 +262,11 @@ const openOptionDialog = (rule: InternalRule) => {
     optionDialogSelected.value = getOptionValueList(rule.actionValue)
     optionDialogIsCascader.value = ['CASCADER', 'MULTICASCADER'].includes(target?.type || '')
     optionDialogVisible.value = true
+}
+
+const openPatternPicker = (rule: InternalRule) => {
+    activePatternRule.value = rule
+    patternPickerVisible.value = true
 }
 
 const onOptionDialogSubmit = (values: string[]) => {
