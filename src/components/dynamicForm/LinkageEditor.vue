@@ -201,9 +201,10 @@
     <PatternPresetPicker
         v-model="patternPickerVisible"
         @select="({ pattern, patternTips }) => {
-            if (activePatternRule.value) {
-                activePatternRule.value.actionValue.pattern = pattern
-                activePatternRule.value.actionValue.patternTips = patternTips
+            if (activePatternRuleUid == null) return
+            const rule = innerRules.find((r: InternalRule) => r._uid === activePatternRuleUid)
+            if (rule) {
+                rule.actionValue = { pattern, patternTips }
             }
         }"
     />
@@ -253,7 +254,7 @@ const optionDialogIsCascader = ref(false)
 const currentOptionRule = ref<InternalRule | null>(null)
 
 const patternPickerVisible = ref(false)
-const activePatternRule = ref<InternalRule | null>(null)
+const activePatternRuleUid = ref<number | null>(null)
 
 const openOptionDialog = (rule: InternalRule) => {
     currentOptionRule.value = rule
@@ -265,7 +266,7 @@ const openOptionDialog = (rule: InternalRule) => {
 }
 
 const openPatternPicker = (rule: InternalRule) => {
-    activePatternRule.value = rule
+    activePatternRuleUid.value = rule._uid
     patternPickerVisible.value = true
 }
 
