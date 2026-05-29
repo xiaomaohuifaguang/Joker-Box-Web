@@ -301,7 +301,13 @@
 
                 <el-col :span="12" v-if="hasPattern">
                     <el-form-item label="正则校验">
-                        <el-input v-model="form.pattern" placeholder="例：^[一-龥]{2,4}$" />
+                        <el-input v-model="form.pattern" placeholder="例：^[一-龥]{2,4}$">
+                            <template #append>
+                                <el-button @click="patternPickerVisible = true" title="选择常用正则">
+                                    <el-icon><Collection /></el-icon>
+                                </el-button>
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12" v-if="hasPattern">
@@ -400,13 +406,22 @@
                 <el-button type="primary" @click="remoteOptionHelpDialog = false">知道了</el-button>
             </template>
         </el-dialog>
+
+        <PatternPresetPicker
+            v-model="patternPickerVisible"
+            @select="({ pattern, patternTips }) => {
+                form.pattern = pattern
+                form.patternTips = patternTips
+            }"
+        />
     </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { Delete, Setting, Connection, QuestionFilled } from '@element-plus/icons-vue'
+import { Delete, Setting, Connection, QuestionFilled, Collection } from '@element-plus/icons-vue'
+import PatternPresetPicker from './PatternPresetPicker.vue'
 import { alert, randomId } from '@/utils'
 import OptionsMaker from './OptionsMaker.vue'
 import {
@@ -469,6 +484,8 @@ interface FormState {
     optionSource: FormOptionSource
     optionParams: ParamItem[]
 }
+
+const patternPickerVisible = ref(false)
 
 const buildEmpty = (): FormState => ({
     fieldId: randomId('field_'),
