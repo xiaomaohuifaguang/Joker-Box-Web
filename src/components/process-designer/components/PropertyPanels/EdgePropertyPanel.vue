@@ -130,7 +130,7 @@ const isGatewayOutgoing = computed(() => {
     if (!sourceId || !props.lf) return false
     const node = props.lf.getNodeModelById(sourceId)
     if (!node) return false
-    return ['exclusiveGateway', 'inclusiveGateway'].includes(node.type)
+    return ['bpmn:exclusiveGateway', 'bpmn:inclusiveGateway'].includes(node.type)
 })
 
 const gatewayCondition = computed<GatewayConditionData | undefined>({

@@ -88,8 +88,8 @@ const defaultFlow = computed({
                         props.lf?.setProperties(prevDefault, {
                             ...prevEdge.properties,
                             isDefaultFlow: false,
-                            gatewayCondition: undefined,
                         })
+                        props.lf?.deleteProperty(prevDefault, 'gatewayCondition')
                     }
                 }
                 delete props.data.properties.default
@@ -109,8 +109,8 @@ const defaultFlow = computed({
                         props.lf?.setProperties(prevDefault, {
                             ...prevEdge.properties,
                             isDefaultFlow: false,
-                            gatewayCondition: undefined,
                         })
+                        props.lf?.deleteProperty(prevDefault, 'gatewayCondition')
                     }
                 }
                 // 设置新的默认流向
@@ -122,8 +122,8 @@ const defaultFlow = computed({
                         gatewayCondition: { conditionType: null, isDefault: true },
                     })
                 }
+                doUpdateProperty('default', val)
             }
-            doUpdateProperty('default', val)
         }
     }
 })
