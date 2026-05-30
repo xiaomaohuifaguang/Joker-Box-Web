@@ -7,7 +7,7 @@
     destroy-on-close
     :close-on-click-modal="false"
   >
-    <div v-loading="loading" class="dialog-body">
+    <div v-loading="loading" class="dialog-body" @mousedown.stop @mouseup.stop @click.stop>
       <!-- 模式切换 -->
       <div class="mode-switch">
         <div
@@ -48,10 +48,12 @@
     </div>
 
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :disabled="readonly" @click="onConfirm">
-        确定
-      </el-button>
+      <span @mousedown.stop @mouseup.stop @click.stop>
+        <el-button @click="visible = false">取消</el-button>
+        <el-button type="primary" :disabled="readonly" @click="onConfirm">
+          确定
+        </el-button>
+      </span>
     </template>
   </el-dialog>
 </template>
