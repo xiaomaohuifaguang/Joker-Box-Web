@@ -19,7 +19,9 @@ const extraProps =
             "properties.backAssigneePolicy",
             "properties.form",
             "properties.isDefault",
-            "properties.direction"
+            "properties.direction",
+            "properties.gatewayCondition",
+            "properties.isDefaultFlow"
         ]
     },
     // 指定 bpmn:sequenceFlow 类型元素的转换规则
