@@ -30,6 +30,7 @@
                 <span>确认保存</span>
             </el-button>
         </div>
+        <FlowWarningDialog v-model="warningDialogVisible" :warnings="flowWarnings" @confirm="doSave" />
     </div>
 </template>
 
@@ -39,6 +40,7 @@ import { alert, confirm, http } from '@/utils';
 import { ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue';
 import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
+import FlowWarningDialog from '@/components/process-designer/components/FlowWarningDialog.vue';
 
 
 const props = defineProps({
@@ -74,6 +76,8 @@ const nodeConfig = ref({
 })
 
 const processEditorRef = ref<any>(null)
+const warningDialogVisible = ref(false)
+const flowWarnings = ref<any[]>([])
 
 const queryInfo = async () => {
     loading.value = true
@@ -114,21 +118,8 @@ const save = () => {
   const warnings = processEditorRef.value?.validateFlow() || []
 
   if (warnings.length > 0) {
-    const warningList = warnings
-      .map(w => `• 节点「${w.nodeName}」：${w.message}`)
-      .join('\n')
-
-    ElMessageBox.confirm(
-      `流程存在 ${warnings.length} 个警告：\n\n${warningList}\n\n建议修复后再保存，避免流程运行时卡住。`,
-      '流程存在警告',
-      {
-        confirmButtonText: '确认保存',
-        cancelButtonText: '返回修改',
-        type: 'warning',
-      }
-    ).then(() => {
-      doSave()
-    }).catch(() => {})
+    flowWarnings.value = warnings
+    warningDialogVisible.value = true
     return
   }
 
