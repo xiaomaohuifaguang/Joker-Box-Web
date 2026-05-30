@@ -41,7 +41,7 @@ import CatBPMNAdapter, { setProcessMeta } from './core/adapter/CatBPMNAdapter';
 import extraProps from './core/adapter/extraProps';
 import testJson from './test.json';
 import type { FlowValidator, FlowWarning } from './types/flow-validation'
-import { validateGateway } from './components/PropertyPanels/GatewayProperty.vue'
+import { validateGateway } from './core/validators'
 
 LogicFlow.use(Control) // 控制面板
 LogicFlow.use(MiniMap) // 小地图

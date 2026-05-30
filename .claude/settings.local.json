@@ -6,7 +6,9 @@
       "Bash(grep -v \"\\\\.svg$\")",
       "Bash(grep -v \"\\\\.ts$\")",
       "Bash(node scripts/theme-migrate.cjs src/components/common/user/UserSelectorSingle.vue)",
-      "Bash(node scripts/theme-migrate.cjs src/views/common/403.vue src/views/common/Doing.vue)"
+      "Bash(node scripts/theme-migrate.cjs src/views/common/403.vue src/views/common/Doing.vue)",
+      "Skill(superpowers:using-superpowers)",
+      "Skill(superpowers:using-superpowers:*)"
     ]
   }
 }

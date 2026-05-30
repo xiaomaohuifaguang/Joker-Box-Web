@@ -1,0 +1,56 @@
+<h2>实施方向对比</h2>
+<p class="subtitle">两种方案的核心差异：新主题是否应该拥有专属的"特权"CSS能力</p>
+
+<div class="cards">
+  <div class="card" data-choice="unified" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #111; padding: 24px; font-family: 'Courier New', monospace;">
+      <div style="color: #00ff41; font-size: 12px; margin-bottom: 12px;">// 方案A: 纯变量方案</div>
+      <div style="color: #b0b0b0; font-size: 11px; line-height: 1.8;">
+        <div><span style="color:#ff6666">-</span> _theme-matrix.scss 定义 mixin</div>
+        <div><span style="color:#ff6666">-</span> _variables.scss 添加 [data-theme='matrix']</div>
+        <div><span style="color:#ff6666">-</span> _element-plus.scss 添加 EP 主色阶梯</div>
+        <div><span style="color:#ff6666">-</span> useTheme.js 注册新主题</div>
+        <div style="margin-top: 8px; color: #00ff41;">+ 与现有7套主题完全同构</div>
+        <div style="color: #00ff41;">+ 零新增全局CSS/JS</div>
+        <div style="color: #00ff41;">+ 维护成本最低</div>
+        <div style="color: #ffaa00; margin-top: 4px;">~ 无辉光脉动、无代码雨</div>
+        <div style="color: #ffaa00;">~ hover/focus 用边框变化代替光效</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 纯CSS变量 · 同构方案</h3>
+      <p>新主题和现有7套完全一样，只换色板。靠颜色本身传达矩阵感。最稳、最快，但"科幻感"全靠配色和现有动效</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="extended" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #0a0a0a; padding: 24px; font-family: 'Courier New', monospace;">
+      <div style="color: #00ff41; font-size: 12px; margin-bottom: 12px;">// 方案B: 变量 + 专属动效</div>
+      <div style="color: #b0b0b0; font-size: 11px; line-height: 1.8;">
+        <div><span style="color:#00ff41">+</span> _theme-matrix.scss 定义 mixin（含新增变量）</div>
+        <div><span style="color:#00ff41">+</span> 新增 --glow-* 变量给辉光效果</div>
+        <div><span style="color:#00ff41">+</span> _variables.scss 添加 [data-theme='matrix']</div>
+        <div><span style="color:#00ff41">+</span> matrix-effects.scss 条件加载动画</div>
+        <div><span style="color:#00ff41">+</span> ThemeSelector 添加主题图标</div>
+        <div style="margin-top: 8px; color: #00e5ff;">✦ hover 辉光脉动</div>
+        <div style="color: #00e5ff;">✦ focus 扫描线闪烁</div>
+        <div style="color: #00e5ff;">✦ 主题切换代码雨过渡</div>
+        <div style="color: #ffaa00; margin-top: 4px;">~ 约80行额外CSS（仅matrix主题激活时生效）</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 变量 + 专属动效 · 增强方案</h3>
+      <p>色板 + 克制的科幻动效。辉光脉动、扫描线焦点、切换过渡。仅matrix主题激活时加载，不影响其他主题</p>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 32px; padding: 20px; background: rgba(0,255,65,0.05); border: 1px solid rgba(0,255,65,0.15); border-radius: 8px;">
+  <h3 style="color: #00ff41; font-size: 14px; margin: 0 0 8px 0;">关于现有7套主题的优化</h3>
+  <p style="color: #b0b0b0; font-size: 12px; margin: 0; line-height: 1.6;">
+    两个方案都包含对现有7套主题的全面优化：<br>
+    <span style="color:#00ff41">·</span> 色彩微调——改善对比度、层次感<br>
+    <span style="color:#00ff41">·</span> 动效增强——主题切换过渡动画、更好的hover/focus反馈<br>
+    <span style="color:#00ff41">·</span> 交互体验——ThemeSelector视觉升级、更流畅的切换体验
+  </p>
+</div>
