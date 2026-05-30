@@ -40,6 +40,8 @@ import { registerCustomElement } from './core/index';
 import CatBPMNAdapter, { setProcessMeta } from './core/adapter/CatBPMNAdapter';
 import extraProps from './core/adapter/extraProps';
 import testJson from './test.json';
+import type { FlowValidator, FlowWarning } from './types/flow-validation'
+import { validateGateway } from './components/PropertyPanels/GatewayProperty.vue'
 
 LogicFlow.use(Control) // 控制面板
 LogicFlow.use(MiniMap) // 小地图
@@ -101,6 +103,38 @@ const renderData = ref(props.info.rawData);
 const itemData = ref();
 const itemType = ref<'process' | 'node' | 'edge' | 'init'>('init');
 
+const validators: Record<string, FlowValidator> = {}
+
+const registerValidator = (nodeType: string, validator: FlowValidator) => {
+  validators[nodeType] = validator
+}
+
+const validateFlow = (): FlowWarning[] => {
+  if (!lf.value) return []
+  const warnings: FlowWarning[] = []
+  const nodes = lf.value.graphModel?.nodes || []
+
+  nodes.forEach((node: any) => {
+    const validator = validators[node.type]
+    if (validator) {
+      try {
+        const nodeWarnings = validator(node, lf.value)
+        nodeWarnings.forEach(w => {
+          warnings.push({
+            ...w,
+            nodeId: node.id,
+            nodeName: node.text?.value || node.id,
+          })
+        })
+      } catch (e) {
+        console.error(`校验节点 ${node.id} 时出错:`, e)
+      }
+    }
+  })
+
+  return warnings
+}
+
 onMounted(async () => {
 
     if (container.value) {
@@ -112,6 +146,8 @@ onMounted(async () => {
             allowRotate: true,   // 启用全局旋转,
         });
         registerCustomElement(lf.value);
+        registerValidator('bpmn:exclusiveGateway', validateGateway)
+        registerValidator('bpmn:inclusiveGateway', validateGateway)
         lf.value.renderRawData(renderData.value);
         lf.value.on('node:click', (event) => {
             itemData.value = event.data
@@ -219,6 +255,8 @@ const onPropertyChange = () => {
 const onNodeConfigChange = (data: any) => {
     emit('update:nodeConfig', data)
 }
+
+defineExpose({ validateFlow })
 
 </script>
 
