@@ -113,6 +113,7 @@ const validateFlow = (): FlowWarning[] => {
   if (!lf.value) return []
   const warnings: FlowWarning[] = []
   const nodes = lf.value.graphModel?.nodes || []
+  const edges = lf.value.graphModel?.edges || []
 
   nodes.forEach((node: any) => {
     const validator = validators[node.type]
@@ -131,6 +132,32 @@ const validateFlow = (): FlowWarning[] => {
       }
     }
   })
+
+  // Gateway condition validation: each outgoing edge must have a condition or a default path
+  const gatewayNodes = nodes.filter((n: any) =>
+    ['bpmn:exclusiveGateway', 'bpmn:inclusiveGateway'].includes(n.type)
+  )
+
+  for (const gw of gatewayNodes) {
+    const outgoingEdges = edges.filter((e: any) => e.sourceNodeId === gw.id)
+    const hasDefault = outgoingEdges.some(
+      (e: any) => e.properties?.isDefaultFlow || e.properties?.gatewayCondition?.isDefault
+    )
+
+    for (const edge of outgoingEdges) {
+      const gc = edge.properties?.gatewayCondition
+      const hasCondition = gc?.conditionType === 'NATIVE' || gc?.conditionType === 'CUSTOM'
+
+      if (!hasCondition && !hasDefault) {
+        warnings.push({
+          type: 'edge',
+          message: `网关 ${gw.text?.value || gw.id} 的出线 ${edge.text?.value || edge.id} 未配置条件且未设置默认走向`,
+          nodeId: gw.id,
+          nodeName: gw.text?.value || gw.id,
+        })
+      }
+    }
+  }
 
   return warnings
 }
