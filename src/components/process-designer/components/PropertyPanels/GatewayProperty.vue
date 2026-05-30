@@ -72,8 +72,11 @@ const defaultFlow = computed({
     get: () => props.data?.properties?.default || '',
     set: (val) => {
         if (!val) {
-            if (props.lf && props.data?.id && props.data?.properties?.default) {
-                props.lf.deleteProperty(props.data.id, 'default')
+            if (props.data?.properties?.default !== undefined) {
+                delete props.data.properties.default
+                if (props.lf && props.data?.id) {
+                    props.lf.deleteProperty(props.data.id, 'default')
+                }
                 emit('change')
             }
         } else {
