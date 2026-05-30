@@ -1189,12 +1189,12 @@ defineExpose({
         border: 2px dashed var(--el-color-warning-light-5);
         border-radius: 14px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        box-shadow: var(--el-box-shadow-lighter);
         transition: all 0.2s;
 
         &:hover {
             border-color: var(--el-color-warning);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--el-box-shadow-light);
         }
 
         .group-header {
@@ -1202,7 +1202,7 @@ defineExpose({
             align-items: center;
             gap: 10px;
             padding: 12px 16px;
-            background: linear-gradient(135deg, var(--el-color-warning-light-9) 0%, var(--el-fill-color-lighter) 100%);
+            background: var(--el-color-warning-light-9);
             border-bottom: 2px dashed var(--el-color-warning-light-5);
             position: relative;
             min-width: 0;
@@ -1214,7 +1214,7 @@ defineExpose({
                 top: 0;
                 bottom: 0;
                 width: 4px;
-                background: linear-gradient(180deg, var(--el-color-warning) 0%, var(--el-color-warning-light-3) 100%);
+                background: var(--el-color-warning);
                 border-radius: 0 2px 2px 0;
             }
 
@@ -1247,11 +1247,11 @@ defineExpose({
         border: 1px solid var(--el-border-color-light);
         border-radius: 14px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--el-box-shadow-lighter);
         transition: all 0.25s ease;
 
         &:hover {
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--el-box-shadow-light);
             border-color: var(--el-border-color);
         }
 
@@ -1260,7 +1260,7 @@ defineExpose({
             align-items: center;
             gap: 10px;
             padding: 14px 18px;
-            background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-fill-color-lighter) 100%);
+            background: var(--el-color-primary-light-9);
             border-bottom: 1px solid var(--el-border-color-light);
             position: relative;
             min-width: 0;
@@ -1272,7 +1272,7 @@ defineExpose({
                 top: 0;
                 bottom: 0;
                 width: 4px;
-                background: var(--brand-gradient, linear-gradient(180deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%));
+                background: var(--el-color-primary);
                 border-radius: 0 2px 2px 0;
             }
 
@@ -1352,7 +1352,7 @@ defineExpose({
         display: flex;
         flex-direction: column;
         height: 100%;
-        background: #ffffff;
+        background: var(--el-bg-color);
         border: 1px solid var(--el-border-color-lighter);
         border-radius: 10px;
         padding: 10px 12px;
@@ -1368,7 +1368,7 @@ defineExpose({
             top: 8px;
             bottom: 8px;
             width: 3px;
-            background: var(--el-color-primary-light-5);
+            background: var(--el-color-primary);
             border-radius: 0 3px 3px 0;
             opacity: 0;
             transition: opacity 0.2s;
@@ -1376,7 +1376,7 @@ defineExpose({
 
         &:hover {
             border-color: var(--el-color-primary-light-5);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--el-box-shadow-light);
             transform: scale(1.005);
 
             &::before {
@@ -1538,7 +1538,7 @@ defineExpose({
         font-weight: 600;
         color: var(--text-primary);
         padding: 14px 18px;
-        background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-fill-color-lighter) 100%);
+        background: var(--el-color-primary-light-9);
         border-bottom: 1px solid var(--el-border-color-light);
         position: relative;
 
@@ -1549,7 +1549,7 @@ defineExpose({
             top: 0;
             bottom: 0;
             width: 4px;
-            background: var(--brand-gradient, linear-gradient(180deg, var(--el-color-primary) 0%, var(--el-color-primary-light-3) 100%));
+            background: var(--el-color-primary);
             border-radius: 0 2px 2px 0;
         }
     }
