@@ -244,7 +244,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .post-view-page {
     min-height: calc(100vh - 60px);
-    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
+    background: var(--bg-page);
 
     .page-container {
         max-width: 1400px;
@@ -369,7 +369,7 @@ onMounted(() => {
                     .title-icon {
                         width: 40px;
                         height: 40px;
-                        background: var(--brand-gradient);
+                        background: var(--el-color-primary);
                         border-radius: 10px;
                         display: flex;
                         align-items: center;
@@ -377,7 +377,7 @@ onMounted(() => {
 
                         .el-icon {
                             font-size: 20px;
-                            color: var(--text-on-brand);
+                            color: #ffffff;
                         }
                     }
 
@@ -459,8 +459,6 @@ onMounted(() => {
                         border-radius: 10px;
                         font-size: 14px;
                         font-weight: 500;
-                        background: var(--brand-gradient);
-                        border: none;
                         transition: all 0.3s ease;
 
                         &:hover:not(:disabled) {
@@ -523,7 +521,7 @@ onMounted(() => {
                     .empty-icon {
                         width: 80px;
                         height: 80px;
-                        background: linear-gradient(135deg, var(--brand-primary)20 0%, var(--brand-secondary)20 100%);
+                        background: var(--el-color-primary-light-9);
                         border-radius: 50%;
                         display: flex;
                         align-items: center;
@@ -532,7 +530,7 @@ onMounted(() => {
 
                         .el-icon {
                             font-size: 40px;
-                            color: var(--brand-primary);
+                            color: var(--el-color-primary);
                         }
                     }
 

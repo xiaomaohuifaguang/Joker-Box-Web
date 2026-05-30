@@ -371,7 +371,7 @@ watch(() => props.replayCount, (newVal) => {
                 top: 16px;
                 bottom: 56px;
                 width: 2px;
-                background: linear-gradient(180deg, var(--brand-primary-light) 0%, var(--border-light) 100%);
+                background: var(--border-base);
                 border-radius: 1px;
                 opacity: 0.5;
             }
@@ -492,18 +492,18 @@ watch(() => props.replayCount, (newVal) => {
 // 回复弹窗样式
 .reply-dialog {
     :deep(.el-dialog__header) {
-        background: var(--brand-gradient);
+        background: var(--el-color-primary);
         margin: 0;
         padding: 16px 20px;
 
         .el-dialog__title {
-            color: var(--text-on-brand);
+            color: #ffffff;
             font-size: 16px;
             font-weight: 600;
         }
 
         .el-dialog__headerbtn .el-dialog__close {
-            color: var(--text-on-brand);
+            color: #ffffff;
         }
     }
 
@@ -567,7 +567,6 @@ watch(() => props.replayCount, (newVal) => {
         gap: 12px;
 
         .submit-btn {
-            background: var(--brand-gradient);
             border: none;
 
             &:hover:not(:disabled) {

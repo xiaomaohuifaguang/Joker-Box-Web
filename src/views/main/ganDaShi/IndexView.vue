@@ -260,7 +260,7 @@ onMounted(() => {
 <style scoped lang="scss">
 .gandashi-page {
     min-height: calc(100vh - 60px);
-    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-elevated) 100%);
+    background: var(--bg-page);
     padding-bottom: 40px;
 
     .page-container {
@@ -310,8 +310,6 @@ onMounted(() => {
                 border-radius: 10px;
                 font-size: 15px;
                 font-weight: 500;
-                background: var(--brand-gradient);
-                border: none;
             }
         }
     }
@@ -473,7 +471,7 @@ onMounted(() => {
             .empty-icon {
                 width: 100px;
                 height: 100px;
-                background: linear-gradient(135deg, var(--brand-primary)20 0%, var(--brand-secondary)20 100%);
+                background: var(--el-color-primary-light-9);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -482,7 +480,7 @@ onMounted(() => {
 
                 .el-icon {
                     font-size: 48px;
-                    color: var(--brand-primary);
+                    color: var(--el-color-primary);
                 }
             }
 
