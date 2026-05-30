@@ -27,7 +27,7 @@ function buildNodeText(node: RuleTreeNode): string {
   }
 
   const joiner = node.nodeType === 'AND' ? ' AND ' : ' OR '
-  const childrenText = node.children
+  const childrenText = [...node.children]
     .sort((a, b) => a.sort - b.sort)
     .map(buildNodeText)
     .join(joiner)
