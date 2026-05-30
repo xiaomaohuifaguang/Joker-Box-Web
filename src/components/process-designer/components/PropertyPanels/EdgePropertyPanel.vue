@@ -235,3 +235,60 @@ function onDialogConfirm(data: GatewayConditionData) {
     }
 }
 </script>
+
+<style scoped>
+.condition-section {
+    margin-top: 8px;
+}
+
+.section-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+    margin-bottom: 10px;
+}
+
+.mode-pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.mode-pill {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    background: var(--el-fill-color-light);
+    color: var(--el-text-color-secondary);
+    border: 1px solid var(--el-border-color);
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.mode-pill:hover {
+    background: var(--el-fill-color);
+}
+
+.mode-pill.active {
+    background: var(--el-color-primary);
+    color: #fff;
+    border-color: var(--el-color-primary);
+    font-weight: 600;
+}
+
+.condition-preview {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: var(--el-fill-color-light);
+    border-radius: 4px;
+    min-height: 32px;
+}
+
+.var-hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+</style>
