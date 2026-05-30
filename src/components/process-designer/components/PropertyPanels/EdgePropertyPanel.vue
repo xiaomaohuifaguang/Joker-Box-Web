@@ -147,8 +147,8 @@ const conditionMode = computed(() => {
 })
 
 const conditionModes = [
-    { label: 'NATIVE', value: 'NATIVE' },
-    { label: 'CUSTOM', value: 'CUSTOM' },
+    { label: '传统表达式', value: 'NATIVE' },
+    { label: '自定义配置', value: 'CUSTOM' },
     { label: '默认走向', value: 'DEFAULT' },
 ]
 
