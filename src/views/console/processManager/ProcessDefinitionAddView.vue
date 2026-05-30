@@ -28,6 +28,7 @@ import { alert, confirm, http } from '@/utils';
 import { ElMessageBox } from 'element-plus'
 import { ref } from 'vue';
 import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
+import { buildGatewayConditions } from '@/components/process-designer/utils/gateway-condition';
 
 const emit = defineEmits(['success']);
 
@@ -66,6 +67,7 @@ const doAdd = async () => {
         globalFormBinding: nodeConfig.value.globalFormBinding,
         nodeFormBindings: nodeConfig.value.nodeFormBindings,
         nodeFieldPermissions: nodeConfig.value.nodeFieldPermissions,
+        gatewayConditions: buildGatewayConditions(info.value.rawData),
     }
     const result = await http.post('/processDefinition/add', payload, { raw: true })
     alert(result.msg, 'success')

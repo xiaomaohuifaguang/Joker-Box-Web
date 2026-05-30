@@ -41,6 +41,7 @@ import { ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue';
 import ProcessEditor from '@/components/process-designer/ProcessEditor.vue';
 import FlowWarningDialog from '@/components/process-designer/components/FlowWarningDialog.vue';
+import { buildGatewayConditions, applyGatewayConditions } from '@/components/process-designer/utils/gateway-condition';
 
 
 const props = defineProps({
@@ -89,6 +90,7 @@ const queryInfo = async () => {
     nodeConfig.value.globalFormBinding = result.globalFormBinding ?? null
     nodeConfig.value.nodeFormBindings = result.nodeFormBindings ?? []
     nodeConfig.value.nodeFieldPermissions = result.nodeFieldPermissions ?? []
+    applyGatewayConditions(info.value.rawData, result.gatewayConditions || [])
     loading.value = false
     loaded.value = true
     reloadKey.value++
@@ -108,6 +110,7 @@ const doSave = async () => {
         globalFormBinding: nodeConfig.value.globalFormBinding,
         nodeFormBindings: nodeConfig.value.nodeFormBindings,
         nodeFieldPermissions: nodeConfig.value.nodeFieldPermissions,
+        gatewayConditions: buildGatewayConditions(info.value.rawData),
     }
     const result = await http.post('/processDefinition/save', payload, { raw: true })
     alert(result.msg, 'success')
