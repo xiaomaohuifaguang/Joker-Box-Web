@@ -79,6 +79,19 @@ const defaultFlow = computed({
     set: (val) => {
         if (!val) {
             if (props.data?.properties?.default !== undefined) {
+                // 清除旧的默认流向的 gatewayCondition
+                const edges = props.lf?.graphModel?.edges || []
+                const prevDefault = props.data.properties.default
+                if (prevDefault) {
+                    const prevEdge = edges.find((edge: any) => edge.id === prevDefault)
+                    if (prevEdge) {
+                        props.lf?.setProperties(prevDefault, {
+                            ...prevEdge.properties,
+                            isDefaultFlow: false,
+                            gatewayCondition: undefined,
+                        })
+                    }
+                }
                 delete props.data.properties.default
                 if (props.lf && props.data?.id) {
                     props.lf.deleteProperty(props.data.id, 'default')
@@ -89,15 +102,25 @@ const defaultFlow = computed({
             const prevDefault = props.data?.properties?.default
             if (prevDefault !== val) {
                 const edges = props.lf?.graphModel?.edges || []
+                // 清除旧的默认流向
                 if (prevDefault) {
                     const prevEdge = edges.find((edge: any) => edge.id === prevDefault)
-                    if (prevEdge?.properties?.condition) {
-                        props.lf?.deleteProperty(prevDefault, 'condition')
+                    if (prevEdge) {
+                        props.lf?.setProperties(prevDefault, {
+                            ...prevEdge.properties,
+                            isDefaultFlow: false,
+                            gatewayCondition: undefined,
+                        })
                     }
                 }
+                // 设置新的默认流向
                 const newEdge = edges.find((edge: any) => edge.id === val)
-                if (newEdge?.properties?.condition) {
-                    props.lf?.deleteProperty(val, 'condition')
+                if (newEdge) {
+                    props.lf?.setProperties(val, {
+                        ...newEdge.properties,
+                        isDefaultFlow: true,
+                        gatewayCondition: { conditionType: null, isDefault: true },
+                    })
                 }
             }
             doUpdateProperty('default', val)
