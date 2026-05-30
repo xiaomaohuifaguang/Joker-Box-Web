@@ -274,6 +274,14 @@ const dragInNode = (type: any) => {
 
 const onPropertyChange = () => {
     if (lf.value) {
+        // 如果当前选中的是 edge，刷新 itemData 以触发属性面板重新渲染
+        //（Vue props 是 shallow 的，嵌套 properties 变化检测不到）
+        if (itemType.value === 'edge' && itemData.value?.id) {
+            const edge = lf.value.graphModel?.edges?.find((e: any) => e.id === itemData.value.id)
+            if (edge) {
+                itemData.value = { ...edge }
+            }
+        }
         emit('update:graphRawData', lf.value.getGraphRawData())
         emit('update:graphData', lf.value.getGraphData())
     }
