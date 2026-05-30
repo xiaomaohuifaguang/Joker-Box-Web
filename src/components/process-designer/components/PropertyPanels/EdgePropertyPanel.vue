@@ -152,14 +152,28 @@ const conditionModes = [
     { label: '默认走向', value: 'DEFAULT' },
 ]
 
+function clearDefaultFlowOnEdge() {
+    doUpdateProperty('isDefaultFlow', false)
+    // 如果该 edge 是某个网关的默认路径，清除网关的 default 属性
+    const sourceId = props.data.sourceNodeId
+    if (sourceId && props.lf) {
+        const gatewayNode = props.lf.getNodeModelById(sourceId)
+        if (gatewayNode?.properties?.default === props.data.id) {
+            props.lf.deleteProperty(sourceId, 'default')
+        }
+    }
+}
+
 function setConditionMode(mode: string) {
     if (mode === 'NATIVE') {
+        clearDefaultFlowOnEdge()
         gatewayCondition.value = {
             conditionType: 'NATIVE',
             isDefault: false,
             nativeExpression: gatewayCondition.value?.nativeExpression ?? '',
         }
     } else if (mode === 'CUSTOM') {
+        clearDefaultFlowOnEdge()
         gatewayCondition.value = {
             conditionType: 'CUSTOM',
             isDefault: false,
@@ -216,6 +230,8 @@ function onDialogConfirm(data: GatewayConditionData) {
     gatewayCondition.value = data
     if (data.isDefault) {
         doUpdateProperty('isDefaultFlow', true)
+    } else {
+        clearDefaultFlowOnEdge()
     }
 }
 </script>

@@ -8,6 +8,7 @@
         <el-form-item label="名称">
             <el-input :model-value="elementText" @update:model-value="doUpdateElementText" :disabled="readonly" />
         </el-form-item>
+        <!-- 默认路径配置已移至 EdgePropertyPanel 的"默认走向"模式 --
         <el-form-item label="默认路径" v-if="showDefaultFlow">
             <el-select v-model="defaultFlow" clearable placeholder="请选择默认路径" :disabled="readonly">
                 <el-option v-for="item in outgoingEdges" :key="item.id" :label="item.label" :value="item.id" />
@@ -17,6 +18,7 @@
                 <span>存在未设条件的出边且未指定默认路径，流程可能在此处卡住</span>
             </div>
         </el-form-item>
+        -->
     </el-form>
 </template>
 
