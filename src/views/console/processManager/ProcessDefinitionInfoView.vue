@@ -1,7 +1,7 @@
 <template>
     <div class="add-process-view" v-loading="loading" element-loading-text="加载中...">
         <div class="editor-area">
-            <ProcessEditor v-if="loaded" :key="reloadKey" :info="info" :readonly="type === 'view'"
+            <ProcessEditor ref="processEditorRef" v-if="loaded" :key="reloadKey" :info="info" :readonly="type === 'view'"
                 v-model:node-config="nodeConfig"
                 @update:graphRawData="(data: any) => info.rawData = data"
                 @update:graphData="(data: any) => info.xmlStr = data" />
@@ -73,6 +73,8 @@ const nodeConfig = ref({
     nodeFieldPermissions: [] as any[],
 })
 
+const processEditorRef = ref<any>(null)
+
 const queryInfo = async () => {
     loading.value = true
     loaded.value = false
@@ -109,27 +111,49 @@ const doSave = async () => {
 }
 
 const save = () => {
-    const missingTasks = validateUserTasks(info.value.rawData)
-    if (missingTasks.length > 0) {
-        const taskList = missingTasks.map((name: string) => `「${name}」`).join('、')
-        ElMessageBox.confirm(
-            `以下用户任务未设置处理类型，请检查：\n${taskList}`,
-            '校验提示',
-            {
-                confirmButtonText: '确认继续',
-                cancelButtonText: '取消',
-                closeOnClickModal: false,
-                closeOnPressEscape: true,
-                type: 'warning',
-            }
-        ).then(() => {
-            doSave()
-        }).catch(() => {})
-        return
-    }
-    confirm("提示", "确认保存？", async () => {
-        doSave()
-    })
+  const warnings = processEditorRef.value?.validateFlow() || []
+
+  if (warnings.length > 0) {
+    const warningList = warnings
+      .map(w => `• 节点「${w.nodeName}」：${w.message}`)
+      .join('\n')
+
+    ElMessageBox.confirm(
+      `流程存在 ${warnings.length} 个警告：\n\n${warningList}\n\n建议修复后再保存，避免流程运行时卡住。`,
+      '流程存在警告',
+      {
+        confirmButtonText: '确认保存',
+        cancelButtonText: '返回修改',
+        type: 'warning',
+      }
+    ).then(() => {
+      doSave()
+    }).catch(() => {})
+    return
+  }
+
+  const missingTasks = validateUserTasks(info.value.rawData)
+  if (missingTasks.length > 0) {
+    const taskList = missingTasks.map((name: string) => `「${name}」`).join('、')
+    ElMessageBox.confirm(
+      `以下用户任务未设置处理类型，请检查：\n${taskList}`,
+      '校验提示',
+      {
+        confirmButtonText: '确认继续',
+        cancelButtonText: '取消',
+        closeOnClickModal: false,
+        closeOnPressEscape: true,
+        type: 'warning',
+      }
+    ).then(() => {
+      doSave()
+    }).catch(() => {})
+    return
+  }
+
+  confirm("提示", "确认保存？", async () => {
+    doSave()
+  })
 }
 
 onMounted(() => {
