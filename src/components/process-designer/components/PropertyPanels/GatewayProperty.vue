@@ -12,12 +12,17 @@
             <el-select v-model="defaultFlow" clearable placeholder="请选择默认路径" :disabled="readonly">
                 <el-option v-for="item in outgoingEdges" :key="item.id" :label="item.label" :value="item.id" />
             </el-select>
+            <div v-if="showDefaultFlowWarning" class="default-flow-warning">
+                <el-icon><Warning /></el-icon>
+                <span>存在未设条件的出边且未指定默认路径，流程可能在此处卡住</span>
+            </div>
         </el-form-item>
     </el-form>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Warning } from '@element-plus/icons-vue'
 import { useProperty } from './shared'
 
 const props = defineProps<{
@@ -98,4 +103,34 @@ const defaultFlow = computed({
         }
     }
 })
+
+// 警告：存在未设条件的出边且未指定默认路径
+const showDefaultFlowWarning = computed(() => {
+    if (!showDefaultFlow.value) return false
+    if (defaultFlow.value) return false
+    const edges = props.lf?.graphModel?.edges || []
+    const sourceEdges = edges.filter((edge: any) => edge.sourceNodeId === props.data?.id)
+    if (sourceEdges.length === 0) return false
+    return sourceEdges.some((edge: any) => !edge.properties?.condition)
+})
 </script>
+
+<style scoped>
+.default-flow-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    background: var(--el-color-warning-light-9);
+    color: var(--el-color-warning);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.default-flow-warning .el-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+</style>
