@@ -52,11 +52,10 @@ export const alert = (msg: string, type: 'info' | 'success' | 'warning' | 'error
     ElMessage({
         message: msg,
         type: type,
-        // duration: 5000,
         showClose: true,
         offset: 80,
         center: false,
-        // customClass: 'custom-message',
+        customClass: 'custom-message',
         grouping: true,
         appendTo: document.body
     })
