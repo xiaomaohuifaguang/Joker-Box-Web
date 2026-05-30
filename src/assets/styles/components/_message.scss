@@ -43,8 +43,31 @@
 }
 
 .custom-message .el-message__icon {
-    font-size: 20px;
+    font-size: 18px;
     margin-right: var(--space-md);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--el-color-primary-light-9);
+}
+
+.custom-message.el-message--success .el-message__icon {
+    background: var(--success-bg);
+}
+
+.custom-message.el-message--warning .el-message__icon {
+    background: var(--warning-bg);
+}
+
+.custom-message.el-message--error .el-message__icon {
+    background: var(--danger-bg);
+}
+
+.custom-message.el-message--info .el-message__icon {
+    background: var(--info-bg);
 }
 
 .custom-message .el-message__closeBtn {
@@ -173,6 +196,50 @@
     z-index: 1;
 }
 
+/* 圆形图标装饰 */
+.custom-message-box .el-message-box__status {
+    font-size: 20px !important;
+    position: relative !important;
+    top: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: var(--space-md);
+    transform: none !important;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--el-color-primary-light-9);
+}
+
+.custom-message-box .el-message-box__status + .el-message-box__message {
+    padding-left: 0;
+}
+
+.custom-message-box .el-message-box__container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* 内容区 */
+.custom-message-box .el-message-box__content {
+    padding: 16px 32px 24px !important;
+    font-size: 15px !important;
+    color: var(--text-regular) !important;
+    line-height: var(--lh-loose) !important;
+}
+
+.custom-message-box .el-message-box__message {
+    padding-left: 0 !important;
+}
+
+.custom-message-box .el-message-box__message p {
+    margin: 0;
+    line-height: var(--lh-loose);
+}
+
 /* 头部 */
 .custom-message-box .el-message-box__header {
     padding: 28px 32px 16px !important;
@@ -223,35 +290,6 @@
     transform: rotate(90deg);
 }
 
-/* 内容区 */
-.custom-message-box .el-message-box__content {
-    padding: 24px 32px !important;
-    font-size: 15px !important;
-    color: var(--text-regular) !important;
-    line-height: var(--lh-loose) !important;
-    text-align: center;
-}
-
-.custom-message-box .el-message-box__container {
-    justify-content: center;
-}
-
-.custom-message-box .el-message-box__status {
-    font-size: 26px !important;
-    position: relative !important;
-    top: 0 !important;
-    margin-right: var(--space-md) !important;
-    transform: none !important;
-}
-
-.custom-message-box .el-message-box__message {
-    padding-left: 0 !important;
-}
-
-.custom-message-box .el-message-box__message p {
-    margin: 0;
-    line-height: var(--lh-loose);
-}
 
 /* 按钮区 */
 .custom-message-box .el-message-box__btns {
