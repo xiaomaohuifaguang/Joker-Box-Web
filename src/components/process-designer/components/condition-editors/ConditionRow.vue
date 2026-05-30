@@ -6,6 +6,7 @@
       size="small"
       style="width: 100px"
       :disabled="readonly"
+      :teleported="false"
       @change="onCategoryChange"
     >
       <el-option
@@ -23,6 +24,7 @@
       size="small"
       style="width: 100px"
       :disabled="readonly"
+      :teleported="false"
       placeholder="选择字段"
     >
       <el-option
@@ -39,6 +41,7 @@
       size="small"
       style="width: 80px"
       :disabled="readonly"
+      :teleported="false"
     >
       <el-option
         v-for="opt in OPERATOR_OPTIONS"

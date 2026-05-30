@@ -4,10 +4,10 @@
     v-model="visible"
     :title="dialogTitle"
     width="720px"
-    destroy-on-close
+    :append-to-body="false"
     :close-on-click-modal="false"
   >
-    <div v-loading="loading" class="dialog-body" @mousedown.stop @mouseup.stop @click.stop>
+    <div v-loading="loading" class="dialog-body">
       <!-- 模式切换 -->
       <div class="mode-switch">
         <div
@@ -48,12 +48,10 @@
     </div>
 
     <template #footer>
-      <span @mousedown.stop @mouseup.stop @click.stop>
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" :disabled="readonly" @click="onConfirm">
-          确定
-        </el-button>
-      </span>
+      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" :disabled="readonly" @click="onConfirm">
+        确定
+      </el-button>
     </template>
   </el-dialog>
 </template>
