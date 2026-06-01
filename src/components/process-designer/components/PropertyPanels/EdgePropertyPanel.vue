@@ -91,6 +91,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useProperty } from './shared'
+import { http } from '@/utils'
 import ConditionSummary from '../ConditionSummary.vue'
 import GatewayConditionDialog from '../GatewayConditionDialog.vue'
 import type { GatewayConditionData } from '../../types/gateway-condition'
@@ -98,7 +99,12 @@ import type { GatewayConditionData } from '../../types/gateway-condition'
 const props = defineProps<{
     lf: any,
     data: any,
-    readonly?: boolean
+    readonly?: boolean,
+    nodeConfig?: {
+        globalFormBinding: any,
+        nodeFormBindings: any[],
+        nodeFieldPermissions: any[]
+    }
 }>()
 
 const emit = defineEmits<{
@@ -198,7 +204,7 @@ const nativeExpression = computed({
 })
 
 const dialogVisible = ref(false)
-const formFields = ref<{ fieldId: string; title: string }[]>([])
+const formFields = ref<{ fieldId: string; title: string; groupName: string }[]>([])
 
 const edgeData = computed(() => ({
     id: props.data.id,
@@ -222,7 +228,41 @@ function insertVar(variable: string) {
     nativeExpression.value = nativeExpression.value + prefix + variable + suffix
 }
 
+const loadFormFields = async () => {
+    const globalForm = props.nodeConfig?.globalFormBinding
+    if (!globalForm?.formId) {
+        formFields.value = []
+        return
+    }
+    try {
+        const data = await http.post('/dynamicForm/info', {
+            id: globalForm.formId,
+            version: globalForm.formVersion,
+        })
+        const fields: { fieldId: string; title: string; groupName: string }[] = []
+        // 未分组字段
+        if (data?.formFields?.length) {
+            data.formFields.forEach((f: any) => {
+                fields.push({ fieldId: f.fieldId, title: f.title, groupName: '未分组' })
+            })
+        }
+        // 分组字段
+        if (data?.groups?.length) {
+            data.groups.forEach((g: any) => {
+                const groupName = g.name || '未命名分组'
+                g.fields?.forEach((f: any) => {
+                    fields.push({ fieldId: f.fieldId, title: f.title, groupName })
+                })
+            })
+        }
+        formFields.value = fields
+    } catch (e) {
+        formFields.value = []
+    }
+}
+
 function openConditionDialog() {
+    loadFormFields()
     dialogVisible.value = true
 }
 

@@ -30,7 +30,7 @@
       <el-option
         v-for="f in formFields"
         :key="f.fieldId"
-        :label="f.title"
+        :label="f.groupName ? `${f.groupName} - ${f.title}` : f.title"
         :value="f.fieldId"
       />
     </el-select>
@@ -84,7 +84,7 @@ import {
 
 const props = defineProps<{
   node: RuleTreeNode
-  formFields?: { fieldId: string; title: string }[]
+  formFields?: { fieldId: string; title: string; groupName?: string }[]
   readonly?: boolean
 }>()
 

@@ -17,7 +17,7 @@
                 <GatewayProperty v-else-if="['bpmn:exclusiveGateway', 'bpmn:parallelGateway', 'bpmn:inclusiveGateway'].includes(data.type)"
                     :lf="lf" :data="data" :readonly="readonly" @change="handleChange" />
             </template>
-            <EdgePropertyPanel v-if="itemType == 'edge'" :lf="lf" :data="data" :readonly="readonly" @change="handleChange" />
+            <EdgePropertyPanel v-if="itemType == 'edge'" :lf="lf" :data="data" :readonly="readonly" :node-config="nodeConfig" @change="handleChange" />
         </el-form>
     </div>
 </template>
