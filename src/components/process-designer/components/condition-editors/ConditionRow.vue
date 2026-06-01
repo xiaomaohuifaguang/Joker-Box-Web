@@ -1,80 +1,98 @@
 <!-- src/components/process-designer/components/condition-editors/ConditionRow.vue -->
 <template>
   <div class="condition-row">
-    <el-select
-      v-model="localNode.category"
-      size="small"
-      style="width: 100px"
-      :disabled="readonly"
-      :teleported="false"
-      @change="onCategoryChange"
-    >
-      <el-option
-        v-for="opt in CATEGORY_OPTIONS"
-        :key="opt.value"
-        :label="opt.label"
-        :value="opt.value"
+    <!-- 来源 -->
+    <div class="field-cell">
+      <div class="field-label">来源</div>
+      <el-select
+        v-model="localNode.category"
+        size="small"
+        class="field-select"
+        :disabled="readonly"
+        :teleported="false"
+        @change="onCategoryChange"
+      >
+        <el-option
+          v-for="opt in CATEGORY_OPTIONS"
+          :key="opt.value"
+          :label="opt.label"
+          :value="opt.value"
+        />
+      </el-select>
+    </div>
+
+    <!-- 字段 -->
+    <div class="field-cell">
+      <div class="field-label">字段</div>
+      <el-select
+        v-if="localNode.category === 'FORM_FIELD'"
+        v-model="localNode.fieldKey"
+        size="small"
+        class="field-select"
+        :disabled="readonly"
+        :teleported="false"
+        placeholder="选择字段"
+      >
+        <el-option
+          v-for="f in formFields"
+          :key="f.fieldId"
+          :label="f.groupName ? `${f.groupName} - ${f.title}` : f.title"
+          :value="f.fieldId"
+        />
+      </el-select>
+      <span v-else class="field-fixed">{{ fixedFieldKey }}</span>
+    </div>
+
+    <!-- 运算符 -->
+    <div class="field-cell">
+      <div class="field-label">运算符</div>
+      <el-select
+        v-model="localNode.operator"
+        size="small"
+        class="field-select"
+        style="width: 80px"
+        :disabled="readonly"
+        :teleported="false"
+      >
+        <el-option
+          v-for="opt in OPERATOR_OPTIONS"
+          :key="opt.value"
+          :label="opt.label"
+          :value="opt.value"
+        />
+      </el-select>
+    </div>
+
+    <!-- 值 -->
+    <div class="field-cell field-value">
+      <div class="field-label">值</div>
+      <el-input
+        v-if="!isValuelessOperator"
+        v-model="localNode.value"
+        size="small"
+        class="field-input"
+        :disabled="readonly"
+        :placeholder="valuePlaceholder"
       />
-    </el-select>
+      <span v-else class="field-empty">无需填写</span>
+    </div>
 
-    <!-- FORM_FIELD 时显示下拉，其他显示固定文本 -->
-    <el-select
-      v-if="localNode.category === 'FORM_FIELD'"
-      v-model="localNode.fieldKey"
-      size="small"
-      style="width: 100px"
-      :disabled="readonly"
-      :teleported="false"
-      placeholder="选择字段"
-    >
-      <el-option
-        v-for="f in formFields"
-        :key="f.fieldId"
-        :label="f.groupName ? `${f.groupName} - ${f.title}` : f.title"
-        :value="f.fieldId"
-      />
-    </el-select>
-    <span v-else class="fixed-field">{{ fixedFieldKey }}</span>
-
-    <el-select
-      v-model="localNode.operator"
-      size="small"
-      style="width: 80px"
-      :disabled="readonly"
-      :teleported="false"
-    >
-      <el-option
-        v-for="opt in OPERATOR_OPTIONS"
-        :key="opt.value"
-        :label="opt.label"
-        :value="opt.value"
-      />
-    </el-select>
-
-    <el-input
-      v-if="!isValuelessOperator"
-      v-model="localNode.value"
-      size="small"
-      style="width: 120px"
-      :disabled="readonly"
-      :placeholder="valuePlaceholder"
-    />
-    <span v-else class="value-placeholder">—</span>
-
+    <!-- 删除 -->
     <el-button
       v-if="!readonly"
+      class="delete-btn"
       link
       type="danger"
       size="small"
+      :icon="Delete"
       @click="$emit('delete')"
-    >
-      删除
-    </el-button>
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Delete } from '@element-plus/icons-vue'
 import {
   CATEGORY_OPTIONS,
   OPERATOR_OPTIONS,
@@ -126,23 +144,57 @@ function onCategoryChange() {
 <style scoped>
 .condition-row {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: flex-end;
   gap: 8px;
   padding: 8px 10px;
   background: var(--bg-elevated, #1e1e2e);
   border-radius: 6px;
 }
 
-.fixed-field {
-  width: 100px;
-  font-size: 12px;
-  color: var(--el-text-color-secondary);
-  text-align: center;
+.field-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.value-placeholder {
-  width: 120px;
-  text-align: center;
+.field-label {
+  font-size: 11px;
   color: var(--el-text-color-secondary);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.field-select {
+  min-width: 80px;
+  max-width: 130px;
+}
+
+.field-fixed {
+  min-width: 80px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  padding: 4px 0;
+}
+
+.field-input {
+  min-width: 80px;
+  max-width: 140px;
+}
+
+.field-empty {
+  min-width: 80px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  padding: 4px 0;
+}
+
+.field-value {
+  flex: 1;
+  min-width: 80px;
+}
+
+.delete-btn {
+  margin-bottom: 2px;
 }
 </style>

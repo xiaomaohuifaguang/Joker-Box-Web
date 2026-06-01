@@ -13,10 +13,9 @@
         type="danger"
         size="small"
         :disabled="readonly"
+        :icon="Delete"
         @click="$emit('delete')"
-      >
-        删除
-      </el-button>
+      />
     </div>
 
     <div class="group-body">
@@ -52,6 +51,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Delete } from '@element-plus/icons-vue'
 import type { RuleTreeNode, NodeType } from '../../types/gateway-condition'
 import ConditionRow from './ConditionRow.vue'
 
