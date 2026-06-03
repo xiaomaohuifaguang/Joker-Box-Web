@@ -1,22 +1,25 @@
 <template>
-    <el-input v-if="field.type === 'INPUT'" :model-value="modelValue" @update:model-value="onUpdate"
+    <div class="field-renderer">
+        <el-input v-if="field.type === 'INPUT'" :model-value="modelValue ?? ''" @update:model-value="onUpdate"
         :placeholder="field.placeholder" :maxlength="field.maxLength" :minlength="field.minLength" :disabled="disabled"
         clearable style="width: 100%;" />
 
-    <el-input-number v-else-if="field.type === 'NUMBER'" :model-value="modelValue" @update:model-value="onUpdate"
-        :placeholder="field.placeholder" :min="field.min ?? -Infinity" :max="field.max ?? Infinity" :disabled="disabled"
-        style="width: 100%;" />
+    <el-input-number v-else-if="field.type === 'NUMBER'"
+        :model-value="modelValue == null || modelValue === '' ? undefined : Number(modelValue)"
+        @update:model-value="onUpdate" :placeholder="field.placeholder" :min="field.min ?? -Infinity"
+        :max="field.max ?? Infinity" :disabled="disabled" style="width: 100%;" />
 
-    <el-input v-else-if="field.type === 'TEXTAREA'" :model-value="modelValue" @update:model-value="onUpdate"
+    <el-input v-else-if="field.type === 'TEXTAREA'" :model-value="modelValue ?? ''" @update:model-value="onUpdate"
         type="textarea" :autosize="{ minRows: field.min ?? 2, maxRows: field.max ?? 4 }"
         :placeholder="field.placeholder" :minlength="field.minLength" :maxlength="field.maxLength" :disabled="disabled"
         style="width: 100%;" />
 
-    <el-rate v-else-if="field.type === 'RATE'" :model-value="modelValue" @update:model-value="onUpdate"
-        :max="field.max || 5" :disabled="disabled" />
+    <el-rate v-else-if="field.type === 'RATE'"
+        :model-value="modelValue == null || modelValue === '' ? undefined : Number(modelValue)"
+        @update:model-value="onUpdate" :max="field.max || 5" :disabled="disabled" />
 
     <div v-else-if="field.type === 'SELECT'" class="option-field-wrapper">
-        <el-select :model-value="modelValue" @update:model-value="onUpdate"
+        <el-select :model-value="modelValue ?? undefined" @update:model-value="onUpdate"
             :placeholder="field.placeholder" :disabled="optionDisabled" clearable style="width: 100%;">
             <el-option v-for="item in fieldOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
@@ -33,7 +36,7 @@
 
     <div v-else-if="field.type === 'RADIO'" class="option-field-wrapper">
         <div class="field-with-clear">
-            <el-radio-group :model-value="modelValue" @update:model-value="onUpdate" :disabled="optionDisabled"
+            <el-radio-group :model-value="modelValue ?? undefined" @update:model-value="onUpdate" :disabled="optionDisabled"
                 style="flex: 1;">
                 <el-radio v-for="item in fieldOptions" :key="item.value" :value="item.value"
                     style="margin-bottom: 4px">
@@ -58,7 +61,7 @@
     </div>
 
     <div v-else-if="field.type === 'CASCADER'" class="option-field-wrapper">
-        <el-cascader :model-value="modelValue" @update:model-value="onUpdate"
+        <el-cascader :model-value="modelValue ?? undefined" @update:model-value="onUpdate"
             :options="fieldOptions" :placeholder="field.placeholder" :disabled="optionDisabled"
             :props="{ multiple: false, ...(field.props || {}) }"
             :show-all-levels="field.props?.showAllLevels"
@@ -75,18 +78,20 @@
         <RemoteOptionStatus v-if="showOptionStatus" :loading="optionLoading" :error="optionError" @retry="retryOptions" />
     </div>
 
-    <el-switch v-else-if="field.type === 'SWITCH'" :model-value="modelValue" @update:model-value="onUpdate"
+    <el-switch v-else-if="field.type === 'SWITCH'" :model-value="parseSwitchValue(modelValue)" @update:model-value="onUpdate"
         :disabled="disabled" />
 
     <div v-else-if="field.type === 'COLOR'" class="field-with-clear">
-        <el-color-picker :model-value="modelValue" @update:model-value="onUpdate" :disabled="disabled" show-alpha />
+        <el-color-picker :model-value="modelValue ?? undefined" @update:model-value="onUpdate" :disabled="disabled" show-alpha />
         <el-button v-if="modelValue !== null && modelValue !== undefined && modelValue !== ''" link type="primary"
             size="small" @click="onUpdate(null)"
             style="margin-left: 8px; white-space: nowrap;">清空</el-button>
     </div>
 
     <div v-else-if="field.type === 'SLIDER'" class="field-with-clear">
-        <el-slider :model-value="modelValue" @update:model-value="onUpdate" :min="field.min ?? 0"
+        <el-slider
+            :model-value="modelValue == null || modelValue === '' ? undefined : Number(modelValue)"
+            @update:model-value="onUpdate" :min="field.min ?? 0"
             :max="field.max ?? 100" :disabled="disabled" :show-input="!disabled" show-stops show-tooltip
             style="flex: 1; margin: 0 12px;" />
         <el-button v-if="modelValue !== null && modelValue !== undefined && modelValue !== ''" link type="primary"
@@ -94,19 +99,19 @@
             style="margin-left: 8px; white-space: nowrap;">重置</el-button>
     </div>
 
-    <el-date-picker v-else-if="field.type === 'DATE'" :model-value="modelValue" @update:model-value="onUpdate"
+    <el-date-picker v-else-if="field.type === 'DATE'" :model-value="modelValue ?? undefined" @update:model-value="onUpdate"
         type="date" :placeholder="field.placeholder" :disabled="disabled" value-format="YYYY-MM-DD"
         clearable style="width: 100%;" />
 
-    <el-date-picker v-else-if="field.type === 'DATETIME'" :model-value="modelValue" @update:model-value="onUpdate"
+    <el-date-picker v-else-if="field.type === 'DATETIME'" :model-value="modelValue ?? undefined" @update:model-value="onUpdate"
         type="datetime" :placeholder="field.placeholder" :disabled="disabled" value-format="YYYY-MM-DD HH:mm:ss"
         clearable style="width: 100%;" />
 
-    <el-time-picker v-else-if="field.type === 'TIME'" :model-value="modelValue" @update:model-value="onUpdate"
+    <el-time-picker v-else-if="field.type === 'TIME'" :model-value="modelValue ?? undefined" @update:model-value="onUpdate"
         :placeholder="field.placeholder" :disabled="disabled" value-format="HH:mm:ss" clearable
         style="width: 100%;" />
 
-    <el-date-picker v-else-if="field.type === 'DATERANGE'" :model-value="modelValue" @update:model-value="onUpdate"
+    <el-date-picker v-else-if="field.type === 'DATERANGE'" :model-value="modelValue ?? undefined" @update:model-value="onUpdate"
         type="daterange" unlink-panels range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间"
         :disabled="disabled" value-format="YYYY-MM-DD" clearable style="width: 100%;" />
 
@@ -171,7 +176,8 @@
     <TableRenderer v-else-if="field.type === 'TABLE'" :field="field" :model-value="modelValue"
         @update:model-value="onUpdate" :disabled="disabled" />
 
-    <span v-else style="color: var(--el-color-warning);">未支持的字段类型: {{ field.type }}</span>
+        <span v-else style="color: var(--el-color-warning);">未支持的字段类型: {{ field.type }}</span>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -183,31 +189,13 @@ import {
 } from '@element-plus/icons-vue'
 import type { UploadFile } from 'element-plus'
 import type { FormField, FormFieldOption } from './types'
+import { parseSwitchValue } from './types'
 import TableRenderer from './TableRenderer.vue'
 import axios from 'axios'
 import { CONSTANTS, getToken, alert } from '@/utils'
 
-const props = defineProps<{
-    field: FormField
-    modelValue: any
-    disabled?: boolean
-    runtimeOptions?: FormFieldOption[]
-    optionLoading?: boolean
-    optionError?: string
-}>()
-
-const fieldOptions = computed(() => props.runtimeOptions ?? props.field.options ?? [])
-const optionDisabled = computed(() => props.disabled || props.optionLoading || !!props.optionError)
-const showOptionStatus = computed(() => props.optionLoading || !!props.optionError)
-
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: any): void
-    (e: 'retry-options'): void
-}>()
-
-const retryOptions = () => emit('retry-options')
-
 const RemoteOptionStatus = defineComponent({
+    name: 'RemoteOptionStatus',
     props: {
         loading: Boolean,
         error: String,
@@ -231,6 +219,26 @@ const RemoteOptionStatus = defineComponent({
             ])
     },
 })
+
+const props = defineProps<{
+    field: FormField
+    modelValue: any
+    disabled?: boolean
+    runtimeOptions?: FormFieldOption[]
+    optionLoading?: boolean
+    optionError?: string
+}>()
+
+const fieldOptions = computed(() => props.runtimeOptions ?? props.field.options ?? [])
+const optionDisabled = computed(() => props.disabled || props.optionLoading || !!props.optionError)
+const showOptionStatus = computed(() => props.optionLoading || !!props.optionError)
+
+const emit = defineEmits<{
+    (e: 'update:modelValue', value: any): void
+    (e: 'retry-options'): void
+}>()
+
+const retryOptions = () => emit('retry-options')
 
 const onUpdate = (val: any) => {
     emit('update:modelValue', val)
@@ -443,6 +451,14 @@ const onUploadExceed = () => {
 </script>
 
 <style scoped lang="scss">
+/* ============================================================
+   动态表单 · 字段渲染器
+   使用 display: contents 避免单根节点包装影响布局
+   ============================================================ */
+.field-renderer {
+    display: contents;
+}
+
 /* ============================================================
    动态表单 · 文件上传组件
    主题变量：--brand-primary, --bg-elevated, --text-primary 等

@@ -192,6 +192,12 @@ const router = createRouter({
           meta: { title: '表单管理' },
         },
         {
+          path: 'dynamicFormV2',
+          name: 'DynamicFormV2List',
+          component: () => import('@/views/console/dynamicFormV2/IndexView.vue'),
+          meta: { title: '动态表单管理' },
+        },
+        {
           path: 'process-manager',
           name: 'process-manager',
           component: () => import('@/views/console/processManager/IndexView.vue'),

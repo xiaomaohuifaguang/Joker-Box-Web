@@ -1,19 +1,10 @@
 <template>
-  <el-dialog
-    v-model="dialog.open"
-    :title="dialogTitle"
-    width="max(60vw, min(1400px, 90vw))"
-    destroy-on-close
-    :close-on-click-modal="false"
-    class="detail-dialog"
-  >
+  <el-dialog v-model="dialog.open" :title="dialogTitle" width="max(60vw, min(1400px, 90vw))" destroy-on-close
+    :close-on-click-modal="false" class="detail-dialog">
     <div v-loading="loading" class="dialog-body">
-      <ProcessInstanceBaseInfo
-        :item="infoData"
-        :icon="dialog.mode === 'handle' ? Promotion : Tickets"
+      <ProcessInstanceBaseInfo :item="infoData" :icon="dialog.mode === 'handle' ? Promotion : Tickets"
         :title="dialog.mode === 'handle' ? '待处理任务' : '流程详情'"
-        icon-bg="linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)"
-      />
+        icon-bg="linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)" />
 
       <!-- 表单区（handle 模式） -->
       <template v-if="dialog.mode === 'handle'">
@@ -21,42 +12,38 @@
           <div v-if="globalForm" class="form-section">
             <div class="form-section-header" @click="globalCollapsed = !globalCollapsed">
               <div class="header-left">
-                <el-icon><Collection /></el-icon>
+                <el-icon>
+                  <Collection />
+                </el-icon>
                 <span>{{ globalForm.name || '全局表单' }}</span>
               </div>
-              <el-icon class="collapse-icon" :class="{ collapsed: globalCollapsed }"><ArrowDown /></el-icon>
+              <el-icon class="collapse-icon" :class="{ collapsed: globalCollapsed }">
+                <ArrowDown />
+              </el-icon>
             </div>
-            <FormMaker
-              v-show="!globalCollapsed"
-              ref="globalFormRef"
-              type="edit"
-              v-model="globalFormData"
-              :form-fields="globalForm.formFields"
-              :groups="globalForm.groups"
-              :linkage-rules="globalForm.linkageRules"
-            />
+            <FormMaker v-show="!globalCollapsed" ref="globalFormRef" type="edit" v-model="globalFormData"
+              :fields="globalForm.fields" :groups="globalForm.groups" :linkage-rules="globalForm.linkageRules" />
           </div>
           <div v-if="nodeForm" class="form-section">
             <div class="form-section-header" @click="nodeCollapsed = !nodeCollapsed">
               <div class="header-left">
-                <el-icon><Document /></el-icon>
+                <el-icon>
+                  <Document />
+                </el-icon>
                 <span>{{ nodeForm.name || '表单' }}</span>
               </div>
-              <el-icon class="collapse-icon" :class="{ collapsed: nodeCollapsed }"><ArrowDown /></el-icon>
+              <el-icon class="collapse-icon" :class="{ collapsed: nodeCollapsed }">
+                <ArrowDown />
+              </el-icon>
             </div>
-            <FormMaker
-              v-show="!nodeCollapsed"
-              ref="nodeFormRef"
-              type="edit"
-              v-model="nodeFormData"
-              :form-fields="nodeForm.formFields"
-              :groups="nodeForm.groups"
-              :linkage-rules="nodeForm.linkageRules"
-            />
+            <FormMaker v-show="!nodeCollapsed" ref="nodeFormRef" type="edit" v-model="nodeFormData"
+              :fields="nodeForm.fields" :groups="nodeForm.groups" :linkage-rules="nodeForm.linkageRules" />
           </div>
         </template>
         <div v-else-if="!loading" class="form-placeholder">
-          <el-icon class="placeholder-icon"><Edit /></el-icon>
+          <el-icon class="placeholder-icon">
+            <Edit />
+          </el-icon>
           <p>该任务未配置表单</p>
           <span>直接进行审批操作即可</span>
         </div>
@@ -70,15 +57,21 @@
       <div class="dialog-footer">
         <el-button size="large" @click="dialog.open = false">取消</el-button>
         <el-button type="warning" size="large" :loading="actionLoading" @click="showBack">
-          <el-icon><RefreshLeft /></el-icon>
+          <el-icon>
+            <RefreshLeft />
+          </el-icon>
           <span>驳回</span>
         </el-button>
         <el-button type="danger" size="large" :loading="actionLoading" @click="showReject">
-          <el-icon><CircleClose /></el-icon>
+          <el-icon>
+            <CircleClose />
+          </el-icon>
           <span>拒绝</span>
         </el-button>
         <el-button type="primary" size="large" :loading="actionLoading" @click="showPass">
-          <el-icon><Promotion /></el-icon>
+          <el-icon>
+            <Promotion />
+          </el-icon>
           <span>通过</span>
         </el-button>
       </div>
@@ -86,7 +79,8 @@
   </el-dialog>
 
   <!-- 确认通过弹窗 -->
-  <el-dialog v-model="passDialog.open" title="确认通过" width="480px" :close-on-click-modal="false" append-to-body destroy-on-close class="pass-confirm-dialog">
+  <el-dialog v-model="passDialog.open" title="确认通过" width="480px" :close-on-click-modal="false" append-to-body
+    destroy-on-close class="pass-confirm-dialog">
     <div class="confirm-body">
       <p class="confirm-tip">确定要通过该审批吗？</p>
       <div class="remark-field">
@@ -98,7 +92,9 @@
       <div class="confirm-footer">
         <el-button size="large" @click="passDialog.open = false">取消</el-button>
         <el-button type="primary" size="large" :loading="passDialog.loading" @click="handlePass">
-          <el-icon><Promotion /></el-icon>
+          <el-icon>
+            <Promotion />
+          </el-icon>
           <span>确认通过</span>
         </el-button>
       </div>
@@ -106,7 +102,8 @@
   </el-dialog>
 
   <!-- 确认拒绝弹窗 -->
-  <el-dialog v-model="rejectDialog.open" title="确认拒绝" width="480px" :close-on-click-modal="false" append-to-body destroy-on-close class="reject-confirm-dialog">
+  <el-dialog v-model="rejectDialog.open" title="确认拒绝" width="480px" :close-on-click-modal="false" append-to-body
+    destroy-on-close class="reject-confirm-dialog">
     <div class="confirm-body">
       <p class="confirm-tip">确定要拒绝该审批吗？</p>
       <div class="remark-field">
@@ -118,7 +115,9 @@
       <div class="confirm-footer">
         <el-button size="large" @click="rejectDialog.open = false">取消</el-button>
         <el-button type="danger" size="large" :loading="rejectDialog.loading" @click="handleReject">
-          <el-icon><CircleClose /></el-icon>
+          <el-icon>
+            <CircleClose />
+          </el-icon>
           <span>确认拒绝</span>
         </el-button>
       </div>
@@ -126,7 +125,8 @@
   </el-dialog>
 
   <!-- 确认驳回弹窗 -->
-  <el-dialog v-model="backDialog.open" title="确认驳回" width="480px" :close-on-click-modal="false" append-to-body destroy-on-close class="back-confirm-dialog">
+  <el-dialog v-model="backDialog.open" title="确认驳回" width="480px" :close-on-click-modal="false" append-to-body
+    destroy-on-close class="back-confirm-dialog">
     <div class="confirm-body">
       <p class="confirm-tip">确定要驳回该审批吗？</p>
       <div class="remark-field">
@@ -138,7 +138,9 @@
       <div class="confirm-footer">
         <el-button size="large" @click="backDialog.open = false">取消</el-button>
         <el-button type="warning" size="large" :loading="backDialog.loading" @click="handleBack">
-          <el-icon><RefreshLeft /></el-icon>
+          <el-icon>
+            <RefreshLeft />
+          </el-icon>
           <span>确认驳回</span>
         </el-button>
       </div>
@@ -218,13 +220,13 @@ const initFormData = (fields: any[]): Record<string, any> => {
 
 const initForm = (form: any): Record<string, any> => {
   if (!form) return {}
-  form.formFields = (form.formFields || []).map(applyPermission).filter((f: any) => !f._hidden)
+  form.fields = (form.fields || []).map(applyPermission).filter((f: any) => !f._hidden)
   form.groups = (form.groups || []).map((g: any) => ({
     ...g,
     fields: (g.fields || []).map(applyPermission).filter((f: any) => !f._hidden)
   }))
-  form.formFields = flattenGroups(form.groups).concat(form.formFields)
-  return initFormData(form.formFields)
+  form.fields = flattenGroups(form.groups).concat(form.fields)
+  return initFormData(form.fields)
 }
 
 const dialogTitle = computed(() => {
@@ -340,11 +342,25 @@ defineExpose({ open })
     background: var(--brand-gradient);
     margin: 0;
     padding: 18px 24px;
-    .el-dialog__title { color: var(--text-on-brand); font-weight: var(--fw-semibold); }
-    .el-dialog__headerbtn .el-dialog__close { color: var(--text-on-brand); }
+
+    .el-dialog__title {
+      color: var(--text-on-brand);
+      font-weight: var(--fw-semibold);
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+      color: var(--text-on-brand);
+    }
   }
-  :deep(.el-dialog__body) { padding: 0; }
-  :deep(.el-dialog__footer) { padding: 16px 24px; border-top: 1px solid var(--border-light); }
+
+  :deep(.el-dialog__body) {
+    padding: 0;
+  }
+
+  :deep(.el-dialog__footer) {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-light);
+  }
 }
 
 .dialog-body {
@@ -361,6 +377,7 @@ defineExpose({ open })
 
 .form-section {
   margin-bottom: 24px;
+
   .form-section-header {
     display: flex;
     align-items: center;
@@ -408,39 +425,100 @@ defineExpose({ open })
   text-align: center;
   color: var(--text-secondary);
   margin-bottom: 24px;
-  .placeholder-icon { font-size: 36px; color: var(--brand-primary); margin-bottom: 12px; }
-  p { margin: 0 0 6px; font-size: var(--fs-lg); font-weight: var(--fw-semibold); color: var(--text-primary); }
-  span { font-size: var(--fs-sm); }
+
+  .placeholder-icon {
+    font-size: 36px;
+    color: var(--brand-primary);
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin: 0 0 6px;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+  }
+
+  span {
+    font-size: var(--fs-sm);
+  }
 }
 
 .confirm-body {
-  .confirm-tip { margin: 0 0 16px; font-size: var(--fs-md); color: var(--text-primary); }
+  .confirm-tip {
+    margin: 0 0 16px;
+    font-size: var(--fs-md);
+    color: var(--text-primary);
+  }
+
   .remark-field {
-    .remark-label { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-primary); margin-bottom: 8px; }
-    :deep(.el-textarea__inner) { border-radius: var(--radius-md); }
+    .remark-label {
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-semibold);
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    :deep(.el-textarea__inner) {
+      border-radius: var(--radius-md);
+    }
   }
 }
-.confirm-footer { display: flex; justify-content: flex-end; gap: 12px; }
+
+.confirm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
 
 .pass-confirm-dialog {
   :deep(.el-dialog__header) {
-    background: var(--brand-gradient); margin: 0; padding: 18px 24px;
-    .el-dialog__title { color: var(--text-on-brand); font-weight: var(--fw-semibold); }
-    .el-dialog__headerbtn .el-dialog__close { color: var(--text-on-brand); }
+    background: var(--brand-gradient);
+    margin: 0;
+    padding: 18px 24px;
+
+    .el-dialog__title {
+      color: var(--text-on-brand);
+      font-weight: var(--fw-semibold);
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+      color: var(--text-on-brand);
+    }
   }
 }
+
 .reject-confirm-dialog {
   :deep(.el-dialog__header) {
-    background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); margin: 0; padding: 18px 24px;
-    .el-dialog__title { color: #fff; font-weight: var(--fw-semibold); }
-    .el-dialog__headerbtn .el-dialog__close { color: #fff; }
+    background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+    margin: 0;
+    padding: 18px 24px;
+
+    .el-dialog__title {
+      color: #fff;
+      font-weight: var(--fw-semibold);
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+      color: #fff;
+    }
   }
 }
+
 .back-confirm-dialog {
   :deep(.el-dialog__header) {
-    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); margin: 0; padding: 18px 24px;
-    .el-dialog__title { color: #fff; font-weight: var(--fw-semibold); }
-    .el-dialog__headerbtn .el-dialog__close { color: #fff; }
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    margin: 0;
+    padding: 18px 24px;
+
+    .el-dialog__title {
+      color: #fff;
+      font-weight: var(--fw-semibold);
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+      color: #fff;
+    }
   }
 }
 </style>

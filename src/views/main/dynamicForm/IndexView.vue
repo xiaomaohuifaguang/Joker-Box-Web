@@ -6,17 +6,14 @@
         <div class="page-container">
             <div class="form-wrapper">
                 <div class="form-card">
-                    <FormMaker
-                        v-model="formData"
-                        :form-fields="info.formFields"
-                        :linkage-rules="info.linkageRules"
-                        :groups="info.groups"
-                        type="edit"
-                        ref="formMakerRef" />
+                    <FormMaker v-model="formData" :fields="info.fields" :linkage-rules="info.linkageRules"
+                        :groups="info.groups" type="edit" ref="formMakerRef" />
                 </div>
                 <div class="action-bar">
                     <el-button type="primary" size="large" @click="submit" class="submit-button" :loading="loading">
-                        <el-icon><Check /></el-icon>
+                        <el-icon>
+                            <Check />
+                        </el-icon>
                         <span>提交表单</span>
                     </el-button>
                 </div>
@@ -48,7 +45,7 @@ interface FormInfoState {
     createBy: string
     createTime: string
     updateTime: string
-    formFields: FormField[]
+    fields: FormField[]
     linkageRules: FormLinkageRule[]
     groups?: FormFieldGroup[]
 }
@@ -63,7 +60,7 @@ const info = ref<FormInfoState>({
     createBy: '',
     createTime: '',
     updateTime: '',
-    formFields: [],
+    fields: [],
     linkageRules: []
 })
 const formData = ref<Record<string, any>>({})
@@ -77,17 +74,17 @@ const queryFields = async () => {
             version: route.params.version
         })
         const groups = data.groups || []
-        const formFields = data.formFields || []
+        const fields = data.fields || []
         const hasGroups = groups.length > 0
         info.value = {
             ...data,
-            formFields: hasGroups
-                ? flattenGroups(groups).concat(formFields)
-                : formFields,
+            fields: hasGroups
+                ? flattenGroups(groups).concat(fields)
+                : fields,
             linkageRules: data.linkageRules || [],
             groups: hasGroups ? groups : undefined,
         }
-        if (info.value.formFields.length == 0) {
+        if (info.value.fields.length == 0) {
             toPath('/404')
         }
     } catch (e: any) {
@@ -148,7 +145,7 @@ const submit = async () => {
             formId: info.value.id,
             version: route.params.version,
             formInstanceId: null,
-            data: convertSubmitData(formData.value, info.value.formFields, states)
+            data: convertSubmitData(formData.value, info.value.fields, states)
         })
         alert('提交成功', 'success')
     } catch (e: any) {

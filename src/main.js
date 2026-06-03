@@ -12,6 +12,7 @@ initThemeEarly()
 import './assets/font.css'
 import './assets/styles/main.scss'
 import './assets/logicFlow/custom/icon/iconClass.css'
+// import '@/components/dynamicFormV2/styles/vars.css'
 
 import registerComponents from './registerComponents';
 

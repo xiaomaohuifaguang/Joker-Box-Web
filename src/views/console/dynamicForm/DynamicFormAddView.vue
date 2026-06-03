@@ -41,10 +41,9 @@
                             </div>
                             <span class="header-title">表单字段配置</span>
                         </div>
-                        <FormMaker ref="formMakerRef" :form-fields="info.formFields" :linkage-rules="info.linkageRules"
-                            :groups="info.groups" v-model="formData" type="create"
-                            @update:fields="info.formFields = $event" @update:groups="info.groups = $event"
-                            @update:rules="info.linkageRules = $event" />
+                        <FormMaker ref="formMakerRef" :fields="info.fields" :linkage-rules="info.linkageRules"
+                            :groups="info.groups" v-model="formData" type="create" @update:fields="info.fields = $event"
+                            @update:groups="info.groups = $event" @update:rules="info.linkageRules = $event" />
                     </div>
                 </el-col>
             </el-row>
@@ -86,7 +85,7 @@ interface AddFormState {
     createBy: string
     createTime: string
     updateTime: string
-    formFields: FormField[]
+    fields: FormField[]
     linkageRules: FormLinkageRule[]
     groups?: FormFieldGroup[]
 }
@@ -101,7 +100,7 @@ const info = ref<AddFormState>({
     createBy: '',
     createTime: '',
     updateTime: '',
-    formFields: [],
+    fields: [],
     linkageRules: []
 })
 
@@ -110,7 +109,7 @@ const formData = ref<Record<string, any>>({})
 const add = async () => {
     const check = validateTemplate(
         info.value.name,
-        info.value.formFields,
+        info.value.fields,
         info.value.linkageRules,
         info.value.groups,
         info.value.description,
@@ -125,7 +124,7 @@ const add = async () => {
         const payload = {
             ...info.value,
             groups: info.value.groups,
-            formFields: info.value.formFields.filter(f => !f.groupId),
+            fields: info.value.fields.filter(f => !f.groupId),
         }
         const result = await http.post('/dynamicForm/add', payload, { raw: true })
         alert(result.msg, 'success')

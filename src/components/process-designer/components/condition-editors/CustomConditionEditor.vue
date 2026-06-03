@@ -1,14 +1,8 @@
 <!-- src/components/process-designer/components/condition-editors/CustomConditionEditor.vue -->
 <template>
   <div class="custom-condition-editor">
-    <RuleGroup
-      :node="localTree"
-      :depth="0"
-      :is-root="true"
-      :form-fields="formFields"
-      :readonly="readonly"
-      @update="onRootUpdate"
-    />
+    <RuleGroup :node="localTree" :depth="0" :is-root="true" :form-fields="fields" :readonly="readonly"
+      @update="onRootUpdate" />
   </div>
 </template>
 
@@ -19,7 +13,7 @@ import RuleGroup from './RuleGroup.vue'
 
 const props = defineProps<{
   modelValue?: RuleTreeNode
-  formFields?: { fieldId: string; title: string }[]
+  fields?: { fieldId: string; title: string }[]
   readonly?: boolean
 }>()
 

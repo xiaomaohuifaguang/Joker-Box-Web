@@ -93,40 +93,34 @@
       <div v-if="globalForm" class="form-section">
         <div class="form-section-header" @click="globalCollapsed = !globalCollapsed">
           <div class="header-left">
-            <el-icon><Collection /></el-icon>
+            <el-icon>
+              <Collection />
+            </el-icon>
             <span>{{ globalForm.name || '全局表单' }}</span>
           </div>
-          <el-icon class="collapse-icon" :class="{ collapsed: globalCollapsed }"><ArrowDown /></el-icon>
+          <el-icon class="collapse-icon" :class="{ collapsed: globalCollapsed }">
+            <ArrowDown />
+          </el-icon>
         </div>
-        <FormMaker
-          v-show="!globalCollapsed"
-          ref="globalFormRef"
-          type="edit"
-          v-model="globalFormData"
-          :form-fields="globalForm.formFields"
-          :groups="globalForm.groups"
-          :linkage-rules="globalForm.linkageRules"
-        />
+        <FormMaker v-show="!globalCollapsed" ref="globalFormRef" type="edit" v-model="globalFormData"
+          :fields="globalForm.fields" :groups="globalForm.groups" :linkage-rules="globalForm.linkageRules" />
       </div>
 
       <!-- 节点表单 -->
       <div v-if="nodeForm" class="form-section">
         <div class="form-section-header" @click="nodeCollapsed = !nodeCollapsed">
           <div class="header-left">
-            <el-icon><Document /></el-icon>
+            <el-icon>
+              <Document />
+            </el-icon>
             <span>{{ nodeForm.name || '表单' }}</span>
           </div>
-          <el-icon class="collapse-icon" :class="{ collapsed: nodeCollapsed }"><ArrowDown /></el-icon>
+          <el-icon class="collapse-icon" :class="{ collapsed: nodeCollapsed }">
+            <ArrowDown />
+          </el-icon>
         </div>
-        <FormMaker
-          v-show="!nodeCollapsed"
-          ref="nodeFormRef"
-          type="edit"
-          v-model="nodeFormData"
-          :form-fields="nodeForm.formFields"
-          :groups="nodeForm.groups"
-          :linkage-rules="nodeForm.linkageRules"
-        />
+        <FormMaker v-show="!nodeCollapsed" ref="nodeFormRef" type="edit" v-model="nodeFormData"
+          :fields="nodeForm.fields" :groups="nodeForm.groups" :linkage-rules="nodeForm.linkageRules" />
       </div>
     </template>
 
@@ -219,13 +213,13 @@ const initFormData = (fields: any[]): Record<string, any> => {
 
 const initForm = (form: any): Record<string, any> => {
   if (!form) return {}
-  form.formFields = (form.formFields || []).map(applyPermission).filter((f: any) => !f._hidden)
+  form.fields = (form.fields || []).map(applyPermission).filter((f: any) => !f._hidden)
   form.groups = (form.groups || []).map((g: any) => ({
     ...g,
     fields: (g.fields || []).map(applyPermission).filter((f: any) => !f._hidden)
   }))
-  form.formFields = flattenGroups(form.groups).concat(form.formFields)
-  return initFormData(form.formFields)
+  form.fields = flattenGroups(form.groups).concat(form.fields)
+  return initFormData(form.fields)
 }
 
 const loadStartInfo = async (processDefinitionId: string | number) => {
@@ -238,7 +232,7 @@ const loadStartInfo = async (processDefinitionId: string | number) => {
     })
     startInfo.value = result ?? null
 
-    // 初始化表单数据：处理未分组和分组字段的权限，并扁平化分组字段到 formFields
+    // 初始化表单数据：处理未分组和分组字段的权限，并扁平化分组字段到 fields
     if (nodeForm.value) nodeFormData.value = initForm(nodeForm.value)
     if (globalForm.value) globalFormData.value = initForm(globalForm.value)
   } catch {

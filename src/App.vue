@@ -1,6 +1,6 @@
 <script setup>
 import { useColorMode } from '@vueuse/core'
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import AiChartDrawer from './components/common/AiChartDrawer.vue';
 import { alert, http, saveUserInfo, userInfo, userInfoRef } from '@/utils';
@@ -25,9 +25,6 @@ const font = reactive({
   color: 'rgba(0, 0, 0, .15)',
   fontSize: '30'
 })
-
-watch(
-)
 
 
 // const root = document.documentElement;

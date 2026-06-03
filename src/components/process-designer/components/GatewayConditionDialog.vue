@@ -1,47 +1,30 @@
 <!-- src/components/process-designer/components/GatewayConditionDialog.vue -->
 <template>
-  <el-dialog
-    v-model="visible"
-    :title="dialogTitle"
-    width="720px"
-    :append-to-body="false"
-    :close-on-click-modal="false"
-  >
+  <el-dialog v-model="visible" :title="dialogTitle" width="720px" :append-to-body="false" :close-on-click-modal="false">
     <div v-loading="loading" class="dialog-body">
       <!-- 模式切换 -->
       <div class="mode-switch">
-        <div
-          v-for="mode in modes"
-          :key="mode.value"
-          class="mode-item"
-          :class="{ active: currentMode === mode.value }"
-          @click="switchMode(mode.value)"
-        >
+        <div v-for="mode in modes" :key="mode.value" class="mode-item" :class="{ active: currentMode === mode.value }"
+          @click="switchMode(mode.value)">
           {{ mode.label }}
         </div>
       </div>
 
       <!-- NATIVE -->
       <div v-if="currentMode === 'NATIVE'" class="mode-panel">
-        <NativeConditionEditor
-          v-model="form.nativeExpression"
-          :form-field-ids="formFieldIds"
-          :readonly="readonly"
-        />
+        <NativeConditionEditor v-model="form.nativeExpression" :form-field-ids="formFieldIds" :readonly="readonly" />
       </div>
 
       <!-- CUSTOM -->
       <div v-else-if="currentMode === 'CUSTOM'" class="mode-panel">
-        <CustomConditionEditor
-          v-model="form.ruleTree"
-          :form-fields="formFields"
-          :readonly="readonly"
-        />
+        <CustomConditionEditor v-model="form.ruleTree" :form-fields="fields" :readonly="readonly" />
       </div>
 
       <!-- DEFAULT -->
       <div v-else-if="currentMode === 'DEFAULT'" class="mode-panel default-panel">
-        <el-icon :size="48" color="#67c23a"><CircleCheck /></el-icon>
+        <el-icon :size="48" color="#67c23a">
+          <CircleCheck />
+        </el-icon>
         <div class="default-title">此连线已设为默认走向</div>
         <div class="default-desc">当所有其他条件都不满足时，流程将自动走此分支</div>
       </div>
@@ -73,7 +56,7 @@ const props = defineProps<{
     targetNodeId: string
   }
   initialData?: GatewayConditionData
-  formFields?: { fieldId: string; title: string }[]
+  fields?: { fieldId: string; title: string }[]
   readonly?: boolean
 }>()
 
@@ -93,7 +76,7 @@ const dialogTitle = computed(() => {
   return `条件配置 — ${e.id}（${e.sourceNodeId} → ${e.targetNodeId}）`
 })
 
-const formFieldIds = computed(() => props.formFields?.map((f) => f.fieldId) ?? [])
+const formFieldIds = computed(() => props.fields?.map((f) => f.fieldId) ?? [])
 
 const modes = [
   { label: 'NATIVE 表达式', value: 'NATIVE' as const },

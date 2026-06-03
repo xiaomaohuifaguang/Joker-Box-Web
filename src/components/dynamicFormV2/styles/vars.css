@@ -1,52 +1,48 @@
 :root {
-  /* 主色调 */
+  /* 主色调 —— 继承 Element Plus 主题变量（已由项目主题系统覆盖） */
   --df-primary: var(--el-color-primary);
   --df-primary-light: var(--el-color-primary-light-9);
   --df-primary-lighter: var(--el-color-primary-light-8);
 
-  /* 语义色 */
-  --df-success: #10b981;
-  --df-warning: #f59e0b;
-  --df-danger: #ef4444;
-  --df-info: #6366f1;
+  /* 语义色 —— 使用项目主题变量 */
+  --df-success: var(--success);
+  --df-warning: var(--warning);
+  --df-danger: var(--danger);
+  --df-info: var(--info);
 
-  /* 中性色 */
-  --df-bg-page: #f8fafc;
-  --df-bg-card: #ffffff;
-  --df-bg-hover: #f1f5f9;
-  --df-border: #e2e8f0;
-  --df-border-light: #f1f5f9;
-  --df-text-primary: #1e293b;
-  --df-text-secondary: #64748b;
-  --df-text-tertiary: #94a3b8;
+  /* 中性色 —— 使用项目主题变量，适配明暗主题 */
+  --df-bg-page: var(--bg-page);
+  --df-bg-card: var(--bg-container);
+  --df-bg-hover: var(--bg-overlay);
+  --df-border: var(--border-base);
+  --df-border-light: var(--border-light);
+  --df-text-primary: var(--text-primary);
+  --df-text-secondary: var(--text-secondary);
+  --df-text-tertiary: var(--text-placeholder);
 
-  /* 间距（8px基准） */
+  /* 间距（8px基准）—— 不随主题变化 */
   --df-space-xs: 4px;
   --df-space-sm: 8px;
   --df-space-md: 16px;
   --df-space-lg: 24px;
   --df-space-xl: 32px;
-
-  /* 圆角 */
-  --df-radius-sm: 6px;
-  --df-radius-md: 8px;
-  --df-radius-lg: 12px;
-  --df-radius-xl: 16px;
-
-  /* 阴影 */
-  --df-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-  --df-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.03);
-  --df-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.03);
-  --df-shadow-colored: 0 4px 14px 0 var(--el-color-primary-light-8);
-
-  /* 动画 */
-  --df-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --df-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* 新增 */
   --df-space-xxl: 48px;
 
-  /* 阴影升级 */
+  /* 圆角 —— 使用项目主题变量 */
+  --df-radius-sm: var(--radius-sm, 6px);
+  --df-radius-md: var(--radius-md, 8px);
+  --df-radius-lg: var(--radius-lg, 12px);
+  --df-radius-xl: var(--radius-xl, 16px);
+
+  /* 阴影 —— 使用项目主题变量 */
+  --df-shadow-sm: var(--shadow-sm);
+  --df-shadow-md: var(--shadow-md);
+  --df-shadow-lg: var(--shadow-lg);
   --df-shadow-card: 0 2px 8px 0 rgb(0 0 0 / 0.06);
   --df-shadow-card-hover: 0 8px 24px 0 rgb(0 0 0 / 0.1);
+  --df-shadow-colored: 0 4px 14px 0 var(--el-color-primary-light-8);
+
+  /* 动画 —— 不随主题变化 */
+  --df-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --df-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }

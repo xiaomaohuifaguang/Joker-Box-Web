@@ -4,41 +4,19 @@
     <!-- 来源 -->
     <div class="field-cell">
       <div class="field-label">来源</div>
-      <el-select
-        v-model="localNode.category"
-        size="small"
-        class="field-select"
-        :disabled="readonly"
-        :teleported="false"
-        @change="onCategoryChange"
-      >
-        <el-option
-          v-for="opt in CATEGORY_OPTIONS"
-          :key="opt.value"
-          :label="opt.label"
-          :value="opt.value"
-        />
+      <el-select v-model="localNode.category" size="small" class="field-select" :disabled="readonly" :teleported="false"
+        @change="onCategoryChange">
+        <el-option v-for="opt in CATEGORY_OPTIONS" :key="opt.value" :label="opt.label" :value="opt.value" />
       </el-select>
     </div>
 
     <!-- 字段 -->
     <div class="field-cell">
       <div class="field-label">字段</div>
-      <el-select
-        v-if="localNode.category === 'FORM_FIELD'"
-        v-model="localNode.fieldKey"
-        size="small"
-        class="field-select"
-        :disabled="readonly"
-        :teleported="false"
-        placeholder="选择字段"
-      >
-        <el-option
-          v-for="f in formFields"
-          :key="f.fieldId"
-          :label="f.groupName ? `${f.groupName} - ${f.title}` : f.title"
-          :value="f.fieldId"
-        />
+      <el-select v-if="localNode.category === 'FORM_FIELD'" v-model="localNode.fieldKey" size="small"
+        class="field-select" :disabled="readonly" :teleported="false" placeholder="选择字段">
+        <el-option v-for="f in fields" :key="f.fieldId" :label="f.groupName ? `${f.groupName} - ${f.title}` : f.title"
+          :value="f.fieldId" />
       </el-select>
       <span v-else class="field-fixed">{{ fixedFieldKey }}</span>
     </div>
@@ -46,47 +24,23 @@
     <!-- 运算符 -->
     <div class="field-cell">
       <div class="field-label">运算符</div>
-      <el-select
-        v-model="localNode.operator"
-        size="small"
-        class="field-select"
-        style="width: 80px"
-        :disabled="readonly"
-        :teleported="false"
-      >
-        <el-option
-          v-for="opt in OPERATOR_OPTIONS"
-          :key="opt.value"
-          :label="opt.label"
-          :value="opt.value"
-        />
+      <el-select v-model="localNode.operator" size="small" class="field-select" style="width: 80px" :disabled="readonly"
+        :teleported="false">
+        <el-option v-for="opt in OPERATOR_OPTIONS" :key="opt.value" :label="opt.label" :value="opt.value" />
       </el-select>
     </div>
 
     <!-- 值 -->
     <div class="field-cell field-value">
       <div class="field-label">值</div>
-      <el-input
-        v-if="!isValuelessOperator"
-        v-model="localNode.value"
-        size="small"
-        class="field-input"
-        :disabled="readonly"
-        :placeholder="valuePlaceholder"
-      />
+      <el-input v-if="!isValuelessOperator" v-model="localNode.value" size="small" class="field-input"
+        :disabled="readonly" :placeholder="valuePlaceholder" />
       <span v-else class="field-empty">无需填写</span>
     </div>
 
     <!-- 删除 -->
-    <el-button
-      v-if="!readonly"
-      class="delete-btn"
-      link
-      type="danger"
-      size="small"
-      :icon="Delete"
-      @click="$emit('delete')"
-    />
+    <el-button v-if="!readonly" class="delete-btn" link type="danger" size="small" :icon="Delete"
+      @click="$emit('delete')" />
   </div>
 </template>
 
@@ -102,7 +56,7 @@ import {
 
 const props = defineProps<{
   node: RuleTreeNode
-  formFields?: { fieldId: string; title: string; groupName?: string }[]
+  fields?: { fieldId: string; title: string; groupName?: string }[]
   readonly?: boolean
 }>()
 

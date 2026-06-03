@@ -55,8 +55,7 @@
         </div>
         <template #footer>
             <el-button @click="visible = false">关闭</el-button>
-            <el-button type="primary" @click="savePermissions" :loading="saving" :disabled="readonly"
-                v-if="!readonly">
+            <el-button type="primary" @click="savePermissions" :loading="saving" :disabled="readonly" v-if="!readonly">
                 保存
             </el-button>
         </template>
@@ -127,8 +126,8 @@ const buildFieldsFromFormData = (data: any): PermissionField[] => {
     const fields: PermissionField[] = []
 
     // 未分组字段（放前面）
-    if (data?.formFields && data.formFields.length > 0) {
-        data.formFields.forEach((f: FormField) => {
+    if (data?.fields && data.fields.length > 0) {
+        data.fields.forEach((f: FormField) => {
             fields.push({
                 fieldId: f.fieldId,
                 title: f.title,

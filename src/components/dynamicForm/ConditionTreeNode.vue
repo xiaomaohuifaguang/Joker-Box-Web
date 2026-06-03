@@ -3,8 +3,7 @@
         <!-- AND / OR 组节点 -->
         <template v-if="isGroup">
             <div class="group-header">
-                <el-radio-group :model-value="node.nodeType" @update:model-value="onGroupTypeChange"
-                   >
+                <el-radio-group :model-value="node.nodeType" @update:model-value="onGroupTypeChange">
                     <el-radio-button value="AND">且</el-radio-button>
                     <el-radio-button value="OR">或</el-radio-button>
                 </el-radio-group>
@@ -14,15 +13,14 @@
                 <el-button type="primary" link :icon="FolderOpened" @click="addGroup">
                     添加组
                 </el-button>
-                <el-button v-if="!isRoot" type="danger" link :icon="Delete"                     @click="$emit('remove')">
+                <el-button v-if="!isRoot" type="danger" link :icon="Delete" @click="$emit('remove')">
                     删除
                 </el-button>
             </div>
             <div class="group-body">
                 <div v-for="(child, i) in node.children" :key="i" class="child-wrapper">
-                    <ConditionTreeNode :node="child" :fields="fields" :depth="depth + 1"
-                        :is-root="false" @update:node="updateChild(i, $event)"
-                        @remove="removeChild(i)" />
+                    <ConditionTreeNode :node="child" :fields="fields" :depth="depth + 1" :is-root="false"
+                        @update:node="updateChild(i, $event)" @remove="removeChild(i)" />
                 </div>
                 <div v-if="!node.children || node.children.length === 0" class="empty-children">
                     <span class="empty-tip">点击上方按钮添加条件</span>
@@ -35,20 +33,17 @@
             <div class="condition-row">
                 <div class="condition-field">
                     <div class="field-label">触发字段</div>
-                    <el-select :model-value="node.triggerFieldId"
-                        @update:model-value="onTriggerFieldChange" placeholder="触发字段"
-                        class="trigger-field-select">
-                        <el-option v-for="f in fields" :key="f.fieldId"
-                            :label="`${f.title} (${f.fieldId})`" :value="f.fieldId" />
+                    <el-select :model-value="node.triggerFieldId" @update:model-value="onTriggerFieldChange"
+                        placeholder="触发字段" class="trigger-field-select">
+                        <el-option v-for="f in fields" :key="f.fieldId" :label="`${f.title} (${f.fieldId})`"
+                            :value="f.fieldId" />
                     </el-select>
                 </div>
                 <div class="condition-field">
                     <div class="field-label">比较方式</div>
-                    <el-select :model-value="node.triggerCondition"
-                        @update:model-value="onTriggerConditionChange"
+                    <el-select :model-value="node.triggerCondition" @update:model-value="onTriggerConditionChange"
                         class="condition-select">
-                        <el-option v-for="c in conditionOptions" :key="c.value" :label="c.label"
-                            :value="c.value" />
+                        <el-option v-for="c in conditionOptions" :key="c.value" :label="c.label" :value="c.value" />
                     </el-select>
                 </div>
                 <div class="condition-field condition-value-field">
@@ -60,8 +55,7 @@
                         <span v-else class="condition-placeholder">无需输入值</span>
                     </div>
                 </div>
-                <el-button type="danger" link :icon="Delete" @click="$emit('remove')"
-                    class="remove-btn" />
+                <el-button type="danger" link :icon="Delete" @click="$emit('remove')" class="remove-btn" />
             </div>
         </template>
     </div>

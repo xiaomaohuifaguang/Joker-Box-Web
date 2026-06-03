@@ -16,7 +16,8 @@
             <el-empty description="暂无联动规则" />
         </div>
 
-        <draggable v-else ref="ruleListRef" v-model="innerRules" item-key="_uid" handle=".drag-handle" @end="onSorted" class="rule-list">
+        <draggable v-else ref="ruleListRef" v-model="innerRules" item-key="_uid" handle=".drag-handle" @end="onSorted"
+            class="rule-list">
             <template #item="{ element, index }">
                 <div class="rule-card">
                     <!-- 规则头部 -->
@@ -28,8 +29,9 @@
                         </span>
                         <span class="rule-index">#{{ index + 1 }}</span>
                         <el-input v-model="element.name" placeholder="规则名称（可选）" style="width: 200px" />
-                        <el-switch v-model="element.enable" active-text="启用" inactive-text="禁用"                             style="margin-left: auto" />
-                        <el-button type="danger" link :icon="Delete"                             @click="removeRule(index)">删除</el-button>
+                        <el-switch v-model="element.enable" active-text="启用" inactive-text="禁用"
+                            style="margin-left: auto" />
+                        <el-button type="danger" link :icon="Delete" @click="removeRule(index)">删除</el-button>
                     </div>
 
                     <!-- 条件区域 -->
@@ -46,23 +48,15 @@
                             <el-col :xs="12" :sm="6" :md="4">
                                 <div class="rule-label">动作类型</div>
                                 <el-select v-model="element.actionType" class="w-full">
-                                    <el-option
-                                        v-for="a in getActionOptionsForRule(element)"
-                                        :key="a.value"
-                                        :label="a.label"
-                                        :value="a.value"
-                                    />
+                                    <el-option v-for="a in getActionOptionsForRule(element)" :key="a.value"
+                                        :label="a.label" :value="a.value" />
                                 </el-select>
                             </el-col>
                             <el-col :xs="12" :sm="9" :md="7">
                                 <div class="rule-label">目标字段</div>
-                                <el-select v-model="element.targetFieldId" placeholder="目标字段"                                     class="w-full">
-                                    <el-option
-                                        v-for="f in getTargetFieldsForRule(element)"
-                                        :key="f.fieldId"
-                                        :label="`${f.title} (${f.fieldId})`"
-                                        :value="f.fieldId"
-                                    />
+                                <el-select v-model="element.targetFieldId" placeholder="目标字段" class="w-full">
+                                    <el-option v-for="f in getTargetFieldsForRule(element)" :key="f.fieldId"
+                                        :label="`${f.title} (${f.fieldId})`" :value="f.fieldId" />
                                 </el-select>
                             </el-col>
                             <el-col :xs="24" :sm="9" :md="13">
@@ -79,10 +73,13 @@
                                             inactive-text="不禁用" />
                                     </template>
                                     <template v-else-if="element.actionType === 'SET_PATTERN'">
-                                        <el-input v-model="element.actionValue.pattern" placeholder="正则表达式"                                             style="flex: 1">
+                                        <el-input v-model="element.actionValue.pattern" placeholder="正则表达式"
+                                            style="flex: 1">
                                             <template #append>
                                                 <el-button @click="openPatternPicker(element)" title="选择常用正则">
-                                                    <el-icon><Collection /></el-icon>
+                                                    <el-icon>
+                                                        <Collection />
+                                                    </el-icon>
                                                 </el-button>
                                             </template>
                                         </el-input>
@@ -96,13 +93,10 @@
                                     </template>
                                     <template v-else-if="element.actionType === 'OPTION'">
                                         <el-button type="primary" plain @click="openOptionDialog(element)"
-                                            style="width: 100%"
-                                        >
+                                            style="width: 100%">
                                             配置选项显隐
-                                            <el-tag
-                                                v-if="getOptionValueList(element.actionValue).length > 0"
-                                                type="info" size="small" style="margin-left: 8px"
-                                            >
+                                            <el-tag v-if="getOptionValueList(element.actionValue).length > 0"
+                                                type="info" size="small" style="margin-left: 8px">
                                                 已选 {{ getOptionValueList(element.actionValue).length }} 项
                                             </el-tag>
                                         </el-button>
@@ -110,15 +104,14 @@
                                     <template v-else-if="element.actionType === 'VALUE'">
                                         <template
                                             v-if="getTargetFieldType(element) === 'INPUT' || getTargetFieldType(element) === 'TEXTAREA'">
-                                            <el-input v-model="element.actionValue" placeholder="输入值"                                                 :maxlength="getTargetField(element)?.maxLength"
-                                                :show-word-limit="!!getTargetField(element)?.maxLength"
-                                            />
+                                            <el-input v-model="element.actionValue" placeholder="输入值"
+                                                :maxlength="getTargetField(element)?.maxLength"
+                                                :show-word-limit="!!getTargetField(element)?.maxLength" />
                                         </template>
                                         <template v-else-if="getTargetFieldType(element) === 'NUMBER'">
                                             <el-input-number v-model="element.actionValue"
                                                 :min="getTargetField(element)?.min ?? -Infinity"
-                                                :max="getTargetField(element)?.max ?? Infinity" :controls="false"
-                                                />
+                                                :max="getTargetField(element)?.max ?? Infinity" :controls="false" />
                                         </template>
                                         <template
                                             v-else-if="['SELECT', 'RADIO'].includes(getTargetFieldType(element) || '')">
@@ -129,7 +122,7 @@
                                         </template>
                                         <template
                                             v-else-if="['MULTISELECT', 'CHECKBOX'].includes(getTargetFieldType(element) || '')">
-                                            <el-select v-model="element.actionValue" placeholder="选择值"                                                 multiple>
+                                            <el-select v-model="element.actionValue" placeholder="选择值" multiple>
                                                 <el-option v-for="opt in getTargetField(element)?.options || []"
                                                     :key="opt.value" :label="opt.label" :value="opt.value" />
                                             </el-select>
@@ -139,13 +132,12 @@
                                                 inactive-text="关" />
                                         </template>
                                         <template v-else-if="getTargetFieldType(element) === 'DATE'">
-                                            <el-date-picker v-model="element.actionValue" type="date"
-                                                placeholder="选择日期" value-format="YYYY-MM-DD"
-                                            />
+                                            <el-date-picker v-model="element.actionValue" type="date" placeholder="选择日期"
+                                                value-format="YYYY-MM-DD" />
                                         </template>
                                         <template v-else-if="getTargetFieldType(element) === 'DATETIME'">
                                             <el-date-picker v-model="element.actionValue" type="datetime"
-                                                placeholder="选择日期时间"                                                 value-format="YYYY-MM-DD HH:mm:ss" />
+                                                placeholder="选择日期时间" value-format="YYYY-MM-DD HH:mm:ss" />
                                         </template>
                                         <template v-else-if="getTargetFieldType(element) === 'TIME'">
                                             <el-time-picker v-model="element.actionValue" placeholder="选择时间"
@@ -162,7 +154,7 @@
                                         <template v-else-if="getTargetFieldType(element) === 'SLIDER'">
                                             <el-slider v-model="element.actionValue"
                                                 :min="getTargetField(element)?.min ?? 0"
-                                                :max="getTargetField(element)?.max ?? 100"                                             />
+                                                :max="getTargetField(element)?.max ?? 100" />
                                         </template>
                                         <template v-else-if="getTargetFieldType(element) === 'RATE'">
                                             <el-rate v-model="element.actionValue"
@@ -171,11 +163,11 @@
                                         <template
                                             v-else-if="['CASCADER', 'MULTICASCADER'].includes(getTargetFieldType(element) || '')">
                                             <el-cascader v-model="element.actionValue"
-                                                :options="getTargetField(element)?.options || []"                                                 :props="{ multiple: getTargetFieldType(element) === 'MULTICASCADER' }"
-                                            />
+                                                :options="getTargetField(element)?.options || []"
+                                                :props="{ multiple: getTargetFieldType(element) === 'MULTICASCADER' }" />
                                         </template>
                                         <template v-else>
-                                            <el-input v-model="element.actionValue" placeholder="设定值"                                             />
+                                            <el-input v-model="element.actionValue" placeholder="设定值" />
                                         </template>
                                     </template>
                                     <template v-else>
@@ -190,24 +182,17 @@
         </draggable>
     </div>
 
-    <OptionVisibilityDialog
-        v-model="optionDialogVisible"
-        :options="optionDialogOptions"
-        :selected-values="optionDialogSelected"
-        :is-cascader-type="optionDialogIsCascader"
-        @submit="onOptionDialogSubmit"
-    />
+    <OptionVisibilityDialog v-model="optionDialogVisible" :options="optionDialogOptions"
+        :selected-values="optionDialogSelected" :is-cascader-type="optionDialogIsCascader"
+        @submit="onOptionDialogSubmit" />
 
-    <PatternPresetPicker
-        v-model="patternPickerVisible"
-        @select="({ pattern, patternTips }) => {
-            if (activePatternRuleUid == null) return
-            const rule = innerRules.find((r: InternalRule) => r._uid === activePatternRuleUid)
-            if (rule) {
-                rule.actionValue = { pattern, patternTips }
-            }
-        }"
-    />
+    <PatternPresetPicker v-model="patternPickerVisible" @select="({ pattern, patternTips }) => {
+        if (activePatternRuleUid == null) return
+        const rule = innerRules.find((r: InternalRule) => r._uid === activePatternRuleUid)
+        if (rule) {
+            rule.actionValue = { pattern, patternTips }
+        }
+    }" />
 </template>
 
 <script setup lang="ts">
@@ -417,6 +402,8 @@ const wrap = (rules: FormLinkageRule[]): InternalRule[] =>
             if (rule.actionValue === undefined || rule.actionValue === null) {
                 rule.actionValue = getDefaultValueForFieldType(target?.type)
             }
+            // 加载时规范化已有 actionValue，避免类型不匹配导致组件死循环
+            normalizeValueAction(rule)
         }
         // 确保 conditionTree 存在
         if (!rule.conditionTree || rule.conditionTree.length === 0) {

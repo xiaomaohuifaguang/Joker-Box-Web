@@ -15,13 +15,8 @@
 
                 <!-- 模式切换 -->
                 <div class="mode-pills">
-                    <span
-                        v-for="mode in conditionModes"
-                        :key="mode.value"
-                        class="mode-pill"
-                        :class="{ active: conditionMode === mode.value }"
-                        @click="setConditionMode(mode.value)"
-                    >
+                    <span v-for="mode in conditionModes" :key="mode.value" class="mode-pill"
+                        :class="{ active: conditionMode === mode.value }" @click="setConditionMode(mode.value)">
                         {{ mode.label }}
                     </span>
                 </div>
@@ -29,20 +24,11 @@
                 <!-- NATIVE 模式 -->
                 <template v-if="conditionMode === 'NATIVE'">
                     <el-form-item label="JUEL 表达式">
-                        <el-input
-                            v-model="nativeExpression"
-                            placeholder="${amount > 10000}"
-                            :disabled="readonly"
-                            style="font-family: monospace"
-                        />
+                        <el-input v-model="nativeExpression" placeholder="${amount > 10000}" :disabled="readonly"
+                            style="font-family: monospace" />
                     </el-form-item>
                     <div class="var-hint">
-                        <el-tag
-                            v-for="v in availableVars"
-                            :key="v"
-                            size="small"
-                            @click="insertVar(v)"
-                        >
+                        <el-tag v-for="v in availableVars" :key="v" size="small" @click="insertVar(v)">
                             {{ v }}
                         </el-tag>
                     </div>
@@ -53,37 +39,21 @@
                     <div class="condition-preview">
                         <ConditionSummary :rule-tree="gatewayCondition?.ruleTree" />
                     </div>
-                    <el-button
-                        type="primary"
-                        size="small"
-                        :disabled="readonly"
-                        @click="openConditionDialog"
-                    >
+                    <el-button type="primary" size="small" :disabled="readonly" @click="openConditionDialog">
                         配置条件
                     </el-button>
                 </template>
 
                 <!-- 默认走向 -->
                 <template v-else-if="conditionMode === 'DEFAULT'">
-                    <el-alert
-                        title="此连线已设为默认走向"
-                        description="当所有其他条件都不满足时，流程将自动走此分支"
-                        type="success"
-                        :closable="false"
-                        show-icon
-                    />
+                    <el-alert title="此连线已设为默认走向" description="当所有其他条件都不满足时，流程将自动走此分支" type="success" :closable="false"
+                        show-icon />
                 </template>
             </div>
 
             <!-- 弹窗 -->
-            <GatewayConditionDialog
-                v-model="dialogVisible"
-                :edge-data="edgeData"
-                :initial-data="gatewayCondition"
-                :form-fields="formFields"
-                :readonly="readonly"
-                @confirm="onDialogConfirm"
-            />
+            <GatewayConditionDialog v-model="dialogVisible" :edge-data="edgeData" :initial-data="gatewayCondition"
+                :form-fields="fields" :readonly="readonly" @confirm="onDialogConfirm" />
         </template>
     </el-form>
 </template>
@@ -204,7 +174,7 @@ const nativeExpression = computed({
 })
 
 const dialogVisible = ref(false)
-const formFields = ref<{ fieldId: string; title: string; groupName: string }[]>([])
+const fields = ref<{ fieldId: string; title: string; groupName: string }[]>([])
 
 const edgeData = computed(() => ({
     id: props.data.id,
@@ -231,7 +201,7 @@ function insertVar(variable: string) {
 const loadFormFields = async () => {
     const globalForm = props.nodeConfig?.globalFormBinding
     if (!globalForm?.formId) {
-        formFields.value = []
+        fields.value = []
         return
     }
     try {
@@ -241,8 +211,8 @@ const loadFormFields = async () => {
         })
         const fields: { fieldId: string; title: string; groupName: string }[] = []
         // 未分组字段
-        if (data?.formFields?.length) {
-            data.formFields.forEach((f: any) => {
+        if (data?.fields?.length) {
+            data.fields.forEach((f: any) => {
                 fields.push({ fieldId: f.fieldId, title: f.title, groupName: '未分组' })
             })
         }
@@ -255,9 +225,9 @@ const loadFormFields = async () => {
                 })
             })
         }
-        formFields.value = fields
+        fields.value = fields
     } catch (e) {
-        formFields.value = []
+        fields.value = []
     }
 }
 

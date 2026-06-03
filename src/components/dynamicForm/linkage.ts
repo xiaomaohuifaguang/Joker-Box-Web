@@ -2,6 +2,7 @@ import type {
     FieldRuntimeState,
     FormField,
     FormFieldGroup,
+    FormFieldOption,
     FormLinkageNode,
     FormLinkageRule,
     LinkageCondition,
@@ -15,6 +16,88 @@ import {
     VALID_LINKAGE_ACTIONS,
     VALID_LINKAGE_CONDITIONS,
 } from './types'
+
+// ------------------------------------------------------------------
+// computeFieldStates 缓存接口：由调用者传入，避免 previewStates / runtimeStates
+// 共享模块级缓存导致互相覆盖、缓存失效、无限重渲染
+// ------------------------------------------------------------------
+export interface ComputeFieldStatesCache {
+    fields?: FormField[]
+    linkages?: FormLinkageRule[]
+    formData?: Record<string, any>
+    result?: Record<string, FieldRuntimeState>
+}
+
+/** 判断值是否为"空"（null / undefined / '' / [] 均视为空） */
+const isEmptyish = (v: any): boolean => v === null || v === undefined || v === '' || (Array.isArray(v) && v.length === 0)
+
+/** 比较两个值在联动语义下是否等价 */
+const formDataValueEqual = (a: any, b: any): boolean => {
+    if (a === b) return true
+    if (isEmptyish(a) && isEmptyish(b)) return true
+    if (Array.isArray(a) && Array.isArray(b)) {
+        if (a.length !== b.length) return false
+        return a.every((v: any, i: number) => v === b[i])
+    }
+    return false
+}
+
+/** 比较两个数组的元素引用是否完全一致（用于 fields 缓存） */
+const sameArrayRef = (a: any[] | undefined, b: any[] | undefined): boolean => {
+    if (a === b) return true
+    if (!a || !b) return false
+    if (a.length !== b.length) return false
+    return a.every((item, i) => item === b[i])
+}
+
+/** 比较 formData 的键值对是否与缓存相同。
+ *  对空值和数组做"语义等价"比较，防止 Element Plus 组件
+ *  sync emit 全新空数组导致引用抖动、缓存失效、无限重渲染。
+ */
+const sameFormData = (a: Record<string, any>, b: Record<string, any>): boolean => {
+    if (a === b) return true
+    const keysA = Object.keys(a)
+    const keysB = Object.keys(b)
+    if (keysA.length !== keysB.length) return false
+    return keysA.every(k => formDataValueEqual(a[k], b[k]))
+}
+
+/** 比较两个 states 结果的内容是否完全一致，用于返回旧引用避免 Vue 下游重渲染 */
+/** 深度比较两个选项是否相同（OPTION 动作的 filterTree 每次创建新对象，引用比较会失败） */
+const sameOption = (a: FormFieldOption, b: FormFieldOption): boolean => {
+    if (a.label !== b.label || a.value !== b.value) return false
+    if (a.visible !== b.visible) return false
+    const ac = a.children, bc = b.children
+    if (!ac && !bc) return true
+    if (!ac || !bc) return false
+    if (ac.length !== bc.length) return false
+    return ac.every((c: FormFieldOption, i: number) => sameOption(c, bc[i]))
+}
+
+const sameStates = (
+    a: Record<string, FieldRuntimeState>,
+    b: Record<string, FieldRuntimeState>,
+    fields: FormField[],
+): boolean => {
+    for (const f of fields) {
+        const sa = a[f.fieldId]
+        const sb = b[f.fieldId]
+        if (!sa || !sb) return false
+        if (sa.visible !== sb.visible) return false
+        if (sa.required !== sb.required) return false
+        if (sa.disabled !== sb.disabled) return false
+        if (sa.pattern !== sb.pattern) return false
+        if (sa.patternTips !== sb.patternTips) return false
+        if (sa.span !== sb.span) return false
+        if (sa.value !== sb.value) return false
+        // options 深度比较
+        if (sa.options?.length !== sb.options?.length) return false
+        if (sa.options && sb.options) {
+            if (!sa.options.every((opt, i) => sameOption(opt, sb.options![i]))) return false
+        }
+    }
+    return true
+}
 
 const toNumber = (v: any): number => {
     if (v === null || v === undefined || v === '') return NaN
@@ -156,18 +239,36 @@ export const computeFieldStates = (
     fields: FormField[],
     linkages: FormLinkageRule[] | undefined,
     formData: Record<string, any>,
+    cache?: ComputeFieldStatesCache,
 ): Record<string, FieldRuntimeState> => {
+    // ---- 调用者级缓存：输入不变则直接返回旧引用，杜绝 Vue 误判变化 ----
+    // previewStates / runtimeStates 各自传入独立缓存，避免共享覆盖
+    if (cache && sameArrayRef(cache.fields, fields) && cache.linkages === linkages && cache.result) {
+        if (sameFormData(formData, cache.formData!)) {
+            return cache.result
+        }
+    }
+
     const states: Record<string, FieldRuntimeState> = {}
     fields.forEach(f => {
+        const needFilterOptions = f.options && f.options.length > 0 && f.options.some(opt => opt.visible === false)
         states[f.fieldId] = {
             visible: true,
             required: f.required === '1',
             disabled: !!(f as any)._readonly,
-            options: f.options?.filter(opt => opt.visible !== false) || f.options,
+            options: needFilterOptions ? f.options!.filter(opt => opt.visible !== false) : f.options,
         }
     })
 
-    if (!linkages || linkages.length === 0) return states
+    if (!linkages || linkages.length === 0) {
+        if (cache) {
+            cache.fields = fields
+            cache.linkages = linkages
+            cache.formData = formData
+            cache.result = states
+        }
+        return states
+    }
 
     const sorted = [...linkages].sort((a, b) => {
         const ao = a.sortOrder ?? 0
@@ -251,7 +352,18 @@ export const computeFieldStates = (
         }
     })
 
-    return states
+    if (cache) {
+        cache.fields = fields
+        cache.linkages = linkages
+        cache.formData = formData
+        // 若计算结果与缓存内容完全一致，返回旧引用，避免 Vue 下游 computed 连锁重渲染
+        if (cache.result && sameStates(cache.result, states, fields)) {
+            cache.result = cache.result
+        } else {
+            cache.result = states
+        }
+    }
+    return cache?.result ?? states
 }
 
 // 模板预校验：发布/保存前
@@ -618,100 +730,100 @@ export const validateTemplate = (
         }
     }
 
-    ;(linkages || []).forEach((r, idx) => {
-        // targetFieldId
-        if (!r.targetFieldId) {
-            errors.push(`联动规则 #${idx + 1} 缺少目标字段`)
-        } else if (!ids.has(r.targetFieldId)) {
-            errors.push(`联动规则 #${idx + 1} 的目标字段 "${r.targetFieldId}" 不存在`)
-        }
-
-        // actionType
-        if (!r.actionType) {
-            errors.push(`联动规则 #${idx + 1} 缺少动作类型`)
-        } else if (!VALID_LINKAGE_ACTIONS.includes(r.actionType)) {
-            errors.push(`联动规则 #${idx + 1} 动作类型无效: ${r.actionType}`)
-        }
-
-        // conditionTree
-        if (!r.conditionTree || r.conditionTree.length === 0) {
-            errors.push(`联动规则 #${idx + 1} 缺少条件配置`)
-        } else {
-            const root = r.conditionTree[0]
-            if (!root) {
-                errors.push(`联动规则 #${idx + 1} 条件树根节点不能为空`)
-            } else if (root.nodeType !== 'AND' && root.nodeType !== 'OR') {
-                errors.push(`联动规则 #${idx + 1} 条件树根节点必须是 AND 或 OR`)
+        ; (linkages || []).forEach((r, idx) => {
+            // targetFieldId
+            if (!r.targetFieldId) {
+                errors.push(`联动规则 #${idx + 1} 缺少目标字段`)
+            } else if (!ids.has(r.targetFieldId)) {
+                errors.push(`联动规则 #${idx + 1} 的目标字段 "${r.targetFieldId}" 不存在`)
             }
-            validateNode(root, idx, '.conditionTree[0]')
-        }
 
-        // actionValue 校验
-        if (r.actionType === 'SET_PATTERN' && r.actionValue) {
-            const pat = typeof r.actionValue === 'object' ? r.actionValue.pattern : r.actionValue
-            if (pat) {
-                try {
-                    new RegExp(String(pat))
-                } catch {
-                    errors.push(`联动规则 #${idx + 1} 的正则表达式无效`)
+            // actionType
+            if (!r.actionType) {
+                errors.push(`联动规则 #${idx + 1} 缺少动作类型`)
+            } else if (!VALID_LINKAGE_ACTIONS.includes(r.actionType)) {
+                errors.push(`联动规则 #${idx + 1} 动作类型无效: ${r.actionType}`)
+            }
+
+            // conditionTree
+            if (!r.conditionTree || r.conditionTree.length === 0) {
+                errors.push(`联动规则 #${idx + 1} 缺少条件配置`)
+            } else {
+                const root = r.conditionTree[0]
+                if (!root) {
+                    errors.push(`联动规则 #${idx + 1} 条件树根节点不能为空`)
+                } else if (root.nodeType !== 'AND' && root.nodeType !== 'OR') {
+                    errors.push(`联动规则 #${idx + 1} 条件树根节点必须是 AND 或 OR`)
                 }
+                validateNode(root, idx, '.conditionTree[0]')
             }
-        }
-        if (r.actionType === 'SET_SPAN' && r.actionValue !== undefined && r.actionValue !== null) {
-            let sp: number
-            if (typeof r.actionValue === 'object' && !Array.isArray(r.actionValue)) {
-                sp = Number((r.actionValue as Record<string, any>).span)
-            } else {
-                sp = Number(r.actionValue)
-            }
-            if (isNaN(sp) || sp < 1 || sp > 24) {
-                errors.push(`联动规则 #${idx + 1} 的 span 需在 1-24 之间`)
-            }
-        }
 
-        // OPTION actionValue 校验（值字符串数组）
-        if (r.actionType === 'OPTION') {
-            if (!Array.isArray(r.actionValue)) {
-                errors.push(`联动规则 #${idx + 1} 的选项必须是数组`)
-            } else {
-                (r.actionValue as any[]).forEach((val, valIdx) => {
-                    if (val === undefined || val === null || String(val).trim() === '') {
-                        errors.push(`联动规则 #${idx + 1} 选项值[${valIdx}] 不能为空`)
+            // actionValue 校验
+            if (r.actionType === 'SET_PATTERN' && r.actionValue) {
+                const pat = typeof r.actionValue === 'object' ? r.actionValue.pattern : r.actionValue
+                if (pat) {
+                    try {
+                        new RegExp(String(pat))
+                    } catch {
+                        errors.push(`联动规则 #${idx + 1} 的正则表达式无效`)
                     }
-                })
+                }
             }
-        }
+            if (r.actionType === 'SET_SPAN' && r.actionValue !== undefined && r.actionValue !== null) {
+                let sp: number
+                if (typeof r.actionValue === 'object' && !Array.isArray(r.actionValue)) {
+                    sp = Number((r.actionValue as Record<string, any>).span)
+                } else {
+                    sp = Number(r.actionValue)
+                }
+                if (isNaN(sp) || sp < 1 || sp > 24) {
+                    errors.push(`联动规则 #${idx + 1} 的 span 需在 1-24 之间`)
+                }
+            }
 
-        // VALUE actionValue 类型校验
-        if (r.actionType === 'VALUE' && r.actionValue !== undefined && r.actionValue !== null) {
-            const targetType = fieldIdToType.get(r.targetFieldId)
-            if (targetType) {
-                const v = r.actionValue
-                const isArrayType = ['CHECKBOX', 'MULTISELECT', 'MULTICASCADER', 'DATERANGE'].includes(targetType)
-                const isNumberType = ['NUMBER', 'SLIDER', 'RATE'].includes(targetType)
-                if (isArrayType && !Array.isArray(v)) {
-                    errors.push(`联动规则 #${idx + 1} 目标字段类型 "${targetType}" 的值应为数组`)
-                }
-                if (isNumberType && typeof v !== 'number') {
-                    errors.push(`联动规则 #${idx + 1} 目标字段类型 "${targetType}" 的值应为数字`)
-                }
-                if (targetType === 'SWITCH' && typeof v !== 'boolean') {
-                    errors.push(`联动规则 #${idx + 1} 目标字段类型 "SWITCH" 的值应为布尔值`)
+            // OPTION actionValue 校验（值字符串数组）
+            if (r.actionType === 'OPTION') {
+                if (!Array.isArray(r.actionValue)) {
+                    errors.push(`联动规则 #${idx + 1} 的选项必须是数组`)
+                } else {
+                    (r.actionValue as any[]).forEach((val, valIdx) => {
+                        if (val === undefined || val === null || String(val).trim() === '') {
+                            errors.push(`联动规则 #${idx + 1} 选项值[${valIdx}] 不能为空`)
+                        }
+                    })
                 }
             }
-        }
 
-        // 动作兼容性校验
-        if (r.targetFieldId && r.actionType && ids.has(r.targetFieldId)) {
-            const targetType = fieldIdToType.get(r.targetFieldId)
-            if (targetType) {
-                const valid = getValidActionsByFieldType(targetType as any)
-                if (!valid.includes(r.actionType)) {
-                    errors.push(`联动规则 #${idx + 1} 动作 "${r.actionType}" 不支持目标字段类型 "${targetType}"`)
+            // VALUE actionValue 类型校验
+            if (r.actionType === 'VALUE' && r.actionValue !== undefined && r.actionValue !== null) {
+                const targetType = fieldIdToType.get(r.targetFieldId)
+                if (targetType) {
+                    const v = r.actionValue
+                    const isArrayType = ['CHECKBOX', 'MULTISELECT', 'MULTICASCADER', 'DATERANGE'].includes(targetType)
+                    const isNumberType = ['NUMBER', 'SLIDER', 'RATE'].includes(targetType)
+                    if (isArrayType && !Array.isArray(v)) {
+                        errors.push(`联动规则 #${idx + 1} 目标字段类型 "${targetType}" 的值应为数组`)
+                    }
+                    if (isNumberType && typeof v !== 'number') {
+                        errors.push(`联动规则 #${idx + 1} 目标字段类型 "${targetType}" 的值应为数字`)
+                    }
+                    if (targetType === 'SWITCH' && typeof v !== 'boolean') {
+                        errors.push(`联动规则 #${idx + 1} 目标字段类型 "SWITCH" 的值应为布尔值`)
+                    }
                 }
             }
-        }
-    })
+
+            // 动作兼容性校验
+            if (r.targetFieldId && r.actionType && ids.has(r.targetFieldId)) {
+                const targetType = fieldIdToType.get(r.targetFieldId)
+                if (targetType) {
+                    const valid = getValidActionsByFieldType(targetType as any)
+                    if (!valid.includes(r.actionType)) {
+                        errors.push(`联动规则 #${idx + 1} 动作 "${r.actionType}" 不支持目标字段类型 "${targetType}"`)
+                    }
+                }
+            }
+        })
 
     return { ok: errors.length === 0, errors }
 }

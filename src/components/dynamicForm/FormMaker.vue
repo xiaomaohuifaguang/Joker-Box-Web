@@ -42,8 +42,8 @@
                                             <span class="field-index">#{{ index + 1 }}</span>
                                             <span class="field-title" :title="element.title">{{ element.title }}</span>
                                             <div class="card-actions">
-                                                <el-button type="primary" link :icon="Edit" @click="onEditField(element)"
-                                                    title="编辑">
+                                                <el-button type="primary" link :icon="Edit"
+                                                    @click="onEditField(element)" title="编辑">
                                                     <span class="action-text">编辑</span>
                                                 </el-button>
                                                 <el-button type="danger" link :icon="Delete"
@@ -51,13 +51,16 @@
                                                     <span class="action-text">删除</span>
                                                 </el-button>
                                                 <span class="field-drag-handle" title="拖拽排序">
-                                                    <el-icon><Rank /></el-icon>
+                                                    <el-icon>
+                                                        <Rank />
+                                                    </el-icon>
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="card-tags">
                                             <el-tag size="small" type="info">{{ typeLabel(element.type) }}</el-tag>
-                                            <el-tag size="small" type="danger" v-if="element.required === '1'">必填</el-tag>
+                                            <el-tag size="small" type="danger"
+                                                v-if="element.required === '1'">必填</el-tag>
                                             <el-tag size="small" type="warning">span {{ element.span ?? 24 }}</el-tag>
                                             <span class="field-id">{{ element.fieldId }}</span>
                                         </div>
@@ -75,30 +78,33 @@
                     <el-empty description="暂无字段，请先添加分组和字段" />
                 </div>
 
-                <draggable v-if="designGroups.length > 0" v-model="designGroups" item-key="id" handle=".group-drag-handle"
-                    @end="onGroupsSorted" class="groups-container">
+                <draggable v-if="designGroups.length > 0" v-model="designGroups" item-key="id"
+                    handle=".group-drag-handle" @end="onGroupsSorted" class="groups-container">
                     <template #item="{ element: group }">
                         <div class="group-section" :data-group-id="group.id">
                             <div class="group-header">
                                 <span class="group-drag-handle" title="拖拽调整分组顺序">
-                                    <el-icon><Rank /></el-icon>
+                                    <el-icon>
+                                        <Rank />
+                                    </el-icon>
                                 </span>
                                 <span class="group-name" :title="group.name">{{ group.name || group.id }}</span>
                                 <span class="group-count">({{ group.fields.length }} 个字段)</span>
                                 <div class="group-actions">
-                                    <el-button link type="primary" :icon="Plus"
-                                        @click="onAddField(group.id)" title="添加字段">
+                                    <el-button link type="primary" :icon="Plus" @click="onAddField(group.id)"
+                                        title="添加字段">
                                         <span class="action-text">添加字段</span>
                                     </el-button>
                                     <el-button link :icon="Edit" @click="onRenameGroup(group)" title="重命名">
                                         <span class="action-text">重命名</span>
                                     </el-button>
                                     <el-button link :icon="group.collapsed === '1' ? ArrowRight : ArrowDown"
-                                        @click="toggleGroupCollapsed(group)" :title="group.collapsed === '1' ? '默认展开' : '默认折叠'">
+                                        @click="toggleGroupCollapsed(group)"
+                                        :title="group.collapsed === '1' ? '默认展开' : '默认折叠'">
                                         <span class="action-text">{{ group.collapsed === '1' ? '展开' : '折叠' }}</span>
                                     </el-button>
-                                    <el-button link type="danger" :icon="Delete"
-                                        @click="onRemoveGroup(group.id)" title="删除分组">
+                                    <el-button link type="danger" :icon="Delete" @click="onRemoveGroup(group.id)"
+                                        title="删除分组">
                                         <span class="action-text">删除</span>
                                     </el-button>
                                 </div>
@@ -107,14 +113,16 @@
                                 <draggable v-model="group.fields" item-key="fieldId" handle=".field-drag-handle"
                                     @end="onFieldsSorted(group)" class="field-grid">
                                     <template #item="{ element, index }">
-                                        <div class="field-col" :style="{ width: `${((element.span || 24) / 24) * 100}%` }">
+                                        <div class="field-col"
+                                            :style="{ width: `${((element.span || 24) / 24) * 100}%` }">
                                             <div class="field-card" :class="cardSizeClass(element.span)">
                                                 <div class="card-head">
                                                     <span class="field-index">#{{ index + 1 }}</span>
-                                                    <span class="field-title" :title="element.title">{{ element.title }}</span>
+                                                    <span class="field-title" :title="element.title">{{ element.title
+                                                        }}</span>
                                                     <div class="card-actions">
-                                                        <el-button type="primary" link :icon="Edit" @click="onEditField(element)"
-                                                            title="编辑">
+                                                        <el-button type="primary" link :icon="Edit"
+                                                            @click="onEditField(element)" title="编辑">
                                                             <span class="action-text">编辑</span>
                                                         </el-button>
                                                         <el-button type="danger" link :icon="Delete"
@@ -122,14 +130,19 @@
                                                             <span class="action-text">删除</span>
                                                         </el-button>
                                                         <span class="field-drag-handle" title="拖拽排序">
-                                                            <el-icon><Rank /></el-icon>
+                                                            <el-icon>
+                                                                <Rank />
+                                                            </el-icon>
                                                         </span>
                                                     </div>
                                                 </div>
                                                 <div class="card-tags">
-                                                    <el-tag size="small" type="info">{{ typeLabel(element.type) }}</el-tag>
-                                                    <el-tag size="small" type="danger" v-if="element.required === '1'">必填</el-tag>
-                                                    <el-tag size="small" type="warning">span {{ element.span ?? 24 }}</el-tag>
+                                                    <el-tag size="small" type="info">{{ typeLabel(element.type)
+                                                        }}</el-tag>
+                                                    <el-tag size="small" type="danger"
+                                                        v-if="element.required === '1'">必填</el-tag>
+                                                    <el-tag size="small" type="warning">span {{ element.span ?? 24
+                                                        }}</el-tag>
                                                     <span class="field-id">{{ element.fieldId }}</span>
                                                 </div>
                                                 <div class="card-preview">
@@ -159,7 +172,8 @@
             </el-tab-pane>
 
             <el-tab-pane :label="`联动规则 (${linkageList.length})`" name="linkage">
-                <LinkageEditor :rules="linkageList" :fields="designFieldsWithLoadedOptions" @update:rules="linkageList = $event" />
+                <LinkageEditor :rules="linkageList" :fields="designFieldsWithLoadedOptions"
+                    @update:rules="linkageList = $event" />
             </el-tab-pane>
 
             <el-tab-pane label="表单预览" name="preview">
@@ -177,9 +191,9 @@
                             <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
                                 :required="previewStates[field.fieldId]?.required">
                                 <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
-                                    @update:model-value="previewData[field.fieldId] = $event"
+                                    @update:model-value="updatePreviewField(field.fieldId, $event)"
                                     :disabled="previewStates[field.fieldId]?.disabled"
-                                :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
+                                    :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
                                     :option-loading="remoteOptionLoading[field.fieldId]"
                                     :option-error="remoteOptionErrors[field.fieldId]"
                                     @retry-options="reloadFieldOptions(field)" />
@@ -194,15 +208,15 @@
                                 <el-row :gutter="16">
                                     <el-col v-for="field in g.fields" :key="field.fieldId"
                                         :span="previewStates[field.fieldId]?.span ?? field.span ?? 24">
-                                        <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
-                                            :required="previewStates[field.fieldId]?.required">
+                                        <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title"
+                                            :prop="field.fieldId" :required="previewStates[field.fieldId]?.required">
                                             <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
-                                                @update:model-value="previewData[field.fieldId] = $event"
+                                                @update:model-value="updatePreviewField(field.fieldId, $event)"
                                                 :disabled="previewStates[field.fieldId]?.disabled"
-                                :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
-                                    :option-loading="remoteOptionLoading[field.fieldId]"
-                                    :option-error="remoteOptionErrors[field.fieldId]"
-                                    @retry-options="reloadFieldOptions(field)" />
+                                                :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
+                                                :option-loading="remoteOptionLoading[field.fieldId]"
+                                                :option-error="remoteOptionErrors[field.fieldId]"
+                                                @retry-options="reloadFieldOptions(field)" />
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -216,9 +230,9 @@
                             <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
                                 :required="previewStates[field.fieldId]?.required">
                                 <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
-                                    @update:model-value="previewData[field.fieldId] = $event"
+                                    @update:model-value="updatePreviewField(field.fieldId, $event)"
                                     :disabled="previewStates[field.fieldId]?.disabled"
-                                :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
+                                    :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
                                     :option-loading="remoteOptionLoading[field.fieldId]"
                                     :option-error="remoteOptionErrors[field.fieldId]"
                                     @retry-options="reloadFieldOptions(field)" />
@@ -256,20 +270,19 @@
             <!-- 有分组时按折叠面板渲染 -->
             <template v-if="runtimeGroups.length > 0">
                 <el-collapse v-model="activeGroupIds" class="group-collapse">
-                    <el-collapse-item v-for="g in runtimeGroups" :key="g.id" :name="g.id"
-                        :title="g.name || g.id">
+                    <el-collapse-item v-for="g in runtimeGroups" :key="g.id" :name="g.id" :title="g.name || g.id">
                         <el-row :gutter="16">
                             <el-col v-for="field in g.fields" :key="field.fieldId"
                                 :span="runtimeStates[field.fieldId]?.span ?? field.span ?? 24">
-                                <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
-                                    :required="runtimeStates[field.fieldId]?.required">
+                                <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title"
+                                    :prop="field.fieldId" :required="runtimeStates[field.fieldId]?.required">
                                     <FieldRenderer :field="field" :model-value="modelValue[field.fieldId]"
                                         @update:model-value="onRuntimeFieldUpdate(field.fieldId, $event)"
                                         :disabled="type === 'view' || runtimeStates[field.fieldId]?.disabled"
-                                :runtime-options="getEffectiveOptions(field, runtimeStates[field.fieldId]?.options)"
-                            :option-loading="remoteOptionLoading[field.fieldId]"
-                            :option-error="remoteOptionErrors[field.fieldId]"
-                            @retry-options="reloadFieldOptions(field)" />
+                                        :runtime-options="getEffectiveOptions(field, runtimeStates[field.fieldId]?.options)"
+                                        :option-loading="remoteOptionLoading[field.fieldId]"
+                                        :option-error="remoteOptionErrors[field.fieldId]"
+                                        @retry-options="reloadFieldOptions(field)" />
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -297,7 +310,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick } from 'vue'
+import { computed, ref, watch, nextTick, shallowRef, triggerRef } from 'vue'
 import draggable from 'vuedraggable'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 import { Plus, Edit, Delete, Rank, InfoFilled, FolderAdd, ArrowDown, ArrowRight } from '@element-plus/icons-vue'
@@ -316,11 +329,11 @@ import {
     isApiOptionSource,
     parseSwitchValue,
 } from './types'
-import { computeFieldStates, validateTemplate, cleanConditionTree } from './linkage'
+import { computeFieldStates, validateTemplate, cleanConditionTree, type ComputeFieldStatesCache } from './linkage'
 import { collectRemoteOptionParamRefs, loadRemoteOptions } from './remoteOptions'
 
 interface Props {
-    formFields: FormField[]
+    fields: FormField[]
     linkageRules?: FormLinkageRule[]
     groups?: FormFieldGroup[]
     modelValue: Record<string, any>
@@ -341,13 +354,28 @@ const emit = defineEmits<{
 
 // 设计模式数据
 const fieldList = computed<FormField[]>({
-    get: () => props.formFields,
+    get: () => props.fields,
     set: v => emit('update:fields', v),
 })
 
+// 联动规则：内部维护一份本地状态，确保 LinkageEditor 修改后立即
+// 反映到 previewStates，不受父组件异步更新的影响
+const _internalLinkageRules = ref<FormLinkageRule[]>([])
+
+watch(
+    () => props.linkageRules,
+    (val) => {
+        _internalLinkageRules.value = val || []
+    },
+    { immediate: true },
+)
+
 const linkageList = computed<FormLinkageRule[]>({
-    get: () => props.linkageRules || [],
-    set: v => emit('update:rules', v),
+    get: () => _internalLinkageRules.value,
+    set: (v) => {
+        _internalLinkageRules.value = v
+        emit('update:rules', v)
+    },
 })
 
 const fieldIds = computed(() => [
@@ -355,20 +383,81 @@ const fieldIds = computed(() => [
     ...ungroupedFields.value.map(f => f.fieldId),
 ])
 
-const previewData = ref<Record<string, any>>({})
+const previewData = shallowRef<Record<string, any>>({})
+
+/** 判断值是否为"空"（null / undefined / '' 均视为空） */
+const isEmptyish = (v: any): boolean => v === null || v === undefined || v === ''
+
+/** 比较两个值是否实质相同（防止 Element Plus 组件规范化 emit 导致死循环）
+ *  - null / undefined / '' 互为等价（均为"空"）
+ *  - null / undefined / [] 互为等价（数组字段未赋值时，组件规范化为 []）
+ *  - 数字与数字字符串等价（"10" ≡ 10）
+ *  - 布尔与布尔字符串等价（"true" ≡ true）
+ */
+const isSameValue = (a: any, b: any): boolean => {
+    if (a === b) return true
+    // 两者均为"空"值 → 等价（含空数组，因为 Element Plus 多选组件会将 undefined 规范化为 []）
+    if (isEmptyish(a) && isEmptyish(b)) return true
+    // 一侧为空、另一侧为空数组 → 等价（MULTISELECT/CHECKBOX/MULTICASCADER 的常见规范化）
+    if ((isEmptyish(a) && Array.isArray(b) && b.length === 0) ||
+        (isEmptyish(b) && Array.isArray(a) && a.length === 0)) return true
+    // 数组内容比较
+    if (Array.isArray(a) && Array.isArray(b)) {
+        if (a.length !== b.length) return false
+        return a.every((v: any, i: number) => v === b[i])
+    }
+    // 数字 vs 数字字符串
+    if (typeof a === 'number' && typeof b === 'string') return Number.isFinite(a) && a === Number(b)
+    if (typeof b === 'number' && typeof a === 'string') return Number.isFinite(b) && Number(a) === b
+    // 布尔 vs 布尔字符串/数字
+    if (typeof a === 'boolean' && typeof b !== 'boolean') return a === parseSwitchValue(b)
+    if (typeof b === 'boolean' && typeof a !== 'boolean') return b === parseSwitchValue(a)
+    return false
+}
+
+/** 更新预览字段值（就地修改 + triggerRef，避免每次创建新对象引发连锁重渲染） */
+const updatePreviewField = (fieldId: string, value: any) => {
+    if (isSameValue(previewData.value[fieldId], value)) return
+    previewData.value[fieldId] = value ?? undefined
+    triggerRef(previewData)
+}
 
 const remoteOptions = ref<Record<string, any[]>>({})
 const remoteOptionLoading = ref<Record<string, boolean>>({})
 const remoteOptionErrors = ref<Record<string, string>>({})
 const remoteOptionRequestSeq = ref<Record<string, number>>({})
 
-const withLoadedOptions = (fields: FormField[]): FormField[] => fields.map(field => {
-    if (!isApiOptionSource(field)) return field
-    return { ...field, options: remoteOptions.value[field.fieldId] || [] }
-})
+// withLoadedOptions 缓存：避免 .map() 总是返回新数组引用导致 computeFieldStates 缓存失效
+// 每个调用点需要独立缓存，避免互相覆盖
+const createWithLoadedOptions = () => {
+    let cache: { fields: FormField[]; remoteOptions: Record<string, any[]>; result: FormField[] } | null = null
+    return (fields: FormField[]): FormField[] => {
+        if (cache && cache.fields === fields && cache.remoteOptions === remoteOptions.value) {
+            return cache.result
+        }
+        let changed = false
+        const result = fields.map(field => {
+            if (!isApiOptionSource(field)) return field
+            const loadedOptions = remoteOptions.value[field.fieldId] || []
+            if (field.options === loadedOptions) return field
+            if (field.options && loadedOptions && field.options.length === loadedOptions.length) {
+                const same = field.options.every((opt, i) => opt === loadedOptions[i])
+                if (same) return field
+            }
+            changed = true
+            return { ...field, options: loadedOptions }
+        })
+        const finalResult = changed ? result : fields
+        cache = { fields, remoteOptions: remoteOptions.value, result: finalResult }
+        return finalResult
+    }
+}
 
-const formFieldsWithLoadedOptions = computed(() => withLoadedOptions(props.formFields))
-const designFieldsWithLoadedOptions = computed(() => withLoadedOptions(fieldList.value))
+const withLoadedOptions = createWithLoadedOptions()
+const withLoadedOptionsForDesign = createWithLoadedOptions()
+
+const fieldsWithLoadedOptions = computed(() => withLoadedOptions(props.fields))
+const designFieldsWithLoadedOptions = computed(() => withLoadedOptionsForDesign(fieldList.value))
 
 const getRemoteOptionFormData = () => props.type === 'create' ? previewData.value : props.modelValue
 
@@ -416,9 +505,9 @@ const getRemoteOptionLoadKey = (field: FormField) => {
 }
 
 watch(
-    () => props.formFields.map(getRemoteOptionLoadKey),
+    () => props.fields.map(getRemoteOptionLoadKey),
     () => {
-        props.formFields.forEach(field => {
+        props.fields.forEach(field => {
             if (isApiOptionSource(field)) {
                 loadFieldOptions(field)
             }
@@ -452,8 +541,8 @@ const designGroups = ref<FormFieldGroup[]>([])
 const ungroupedFields = ref<FormField[]>([])
 
 const initDesignGroups = () => {
-    const allFields = props.formFields
-    // 未分组字段总是从 formFields 中提取（groupId 为空或不存在）
+    const allFields = props.fields
+    // 未分组字段总是从 fields 中提取（groupId 为空或不存在）
     const ungrouped = allFields.filter(f => !f.groupId).map((f, i) => ({ ...f, sort: i }))
 
     if (props.groups && props.groups.length > 0) {
@@ -476,9 +565,9 @@ const initDesignGroups = () => {
 }
 
 watch(
-    () => props.formFields.map(f => `${f.fieldId}:${f.options?.length}:${f.optionSource?.type}:${f.columns?.length}`),
+    () => props.fields.map(f => `${f.fieldId}:${f.options?.length}:${f.optionSource?.type}:${f.columns?.length}`),
     () => {
-        const allFields = props.formFields
+        const allFields = props.fields
         const ungrouped = allFields.filter(f => !f.groupId).map((f, i) => ({ ...f, sort: i }))
         ungroupedFields.value = ungrouped
         designGroups.value.forEach(g => {
@@ -492,7 +581,7 @@ watch(
 )
 
 watch(
-    () => ({ groupsLen: props.groups?.length ?? 0, fieldsLen: props.formFields.length }),
+    () => ({ groupsLen: props.groups?.length ?? 0, fieldsLen: props.fields.length }),
     initDesignGroups,
     { immediate: true },
 )
@@ -712,36 +801,56 @@ const toggleGroupCollapsed = (group: FormFieldGroup) => {
     emitGroups()
 }
 
-// 默认值初始化（仅在新增字段时把 defaultValue 写入 modelValue）
+// 默认值初始化（为所有字段填充类型安全默认值，避免 Element Plus 组件
+// 因 modelValue 为 undefined 而规范化为 []/false 等，导致 isSameValue 误判
+// "值变化"，触发 update:modelValue 反馈循环）
 const syncDefaultValues = (fields: FormField[]) => {
+    // 设计模式下由 previewData 管理数据，不需要写入 modelValue
+    if (props.type === 'create') return
     const next = { ...props.modelValue }
     let changed = false
     fields.forEach(field => {
         if (Object.prototype.hasOwnProperty.call(next, field.fieldId)) return
-        if (field.defaultValue === undefined || field.defaultValue === null) return
         switch (field.type) {
             case 'CHECKBOX':
             case 'MULTISELECT':
             case 'MULTICASCADER':
                 next[field.fieldId] = Array.isArray(field.defaultValue) ? field.defaultValue : []
                 break
+            case 'TABLE':
+            case 'UPLOAD':
+            case 'DATERANGE':
+                next[field.fieldId] = Array.isArray(field.defaultValue) ? field.defaultValue : []
+                break
             case 'NUMBER':
             case 'SLIDER':
             case 'RATE':
-                next[field.fieldId] = Number(field.defaultValue) || 0
+                if (field.defaultValue != null) {
+                    next[field.fieldId] = Number(field.defaultValue) || 0
+                }
+                // 无默认值时保持 undefined，ElInputNumber 原生支持 undefined
                 break
             case 'SWITCH':
+                // Switch 必须初始化为 boolean，否则 parseSwitchValue(undefined)=false
+                // 每次渲染产生新 boolean → isSameValue(undefined, false) 虽有兼容
+                // 但保持 formData 类型一致可避免缓存抖动
                 next[field.fieldId] = parseSwitchValue(field.defaultValue)
                 break
             default:
-                next[field.fieldId] = field.defaultValue
+                if (field.defaultValue !== undefined && field.defaultValue !== null) {
+                    next[field.fieldId] = field.defaultValue
+                }
+                break
         }
-        changed = true
+        // 仅当实际写入了非 undefined 值时标记 changed，避免向 formData 注入无意义 key
+        if (next[field.fieldId] !== undefined) {
+            changed = true
+        }
     })
     if (changed) emit('update:modelValue', next)
 }
 
-watch(() => props.formFields, list => syncDefaultValues(list), { immediate: true })
+watch(() => props.fields, list => syncDefaultValues(list), { immediate: true })
 
 // 默认展开所有分组
 watch(
@@ -768,85 +877,55 @@ watch(
 )
 
 // 运行模式：联动求值 + 校验规则
-const runtimeStates = computed(() =>
-    computeFieldStates(formFieldsWithLoadedOptions.value, props.linkageRules, props.modelValue),
-)
+const _runtimeStatesCache: ComputeFieldStatesCache = {}
+const runtimeStates = computed(() => {
+    // 设计模式下不需要计算运行时状态，返回空对象避免无效计算
+    if (props.type === 'create') return {} as Record<string, any>
+    return computeFieldStates(fieldsWithLoadedOptions.value, props.linkageRules, props.modelValue, _runtimeStatesCache)
+})
 
-/** 获取字段默认值（VALUE 恢复时用） */
-const getDefaultValue = (field: FormField): any => {
-    if (field.defaultValue === undefined || field.defaultValue === null) {
-        switch (field.type) {
-            case 'CHECKBOX':
-            case 'MULTISELECT':
-            case 'MULTICASCADER':
-            case 'TABLE':
-                return []
-            case 'NUMBER':
-            case 'SLIDER':
-            case 'RATE':
-                return 0
-            case 'SWITCH':
-                return false
-            default:
-                return null
-        }
-    }
-    switch (field.type) {
-        case 'CHECKBOX':
-        case 'MULTISELECT':
-        case 'MULTICASCADER':
-        case 'TABLE':
-            return Array.isArray(field.defaultValue) ? field.defaultValue : []
-        case 'NUMBER':
-        case 'SLIDER':
-        case 'RATE':
-            return Number(field.defaultValue) || 0
-        case 'SWITCH':
-            return parseSwitchValue(field.defaultValue)
-        default:
-            return field.defaultValue
-    }
-}
+/** VALUE 动作：仅在条件刚触发时自动填充，用户手动修改后不再覆盖 */
+let isApplyingRuntimeValues = false
+/** 记录哪些字段的 VALUE 条件当前处于触发态，用于检测"从不满足→满足"的转换 */
+const runtimeValueTriggered = new Map<string, boolean>()
 
-/** VALUE 动作：条件满足时自动填充，不满足时恢复默认值 */
 watch(
     runtimeStates,
-    (newStates, oldStates) => {
+    (newStates) => {
+        // 设计模式下由 previewData + previewStates 管理数据，不需要 runtime VALUE watch
+        if (props.type === 'create') return
+        if (isApplyingRuntimeValues) return
         const next = { ...props.modelValue }
         let changed = false
-        props.formFields.forEach(field => {
+        props.fields.forEach(field => {
             const newState = newStates[field.fieldId]
-            const oldState = oldStates?.[field.fieldId]
-            // VALUE 动作触发
-            if (newState?.value !== undefined) {
+            const isTriggered = newState?.value !== undefined
+            const wasTriggered = runtimeValueTriggered.get(field.fieldId) ?? false
+            runtimeValueTriggered.set(field.fieldId, !!isTriggered)
+
+            if (isTriggered && !wasTriggered) {
+                // 条件从不满足→满足：自动填充联动值
                 if (next[field.fieldId] !== newState.value) {
                     next[field.fieldId] = newState.value
                     changed = true
                 }
             }
-            // VALUE 动作恢复：之前被覆盖，现在没有了
-            else if (oldState?.value !== undefined) {
-                const defaultVal = getDefaultValue(field)
-                if (next[field.fieldId] !== defaultVal) {
-                    next[field.fieldId] = defaultVal
-                    changed = true
-                }
-            }
         })
         if (changed) {
+            isApplyingRuntimeValues = true
             emit('update:modelValue', next)
+            nextTick(() => { isApplyingRuntimeValues = false })
         }
     },
-    { deep: true },
 )
 
 const visibleFieldsForRuntime = computed(() =>
-    props.formFields.filter(f => runtimeStates.value[f.fieldId]?.visible !== false),
+    props.fields.filter(f => runtimeStates.value[f.fieldId]?.visible !== false),
 )
 
 // 未分组字段（运行时）
 const ungroupedRuntimeFields = computed(() =>
-    props.formFields
+    props.fields
         .filter(f => !f.groupId && runtimeStates.value[f.fieldId]?.visible !== false)
         .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)),
 )
@@ -945,7 +1024,7 @@ const buildItemRules = (field: FormField, requiredOverride: boolean, state?: { p
 
 const runtimeRules = computed<FormRules>(() => {
     const rules: FormRules = {}
-    props.formFields.forEach(field => {
+    props.fields.forEach(field => {
         const state = runtimeStates.value[field.fieldId]
         if (!state || !state.visible) return // 隐藏字段不参与校验
         const itemRules = buildItemRules(field, state.required, state)
@@ -955,6 +1034,7 @@ const runtimeRules = computed<FormRules>(() => {
 })
 
 const onRuntimeFieldUpdate = (fieldId: string, value: any) => {
+    if (isSameValue(props.modelValue[fieldId], value)) return
     emit('update:modelValue', { ...props.modelValue, [fieldId]: value })
 }
 
@@ -969,7 +1049,7 @@ const verify = async (): Promise<boolean> => {
         const failedFields = error && typeof error === 'object' ? Object.keys(error) : []
         const groupIdsToOpen = new Set<string>()
         for (const fieldId of failedFields) {
-            const field = props.formFields.find(f => f.fieldId === fieldId)
+            const field = props.fields.find(f => f.fieldId === fieldId)
             if (field?.groupId) {
                 groupIdsToOpen.add(field.groupId)
             }
@@ -990,66 +1070,122 @@ const verify = async (): Promise<boolean> => {
     }
 }
 
-// 设计模式：预览
+// 设计模式：预览数据初始化
 watch(
-    () => props.formFields,
-    fields => {
+    () => props.fields.map(f => `${f.fieldId}:${f.type}:${f.defaultValue}`),
+    () => {
+        const prev = previewData.value || {}
         const next: Record<string, any> = {}
-        fields.forEach(f => {
-            next[f.fieldId] = previewData.value[f.fieldId] ?? f.defaultValue ?? null
+        const seenIds = new Set<string>()
+        props.fields.forEach(f => {
+            seenIds.add(f.fieldId)
+            // 保留用户已输入的值，仅对新字段或无值字段初始化
+            if (f.fieldId in prev && prev[f.fieldId] !== undefined) {
+                next[f.fieldId] = prev[f.fieldId]
+                return
+            }
+            let val = f.defaultValue ?? null
+            // 空值按字段类型回退为安全默认值，避免 Element Plus 组件收到 null 后同步 emit 导致死循环
+            if (val === null || val === undefined) {
+                switch (f.type) {
+                    case 'NUMBER':
+                    case 'SLIDER':
+                    case 'RATE':
+                        val = 0
+                        break
+                    case 'SWITCH':
+                        val = false
+                        break
+                    case 'CHECKBOX':
+                    case 'MULTISELECT':
+                    case 'MULTICASCADER':
+                    case 'TABLE':
+                    case 'UPLOAD':
+                        val = []
+                        break
+                    default:
+                        val = undefined
+                }
+            } else {
+                switch (f.type) {
+                    case 'NUMBER':
+                    case 'SLIDER':
+                    case 'RATE': {
+                        const n = Number(val)
+                        val = Number.isFinite(n) ? n : 0
+                        break
+                    }
+                    case 'SWITCH':
+                        val = parseSwitchValue(val)
+                        break
+                    case 'CHECKBOX':
+                    case 'MULTISELECT':
+                    case 'MULTICASCADER':
+                    case 'TABLE':
+                    case 'UPLOAD':
+                        val = Array.isArray(val) ? val : []
+                        break
+                }
+            }
+            next[f.fieldId] = val
         })
+        // 保留已被删除字段的冗余数据不影响功能，但清理更干净
         previewData.value = next
     },
-    { immediate: true, deep: true },
+    { immediate: true },
 )
 
+const _previewStatesCache: ComputeFieldStatesCache = {}
 const previewStates = computed(() =>
-    computeFieldStates(formFieldsWithLoadedOptions.value, linkageList.value, previewData.value),
+    computeFieldStates(fieldsWithLoadedOptions.value, linkageList.value, previewData.value, _previewStatesCache),
 )
 
-/** 预览模式 VALUE 动作 */
+/** 预览模式 VALUE 动作：仅在条件刚触发时自动填充，用户手动修改后不再覆盖 */
+let isApplyingPreviewValues = false
+/** 记录哪些字段的 VALUE 条件当前处于触发态，用于检测"从不满足→满足"的转换 */
+const previewValueTriggered = new Map<string, boolean>()
+
 watch(
     previewStates,
-    (newStates, oldStates) => {
-        const next = { ...previewData.value }
+    (newStates) => {
+        if (isApplyingPreviewValues) return
         let changed = false
-        props.formFields.forEach(field => {
+        props.fields.forEach(field => {
             const newState = newStates[field.fieldId]
-            const oldState = oldStates?.[field.fieldId]
-            if (newState?.value !== undefined) {
-                if (next[field.fieldId] !== newState.value) {
-                    next[field.fieldId] = newState.value
-                    changed = true
-                }
-            } else if (oldState?.value !== undefined) {
-                const defaultVal = getDefaultValue(field)
-                if (next[field.fieldId] !== defaultVal) {
-                    next[field.fieldId] = defaultVal
+            const isTriggered = newState?.value !== undefined
+            const wasTriggered = previewValueTriggered.get(field.fieldId) ?? false
+            previewValueTriggered.set(field.fieldId, !!isTriggered)
+
+            if (isTriggered && !wasTriggered) {
+                // 条件从不满足→满足：自动填充联动值
+                if (!isSameValue(previewData.value[field.fieldId], newState.value)) {
+                    previewData.value[field.fieldId] = newState.value
                     changed = true
                 }
             }
         })
         if (changed) {
-            previewData.value = next
+            isApplyingPreviewValues = true
+            triggerRef(previewData)
+            nextTick(() => { isApplyingPreviewValues = false })
         }
     },
-    { deep: true },
 )
 
 const visibleFieldsForPreview = computed(() =>
-    props.formFields.filter(f => previewStates.value[f.fieldId]?.visible !== false),
+    props.fields.filter(f => previewStates.value[f.fieldId]?.visible !== false),
 )
 
 // 未分组字段（预览）
 const ungroupedPreviewFields = computed(() =>
-    props.formFields
+    props.fields
         .filter(f => !f.groupId && previewStates.value[f.fieldId]?.visible !== false)
         .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)),
 )
 
 const previewRules = computed<FormRules>(() => {
     const rules: FormRules = {}
-    props.formFields.forEach(field => {
+    props.fields.forEach(field => {
         const state = previewStates.value[field.fieldId]
         if (!state || !state.visible) return
         const itemRules = buildItemRules(field, state.required, state)
@@ -1082,7 +1218,7 @@ const verifyPreview = async () => {
         const failedFields = error && typeof error === 'object' ? Object.keys(error) : []
         const groupIdsToOpen = new Set<string>()
         for (const fieldId of failedFields) {
-            const field = props.formFields.find(f => f.fieldId === fieldId)
+            const field = props.fields.find(f => f.fieldId === fieldId)
             if (field?.groupId) {
                 groupIdsToOpen.add(field.groupId)
             }
@@ -1105,7 +1241,7 @@ const verifyPreview = async () => {
 
 // 模板预校验（外部用：发布前）
 const validateTpl = (name?: string) =>
-    validateTemplate(name ?? '_skip_', props.formFields, props.linkageRules)
+    validateTemplate(name ?? '_skip_', props.fields, props.linkageRules)
 
 defineExpose({
     verify, // 运行时表单校验

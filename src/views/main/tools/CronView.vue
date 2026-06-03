@@ -58,8 +58,8 @@
                                         <el-input-number v-model="builder[def.key].rangeFrom" :min="def.min"
                                             :max="def.max" size="default" controls-position="right" />
                                         <span class="rule-text">到</span>
-                                        <el-input-number v-model="builder[def.key].rangeTo" :min="def.min" :max="def.max"
-                                            size="default" controls-position="right" />
+                                        <el-input-number v-model="builder[def.key].rangeTo" :min="def.min"
+                                            :max="def.max" size="default" controls-position="right" />
                                         <span class="rule-text">{{ def.label }}</span>
                                     </div>
 

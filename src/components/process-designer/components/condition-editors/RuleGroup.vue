@@ -1,43 +1,19 @@
 <!-- src/components/process-designer/components/condition-editors/RuleGroup.vue -->
 <template>
-  <div
-    class="rule-group"
-    :class="[node.nodeType === 'AND' ? 'and-group' : 'or-group']"
-  >
+  <div class="rule-group" :class="[node.nodeType === 'AND' ? 'and-group' : 'or-group']">
     <div class="group-header">
       <span class="group-badge">{{ node.nodeType }}</span>
       <span class="group-desc">{{ node.nodeType === 'AND' ? '以下全部满足' : '以下任一满足' }}</span>
-      <el-button
-        v-if="!isRoot"
-        link
-        type="danger"
-        size="small"
-        :disabled="readonly"
-        :icon="Delete"
-        @click="$emit('delete')"
-      />
+      <el-button v-if="!isRoot" link type="danger" size="small" :disabled="readonly" :icon="Delete"
+        @click="$emit('delete')" />
     </div>
 
     <div class="group-body">
       <template v-for="(child, index) in sortedChildren" :key="index">
-        <ConditionRow
-          v-if="child.nodeType === 'CONDITION'"
-          :node="child"
-          :form-fields="formFields"
-          :readonly="readonly"
-          @update="(v) => updateChild(index, v)"
-          @delete="removeChild(index)"
-        />
-        <RuleGroup
-          v-else
-          :node="child"
-          :depth="depth + 1"
-          :is-root="false"
-          :form-fields="formFields"
-          :readonly="readonly"
-          @update="(v) => updateChild(index, v)"
-          @delete="removeChild(index)"
-        />
+        <ConditionRow v-if="child.nodeType === 'CONDITION'" :node="child" :form-fields="fields" :readonly="readonly"
+          @update="(v) => updateChild(index, v)" @delete="removeChild(index)" />
+        <RuleGroup v-else :node="child" :depth="depth + 1" :is-root="false" :form-fields="fields" :readonly="readonly"
+          @update="(v) => updateChild(index, v)" @delete="removeChild(index)" />
       </template>
     </div>
 
@@ -59,7 +35,7 @@ const props = defineProps<{
   node: RuleTreeNode
   depth: number
   isRoot: boolean
-  formFields?: { fieldId: string; title: string }[]
+  fields?: { fieldId: string; title: string }[]
   readonly?: boolean
 }>()
 

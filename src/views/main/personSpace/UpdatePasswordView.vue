@@ -4,7 +4,9 @@
     <div class="password-card">
       <div class="card-header">
         <div class="header-icon">
-          <el-icon><Lock /></el-icon>
+          <el-icon>
+            <Lock />
+          </el-icon>
         </div>
         <div class="header-text">
           <span class="header-title">修改密码</span>
@@ -13,38 +15,20 @@
       </div>
 
       <div class="card-body">
-        <el-form
-          ref="ruleFormRef"
-          :model="passwordInfo"
-          label-position="top"
-          :rules="rules"
-          @submit.prevent="submitForm(ruleFormRef)"
-          status-icon
-          class="password-form">
+        <el-form ref="ruleFormRef" :model="passwordInfo" label-position="top" :rules="rules"
+          @submit.prevent="submitForm(ruleFormRef)" status-icon class="password-form">
 
           <!-- 原密码 -->
           <el-form-item label="原密码" prop="oldPassword">
-            <el-input
-              v-model="passwordInfo.oldPassword"
-              type="password"
-              placeholder="请输入当前使用的密码"
-              show-password
-              clearable
-              :prefix-icon="Lock"
-              size="large">
+            <el-input v-model="passwordInfo.oldPassword" type="password" placeholder="请输入当前使用的密码" show-password
+              clearable :prefix-icon="Lock" size="large">
             </el-input>
           </el-form-item>
 
           <!-- 新密码 -->
           <el-form-item label="新密码" prop="newPassword">
-            <el-input
-              v-model="passwordInfo.newPassword"
-              type="password"
-              placeholder="8-16位字符，建议包含字母、数字和符号"
-              show-password
-              clearable
-              :prefix-icon="Key"
-              size="large">
+            <el-input v-model="passwordInfo.newPassword" type="password" placeholder="8-16位字符，建议包含字母、数字和符号"
+              show-password clearable :prefix-icon="Key" size="large">
             </el-input>
             <!-- 密码强度指示器 -->
             <div class="password-strength" v-if="passwordInfo.newPassword">
@@ -56,38 +40,33 @@
               </span>
             </div>
             <div class="password-tips" v-else>
-              <el-icon><InfoFilled /></el-icon>
+              <el-icon>
+                <InfoFilled />
+              </el-icon>
               <span>密码长度8-16位，建议包含字母、数字和特殊字符</span>
             </div>
           </el-form-item>
 
           <!-- 确认新密码 -->
           <el-form-item label="确认新密码" prop="newPasswordAgain">
-            <el-input
-              v-model="passwordInfo.newPasswordAgain"
-              type="password"
-              placeholder="请再次输入新密码"
-              show-password
-              clearable
-              :prefix-icon="CircleCheck"
-              size="large">
+            <el-input v-model="passwordInfo.newPasswordAgain" type="password" placeholder="请再次输入新密码" show-password
+              clearable :prefix-icon="CircleCheck" size="large">
             </el-input>
           </el-form-item>
 
           <!-- 提交按钮 -->
           <el-form-item class="submit-item">
-            <el-button
-              type="primary"
-              native-type="submit"
-              size="large"
-              :loading="loading"
-              class="submit-btn">
+            <el-button type="primary" native-type="submit" size="large" :loading="loading" class="submit-btn">
               <template #loading>
-                <el-icon class="is-loading"><Loading /></el-icon>
+                <el-icon class="is-loading">
+                  <Loading />
+                </el-icon>
                 <span>正在提交...</span>
               </template>
               <template #default>
-                <el-icon><Check /></el-icon>
+                <el-icon>
+                  <Check />
+                </el-icon>
                 <span>确认修改</span>
               </template>
             </el-button>
@@ -100,26 +79,34 @@
     <div class="tips-card">
       <div class="card-header">
         <div class="header-icon tips">
-          <el-icon><Warning /></el-icon>
+          <el-icon>
+            <Warning />
+          </el-icon>
         </div>
         <span class="header-title">安全提示</span>
       </div>
       <div class="card-body">
         <div class="tip-item">
           <div class="tip-icon">
-            <el-icon><CircleCheck /></el-icon>
+            <el-icon>
+              <CircleCheck />
+            </el-icon>
           </div>
           <span>避免使用生日、手机号等容易被猜到的密码</span>
         </div>
         <div class="tip-item">
           <div class="tip-icon">
-            <el-icon><CircleCheck /></el-icon>
+            <el-icon>
+              <CircleCheck />
+            </el-icon>
           </div>
           <span>建议每3个月更换一次密码</span>
         </div>
         <div class="tip-item">
           <div class="tip-icon">
-            <el-icon><CircleCheck /></el-icon>
+            <el-icon>
+              <CircleCheck />
+            </el-icon>
           </div>
           <span>不同网站使用不同的密码</span>
         </div>
@@ -253,6 +240,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 <style scoped lang="scss">
 .password-page {
+
   .password-card,
   .tips-card {
     background: var(--bg-container);
@@ -458,6 +446,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
 @media (max-width: 768px) {
   .password-page {
+
     .password-card,
     .tips-card {
       padding: 20px;

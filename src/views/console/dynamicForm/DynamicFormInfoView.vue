@@ -103,11 +103,10 @@
                                 <span class="header-title">表单字段配置</span>
                             </div>
                             <div class="card-body">
-                                <FormMaker :form-fields="info.formFields" :linkage-rules="info.linkageRules"
-                                    :groups="info.groups"
-                                    v-model="formData" :type="props.type === 'edit' ? 'create' : 'view'"
-                                    @update:fields="info.formFields = $event"
-                                    @update:groups="info.groups = $event"
+                                <FormMaker :fields="info.fields" :linkage-rules="info.linkageRules"
+                                    :groups="info.groups" v-model="formData"
+                                    :type="props.type === 'edit' ? 'create' : 'view'"
+                                    @update:fields="info.fields = $event" @update:groups="info.groups = $event"
                                     @update:rules="info.linkageRules = $event" />
                             </div>
                         </div>
@@ -160,7 +159,7 @@ interface InfoState {
     createBy: string
     createTime: string
     updateTime: string
-    formFields: FormField[]
+    fields: FormField[]
     linkageRules: FormLinkageRule[]
     groups?: FormFieldGroup[]
 }
@@ -175,7 +174,7 @@ const info = ref<InfoState>({
     createBy: '',
     createTime: '',
     updateTime: '',
-    formFields: [],
+    fields: [],
     linkageRules: []
 })
 
@@ -184,12 +183,12 @@ const queryInfo = async () => {
     try {
         const data = await http.post('/dynamicForm/info', { id: props.id })
         const groups = data.groups || []
-        const formFields = data.formFields || []
+        const fields = data.fields || []
         info.value = {
             ...data,
-            formFields: groups.length > 0
-                ? flattenGroups(groups).concat(formFields)
-                : formFields,
+            fields: groups.length > 0
+                ? flattenGroups(groups).concat(fields)
+                : fields,
             linkageRules: data.linkageRules || [],
             groups: groups.length > 0 ? groups : undefined,
         }
@@ -201,7 +200,7 @@ const queryInfo = async () => {
 const save = async () => {
     const check = validateTemplate(
         info.value.name,
-        info.value.formFields,
+        info.value.fields,
         info.value.linkageRules,
         info.value.groups,
         info.value.description,
@@ -216,7 +215,7 @@ const save = async () => {
         const payload = {
             ...info.value,
             groups: info.value.groups,
-            formFields: info.value.formFields.filter(f => !f.groupId),
+            fields: info.value.fields.filter(f => !f.groupId),
         }
         const result = await http.post('/dynamicForm/update', payload, { raw: true })
         alert(result.msg, 'success')

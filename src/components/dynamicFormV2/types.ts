@@ -1,4 +1,8 @@
-// 表单字段类型枚举
+// ============================================================
+// 动态表单 V2 —— 核心类型定义
+// ============================================================
+
+/** 字段类型（19 种） */
 export type FormFieldType =
     | 'INPUT'
     | 'NUMBER'
@@ -20,7 +24,7 @@ export type FormFieldType =
     | 'MULTICASCADER'
     | 'TABLE'
 
-// 表单项选项
+/** 选项结构 */
 export interface FormFieldOption {
     label: string
     value: string | number
@@ -28,13 +32,13 @@ export interface FormFieldOption {
     visible?: boolean
 }
 
+/** 表格列定义 */
 export interface FormTableColumn {
     key: string
     title: string
 }
 
-export type FormOptionSourceType = 'STATIC' | 'API'
-
+/** 远程选项映射 */
 export interface FormOptionMapping {
     listPath: string
     labelPath: string
@@ -42,15 +46,16 @@ export interface FormOptionMapping {
     childrenPath?: string
 }
 
+/** 远程选项数据源 */
 export interface FormOptionSource {
-    type?: FormOptionSourceType
+    type?: 'STATIC' | 'API'
     url?: string
     method?: 'GET' | 'POST'
     params?: Record<string, any>
     mapping?: FormOptionMapping
 }
 
-// 表单项配置（DynamicFormField）
+/** 字段定义 */
 export interface FormField {
     fieldId: string
     title: string
@@ -73,7 +78,7 @@ export interface FormField {
     optionSource?: FormOptionSource
 }
 
-// 字段分组（DynamicFormFieldGroup）
+/** 字段分组 */
 export interface FormFieldGroup {
     id: string
     name: string
@@ -83,7 +88,7 @@ export interface FormFieldGroup {
     fields: FormField[]
 }
 
-// 联动触发条件
+/** 联动条件运算符 */
 export type LinkageCondition =
     | 'EQ'
     | 'NE'
@@ -97,7 +102,7 @@ export type LinkageCondition =
     | 'NOT_EMPTY'
     | 'REGEX'
 
-// 联动动作
+/** 联动动作类型 */
 export type LinkageAction =
     | 'SHOW'
     | 'HIDE'
@@ -109,10 +114,14 @@ export type LinkageAction =
     | 'OPTION'
     | 'VALUE'
 
-// 联动节点类型
+/** 联动节点类型 */
 export type LinkageNodeType = 'AND' | 'OR' | 'CONDITION'
 
-// 联动条件节点（树形结构）
+/** 联动条件节点（树形结构）
+ * 注意：单一接口，非 discriminated union
+ * - AND/OR 节点：children 有值，trigger* 为 undefined
+ * - CONDITION 节点：trigger* 有值，children 为 undefined
+ */
 export interface FormLinkageNode {
     id?: string
     nodeType: LinkageNodeType
@@ -123,7 +132,7 @@ export interface FormLinkageNode {
     children?: FormLinkageNode[]
 }
 
-// 联动规则（DynamicFormLinkageRule）
+/** 联动规则 */
 export interface FormLinkageRule {
     id?: string
     name?: string
@@ -135,46 +144,7 @@ export interface FormLinkageRule {
     conditionTree: FormLinkageNode[]
 }
 
-// 兼容旧名称
-export type FormLinkage = FormLinkageRule
-
-/** 将 groups 扁平化为 fields（保留 groupId） */
-export const flattenGroups = (groups: FormFieldGroup[]): FormField[] => {
-    const list: FormField[] = []
-    groups.forEach(g => {
-        g.fields.forEach(f => {
-            list.push({ ...f, groupId: f.groupId ?? g.id })
-        })
-    })
-    return list
-}
-
-/** 将 fields 按 groupId 组装为 groups；无 groupId 时返回 undefined */
-export const buildGroups = (fields: FormField[]): FormFieldGroup[] | undefined => {
-    const map = new Map<string, { name: string; fields: FormField[]; sort: number }>()
-    const noGroup: FormField[] = []
-    fields.forEach(f => {
-        if (f.groupId) {
-            if (!map.has(f.groupId)) {
-                map.set(f.groupId, { name: f.groupId, fields: [], sort: 0 })
-            }
-            map.get(f.groupId)!.fields.push(f)
-        } else {
-            noGroup.push(f)
-        }
-    })
-    if (map.size === 0) return undefined
-    const groups: FormFieldGroup[] = []
-    map.forEach((item, id) => {
-        groups.push({ id, name: item.name, fields: item.fields, sort: item.sort })
-    })
-    if (noGroup.length > 0) {
-        groups.push({ id: '_default', name: '默认分组', fields: noGroup, sort: 9999 })
-    }
-    return groups.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
-}
-
-// 字段运行时状态（联动求值结果）
+/** 字段运行时状态 */
 export interface FieldRuntimeState {
     visible: boolean
     required: boolean
@@ -182,19 +152,20 @@ export interface FieldRuntimeState {
     pattern?: string
     patternTips?: string
     span?: number
-    options?: FormFieldOption[] // OPTION 动作覆盖的选项
-    value?: any // VALUE 动作建议的值
+    options?: FormFieldOption[]
+    value?: any
 }
 
-// 字段类型可选项（UI 用）
-/** 有效的字段类型集合 */
+// ============================================================
+// 常量与辅助函数
+// ============================================================
+
 export const VALID_FIELD_TYPES: FormFieldType[] = [
     'INPUT', 'NUMBER', 'SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX',
     'DATE', 'DATETIME', 'TIME', 'DATERANGE', 'SWITCH', 'TEXTAREA',
     'UPLOAD', 'RATE', 'SLIDER', 'COLOR', 'CASCADER', 'MULTICASCADER', 'TABLE',
 ]
 
-/** 需要 options 的字段类型 */
 export const OPTION_REQUIRED_TYPES: FormFieldType[] = [
     'SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER',
 ]
@@ -203,16 +174,10 @@ export const OPTION_SOURCE_FIELD_TYPES: FormFieldType[] = [
     'SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER',
 ]
 
-export const isApiOptionSource = (field: FormField): boolean => field.optionSource?.type === 'API'
-
-export const supportsOptionSource = (fieldType: FormFieldType): boolean => OPTION_SOURCE_FIELD_TYPES.includes(fieldType)
-
-/** 有效的联动动作集合 */
 export const VALID_LINKAGE_ACTIONS: LinkageAction[] = [
     'SHOW', 'HIDE', 'REQUIRED', 'DISABLED', 'ENABLED', 'SET_PATTERN', 'SET_SPAN', 'OPTION', 'VALUE',
 ]
 
-/** 有效的联动条件运算符集合 */
 export const VALID_LINKAGE_CONDITIONS: LinkageCondition[] = [
     'EQ', 'NE', 'GT', 'LT', 'GE', 'LE', 'IN', 'NOT_IN', 'EMPTY', 'NOT_EMPTY', 'REGEX',
 ]
@@ -240,27 +205,77 @@ export const FIELD_TYPE_OPTIONS: { label: string; value: FormFieldType }[] = [
 ]
 
 export const LINKAGE_CONDITION_OPTIONS: { label: string; value: LinkageCondition }[] = [
-    { label: '等于 (EQ)', value: 'EQ' },
-    { label: '不等于 (NE)', value: 'NE' },
-    { label: '大于 (GT)', value: 'GT' },
-    { label: '小于 (LT)', value: 'LT' },
-    { label: '大于等于 (GE)', value: 'GE' },
-    { label: '小于等于 (LE)', value: 'LE' },
-    { label: '包含 (IN)', value: 'IN' },
-    { label: '不包含 (NOT_IN)', value: 'NOT_IN' },
-    { label: '为空 (EMPTY)', value: 'EMPTY' },
-    { label: '不为空 (NOT_EMPTY)', value: 'NOT_EMPTY' },
-    { label: '正则 (REGEX)', value: 'REGEX' },
+    { label: '等于', value: 'EQ' },
+    { label: '不等于', value: 'NE' },
+    { label: '大于', value: 'GT' },
+    { label: '小于', value: 'LT' },
+    { label: '大于等于', value: 'GE' },
+    { label: '小于等于', value: 'LE' },
+    { label: '包含', value: 'IN' },
+    { label: '不包含', value: 'NOT_IN' },
+    { label: '为空', value: 'EMPTY' },
+    { label: '不为空', value: 'NOT_EMPTY' },
+    { label: '正则匹配', value: 'REGEX' },
 ]
 
-/** 根据字段类型返回联动条件的默认选项 */
+export const LINKAGE_ACTION_OPTIONS: { label: string; value: LinkageAction }[] = [
+    { label: '显示', value: 'SHOW' },
+    { label: '隐藏', value: 'HIDE' },
+    { label: '设为必填', value: 'REQUIRED' },
+    { label: '禁用', value: 'DISABLED' },
+    { label: '启用', value: 'ENABLED' },
+    { label: '修改正则', value: 'SET_PATTERN' },
+    { label: '修改宽度', value: 'SET_SPAN' },
+    { label: '修改选项', value: 'OPTION' },
+    { label: '设置值', value: 'VALUE' },
+]
+
+/** 将分组展平为字段数组 */
+export const flattenGroups = (groups: FormFieldGroup[]): FormField[] => {
+    const list: FormField[] = []
+    groups.forEach(g => {
+        g.fields.forEach(f => {
+            list.push({ ...f, groupId: f.groupId ?? g.id })
+        })
+    })
+    return list
+}
+
+/** 从平铺字段按 groupId 构建分组 */
+export const buildGroups = (fields: FormField[]): FormFieldGroup[] | undefined => {
+    const map = new Map<string, { name: string; fields: FormField[]; sort: number }>()
+    const noGroup: FormField[] = []
+    fields.forEach(f => {
+        if (f.groupId) {
+            if (!map.has(f.groupId)) {
+                map.set(f.groupId, { name: f.groupId, fields: [], sort: 0 })
+            }
+            map.get(f.groupId)!.fields.push(f)
+        } else {
+            noGroup.push(f)
+        }
+    })
+    if (map.size === 0) return undefined
+    const groups: FormFieldGroup[] = []
+    map.forEach((item, id) => {
+        groups.push({ id, name: item.name, fields: item.fields, sort: item.sort })
+    })
+    if (noGroup.length > 0) {
+        groups.push({ id: '_default', name: '默认分组', fields: noGroup, sort: 9999 })
+    }
+    return groups.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+}
+
+export const isApiOptionSource = (field: FormField): boolean => field.optionSource?.type === 'API'
+
+export const supportsOptionSource = (fieldType: FormFieldType): boolean =>
+    OPTION_SOURCE_FIELD_TYPES.includes(fieldType)
+
 export const getDefaultCondition = (fieldType: FormFieldType): LinkageCondition => {
-    if (fieldType === 'UPLOAD') return 'EMPTY'
-    if (fieldType === 'TABLE') return 'EMPTY'
+    if (fieldType === 'UPLOAD' || fieldType === 'TABLE') return 'EMPTY'
     return 'EQ'
 }
 
-/** 根据字段类型返回可用的联动条件 */
 export const getValidConditionsByFieldType = (fieldType: FormFieldType): LinkageCondition[] => {
     const numericOrDate: FormFieldType[] = ['NUMBER', 'SLIDER', 'RATE', 'DATE', 'DATETIME', 'TIME', 'DATERANGE']
     if (numericOrDate.includes(fieldType)) {
@@ -280,57 +295,28 @@ export const getValidConditionsByFieldType = (fieldType: FormFieldType): Linkage
     return ['EMPTY', 'NOT_EMPTY']
 }
 
-export const LINKAGE_ACTION_OPTIONS: { label: string; value: LinkageAction }[] = [
-    { label: '显示', value: 'SHOW' },
-    { label: '隐藏', value: 'HIDE' },
-    { label: '设为必填', value: 'REQUIRED' },
-    { label: '禁用', value: 'DISABLED' },
-    { label: '启用', value: 'ENABLED' },
-    { label: '修改正则', value: 'SET_PATTERN' },
-    { label: '修改宽度', value: 'SET_SPAN' },
-    { label: '修改选项', value: 'OPTION' },
-    { label: '设置值', value: 'VALUE' },
-]
-
-/** 根据字段类型返回可用的联动动作类型 */
 export const getValidActionsByFieldType = (fieldType: FormFieldType): LinkageAction[] => {
     const common: LinkageAction[] = ['SHOW', 'HIDE', 'REQUIRED', 'DISABLED', 'ENABLED', 'SET_SPAN']
     const withValue: LinkageAction[] = [...common, 'VALUE']
-    if (fieldType === 'UPLOAD') {
-        return common
-    }
-    if (fieldType === 'TABLE') {
-        return common
-    }
-    if (fieldType === 'INPUT' || fieldType === 'TEXTAREA') {
-        return [...withValue, 'SET_PATTERN']
-    }
+    if (fieldType === 'UPLOAD' || fieldType === 'TABLE') return common
+    if (fieldType === 'INPUT' || fieldType === 'TEXTAREA') return [...withValue, 'SET_PATTERN']
     if (['SELECT', 'MULTISELECT', 'RADIO', 'CHECKBOX', 'CASCADER', 'MULTICASCADER'].includes(fieldType)) {
         return [...withValue, 'OPTION']
     }
     return withValue
 }
 
-/** 根据动作类型返回默认的动作参数 */
 export const getActionParamDefault = (actionType: LinkageAction): any => {
     switch (actionType) {
         case 'REQUIRED':
-        case 'DISABLED':
-            return true
-        case 'SET_PATTERN':
-            return { pattern: '', patternTips: '' }
-        case 'SET_SPAN':
-            return { span: 24 }
-        case 'OPTION':
-            return []
-        case 'VALUE':
-            return undefined
-        default:
-            return undefined
+        case 'DISABLED': return true
+        case 'SET_PATTERN': return { pattern: '', patternTips: '' }
+        case 'SET_SPAN': return { span: 24 }
+        case 'OPTION': return []
+        default: return undefined
     }
 }
 
-/** 解析 SWITCH 类型值，兼容 boolean / string / number */
 export const parseSwitchValue = (v: any): boolean => {
     if (v === true || v === 'true' || v === '1' || v === 1) return true
     if (v === false || v === 'false' || v === '0' || v === 0) return false
