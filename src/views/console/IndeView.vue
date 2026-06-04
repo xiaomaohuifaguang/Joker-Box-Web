@@ -141,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, shallowRef } from 'vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import {
   Monitor, Clock, User, Document,
@@ -171,7 +171,7 @@ const updateTime = () => {
 };
 
 // 统计数据
-const statsData = ref([
+const statsData = shallowRef([
   { label: '用户总数', value: 1286, trend: 12.5, icon: User, type: 'primary' },
   { label: '表单数量', value: 48, trend: 8.3, icon: Document, type: 'success' },
   { label: 'AI 模型', value: 6, trend: -2.1, icon: Cpu, type: 'warning' },

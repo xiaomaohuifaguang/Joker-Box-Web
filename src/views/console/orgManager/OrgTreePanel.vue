@@ -43,8 +43,8 @@
                 :filter-node-method="filterNode"
                 class="org-tree">
                 <template #default="{ node, data }">
-                    <span class="tree-node" :class="{ 'is-selected': selectedId === data.id }">
-                        <span class="node-indicator" :style="{ background: selectedId === data.id ? 'var(--brand-primary)' : getNodeColor(node.level) }" />
+                    <span class="tree-node" :class="{ 'is-selected': String(selectedId) === String(data.id) }">
+                        <span class="node-indicator" :style="{ background: String(selectedId) === String(data.id) ? 'var(--brand-primary)' : getNodeColor(node.level) }" />
                         <span class="node-icon" :style="{ background: getNodeColor(node.level) }">
                             <el-icon><OfficeBuilding /></el-icon>
                         </span>
@@ -102,16 +102,16 @@ import type { ElTree } from 'element-plus'
 
 const props = defineProps<{
     treeData: any[]
-    selectedId: string
+    selectedId: string | number
     draggable?: boolean
 }>()
 
 const emit = defineEmits<{
-    (e: 'update:selectedId', id: string): void
+    (e: 'update:selectedId', id: string | number): void
     (e: 'update:selectedName', name: string): void
-    (e: 'add', parentId: string, parentName: string): void
-    (e: 'edit', id: string): void
-    (e: 'delete', id: string): void
+    (e: 'add', parentId: string | number, parentName: string): void
+    (e: 'edit', id: string | number): void
+    (e: 'delete', id: string | number): void
     (e: 'drop', draggingNode: any, dropNode: any, dropType: string): void
 }>()
 

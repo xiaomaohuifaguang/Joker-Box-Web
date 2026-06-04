@@ -10,9 +10,9 @@
     border-radius: var(--radius-lg) !important;
     padding: 14px 22px !important;
     min-width: 220px;
-    position: relative;
     overflow: hidden;
     background: var(--bg-container) !important;
+    border: 1px solid var(--border-base) !important;
     transition: all var(--duration-normal) var(--ease-out);
     animation: msgSlideIn var(--duration-slow) var(--ease-bounce);
     box-shadow: var(--shadow-md);
@@ -55,19 +55,19 @@
 }
 
 .custom-message.el-message--success .el-message__icon {
-    background: var(--success-bg);
+    background: color-mix(in srgb, var(--bg-container) 70%, var(--success));
 }
 
 .custom-message.el-message--warning .el-message__icon {
-    background: var(--warning-bg);
+    background: color-mix(in srgb, var(--bg-container) 70%, var(--warning));
 }
 
 .custom-message.el-message--error .el-message__icon {
-    background: var(--danger-bg);
+    background: color-mix(in srgb, var(--bg-container) 70%, var(--danger));
 }
 
 .custom-message.el-message--info .el-message__icon {
-    background: var(--info-bg);
+    background: color-mix(in srgb, var(--bg-container) 70%, var(--info));
 }
 
 .custom-message .el-message__closeBtn {
@@ -84,7 +84,7 @@
 
 /* ---------- 类型色（接入主题变量，纯色边框） ---------- */
 .custom-message.el-message--success {
-    background: var(--success-bg) !important;
+    background: color-mix(in srgb, var(--bg-container) 85%, var(--success)) !important;
     border: 1px solid var(--success-border) !important;
 }
 
@@ -94,10 +94,11 @@
 
 .custom-message.el-message--success .el-message__icon {
     color: var(--success);
+    background: var(--success-bg);
 }
 
 .custom-message.el-message--warning {
-    background: var(--warning-bg) !important;
+    background: color-mix(in srgb, var(--bg-container) 85%, var(--warning)) !important;
     border: 1px solid var(--warning-border) !important;
 }
 
@@ -107,10 +108,11 @@
 
 .custom-message.el-message--warning .el-message__icon {
     color: var(--warning);
+    background: var(--warning-bg);
 }
 
 .custom-message.el-message--error {
-    background: var(--danger-bg) !important;
+    background: color-mix(in srgb, var(--bg-container) 85%, var(--danger)) !important;
     border: 1px solid var(--danger-border) !important;
 }
 
@@ -120,10 +122,11 @@
 
 .custom-message.el-message--error .el-message__icon {
     color: var(--danger);
+    background: var(--danger-bg);
 }
 
 .custom-message.el-message--info {
-    background: var(--info-bg) !important;
+    background: color-mix(in srgb, var(--bg-container) 85%, var(--info)) !important;
     border: 1px solid var(--info-border) !important;
 }
 
@@ -133,6 +136,7 @@
 
 .custom-message.el-message--info .el-message__icon {
     color: var(--info);
+    background: var(--info-bg);
 }
 
 /* ---------- 入场动画 ---------- */

@@ -57,7 +57,7 @@ export const alert = (msg: string, type: 'info' | 'success' | 'warning' | 'error
         center: false,
         customClass: 'custom-message',
         grouping: true,
-        appendTo: document.body
+        zIndex: 9999
     })
 
 }

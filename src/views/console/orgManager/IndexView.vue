@@ -255,17 +255,17 @@ const handleTreeSelect = (name: string) => {
     queryPage()
 }
 
-const handleTreeAdd = (parentId: string, parentName: string) => {
-    selectOrg.value.parentId = parentId
+const handleTreeAdd = (parentId: string | number, parentName: string) => {
+    selectOrg.value.parentId = String(parentId)
     selectOrg.value.parentName = parentName
     dialogAdd.value = true
 }
 
-const handleTreeEdit = (id: string) => {
+const handleTreeEdit = (id: string | number) => {
     openDialog(id, 'edit')
 }
 
-const handleTreeDelete = (id: string) => {
+const handleTreeDelete = (id: string | number) => {
     confirmDelete(id)
 }
 
@@ -290,7 +290,7 @@ const queryOrgTree = async () => {
     const result = await http.post('/org/getOrgTree')
     orgTree.value = []
     orgTree.value.push(result);
-    selectOrg.value.parentId = orgTree.value[0]['id']
+    selectOrg.value.parentId = String(orgTree.value[0]['id'])
     selectOrg.value.parentName = orgTree.value[0]['name']
     queryPage();
 }
@@ -314,7 +314,7 @@ const queryPage = async () => {
     }
 }
 
-const remove = async (id: any) => {
+const remove = async (id: string | number) => {
     await http.post('/org/remove', {
         id: id
     })
@@ -349,7 +349,7 @@ const handleAddSuccess = () => {
     queryOrgTree()
 }
 
-const confirmDelete = (id: string) => {
+const confirmDelete = (id: string | number) => {
     confirm('提示', '确定删除该机构吗？', () => {
         remove(id)
     })

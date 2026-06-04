@@ -1,4 +1,5 @@
 <template>
+    <!-- <CodeDisplay :code="props" language="json" /> -->
     <!-- 设计模式：字段 / 联动 / 预览 -->
     <div v-if="type === 'create'" class="form-maker design">
         <el-tabs v-model="activeTab">
@@ -119,7 +120,7 @@
                                                 <div class="card-head">
                                                     <span class="field-index">#{{ index + 1 }}</span>
                                                     <span class="field-title" :title="element.title">{{ element.title
-                                                        }}</span>
+                                                    }}</span>
                                                     <div class="card-actions">
                                                         <el-button type="primary" link :icon="Edit"
                                                             @click="onEditField(element)" title="编辑">
@@ -138,11 +139,11 @@
                                                 </div>
                                                 <div class="card-tags">
                                                     <el-tag size="small" type="info">{{ typeLabel(element.type)
-                                                        }}</el-tag>
+                                                    }}</el-tag>
                                                     <el-tag size="small" type="danger"
                                                         v-if="element.required === '1'">必填</el-tag>
                                                     <el-tag size="small" type="warning">span {{ element.span ?? 24
-                                                        }}</el-tag>
+                                                    }}</el-tag>
                                                     <span class="field-id">{{ element.fieldId }}</span>
                                                 </div>
                                                 <div class="card-preview">
@@ -176,74 +177,30 @@
                     @update:rules="linkageList = $event" />
             </el-tab-pane>
 
-            <el-tab-pane label="表单预览" name="preview">
-                <div class="preview-tip">
-                    <el-icon>
-                        <InfoFilled />
-                    </el-icon>
-                    <span>这里实时反映字段配置和联动规则的运行效果。</span>
+            <el-tab-pane :label="`表单预览`" name="preview">
+                <div class="preview-container">
+                    <div class="preview-toolbar">
+                        <div class="preview-toolbar-left">
+                            <span class="preview-toolbar-title">📝 表单预览</span>
+                            <span class="preview-toolbar-desc">模拟实际填表，联动规则实时生效</span>
+                        </div>
+                        <div class="preview-toolbar-right">
+                            <el-button :icon="RefreshRight" @click="resetPreviewForm">
+                                重置
+                            </el-button>
+                            <el-button type="primary" :icon="Check" @click="verifyPreviewForm">
+                                验证输入
+                            </el-button>
+                        </div>
+                    </div>
+                    <div class="preview-form-wrapper">
+                        <FormMaker v-model="previewFormData" :fields="props.fields" :linkage-rules="props.linkageRules"
+                            :groups="props.groups" type="edit" ref="previewFormRef" />
+                    </div>
                 </div>
-                <el-form ref="previewFormRef" :model="previewData" :rules="previewRules" label-position="top">
-                    <!-- 未分组字段优先平铺渲染 -->
-                    <el-row v-if="ungroupedPreviewFields.length > 0" :gutter="16">
-                        <el-col v-for="field in ungroupedPreviewFields" :key="field.fieldId"
-                            :span="previewStates[field.fieldId]?.span ?? field.span ?? 24">
-                            <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
-                                :required="previewStates[field.fieldId]?.required">
-                                <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
-                                    @update:model-value="updatePreviewField(field.fieldId, $event)"
-                                    :disabled="previewStates[field.fieldId]?.disabled"
-                                    :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
-                                    :option-loading="remoteOptionLoading[field.fieldId]"
-                                    :option-error="remoteOptionErrors[field.fieldId]"
-                                    @retry-options="reloadFieldOptions(field)" />
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <!-- 分组字段 -->
-                    <template v-if="previewGroups.length > 0">
-                        <el-collapse v-model="activePreviewGroupIds" class="group-collapse">
-                            <el-collapse-item v-for="g in previewGroups" :key="g.id" :name="g.id"
-                                :title="g.name || g.id">
-                                <el-row :gutter="16">
-                                    <el-col v-for="field in g.fields" :key="field.fieldId"
-                                        :span="previewStates[field.fieldId]?.span ?? field.span ?? 24">
-                                        <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title"
-                                            :prop="field.fieldId" :required="previewStates[field.fieldId]?.required">
-                                            <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
-                                                @update:model-value="updatePreviewField(field.fieldId, $event)"
-                                                :disabled="previewStates[field.fieldId]?.disabled"
-                                                :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
-                                                :option-loading="remoteOptionLoading[field.fieldId]"
-                                                :option-error="remoteOptionErrors[field.fieldId]"
-                                                @retry-options="reloadFieldOptions(field)" />
-                                        </el-form-item>
-                                    </el-col>
-                                </el-row>
-                            </el-collapse-item>
-                        </el-collapse>
-                    </template>
-                    <!-- 既没有分组也没有未分组时保持扁平渲染 -->
-                    <el-row v-if="previewGroups.length === 0 && ungroupedPreviewFields.length === 0" :gutter="16">
-                        <el-col v-for="field in visibleFieldsForPreview" :key="field.fieldId"
-                            :span="previewStates[field.fieldId]?.span ?? field.span ?? 24">
-                            <el-form-item :id="`form-item-${field.fieldId}`" :label="field.title" :prop="field.fieldId"
-                                :required="previewStates[field.fieldId]?.required">
-                                <FieldRenderer :field="field" :model-value="previewData[field.fieldId]"
-                                    @update:model-value="updatePreviewField(field.fieldId, $event)"
-                                    :disabled="previewStates[field.fieldId]?.disabled"
-                                    :runtime-options="getEffectiveOptions(field, previewStates[field.fieldId]?.options)"
-                                    :option-loading="remoteOptionLoading[field.fieldId]"
-                                    :option-error="remoteOptionErrors[field.fieldId]"
-                                    @retry-options="reloadFieldOptions(field)" />
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                </el-form>
-                <el-button type="primary" plain @click="verifyPreview">验证表单</el-button>
             </el-tab-pane>
-        </el-tabs>
 
+        </el-tabs>
         <FieldEditor v-model="fieldEditorOpen" :field="editingField" :existing-field-ids="fieldIds"
             :groups="groupOptions" :default-group-id="fieldEditorDefaultGroupId" @submit="onFieldSubmit" />
     </div>
@@ -310,11 +267,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, shallowRef, triggerRef } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 import draggable from 'vuedraggable'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
-import { Plus, Edit, Delete, Rank, InfoFilled, FolderAdd, ArrowDown, ArrowRight } from '@element-plus/icons-vue'
-import { alert } from '@/utils'
+import { Plus, Edit, Delete, Rank, FolderAdd, ArrowDown, ArrowRight, RefreshRight, Check } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import FieldRenderer from './FieldRenderer.vue'
 import FieldEditor from './FieldEditor.vue'
 import LinkageEditor from './LinkageEditor.vue'
@@ -345,6 +302,60 @@ const props = withDefaults(defineProps<Props>(), {
     modelValue: () => ({}),
 })
 
+const previewFormData = ref<Record<string, any>>({})
+const previewFormRef = ref()
+
+const resetPreviewForm = () => {
+    const next: Record<string, any> = {}
+    props.fields.forEach(f => {
+        let val = f.defaultValue ?? null
+        if (val === null || val === undefined) {
+            switch (f.type) {
+                case 'NUMBER':
+                case 'SLIDER':
+                case 'RATE': val = 0; break
+                case 'SWITCH': val = false; break
+                case 'CHECKBOX':
+                case 'MULTISELECT':
+                case 'MULTICASCADER':
+                case 'TABLE':
+                case 'UPLOAD':
+                case 'DATERANGE': val = []; break
+                default: val = undefined
+            }
+        } else {
+            switch (f.type) {
+                case 'NUMBER':
+                case 'SLIDER':
+                case 'RATE': {
+                    const n = Number(val)
+                    val = Number.isFinite(n) ? n : 0
+                    break
+                }
+                case 'SWITCH': val = parseSwitchValue(val); break
+                case 'CHECKBOX':
+                case 'MULTISELECT':
+                case 'MULTICASCADER':
+                case 'TABLE':
+                case 'UPLOAD':
+                case 'DATERANGE': val = Array.isArray(val) ? val : []; break
+            }
+        }
+        next[f.fieldId] = val
+    })
+    previewFormData.value = next
+}
+
+const verifyPreviewForm = async () => {
+    if (!previewFormRef.value) return
+    const valid = await previewFormRef.value.verify()
+    if (valid) {
+        ElMessage.success('表单校验通过')
+    } else {
+        ElMessage.error('表单校验失败，请检查必填项')
+    }
+}
+
 const emit = defineEmits<{
     (e: 'update:fields', v: FormField[]): void
     (e: 'update:groups', v: FormFieldGroup[]): void
@@ -359,7 +370,7 @@ const fieldList = computed<FormField[]>({
 })
 
 // 联动规则：内部维护一份本地状态，确保 LinkageEditor 修改后立即
-// 反映到 previewStates，不受父组件异步更新的影响
+// 反映到 runtimeStates，不受父组件异步更新的影响
 const _internalLinkageRules = ref<FormLinkageRule[]>([])
 
 watch(
@@ -382,8 +393,6 @@ const fieldIds = computed(() => [
     ...flattenGroups(designGroups.value).map(f => f.fieldId),
     ...ungroupedFields.value.map(f => f.fieldId),
 ])
-
-const previewData = shallowRef<Record<string, any>>({})
 
 /** 判断值是否为"空"（null / undefined / '' 均视为空） */
 const isEmptyish = (v: any): boolean => v === null || v === undefined || v === ''
@@ -413,13 +422,6 @@ const isSameValue = (a: any, b: any): boolean => {
     if (typeof a === 'boolean' && typeof b !== 'boolean') return a === parseSwitchValue(b)
     if (typeof b === 'boolean' && typeof a !== 'boolean') return b === parseSwitchValue(a)
     return false
-}
-
-/** 更新预览字段值（就地修改 + triggerRef，避免每次创建新对象引发连锁重渲染） */
-const updatePreviewField = (fieldId: string, value: any) => {
-    if (isSameValue(previewData.value[fieldId], value)) return
-    previewData.value[fieldId] = value ?? undefined
-    triggerRef(previewData)
 }
 
 const remoteOptions = ref<Record<string, any[]>>({})
@@ -459,7 +461,7 @@ const withLoadedOptionsForDesign = createWithLoadedOptions()
 const fieldsWithLoadedOptions = computed(() => withLoadedOptions(props.fields))
 const designFieldsWithLoadedOptions = computed(() => withLoadedOptionsForDesign(fieldList.value))
 
-const getRemoteOptionFormData = () => props.type === 'create' ? previewData.value : props.modelValue
+const getRemoteOptionFormData = () => props.modelValue
 
 const loadFieldOptions = async (field: FormField) => {
     if (!isApiOptionSource(field)) return
@@ -532,8 +534,10 @@ const cardSizeClass = (span?: number): string => {
 }
 
 const activeTab = ref<'fields' | 'linkage' | 'preview'>('fields')
+watch(activeTab, (tab) => {
+    resetPreviewForm()
+})
 const activeGroupIds = ref<string[]>([])
-const activePreviewGroupIds = ref<string[]>([])
 const activeDesignGroupIds = ref<string[]>([])
 
 // 分组设计数据
@@ -805,7 +809,7 @@ const toggleGroupCollapsed = (group: FormFieldGroup) => {
 // 因 modelValue 为 undefined 而规范化为 []/false 等，导致 isSameValue 误判
 // "值变化"，触发 update:modelValue 反馈循环）
 const syncDefaultValues = (fields: FormField[]) => {
-    // 设计模式下由 previewData 管理数据，不需要写入 modelValue
+    // 设计模式下不写入 modelValue
     if (props.type === 'create') return
     const next = { ...props.modelValue }
     let changed = false
@@ -863,18 +867,6 @@ watch(
     { immediate: true },
 )
 
-// 预览模式：根据 collapsed 属性决定默认展开/折叠
-watch(
-    () => props.groups,
-    groups => {
-        if (groups && groups.length > 0) {
-            activePreviewGroupIds.value = groups
-                .filter(g => g.collapsed !== '1')
-                .map(g => g.id)
-        }
-    },
-    { immediate: true },
-)
 
 // 运行模式：联动求值 + 校验规则
 const _runtimeStatesCache: ComputeFieldStatesCache = {}
@@ -892,7 +884,7 @@ const runtimeValueTriggered = new Map<string, boolean>()
 watch(
     runtimeStates,
     (newStates) => {
-        // 设计模式下由 previewData + previewStates 管理数据，不需要 runtime VALUE watch
+        // 设计模式下不需要 runtime VALUE watch
         if (props.type === 'create') return
         if (isApplyingRuntimeValues) return
         const next = { ...props.modelValue }
@@ -1070,175 +1062,6 @@ const verify = async (): Promise<boolean> => {
     }
 }
 
-// 设计模式：预览数据初始化
-watch(
-    () => props.fields.map(f => `${f.fieldId}:${f.type}:${f.defaultValue}`),
-    () => {
-        const prev = previewData.value || {}
-        const next: Record<string, any> = {}
-        const seenIds = new Set<string>()
-        props.fields.forEach(f => {
-            seenIds.add(f.fieldId)
-            // 保留用户已输入的值，仅对新字段或无值字段初始化
-            if (f.fieldId in prev && prev[f.fieldId] !== undefined) {
-                next[f.fieldId] = prev[f.fieldId]
-                return
-            }
-            let val = f.defaultValue ?? null
-            // 空值按字段类型回退为安全默认值，避免 Element Plus 组件收到 null 后同步 emit 导致死循环
-            if (val === null || val === undefined) {
-                switch (f.type) {
-                    case 'NUMBER':
-                    case 'SLIDER':
-                    case 'RATE':
-                        val = 0
-                        break
-                    case 'SWITCH':
-                        val = false
-                        break
-                    case 'CHECKBOX':
-                    case 'MULTISELECT':
-                    case 'MULTICASCADER':
-                    case 'TABLE':
-                    case 'UPLOAD':
-                        val = []
-                        break
-                    default:
-                        val = undefined
-                }
-            } else {
-                switch (f.type) {
-                    case 'NUMBER':
-                    case 'SLIDER':
-                    case 'RATE': {
-                        const n = Number(val)
-                        val = Number.isFinite(n) ? n : 0
-                        break
-                    }
-                    case 'SWITCH':
-                        val = parseSwitchValue(val)
-                        break
-                    case 'CHECKBOX':
-                    case 'MULTISELECT':
-                    case 'MULTICASCADER':
-                    case 'TABLE':
-                    case 'UPLOAD':
-                        val = Array.isArray(val) ? val : []
-                        break
-                }
-            }
-            next[f.fieldId] = val
-        })
-        // 保留已被删除字段的冗余数据不影响功能，但清理更干净
-        previewData.value = next
-    },
-    { immediate: true },
-)
-
-const _previewStatesCache: ComputeFieldStatesCache = {}
-const previewStates = computed(() =>
-    computeFieldStates(fieldsWithLoadedOptions.value, linkageList.value, previewData.value, _previewStatesCache),
-)
-
-/** 预览模式 VALUE 动作：仅在条件刚触发时自动填充，用户手动修改后不再覆盖 */
-let isApplyingPreviewValues = false
-/** 记录哪些字段的 VALUE 条件当前处于触发态，用于检测"从不满足→满足"的转换 */
-const previewValueTriggered = new Map<string, boolean>()
-
-watch(
-    previewStates,
-    (newStates) => {
-        if (isApplyingPreviewValues) return
-        let changed = false
-        props.fields.forEach(field => {
-            const newState = newStates[field.fieldId]
-            const isTriggered = newState?.value !== undefined
-            const wasTriggered = previewValueTriggered.get(field.fieldId) ?? false
-            previewValueTriggered.set(field.fieldId, !!isTriggered)
-
-            if (isTriggered && !wasTriggered) {
-                // 条件从不满足→满足：自动填充联动值
-                if (!isSameValue(previewData.value[field.fieldId], newState.value)) {
-                    previewData.value[field.fieldId] = newState.value
-                    changed = true
-                }
-            }
-        })
-        if (changed) {
-            isApplyingPreviewValues = true
-            triggerRef(previewData)
-            nextTick(() => { isApplyingPreviewValues = false })
-        }
-    },
-)
-
-const visibleFieldsForPreview = computed(() =>
-    props.fields.filter(f => previewStates.value[f.fieldId]?.visible !== false),
-)
-
-// 未分组字段（预览）
-const ungroupedPreviewFields = computed(() =>
-    props.fields
-        .filter(f => !f.groupId && previewStates.value[f.fieldId]?.visible !== false)
-        .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)),
-)
-
-const previewRules = computed<FormRules>(() => {
-    const rules: FormRules = {}
-    props.fields.forEach(field => {
-        const state = previewStates.value[field.fieldId]
-        if (!state || !state.visible) return
-        const itemRules = buildItemRules(field, state.required, state)
-        if (itemRules.length > 0) rules[field.fieldId] = itemRules
-    })
-    return rules
-})
-
-const previewGroups = computed(() => {
-    if (!props.groups || props.groups.length === 0) return []
-    return props.groups
-        .map(g => ({
-            ...g,
-            fields: g.fields
-                .filter(f => previewStates.value[f.fieldId]?.visible !== false)
-                .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)),
-        }))
-        .filter(g => g.fields.length > 0)
-        .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
-})
-
-const previewFormRef = ref<FormInstance>()
-
-const verifyPreview = async () => {
-    if (!previewFormRef.value) return
-    try {
-        await previewFormRef.value.validate()
-        alert('表单校验通过', 'success')
-    } catch (error: any) {
-        const failedFields = error && typeof error === 'object' ? Object.keys(error) : []
-        const groupIdsToOpen = new Set<string>()
-        for (const fieldId of failedFields) {
-            const field = props.fields.find(f => f.fieldId === fieldId)
-            if (field?.groupId) {
-                groupIdsToOpen.add(field.groupId)
-            }
-        }
-        if (groupIdsToOpen.size > 0) {
-            activePreviewGroupIds.value = [...new Set([...activePreviewGroupIds.value, ...groupIdsToOpen])]
-        }
-        const firstFieldId = failedFields[0]
-        if (firstFieldId) {
-            nextTick(() => {
-                const el = document.getElementById(`form-item-${firstFieldId}`)
-                if (el) {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                }
-            })
-        }
-        alert('表单校验失败', 'error')
-    }
-}
-
 // 模板预校验（外部用：发布前）
 const validateTpl = (name?: string) =>
     validateTemplate(name ?? '_skip_', props.fields, props.linkageRules)
@@ -1252,7 +1075,7 @@ defineExpose({
 
 <style scoped lang="scss">
 .form-maker {
-    width: 100%;
+    // width: 100%;
 }
 
 .design {
@@ -1651,6 +1474,59 @@ defineExpose({
     :deep(.sortable-chosen) {
         cursor: grabbing;
     }
+
+    /* ========== 表单预览 tab ========== */
+    .preview-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .preview-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        background: var(--el-bg-color);
+        border: 1px solid var(--el-border-color-light);
+        border-radius: 12px;
+        box-shadow: var(--el-box-shadow-lighter);
+        flex-wrap: wrap;
+        gap: 12px;
+
+        .preview-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex-wrap: wrap;
+        }
+
+        .preview-toolbar-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--el-text-color-primary);
+        }
+
+        .preview-toolbar-desc {
+            font-size: 12px;
+            color: var(--el-text-color-secondary);
+        }
+
+        .preview-toolbar-right {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+    }
+
+    // .preview-form-wrapper {
+    //     background: var(--el-bg-color);
+    //     border: 1px solid var(--el-border-color-light);
+    //     border-radius: 12px;
+    //     padding: 20px;
+    //     box-shadow: var(--el-box-shadow-lighter);
+    // }
 }
 
 .group-collapse {
@@ -1701,20 +1577,11 @@ defineExpose({
     }
 }
 
-.preview-tip {
-    color: var(--el-text-color-secondary);
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 12px;
-}
-
 /* ============================================================
    运行时表单（填表 / 查看模式）
    ============================================================ */
 .runtime {
-    padding: var(--space-lg);
+    // padding: var(--space-lg);
 
     :deep(.el-form-item) {
         margin-bottom: var(--space-lg);

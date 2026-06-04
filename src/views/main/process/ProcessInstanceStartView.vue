@@ -259,6 +259,7 @@ const submit = async (): Promise<boolean> => {
 
   const result = await http.post('/processInstance/start', {
     processDefinitionId: props.def.id,
+    processInstanceId: draftId.value,
     title: formTitle.value || undefined,
     nodeFormData: nodeFormData.value,
     globalFormData: globalFormData.value,
