@@ -50,6 +50,9 @@ export interface FormOptionSource {
     mapping?: FormOptionMapping
 }
 
+// 字段权限类型
+export type FieldPermission = 'VISIBLE' | 'READONLY' | 'HIDDEN' | 'EDITABLE' | 'REQUIRED'
+
 // 表单项配置（DynamicFormField）
 export interface FormField {
     fieldId: string
@@ -69,6 +72,7 @@ export interface FormField {
     sort?: number
     groupId?: string
     props?: Record<string, any>
+    permission?: FieldPermission
     columns?: FormTableColumn[]
     optionSource?: FormOptionSource
 }
@@ -336,3 +340,17 @@ export const parseSwitchValue = (v: any): boolean => {
     if (v === false || v === 'false' || v === '0' || v === 0) return false
     return !!v
 }
+
+/** 有效的字段权限集合 */
+export const VALID_PERMISSIONS: FieldPermission[] = [
+    'VISIBLE', 'READONLY', 'HIDDEN', 'EDITABLE', 'REQUIRED',
+]
+
+/** 字段权限选项（UI 用） */
+export const PERMISSION_OPTIONS: { label: string; value: FieldPermission }[] = [
+    { label: '可见（取原表单配置）', value: 'VISIBLE' },
+    { label: '只读', value: 'READONLY' },
+    { label: '隐藏', value: 'HIDDEN' },
+    { label: '可编辑', value: 'EDITABLE' },
+    { label: '必填', value: 'REQUIRED' },
+]

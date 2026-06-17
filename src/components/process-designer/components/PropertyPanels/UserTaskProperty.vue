@@ -1,5 +1,8 @@
 <template>
     <el-form label-position="top" :model="data">
+        <el-form-item label="ID">
+            <el-input :model-value="data.id" disabled />
+        </el-form-item>
         <el-form-item label="类型">
             <el-select v-model="data.type" disabled>
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />

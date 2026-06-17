@@ -8,12 +8,12 @@ import { computed } from 'vue'
 import type { RuleTreeNode } from '../types/gateway-condition'
 
 const props = defineProps<{
-  ruleTree?: RuleTreeNode
+  ruleTree?: RuleTreeNode[]
 }>()
 
 const summaryText = computed(() => {
-  if (!props.ruleTree) return '未配置条件'
-  return buildNodeText(props.ruleTree)
+  if (!props.ruleTree || props.ruleTree.length === 0) return '未配置条件'
+  return props.ruleTree.map(buildNodeText).join(' AND ')
 })
 
 function buildNodeText(node: RuleTreeNode): string {

@@ -1,4 +1,5 @@
 import type {
+    FieldPermission,
     FieldRuntimeState,
     FormField,
     FormFieldGroup,
@@ -349,6 +350,38 @@ export const computeFieldStates = (
                 targetState.value = rule.actionValue
                 break
             }
+        }
+    })
+
+    // ---- 字段权限覆盖：permission 优先于联动结果 ----
+    // VISIBLE / 空 → 取联动计算后的原状态（不覆盖）
+    // HIDDEN   → 强制隐藏
+    // READONLY → 强制可见 + 禁用
+    // EDITABLE → 强制可见 + 可编辑
+    // REQUIRED → 强制可见 + 可编辑 + 必填
+    fields.forEach(f => {
+        const perm = f.permission as FieldPermission | undefined
+        if (!perm || perm === 'VISIBLE') return
+        const s = states[f.fieldId]
+        if (!s) return
+        switch (perm) {
+            case 'HIDDEN':
+                s.visible = false
+                s.required = false
+                break
+            case 'READONLY':
+                s.visible = true
+                s.disabled = true
+                break
+            case 'EDITABLE':
+                s.visible = true
+                s.disabled = false
+                break
+            case 'REQUIRED':
+                s.visible = true
+                s.disabled = false
+                s.required = true
+                break
         }
     })
 

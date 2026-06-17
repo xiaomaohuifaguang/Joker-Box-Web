@@ -189,6 +189,45 @@ const globalFormRef = ref<InstanceType<typeof FormMaker> | null>(null)
 const globalCollapsed = ref(false)
 const nodeCollapsed = ref(false)
 
+// 收集表单提交数据（按运行时可见态过滤隐藏字段）
+const collectFormData = (
+  formRef: InstanceType<typeof FormMaker> | null,
+  data: Record<string, any>,
+): Record<string, any> => {
+  if (!formRef) return {}
+  const states = (formRef as any).runtimeStates?.value as Record<string, { visible: boolean }> | undefined
+  if (!states) return { ...data }
+  const result: Record<string, any> = {}
+  Object.keys(data).forEach((k) => {
+    if (states[k]?.visible !== false) result[k] = data[k]
+  })
+  return result
+}
+
+// 构建 pass/reject/back 通用的表单提交字段
+const buildFormPayload = () => {
+  const payload: Record<string, any> = {}
+  if (globalForm.value) payload.globalFormData = collectFormData(globalFormRef.value, globalFormData.value)
+  if (nodeForm.value) payload.nodeFormData = collectFormData(nodeFormRef.value, nodeFormData.value)
+  return payload
+}
+
+// 校验所有可见表单（通过时调用）
+const verifyForms = async (): Promise<boolean> => {
+  const tasks: Promise<boolean>[] = []
+  if (globalForm.value && globalFormRef.value) {
+    globalCollapsed.value = false
+    tasks.push((globalFormRef.value as any).verify())
+  }
+  if (nodeForm.value && nodeFormRef.value) {
+    nodeCollapsed.value = false
+    tasks.push((nodeFormRef.value as any).verify())
+  }
+  if (tasks.length === 0) return true
+  const results = await Promise.all(tasks)
+  return results.every(Boolean)
+}
+
 const applyPermission = (field: any): any => {
   const f = { ...field }
   switch (f.permission) {
@@ -268,7 +307,11 @@ const loadInfo = async () => {
 
 // 通过
 const passDialog = ref({ open: false, remark: '', loading: false })
-const showPass = () => { passDialog.value = { open: true, remark: '', loading: false } }
+const showPass = async () => {
+  // 通过前先校验表单
+  if (hasForm.value && !(await verifyForms())) return
+  passDialog.value = { open: true, remark: '', loading: false }
+}
 const handlePass = async () => {
   passDialog.value.loading = true
   try {
@@ -276,6 +319,7 @@ const handlePass = async () => {
       processInstanceId: currentId.value,
       taskId: currentTaskId.value,
       remark: passDialog.value.remark || undefined,
+      ...buildFormPayload(),
     }, { raw: true })
     if (result.code === 200) {
       alert(result.msg || '审批通过', 'success')
@@ -298,6 +342,7 @@ const handleReject = async () => {
       processInstanceId: currentId.value,
       taskId: currentTaskId.value,
       remark: rejectDialog.value.remark || undefined,
+      ...buildFormPayload(),
     }, { raw: true })
     if (result.code === 200) {
       alert(result.msg || '审批拒绝', 'success')
@@ -321,6 +366,7 @@ const handleBack = async () => {
       taskId: currentTaskId.value,
       remark: backDialog.value.remark || undefined,
       targetNodeId: backDialog.value.targetNodeId,
+      ...buildFormPayload(),
     }, { raw: true })
     if (result.code === 200) {
       alert(result.msg || '审批驳回', 'success')

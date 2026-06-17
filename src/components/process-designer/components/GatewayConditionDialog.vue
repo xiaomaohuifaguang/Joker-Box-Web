@@ -17,7 +17,7 @@
 
       <!-- CUSTOM -->
       <div v-else-if="currentMode === 'CUSTOM'" class="mode-panel">
-        <CustomConditionEditor v-model="form.ruleTree" :form-fields="fields" :readonly="readonly" />
+        <CustomConditionEditor v-model="form.ruleTree" :fields="fields" :readonly="readonly" />
       </div>
 
       <!-- DEFAULT -->
@@ -56,7 +56,7 @@ const props = defineProps<{
     targetNodeId: string
   }
   initialData?: GatewayConditionData
-  fields?: { fieldId: string; title: string }[]
+  fields?: { fieldId: string; title: string; groupName?: string }[]
   readonly?: boolean
 }>()
 
@@ -91,11 +91,11 @@ const defaultForm = (): GatewayConditionData => ({
   conditionType: 'CUSTOM',
   isDefault: false,
   nativeExpression: '',
-  ruleTree: {
+  ruleTree: [{
     nodeType: 'AND',
     sort: 0,
     children: [],
-  },
+  }],
 })
 
 const form = ref<GatewayConditionData>(defaultForm())
@@ -106,7 +106,10 @@ watch(
     if (v) {
       const init = props.initialData
       if (init) {
-        form.value = { ...init }
+        form.value = {
+          ...init,
+          ruleTree: init.ruleTree ? (Array.isArray(init.ruleTree) ? init.ruleTree : [init.ruleTree]) : init.ruleTree,
+        }
         if (init.isDefault) {
           currentMode.value = 'DEFAULT'
         } else if (init.conditionType === 'NATIVE') {
@@ -129,7 +132,7 @@ async function switchMode(mode: 'NATIVE' | 'CUSTOM' | 'DEFAULT') {
     currentMode.value === 'NATIVE'
       ? !!form.value.nativeExpression
       : currentMode.value === 'CUSTOM'
-        ? (form.value.ruleTree?.children?.length ?? 0) > 0
+        ? (form.value.ruleTree?.some(n => (n.children?.length ?? 0) > 0) ?? false)
         : false
 
   if (hasData) {
@@ -151,7 +154,7 @@ async function switchMode(mode: 'NATIVE' | 'CUSTOM' | 'DEFAULT') {
     form.value = {
       conditionType: 'CUSTOM',
       isDefault: false,
-      ruleTree: { nodeType: 'AND', sort: 0, children: [] },
+      ruleTree: [{ nodeType: 'AND', sort: 0, children: [] }],
     }
   } else {
     form.value = { conditionType: null, isDefault: true }
@@ -166,11 +169,11 @@ function onConfirm() {
     }
   } else if (currentMode.value === 'CUSTOM') {
     const tree = form.value.ruleTree
-    if (!tree || !tree.children || tree.children.length === 0) {
+    if (!tree || tree.length === 0) {
       ElMessageBox.alert('请至少添加一个条件', '校验失败', { type: 'error' })
       return
     }
-    const errors = validateTree(tree)
+    const errors = tree.flatMap(validateTree)
     if (errors.length > 0) {
       ElMessageBox.alert(errors[0], '校验失败', { type: 'error' })
       return

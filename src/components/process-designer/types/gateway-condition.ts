@@ -29,7 +29,7 @@ export interface GatewayConditionData {
   conditionType: ConditionType
   isDefault: boolean
   nativeExpression?: string
-  ruleTree?: RuleTreeNode
+  ruleTree?: RuleTreeNode[]
 }
 
 export interface GatewayConditionSaveItem {
@@ -39,7 +39,7 @@ export interface GatewayConditionSaveItem {
   conditionType: ConditionType
   isDefault: boolean
   nativeExpression?: string
-  ruleTree?: RuleTreeNode
+  ruleTree?: RuleTreeNode[]
 }
 
 export const CATEGORY_OPTIONS: { label: string; value: Category; fieldKey: string }[] = [

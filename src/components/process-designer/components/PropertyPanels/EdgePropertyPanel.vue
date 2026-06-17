@@ -1,11 +1,14 @@
 <template>
     <el-form label-position="top" :model="data">
+        <el-form-item label="ID">
+            <el-input :model-value="data.id" disabled />
+        </el-form-item>
         <el-form-item label="名称">
             <el-input :model-value="elementText" @update:model-value="doUpdateElementText" :disabled="readonly" />
         </el-form-item>
-        <el-form-item label="条件表达式" v-if="shouldShowCondition">
+        <!-- <el-form-item label="条件表达式" v-if="shouldShowCondition">
             <el-input v-model="condition" clearable placeholder="${approve}" :disabled="readonly" />
-        </el-form-item>
+        </el-form-item> -->
 
         <!-- 网关条件配置 -->
         <template v-if="isGatewayOutgoing">
@@ -53,7 +56,7 @@
 
             <!-- 弹窗 -->
             <GatewayConditionDialog v-model="dialogVisible" :edge-data="edgeData" :initial-data="gatewayCondition"
-                :form-fields="fields" :readonly="readonly" @confirm="onDialogConfirm" />
+                :fields="fields" :readonly="readonly" @confirm="onDialogConfirm" />
         </template>
     </el-form>
 </template>
@@ -94,10 +97,10 @@ const shouldShowCondition = computed(() => {
     return true
 })
 
-const condition = computed({
-    get: () => props.data?.properties?.condition || '',
-    set: (val) => doUpdateProperty('condition', val)
-})
+// const condition = computed({
+//     get: () => props.data?.properties?.condition || '',
+//     set: (val) => doUpdateProperty('condition', val)
+// })
 
 // ============ 网关条件配置 ============
 
@@ -153,7 +156,7 @@ function setConditionMode(mode: string) {
         gatewayCondition.value = {
             conditionType: 'CUSTOM',
             isDefault: false,
-            ruleTree: gatewayCondition.value?.ruleTree ?? { nodeType: 'AND', sort: 0, children: [] },
+            ruleTree: gatewayCondition.value?.ruleTree ?? [{ nodeType: 'AND', sort: 0, children: [] }],
         }
     } else if (mode === 'DEFAULT') {
         gatewayCondition.value = { conditionType: null, isDefault: true }
@@ -209,11 +212,11 @@ const loadFormFields = async () => {
             id: globalForm.formId,
             version: globalForm.formVersion,
         })
-        const fields: { fieldId: string; title: string; groupName: string }[] = []
+        const list: { fieldId: string; title: string; groupName: string }[] = []
         // 未分组字段
         if (data?.fields?.length) {
             data.fields.forEach((f: any) => {
-                fields.push({ fieldId: f.fieldId, title: f.title, groupName: '未分组' })
+                list.push({ fieldId: f.fieldId, title: f.title, groupName: '未分组' })
             })
         }
         // 分组字段
@@ -221,11 +224,11 @@ const loadFormFields = async () => {
             data.groups.forEach((g: any) => {
                 const groupName = g.name || '未命名分组'
                 g.fields?.forEach((f: any) => {
-                    fields.push({ fieldId: f.fieldId, title: f.title, groupName })
+                    list.push({ fieldId: f.fieldId, title: f.title, groupName })
                 })
             })
         }
-        fields.value = fields
+        fields.value = list
     } catch (e) {
         fields.value = []
     }

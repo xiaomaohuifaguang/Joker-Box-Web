@@ -1,7 +1,7 @@
 <!-- src/components/process-designer/components/condition-editors/CustomConditionEditor.vue -->
 <template>
   <div class="custom-condition-editor">
-    <RuleGroup :node="localTree" :depth="0" :is-root="true" :form-fields="fields" :readonly="readonly"
+    <RuleGroup :node="rootNode" :depth="0" :is-root="true" :fields="fields" :readonly="readonly"
       @update="onRootUpdate" />
   </div>
 </template>
@@ -12,27 +12,29 @@ import type { RuleTreeNode } from '../../types/gateway-condition'
 import RuleGroup from './RuleGroup.vue'
 
 const props = defineProps<{
-  modelValue?: RuleTreeNode
-  fields?: { fieldId: string; title: string }[]
+  modelValue?: RuleTreeNode[]
+  fields?: { fieldId: string; title: string; groupName?: string }[]
   readonly?: boolean
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: RuleTreeNode): void
+  (e: 'update:modelValue', value: RuleTreeNode[]): void
 }>()
 
-const defaultTree = (): RuleTreeNode => ({
+const defaultNode = (): RuleTreeNode => ({
   nodeType: 'AND',
   sort: 0,
   children: [],
 })
 
-const localTree = computed({
-  get: () => props.modelValue ?? defaultTree(),
-  set: (v) => emit('update:modelValue', v),
+const rootNode = computed(() => {
+  const tree = props.modelValue
+  if (!tree || tree.length === 0) return defaultNode()
+  // 兼容旧数据：如果第一个元素没有 children，包装成 AND 组
+  return tree[0]
 })
 
 function onRootUpdate(updated: RuleTreeNode) {
-  emit('update:modelValue', updated)
+  emit('update:modelValue', [updated])
 }
 </script>

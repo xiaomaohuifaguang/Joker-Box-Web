@@ -10,9 +10,9 @@
 
     <div class="group-body">
       <template v-for="(child, index) in sortedChildren" :key="index">
-        <ConditionRow v-if="child.nodeType === 'CONDITION'" :node="child" :form-fields="fields" :readonly="readonly"
+        <ConditionRow v-if="child.nodeType === 'CONDITION'" :node="child" :fields="fields" :readonly="readonly"
           @update="(v) => updateChild(index, v)" @delete="removeChild(index)" />
-        <RuleGroup v-else :node="child" :depth="depth + 1" :is-root="false" :form-fields="fields" :readonly="readonly"
+        <RuleGroup v-else :node="child" :depth="depth + 1" :is-root="false" :fields="fields" :readonly="readonly"
           @update="(v) => updateChild(index, v)" @delete="removeChild(index)" />
       </template>
     </div>
@@ -35,7 +35,7 @@ const props = defineProps<{
   node: RuleTreeNode
   depth: number
   isRoot: boolean
-  fields?: { fieldId: string; title: string }[]
+  fields?: { fieldId: string; title: string; groupName?: string }[]
   readonly?: boolean
 }>()
 
