@@ -31,14 +31,6 @@ export class UserTaskModel extends RectNodeModel {
             ry: 4,
         }
     }
-
-    initNodeData(data: any) {
-        super.initNodeData(data)
-        const props = data.properties || {}
-
-    }
-
-
 }
 
 export class UserTaskView extends RectNode {

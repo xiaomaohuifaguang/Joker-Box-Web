@@ -115,8 +115,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { useProperty, useSearchOptions } from './shared'
+import { ref, watch } from 'vue'
+import { useProperty } from './shared'
+import { useNodeFormBinding } from '../../composables/useNodeFormBinding'
+import { useGraphTraversal } from '../../composables/useGraphTraversal'
+import { useUserSearchSelectors } from '../../composables/useUserSearchSelectors'
+import { useActionButtons } from '../../composables/useActionButtons'
 import FormSelector from '../FormSelector.vue'
 import FieldPermissionDialog from '../FieldPermissionDialog.vue'
 
@@ -144,265 +148,81 @@ const candidateRolesArray = makeArrayProp('candidateRoles')
 const candidateGroupsArray = makeArrayProp('candidateGroups')
 const candidateDeptsArray = makeArrayProp('candidateDepts')
 
-// 节点表单绑定
-const nodeFormId = ref('')
-const nodeFormVersion = ref('')
-const inheritMainForm = ref(false)
+// ===== 节点表单绑定 =====
 const showPermissionDialog = ref(false)
 
-const userSelectKey = ref(0)
-const roleSelectKey = ref(0)
-const orgSelectKey = ref(0)
+const {
+    nodeFormId,
+    nodeFormVersion,
+    inheritMainForm,
+    onNodeFormChange,
+    updateNodeBinding,
+} = useNodeFormBinding({
+    getNodeId: () => props.data?.id,
+    getNodeConfig: () => props.nodeConfig,
+    emitUpdate: (config) => emit('update:nodeConfig', config),
+})
+
+const onPermissionUpdate = (newConfig: any) => {
+    emit('update:nodeConfig', newConfig)
+}
+
+// ===== 图遍历（直接前驱 / 全部前驱 / 用户任务前驱选项） =====
+const { isPrevNodeStart, prevUserTaskOptions: prevNodeOptions } = useGraphTraversal(
+    () => props.lf,
+    () => props.data?.id
+)
+
+// ===== 候选人/角色/部门远程搜索 =====
+const {
+    searchUsers, searchRoles, searchOrgs,
+    userLoading, roleLoading, orgLoading,
+    userSelectKey, roleSelectKey, orgSelectKey,
+    userDisplayOptions, roleDisplayOptions, orgDisplayOptions,
+} = useUserSearchSelectors(
+    () => props.data,
+    candidateUsersArray,
+    candidateRolesArray,
+    candidateDeptsArray
+)
+
+// ===== 处理按钮 =====
+const {
+    isActive: isActionButtonActive,
+    toggleButton: toggleActionButton,
+    showBackConfig,
+} = useActionButtons({
+    getRaw: () => props.data?.properties?.actionButtons,
+    setProperty: doUpdateProperty,
+    isPrevNodeStart,
+})
 
 const actionButtonOptions = [
     { value: 'pass', label: '通过' },
     { value: 'reject', label: '拒绝' },
-    { value: 'back', label: '驳回' }
+    { value: 'back', label: '驳回' },
 ]
 
 const backTypeOptions = [
     { value: 'prev', label: '上一节点' },
     { value: 'specific', label: '驳回到指定节点' },
-    { value: 'choose', label: '用户自选' }
+    { value: 'choose', label: '用户自选' },
 ]
 
 const backAssigneePolicyOptions = [
     { value: 'auto', label: '智能默认：有上次办理人则派回，无则按配置重新分配' },
     { value: 'last_handler', label: '派给上次办理人' },
-    { value: 'reassign', label: '按节点 candidate 配置重新分配' }
+    { value: 'reassign', label: '按节点 candidate 配置重新分配' },
 ]
 
-const getActionButtons = (): string[] => {
-    const v = props.data?.properties?.actionButtons
-    return typeof v === 'string' && v ? v.split(',').filter(Boolean) : ['pass']
-}
-
-const isActionButtonActive = (value: string): boolean => {
-    return getActionButtons().includes(value)
-}
-
-const toggleActionButton = (value: string) => {
-    const arr = getActionButtons()
-    let newArr: string[]
-    if (arr.includes(value)) {
-        newArr = arr.filter((item: string) => item !== value)
-    } else {
-        newArr = [...arr, value]
-    }
-    doUpdateProperty('actionButtons', newArr.join(','))
-    if (!newArr.includes('back')) {
-        doUpdateProperty('backType', '')
-        doUpdateProperty('backNodeId', '')
-        doUpdateProperty('backAssigneePolicy', '')
-    }
-}
-
-const showBackConfig = computed(() => isActionButtonActive('back'))
-
-const getPrevNodes = (lf: any, currentNodeId: string) => {
-    if (!lf || !currentNodeId) return []
-
-    let nodes: any[] = []
-    let edges: any[] = []
-
-    // 优先从 graphModel 读取（实时数据），备选 getGraphData/getGraphRawData
-    if (lf.graphModel) {
-        const nodeMap = lf.graphModel.nodes
-        const edgeMap = lf.graphModel.edges
-        if (nodeMap && typeof nodeMap.values === 'function') {
-            try {
-                nodes = Array.from(nodeMap.values()).map((n: any) => ({
-                    id: n.id,
-                    text: n.text,
-                    type: n.type,
-                }))
-            } catch (e) { /* ignore */ }
-        }
-        if (edgeMap && typeof edgeMap.values === 'function') {
-            try {
-                edges = Array.from(edgeMap.values()).map((e: any) => ({
-                    sourceNodeId: e.sourceNodeId,
-                    targetNodeId: e.targetNodeId
-                }))
-            } catch (e) { /* ignore */ }
-        }
-    }
-
-    if (nodes.length === 0 && lf.getGraphData) {
-        try {
-            const graphData = lf.getGraphData()
-            nodes = (graphData?.nodes || []).map((n: any) => ({ id: n.id, text: n.text, type: n.type }))
-            edges = graphData?.edges || []
-        } catch (e) {
-            console.warn('getGraphData failed', e)
-        }
-    }
-
-    if (nodes.length === 0 && lf.getGraphRawData) {
-        try {
-            const rawData = lf.getGraphRawData()
-            nodes = (rawData?.nodes || []).map((n: any) => ({ id: n.id, text: n.text, type: n.type }))
-            edges = rawData?.edges || []
-        } catch (e) {
-            console.warn('getGraphRawData failed', e)
-        }
-    }
-
-    const prevMap = new Map<string, string[]>()
-    for (const edge of edges) {
-        const source = edge.sourceNodeId
-        const target = edge.targetNodeId
-        if (source && target) {
-            if (!prevMap.has(target)) prevMap.set(target, [])
-            prevMap.get(target)!.push(source)
-        }
-    }
-
-    // 所有前置节点（用于指定节点选择）
-    const visited = new Set<string>()
-    const queue = [currentNodeId]
-    while (queue.length > 0) {
-        const curr = queue.shift()!
-        if (visited.has(curr)) continue
-        visited.add(curr)
-        const prevs = prevMap.get(curr) || []
-        for (const prev of prevs) {
-            if (!visited.has(prev)) queue.push(prev)
-        }
-    }
-    visited.delete(currentNodeId)
-
-    return nodes
-        .filter((n: any) => visited.has(n.id))
-        .map((n: any) => ({
-            id: n.id,
-            label: typeof n.text === 'string' ? n.text : (n.text?.value || n.id),
-            type: n.type,
-        }))
-}
-
-const getDirectPrevNodes = (lf: any, currentNodeId: string) => {
-    if (!lf || !currentNodeId) return []
-
-    let nodes: any[] = []
-    let edges: any[] = []
-
-    if (lf.graphModel) {
-        const nodeMap = lf.graphModel.nodes
-        const edgeMap = lf.graphModel.edges
-        if (nodeMap && typeof nodeMap.values === 'function') {
-            try {
-                nodes = Array.from(nodeMap.values()).map((n: any) => ({
-                    id: n.id,
-                    type: n.type,
-                }))
-            } catch (e) { /* ignore */ }
-        }
-        if (edgeMap && typeof edgeMap.values === 'function') {
-            try {
-                edges = Array.from(edgeMap.values()).map((e: any) => ({
-                    sourceNodeId: e.sourceNodeId,
-                    targetNodeId: e.targetNodeId,
-                }))
-            } catch (e) { /* ignore */ }
-        }
-    }
-
-    if (nodes.length === 0 && lf.getGraphData) {
-        try {
-            const graphData = lf.getGraphData()
-            nodes = (graphData?.nodes || []).map((n: any) => ({ id: n.id, type: n.type }))
-            edges = graphData?.edges || []
-        } catch (e) {
-            console.warn('getGraphData failed', e)
-        }
-    }
-
-    if (nodes.length === 0 && lf.getGraphRawData) {
-        try {
-            const rawData = lf.getGraphRawData()
-            nodes = (rawData?.nodes || []).map((n: any) => ({ id: n.id, type: n.type }))
-            edges = rawData?.edges || []
-        } catch (e) {
-            console.warn('getGraphRawData failed', e)
-        }
-    }
-
-    const directPrevIds = new Set<string>()
-    for (const edge of edges) {
-        if (edge.targetNodeId === currentNodeId && edge.sourceNodeId) {
-            directPrevIds.add(edge.sourceNodeId)
-        }
-    }
-
-    return nodes.filter((n: any) => directPrevIds.has(n.id))
-}
-
-const isPrevNodeStart = computed(() => {
-    if (!props.lf || !props.data?.id) return false
-    const directPrevs = getDirectPrevNodes(props.lf, props.data.id)
-    return directPrevs.some((n: any) => n.type === 'bpmn:startEvent')
-})
-
-const prevNodeOptions = computed(() => {
-    if (!props.lf || !props.data?.id) return []
-    const allPrevNodes = getPrevNodes(props.lf, props.data.id)
-    return allPrevNodes.filter((n: any) => n.type === 'bpmn:userTask')
-})
-
-const {
-    userCache, roleCache, orgCache,
-    userOptions, roleOptions, orgOptions,
-    userLoading, roleLoading, orgLoading,
-    mergeSelected,
-    searchUsers, searchRoles, searchOrgs,
-    initUsersByIds, initRolesByIds, initOrgsByIds
-} = useSearchOptions()
-
-const userDisplayOptions = computed(() => mergeSelected(userOptions.value, candidateUsersArray.value, userCache.value))
-const roleDisplayOptions = computed(() => mergeSelected(roleOptions.value, candidateRolesArray.value, roleCache.value))
-const orgDisplayOptions = computed(() => mergeSelected(orgOptions.value, candidateDeptsArray.value, orgCache.value))
-
+// ===== 副作用：进入驳回模式时默认分配策略；切换 approvalType 同步 passRate =====
 watch(
-    () => props.data,
-    async () => {
-        if (candidateUsersArray.value.length > 0) {
-            await initUsersByIds(candidateUsersArray.value)
-            userSelectKey.value++
-        }
-        if (candidateRolesArray.value.length > 0) {
-            await initRolesByIds(candidateRolesArray.value)
-            roleSelectKey.value++
-        }
-        if (candidateDeptsArray.value.length > 0) {
-            await initOrgsByIds(candidateDeptsArray.value)
-            orgSelectKey.value++
-        }
-    },
-    { immediate: true }
-)
-
-watch(
-    () => isPrevNodeStart.value,
-    (isStart) => {
-        if (isStart && isActionButtonActive('back')) {
-            const arr = getActionButtons().filter((item: string) => item !== 'back')
-            doUpdateProperty('actionButtons', arr.join(','))
-            doUpdateProperty('backType', '')
-            doUpdateProperty('backNodeId', '')
-            doUpdateProperty('backAssigneePolicy', '')
-        }
-    }
-)
-
-watch(
-    () => showBackConfig.value,
+    showBackConfig,
     (newVal) => {
-        if (newVal) {
-            const policy = props.data?.properties?.backAssigneePolicy
-            if (policy === undefined || policy === null || policy === '') {
-                doUpdateProperty('backAssigneePolicy', 'auto')
-            }
+        if (!newVal) return
+        const policy = props.data?.properties?.backAssigneePolicy
+        if (policy === undefined || policy === null || policy === '') {
+            doUpdateProperty('backAssigneePolicy', 'auto')
         }
     },
     { immediate: true }
@@ -423,113 +243,18 @@ watch(
     { immediate: true }
 )
 
-// 节点表单绑定
-const onNodeFormChange = (form: { id: string; name: string; version: string } | null) => {
-    nodeFormVersion.value = form?.version ?? ''
-    updateNodeBinding()
-}
-
-const updateNodeBinding = () => {
-    if (!props.nodeConfig || !props.data?.id) return
-    const nodeId = String(props.data.id)
-    const bindings = [...props.nodeConfig.nodeFormBindings]
-    const idx = bindings.findIndex((b: any) => String(b.nodeId) === nodeId)
-    const oldFormId = idx >= 0 ? bindings[idx].formId : ''
-    const oldVersion = idx >= 0 ? bindings[idx].formVersion : ''
-    const newFormId = nodeFormId.value
-
-    let newPermissions = props.nodeConfig.nodeFieldPermissions
-    if (oldFormId !== newFormId || oldVersion !== nodeFormVersion.value) {
-        newPermissions = newPermissions.filter((p: any) => String(p.nodeId) !== nodeId)
-    }
-
-    const hasBinding = newFormId || inheritMainForm.value
-    if (hasBinding) {
-        const item = {
-            formId: newFormId,
-            formVersion: nodeFormVersion.value,
-            nodeId: props.data.id,
-            inheritMainForm: inheritMainForm.value ? '1' : '0',
-        }
-        if (idx >= 0) {
-            bindings[idx] = item
-        } else {
-            bindings.push(item)
-        }
-    } else {
-        if (idx >= 0) {
-            bindings.splice(idx, 1)
-        }
-    }
-    emit('update:nodeConfig', {
-        ...props.nodeConfig,
-        nodeFormBindings: bindings,
-        nodeFieldPermissions: newPermissions
-    })
-}
-
-const onPermissionUpdate = (newConfig: any) => {
-    emit('update:nodeConfig', newConfig)
-}
-
-// 从 nodeConfig 中读取当前节点的绑定
-const readNodeBinding = () => {
-    if (!props.nodeConfig || !props.data?.id) {
-        nodeFormId.value = ''
-        nodeFormVersion.value = ''
-        inheritMainForm.value = false
-        return
-    }
-    const binding = props.nodeConfig.nodeFormBindings.find((b: any) => String(b.nodeId) === String(props.data.id))
-    if (binding) {
-        nodeFormId.value = binding.formId || ''
-        nodeFormVersion.value = binding.formVersion || ''
-        inheritMainForm.value = binding.inheritMainForm === '1'
-    } else {
-        nodeFormId.value = ''
-        nodeFormVersion.value = ''
-        inheritMainForm.value = false
-    }
-}
-
-watch(
-    () => props.data?.id,
-    () => {
-        readNodeBinding()
-    },
-    { immediate: true }
-)
-
-watch(
-    () => props.nodeConfig,
-    () => {
-        readNodeBinding()
-    },
-    { deep: true }
-)
-
+// ===== 选项常量 =====
 const options = [
-    {
-        value: 'bpmn:startEvent',
-        label: '开始节点',
-    },
-    {
-        value: 'bpmn:userTask',
-        label: '用户任务',
-    },
-    {
-        value: 'bpmn:endEvent',
-        label: '结束节点',
-    }, {
-        value: 'bpmn:exclusiveGateway',
-        label: '排他网关',
-    }
+    { value: 'bpmn:startEvent', label: '开始节点' },
+    { value: 'bpmn:userTask', label: '用户任务' },
+    { value: 'bpmn:endEvent', label: '结束节点' },
+    { value: 'bpmn:exclusiveGateway', label: '排他网关' },
 ]
 
 const approvalTypeOptions = [
     { value: 1, label: '会签' },
     { value: 2, label: '或签' },
     { value: 3, label: '随机1人' },
-    { value: 4, label: '认领' }
+    { value: 4, label: '认领' },
 ]
 </script>

@@ -1,29 +1,21 @@
 import type { FlowWarning } from '../types/flow-validation'
 import type { GatewayConditionData } from '../types/gateway-condition'
 
-/** 该边是否被标记为默认走向（兼容三处来源：边的 gatewayCondition、边的 isDefaultFlow、网关 default 属性） */
-const isDefaultEdge = (edge: any, gatewayDefault?: string): boolean => {
-  const gc: GatewayConditionData | undefined = edge?.properties?.gatewayCondition
-  if (gc?.isDefault) return true
-  if (edge?.properties?.isDefaultFlow === true) return true
-  if (gatewayDefault && gatewayDefault === edge?.id) return true
-  return false
-}
+/** 该边是否被标记为默认走向（单一真值：edge.gatewayCondition.isDefault） */
+const isDefaultEdge = (edge: any): boolean =>
+  edge?.properties?.gatewayCondition?.isDefault === true
 
 /** 该边是否配置了有效条件（NATIVE 表达式非空 或 CUSTOM 规则非空，且不是默认走向） */
 const hasCondition = (edge: any): boolean => {
   const gc: GatewayConditionData | undefined = edge?.properties?.gatewayCondition
-  if (gc && !gc.isDefault) {
-    if (gc.conditionType === 'NATIVE') {
-      return !!(gc.nativeExpression && gc.nativeExpression.trim())
-    }
-    if (gc.conditionType === 'CUSTOM') {
-      const tree = gc.ruleTree?.[0]
-      return !!tree?.children && tree.children.length > 0
-    }
+  if (!gc || gc.isDefault) return false
+  if (gc.conditionType === 'NATIVE') {
+    return !!(gc.nativeExpression && gc.nativeExpression.trim())
   }
-  // 兼容旧数据：直接写在边上的 condition 表达式
-  if (edge?.properties?.condition) return true
+  if (gc.conditionType === 'CUSTOM') {
+    const tree = gc.ruleTree?.[0]
+    return !!tree?.children && tree.children.length > 0
+  }
   return false
 }
 
@@ -37,10 +29,9 @@ export const validateGateway = (node: any, lf: any): FlowWarning[] => {
   const sourceEdges = edges.filter((e: any) => e.sourceNodeId === node.id)
   if (sourceEdges.length === 0) return warnings
 
-  const gatewayDefault = node.properties?.default
-  const defaultEdges = sourceEdges.filter((e: any) => isDefaultEdge(e, gatewayDefault))
-  const conditionEdges = sourceEdges.filter((e: any) => !isDefaultEdge(e, gatewayDefault) && hasCondition(e))
-  const blankEdges = sourceEdges.filter((e: any) => !isDefaultEdge(e, gatewayDefault) && !hasCondition(e))
+  const defaultEdges = sourceEdges.filter((e: any) => isDefaultEdge(e))
+  const conditionEdges = sourceEdges.filter((e: any) => !isDefaultEdge(e) && hasCondition(e))
+  const blankEdges = sourceEdges.filter((e: any) => !isDefaultEdge(e) && !hasCondition(e))
 
   // 多条边都被设为默认走向
   if (defaultEdges.length > 1) {

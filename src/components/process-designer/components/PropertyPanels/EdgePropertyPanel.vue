@@ -6,9 +6,6 @@
         <el-form-item label="名称">
             <el-input :model-value="elementText" @update:model-value="doUpdateElementText" :disabled="readonly" />
         </el-form-item>
-        <!-- <el-form-item label="条件表达式" v-if="shouldShowCondition">
-            <el-input v-model="condition" clearable placeholder="${approve}" :disabled="readonly" />
-        </el-form-item> -->
 
         <!-- 网关条件配置 -->
         <template v-if="isGatewayOutgoing">
@@ -26,15 +23,8 @@
 
                 <!-- NATIVE 模式 -->
                 <template v-if="conditionMode === 'NATIVE'">
-                    <el-form-item label="JUEL 表达式">
-                        <el-input v-model="nativeExpression" placeholder="${amount > 10000}" :disabled="readonly"
-                            style="font-family: monospace" />
-                    </el-form-item>
-                    <div class="var-hint">
-                        <el-tag v-for="v in availableVars" :key="v" size="small" @click="insertVar(v)">
-                            {{ v }}
-                        </el-tag>
-                    </div>
+                    <NativeConditionEditor v-model="nativeExpression" :form-field-ids="formFieldIds"
+                        :readonly="readonly" />
                 </template>
 
                 <!-- CUSTOM 模式 -->
@@ -62,11 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useProperty } from './shared'
 import { http } from '@/utils'
 import ConditionSummary from '../ConditionSummary.vue'
 import GatewayConditionDialog from '../GatewayConditionDialog.vue'
+import NativeConditionEditor from '../condition-editors/NativeConditionEditor.vue'
 import type { GatewayConditionData } from '../../types/gateway-condition'
 
 const props = defineProps<{
@@ -85,22 +76,6 @@ const emit = defineEmits<{
 }>()
 
 const { elementText, doUpdateElementText, doUpdateProperty } = useProperty(props, emit)
-
-// 支持条件表达式的网关类型
-const CONDITIONAL_GATEWAYS = ['bpmn:exclusiveGateway', 'bpmn:inclusiveGateway']
-
-const shouldShowCondition = computed(() => {
-    if (!props.lf || !props.data?.sourceNodeId) return false
-    const sourceNode = props.lf.graphModel?.nodes?.find((node: any) => node.id === props.data.sourceNodeId)
-    if (!CONDITIONAL_GATEWAYS.includes(sourceNode?.type)) return false
-    if (sourceNode.properties?.default === props.data.id) return false
-    return true
-})
-
-// const condition = computed({
-//     get: () => props.data?.properties?.condition || '',
-//     set: (val) => doUpdateProperty('condition', val)
-// })
 
 // ============ 网关条件配置 ============
 
@@ -131,28 +106,14 @@ const conditionModes = [
     { label: '默认走向', value: 'DEFAULT' },
 ]
 
-function clearDefaultFlowOnEdge() {
-    doUpdateProperty('isDefaultFlow', false)
-    // 如果该 edge 是某个网关的默认路径，清除网关的 default 属性
-    const sourceId = props.data.sourceNodeId
-    if (sourceId && props.lf) {
-        const gatewayNode = props.lf.getNodeModelById(sourceId)
-        if (gatewayNode?.properties?.default === props.data.id) {
-            props.lf.deleteProperty(sourceId, 'default')
-        }
-    }
-}
-
 function setConditionMode(mode: string) {
     if (mode === 'NATIVE') {
-        clearDefaultFlowOnEdge()
         gatewayCondition.value = {
             conditionType: 'NATIVE',
             isDefault: false,
             nativeExpression: gatewayCondition.value?.nativeExpression ?? '',
         }
     } else if (mode === 'CUSTOM') {
-        clearDefaultFlowOnEdge()
         gatewayCondition.value = {
             conditionType: 'CUSTOM',
             isDefault: false,
@@ -160,7 +121,6 @@ function setConditionMode(mode: string) {
         }
     } else if (mode === 'DEFAULT') {
         gatewayCondition.value = { conditionType: null, isDefault: true }
-        doUpdateProperty('isDefaultFlow', true)
     }
 }
 
@@ -178,28 +138,13 @@ const nativeExpression = computed({
 
 const dialogVisible = ref(false)
 const fields = ref<{ fieldId: string; title: string; groupName: string }[]>([])
+const formFieldIds = computed(() => fields.value.map((f) => f.fieldId))
 
 const edgeData = computed(() => ({
     id: props.data.id,
     sourceNodeId: props.data.sourceNodeId,
     targetNodeId: props.data.targetNodeId,
 }))
-
-const builtinVars = [
-    'formData',
-    '__handler_dept',
-    '__handler_role',
-    '__prev_handler_dept',
-    '__prev_handler_role',
-]
-
-const availableVars = computed(() => [...builtinVars])
-
-function insertVar(variable: string) {
-    const prefix = variable.startsWith('__') || variable === 'formData' ? '' : '${'
-    const suffix = prefix ? '}' : ''
-    nativeExpression.value = nativeExpression.value + prefix + variable + suffix
-}
 
 const loadFormFields = async () => {
     const globalForm = props.nodeConfig?.globalFormBinding
@@ -234,6 +179,17 @@ const loadFormFields = async () => {
     }
 }
 
+// 在 NATIVE 模式下也展示表单字段变量；全局表单变化时刷新
+watch(
+    () => [conditionMode.value, props.nodeConfig?.globalFormBinding?.formId, props.nodeConfig?.globalFormBinding?.formVersion],
+    ([mode]) => {
+        if (mode === 'NATIVE' || mode === 'CUSTOM') {
+            loadFormFields()
+        }
+    },
+    { immediate: true }
+)
+
 function openConditionDialog() {
     loadFormFields()
     dialogVisible.value = true
@@ -241,11 +197,6 @@ function openConditionDialog() {
 
 function onDialogConfirm(data: GatewayConditionData) {
     gatewayCondition.value = data
-    if (data.isDefault) {
-        doUpdateProperty('isDefaultFlow', true)
-    } else {
-        clearDefaultFlowOnEdge()
-    }
 }
 </script>
 
@@ -296,12 +247,5 @@ function onDialogConfirm(data: GatewayConditionData) {
     background: var(--el-fill-color-light);
     border-radius: 4px;
     min-height: 32px;
-}
-
-.var-hint {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
 }
 </style>

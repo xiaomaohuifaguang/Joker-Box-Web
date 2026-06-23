@@ -37,8 +37,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useProperty } from './shared'
+import { useNodeFormBinding } from '../../composables/useNodeFormBinding'
 import FormSelector from '../FormSelector.vue'
 import FieldPermissionDialog from '../FieldPermissionDialog.vue'
 
@@ -61,93 +62,23 @@ const emit = defineEmits<{
 
 const { elementText, doUpdateElementText } = useProperty(props, emit)
 
-const nodeFormId = ref('')
-const nodeFormVersion = ref('')
-const inheritMainForm = ref(false)
 const showPermissionDialog = ref(false)
 
-const onNodeFormChange = (form: { id: string; name: string; version: string } | null) => {
-    nodeFormVersion.value = form?.version ?? ''
-    updateNodeBinding()
-}
-
-const updateNodeBinding = () => {
-    if (!props.nodeConfig || !props.data?.id) return
-    const nodeId = String(props.data.id)
-    const bindings = [...props.nodeConfig.nodeFormBindings]
-    const idx = bindings.findIndex((b: any) => String(b.nodeId) === nodeId)
-    const oldFormId = idx >= 0 ? bindings[idx].formId : ''
-    const oldVersion = idx >= 0 ? bindings[idx].formVersion : ''
-    const newFormId = nodeFormId.value
-
-    let newPermissions = props.nodeConfig.nodeFieldPermissions
-    if (oldFormId !== newFormId || oldVersion !== nodeFormVersion.value) {
-        newPermissions = newPermissions.filter((p: any) => String(p.nodeId) !== nodeId)
-    }
-
-    const hasBinding = newFormId || inheritMainForm.value
-    if (hasBinding) {
-        const item = {
-            formId: newFormId,
-            formVersion: nodeFormVersion.value,
-            nodeId: props.data.id,
-            inheritMainForm: inheritMainForm.value ? '1' : '0',
-        }
-        if (idx >= 0) {
-            bindings[idx] = item
-        } else {
-            bindings.push(item)
-        }
-    } else {
-        if (idx >= 0) {
-            bindings.splice(idx, 1)
-        }
-    }
-    emit('update:nodeConfig', {
-        ...props.nodeConfig,
-        nodeFormBindings: bindings,
-        nodeFieldPermissions: newPermissions,
-    })
-}
+const {
+    nodeFormId,
+    nodeFormVersion,
+    inheritMainForm,
+    onNodeFormChange,
+    updateNodeBinding,
+} = useNodeFormBinding({
+    getNodeId: () => props.data?.id,
+    getNodeConfig: () => props.nodeConfig,
+    emitUpdate: (config) => emit('update:nodeConfig', config),
+})
 
 const onPermissionUpdate = (newConfig: any) => {
     emit('update:nodeConfig', newConfig)
 }
-
-const readNodeBinding = () => {
-    if (!props.nodeConfig || !props.data?.id) {
-        nodeFormId.value = ''
-        nodeFormVersion.value = ''
-        inheritMainForm.value = false
-        return
-    }
-    const binding = props.nodeConfig.nodeFormBindings.find((b: any) => String(b.nodeId) === String(props.data.id))
-    if (binding) {
-        nodeFormId.value = binding.formId || ''
-        nodeFormVersion.value = binding.formVersion || ''
-        inheritMainForm.value = binding.inheritMainForm === '1'
-    } else {
-        nodeFormId.value = ''
-        nodeFormVersion.value = ''
-        inheritMainForm.value = false
-    }
-}
-
-watch(
-    () => props.data?.id,
-    () => {
-        readNodeBinding()
-    },
-    { immediate: true }
-)
-
-watch(
-    () => props.nodeConfig,
-    () => {
-        readNodeBinding()
-    },
-    { deep: true }
-)
 
 const options = [
     {

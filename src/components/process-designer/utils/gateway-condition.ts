@@ -41,9 +41,6 @@ export function applyGatewayConditions(graphRawData: any, gatewayConditions: any
         nativeExpression: condition.nativeExpression,
         ruleTree: condition.ruleTree,
       }
-      if (condition.isDefault) {
-        edge.properties.isDefaultFlow = true
-      }
     }
   })
 }

@@ -18,10 +18,8 @@ const extraProps =
             "properties.backNodeId",
             "properties.backAssigneePolicy",
             "properties.form",
-            "properties.isDefault",
             "properties.direction",
-            "properties.gatewayCondition",
-            "properties.isDefaultFlow"
+            "properties.gatewayCondition"
         ]
     },
     // 指定 bpmn:sequenceFlow 类型元素的转换规则
@@ -70,38 +68,6 @@ const extraProps =
                 }
             }
         },
-        // 'bpmn:sequenceFlow': {
-        //     out(data: any) { // 这里的data是LogicFlow中bpmn:sequenceFlow元素的数据
-        //         const { properties: { condition, isDefault } } = data;
-        //         let extensionElements = '';
-        //         if (condition) {
-        //             extensionElements += `<flowable:conditionExpression desc="条件表达式">${condition}</flowable:conditionExpression>`;
-        //         }
-        //         if (isDefault === true) {
-        //             extensionElements += `<flowable:isDefault desc="默认路径">true</flowable:isDefault>`;
-        //         }
-        //         if (extensionElements) {
-        //             return {
-        //                 json: `  <bpmn:extensionElements>\n\t\t\t${extensionElements.replace(/></g, '>\n\t\t\t<')}\n\t\t  </bpmn:extensionElements>`,
-        //             };
-        //         }
-        //         return {
-        //             json: '',
-        //         };
-        //     },
-        // },
-        // // 包容网关默认路径扩展属性
-        // 'bpmn:inclusiveGateway': {
-        //     out(data: any) {
-        //         const { properties: { default: defaultFlow } } = data;
-        //         if (defaultFlow) {
-        //             return {
-        //                 json: `  <bpmn:extensionElements>\n\t\t\t<flowable:default desc="默认路径">${defaultFlow}</flowable:default>\n\t\t  </bpmn:extensionElements>`,
-        //             };
-        //         }
-        //         return { json: '' };
-        //     }
-        // },
     },
 }
 

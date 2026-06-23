@@ -30,7 +30,7 @@ import { ref, onMounted } from 'vue';
 import { LogicFlow } from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
 import '@logicflow/extension/lib/style/index.css'
-import { Control, MiniMap, Menu, DndPanel, SelectionSelect, Snapshot, InsertNodeInPolyline, NodeResize, BpmnElement, BpmnAdapter, BpmnXmlAdapter, BPMNElements, BPMNBaseAdapter, BPMNAdapter } from "@logicflow/extension"
+import { Control, MiniMap, Menu, DndPanel, SelectionSelect, Snapshot, InsertNodeInPolyline } from "@logicflow/extension"
 import { Dagre } from "@logicflow/layout";
 
 import Toolbar from './components/Toolbar.vue';
@@ -39,7 +39,6 @@ import PropertyPanel from './components/PropertyPanel.vue';
 import { registerCustomElement } from './core/index';
 import CatBPMNAdapter, { setProcessMeta } from './core/adapter/CatBPMNAdapter';
 import extraProps from './core/adapter/extraProps';
-import testJson from './test.json';
 import type { FlowValidator, FlowWarning } from './types/flow-validation'
 import { validateGateway } from './core/validators'
 
@@ -51,13 +50,6 @@ LogicFlow.use(SelectionSelect) // 选区
 LogicFlow.use(Snapshot) // 导出图片
 LogicFlow.use(InsertNodeInPolyline) // 边上插入节点
 LogicFlow.use(Dagre); // 自动布局
-// LogicFlow.use(NodeResize);
-// LogicFlow.use(BpmnElement) // BPMN
-// LogicFlow.use(BpmnAdapter) // BPMN
-// LogicFlow.use(BpmnXmlAdapter) // BPMN
-// LogicFlow.use(BPMNElements) // BPMN
-// LogicFlow.use(BPMNBaseAdapter) // BPMN
-// LogicFlow.use(BPMNAdapter)
 LogicFlow.use(CatBPMNAdapter, extraProps)
 
 
@@ -141,7 +133,7 @@ const validateFlow = (): FlowWarning[] => {
   for (const gw of gatewayNodes) {
     const outgoingEdges = edges.filter((e: any) => e.sourceNodeId === gw.id)
     const hasDefault = outgoingEdges.some(
-      (e: any) => e.properties?.isDefaultFlow || e.properties?.gatewayCondition?.isDefault
+      (e: any) => e.properties?.gatewayCondition?.isDefault
     )
 
     for (const edge of outgoingEdges) {
@@ -189,41 +181,6 @@ onMounted(async () => {
             itemData.value = props.info
             itemType.value = 'process'
         })
-        const GATEWAY_TYPES_WITH_DEFAULT = ['bpmn:exclusiveGateway', 'bpmn:inclusiveGateway']
-
-        const cleanOrphanGatewayDefault = () => {
-            if (!lf.value) return
-            const edges = lf.value.graphModel?.edges || []
-            const edgeIds = new Set(edges.map((edge: any) => edge.id))
-            const nodes = lf.value.graphModel?.nodes || []
-            nodes.forEach((node: any) => {
-                if (GATEWAY_TYPES_WITH_DEFAULT.includes(node.type) && node.properties?.default) {
-                    if (!edgeIds.has(node.properties.default)) {
-                        lf.value!.deleteProperty(node.id, 'default')
-                        if (itemType.value === 'node' && itemData.value?.id === node.id) {
-                            const newProperties = { ...itemData.value.properties }
-                            delete newProperties.default
-                            itemData.value = { ...itemData.value, properties: newProperties }
-                        }
-                    }
-                }
-            })
-        }
-        lf.value.on('edge:delete', (event) => {
-            const deletedEdgeId = event.data?.id
-            if (!deletedEdgeId || !lf.value) return
-            const nodes = lf.value.graphModel?.nodes || []
-            nodes.forEach((node: any) => {
-                if (GATEWAY_TYPES_WITH_DEFAULT.includes(node.type) && node.properties?.default === deletedEdgeId) {
-                    lf.value!.deleteProperty(node.id, 'default')
-                    if (itemType.value === 'node' && itemData.value?.id === node.id) {
-                        const newProperties = { ...itemData.value.properties }
-                        delete newProperties.default
-                        itemData.value = { ...itemData.value, properties: newProperties }
-                    }
-                }
-            })
-        })
         lf.value.on('node:delete', (event: any) => {
             const deletedNodeId = event?.data?.id
             if (deletedNodeId && props.nodeConfig) {
@@ -235,14 +192,11 @@ onMounted(async () => {
                     nodeFieldPermissions: newPermissions,
                 })
             }
-            cleanOrphanGatewayDefault()
         })
         emit('update:graphRawData', lf.value.getGraphRawData())
         emit('update:graphData', lf.value.getGraphData())
-        let isCleaning = false
         lf.value.on('history:change', () => {
-            if (!lf.value || isCleaning) return
-            cleanOrphanGatewayDefault()
+            if (!lf.value) return
             emit('update:graphRawData', lf.value.getGraphRawData())
             emit('update:graphData', lf.value.getGraphData())
         })
