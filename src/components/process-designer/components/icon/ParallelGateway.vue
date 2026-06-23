@@ -1,10 +1,8 @@
 <template>
-    <svg t="1778525816403" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-        p-id="20794" width="200" height="200">
-        <path
-            d="M443.050667 29.2864a97.518933 97.518933 0 0 1 137.898666 0l413.764267 413.7472a97.518933 97.518933 0 0 1 0 137.9328L580.9664 994.7136a97.518933 97.518933 0 0 1-137.9328 0L29.2864 580.9664a97.518933 97.518933 0 0 1 0-137.9328zM512 98.235733L98.235733 512 512 925.764267 925.764267 512 512 98.235733z"
-            fill="#1296db" p-id="20795"></path>
-        <path d="M 512 360 L 512 664 M 360 512 L 664 512" stroke="#ffffff" stroke-width="60" fill="none"
-            stroke-linecap="round"></path>
+    <!-- 并行网关:菱形 + + -->
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em">
+        <path d="M12 1.8 L22.2 12 L12 22.2 L1.8 12 Z" fill="none" stroke="currentColor" stroke-width="1.7"
+            stroke-linejoin="round" />
+        <path d="M12 7 L12 17 M7 12 L17 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
     </svg>
 </template>

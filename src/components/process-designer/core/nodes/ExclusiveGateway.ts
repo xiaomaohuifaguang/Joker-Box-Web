@@ -5,6 +5,7 @@ import LogicFlow, {
     PolygonNodeModel,
 } from '@logicflow/core'
 import { genBpmnId } from '@logicflow/extension/lib/bpmn-elements/utils'
+import { buildNodeStyle, buildTextStyle } from '../theme'
 
 import NodeConfig = LogicFlow.NodeConfig
 
@@ -33,6 +34,16 @@ export class ExclusiveGatewayModel extends PolygonNodeModel {
             [0, 25],
         ]
     }
+
+    getNodeStyle() {
+        const style = super.getNodeStyle()
+        return { ...style, ...buildNodeStyle(this.type, this.isSelected) }
+    }
+
+    getTextStyle() {
+        const style = super.getTextStyle()
+        return { ...style, ...buildTextStyle() }
+    }
 }
 
 export class ExclusiveGatewayView extends PolygonNode {
@@ -47,16 +58,20 @@ export class ExclusiveGatewayView extends PolygonNode {
             {
                 transform: `matrix(1 0 0 1 ${x - width / 2} ${y - height / 2})`,
             },
-            // @ts-ignore TODO: 确认 h('polygon') 报错的问题
+            // @ts-ignore
             h('polygon', {
                 ...style,
                 x,
                 y,
                 points,
             }),
+            // X 标志 —— 颜色跟随主题色,确保选中/校验态变色时一并变化
             h('path', {
-                d: 'm 16,15 7.42857142857143,9.714285714285715 -7.42857142857143,9.714285714285715 3.428571428571429,0 5.714285714285715,-7.464228571428572 5.714285714285715,7.464228571428572 3.428571428571429,0 -7.42857142857143,-9.714285714285715 7.42857142857143,-9.714285714285715 -3.428571428571429,0 -5.714285714285715,7.464228571428572 -5.714285714285715,-7.464228571428572 -3.428571428571429,0 z',
-                ...style,
+                d: 'M 16 16 L 34 34 M 34 16 L 16 34',
+                stroke: style.stroke,
+                'stroke-width': 2.8,
+                'stroke-linecap': 'round',
+                fill: 'none',
             }),
         )
     }

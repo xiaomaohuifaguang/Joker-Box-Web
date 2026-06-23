@@ -5,6 +5,7 @@ import LogicFlow, {
     PolygonNodeModel,
 } from '@logicflow/core'
 import { genBpmnId } from '@logicflow/extension/lib/bpmn-elements/utils'
+import { buildNodeStyle, buildTextStyle } from '../theme'
 
 import NodeConfig = LogicFlow.NodeConfig
 
@@ -33,6 +34,16 @@ export class InclusiveGatewayModel extends PolygonNodeModel {
             [0, 25],
         ]
     }
+
+    getNodeStyle() {
+        const style = super.getNodeStyle()
+        return { ...style, ...buildNodeStyle(this.type, this.isSelected) }
+    }
+
+    getTextStyle() {
+        const style = super.getTextStyle()
+        return { ...style, ...buildTextStyle() }
+    }
 }
 
 export class InclusiveGatewayView extends PolygonNode {
@@ -54,21 +65,13 @@ export class InclusiveGatewayView extends PolygonNode {
                 y,
                 points,
             }),
-            // 同心圆（两个圆）
+            // 单层圆环 —— BPMN 包容网关标准符号 (旧版的双层环看起来太密)
             h('circle', {
                 cx: 25,
                 cy: 25,
-                r: 10,
-                stroke: style.stroke || '#000',
-                'stroke-width': 2,
-                fill: 'none',
-            }),
-            h('circle', {
-                cx: 25,
-                cy: 25,
-                r: 6,
-                stroke: style.stroke || '#000',
-                'stroke-width': 1.5,
+                r: 9,
+                stroke: style.stroke,
+                'stroke-width': 2.4,
                 fill: 'none',
             }),
         )

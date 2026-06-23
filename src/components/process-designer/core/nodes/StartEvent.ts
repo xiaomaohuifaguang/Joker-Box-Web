@@ -1,5 +1,6 @@
 import { CircleNode, CircleNodeModel } from '@logicflow/core'
 import { genBpmnId } from '@logicflow/extension/lib/bpmn-elements/utils'
+import { buildNodeStyle, buildTextStyle } from '../theme'
 
 class StartEventModel extends CircleNodeModel {
   static extendKey = 'StartEventModel'
@@ -25,14 +26,24 @@ class StartEventModel extends CircleNodeModel {
     if (!this.text || !this.text.value) {
       this.text = {
         value: "开始",
-        x: this.x, // 保持文字位置与节点中心一致（可选）
+        x: this.x,
         y: this.y
       };
     }
   }
 
   setAttributes(): void {
-    this.r = 36
+    this.r = 22
+  }
+
+  getNodeStyle() {
+    const style = super.getNodeStyle()
+    return { ...style, ...buildNodeStyle(this.type, this.isSelected) }
+  }
+
+  getTextStyle() {
+    const style = super.getTextStyle()
+    return { ...style, ...buildTextStyle() }
   }
 
   getConnectedTargetRules() {

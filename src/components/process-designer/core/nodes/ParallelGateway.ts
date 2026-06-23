@@ -5,6 +5,7 @@ import LogicFlow, {
     PolygonNodeModel,
 } from '@logicflow/core'
 import { genBpmnId } from '@logicflow/extension/lib/bpmn-elements/utils'
+import { buildNodeStyle, buildTextStyle } from '../theme'
 
 import NodeConfig = LogicFlow.NodeConfig
 
@@ -33,6 +34,16 @@ export class ParallelGatewayModel extends PolygonNodeModel {
             [0, 25],
         ]
     }
+
+    getNodeStyle() {
+        const style = super.getNodeStyle()
+        return { ...style, ...buildNodeStyle(this.type, this.isSelected) }
+    }
+
+    getTextStyle() {
+        const style = super.getTextStyle()
+        return { ...style, ...buildTextStyle() }
+    }
 }
 
 export class ParallelGatewayView extends PolygonNode {
@@ -54,11 +65,12 @@ export class ParallelGatewayView extends PolygonNode {
                 y,
                 points,
             }),
-            // "+" 号：垂直线 + 水平线
+            // "+" 号:垂直线 + 水平线
             h('path', {
-                d: 'M 25 12 L 25 38 M 12 25 L 38 25',
-                stroke: style.stroke || '#000',
-                'stroke-width': 3,
+                d: 'M 25 13 L 25 37 M 13 25 L 37 25',
+                stroke: style.stroke,
+                'stroke-width': 2.8,
+                'stroke-linecap': 'round',
                 fill: 'none',
             }),
         )

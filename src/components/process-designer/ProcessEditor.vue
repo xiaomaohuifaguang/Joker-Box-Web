@@ -31,7 +31,7 @@ import { LogicFlow } from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
 import '@logicflow/extension/lib/style/index.css'
 import { Control, MiniMap, Menu, DndPanel, SelectionSelect, Snapshot, InsertNodeInPolyline } from "@logicflow/extension"
-import { Dagre } from "@logicflow/layout";
+import { Dagre, ElkLayout } from "@logicflow/layout";
 
 import Toolbar from './components/Toolbar.vue';
 import Palette from './components/Palette.vue';
@@ -49,7 +49,8 @@ LogicFlow.use(DndPanel) // 拖拽面板
 LogicFlow.use(SelectionSelect) // 选区
 LogicFlow.use(Snapshot) // 导出图片
 LogicFlow.use(InsertNodeInPolyline) // 边上插入节点
-LogicFlow.use(Dagre); // 自动布局
+LogicFlow.use(Dagre); // 自动布局 (Dagre - 快速, 同步)
+LogicFlow.use(ElkLayout); // 自动布局 (ELK - 高质量, 异步, 边交叉最少)
 LogicFlow.use(CatBPMNAdapter, extraProps)
 
 
@@ -160,9 +161,70 @@ onMounted(async () => {
         lf.value = new LogicFlow({
             container: container.value,
             edgeType: 'bpmn:sequenceFlow',
-            grid: true,
+            grid: {
+                size: 10,
+                type: 'dot',
+                config: { color: '#e4e7ed', thickness: 1.2 },
+            },
             allowResize: true,  // 启用全局缩放
             allowRotate: true,   // 启用全局旋转,
+        });
+        // 画布级主题 —— 锚点、对齐线、旋转/调整控制点、连线默认配色
+        // 节点本身的描边/填充走各自 model 的 getNodeStyle,见 ./core/theme.ts
+        // 连线选中态颜色走 SequenceFlowModel.getEdgeStyle,见 ./core/edges/SequenceFlow.ts
+        lf.value.setTheme({
+            anchor: {
+                stroke: '#1677ff',
+                fill: '#ffffff',
+                r: 4,
+                hover: { fill: '#1677ff', fillOpacity: 0.2, stroke: '#1677ff', r: 10 },
+            },
+            anchorLine: { stroke: '#1677ff', strokeWidth: 1.4, strokeDasharray: '4,3' },
+            snapline: { stroke: '#1677ff', strokeWidth: 1 },
+            outline: {
+                stroke: '#1677ff',
+                strokeDasharray: '4,4',
+                hover: { stroke: '#1677ff' },
+            },
+            rotateControl: { stroke: '#1677ff', fill: '#ffffff' },
+            resizeControl: { stroke: '#1677ff', fill: '#ffffff' },
+            // 连线相关 —— polyline 是默认描边色, arrow 是箭头几何, edgeText 是连线文字
+            polyline: { strokeLinecap: 'round', strokeLinejoin: 'round' },
+            arrow: {
+                offset: 8,
+                verticalLength: 4,
+                strokeLinecap: 'round',
+                strokeLinejoin: 'round',
+            },
+            edgeText: {
+                fontSize: 12,
+                color: '#606266',
+                // EdgeTextTheme 必填字段 —— default 模式下其实不参与换行计算,给个足够大的值
+                textWidth: 200,
+                // 用 SVG <text> + 描边而不是 HTML foreignObject ——
+                // overflowMode: 'ellipsis' 会走 renderHtmlText (<div>),SVG 的 stroke 对它无效。
+                // 短文字 default 模式就够,真长文字让它自己换行也比省略号清楚。
+                overflowMode: 'default',
+                // 文字描边代替矩形底框 —— 框会占用空间让自动布局看起来很挤;
+                // 白色 4px 描边给文字"开光",压在连线上仍清晰,且零占位。
+                stroke: '#ffffff',
+                strokeWidth: 4,
+                // paintOrder camelCase 顶层 prop —— LogicFlow 的 Text.js 只透传非 object 字段,
+                // 所以不能写在 style: {} 里。preact 会自动转成 paint-order SVG 属性。
+                paintOrder: 'stroke fill',
+                strokeLinejoin: 'round',
+                // 显式关掉默认主题的白底 <rect>,避免和文字描边叠加
+                background: {
+                    fill: 'transparent',
+                },
+            },
+            // 调整边端点的拖拽点
+            edgeAdjust: {
+                r: 5,
+                fill: '#ffffff',
+                stroke: '#1677ff',
+                strokeWidth: 2,
+            },
         });
         registerCustomElement(lf.value);
         registerValidator('bpmn:exclusiveGateway', validateGateway)
@@ -258,18 +320,25 @@ defineExpose({ validateFlow })
 
 .diagram-palette {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 12px;
+    left: 12px;
     z-index: 100;
-    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 10px;
+    box-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .container {
     width: 100%;
     height: 100%;
-    border: 1px solid #000;
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fafbfc;
 }
 </style>

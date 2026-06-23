@@ -1,9 +1,6 @@
 import { h, RectNode, RectNodeModel, GraphModel } from '@logicflow/core'
 import { genBpmnId } from '@logicflow/extension/lib/bpmn-elements/utils'
-
-// 1. 在这里引入你的 SVG 文件 (假设文件名为 user-icon.svg)
-// 注意：根据你的打包工具配置(vite/webpack)，这里导入的可能是一个字符串或者 url
-import UserIconSvg from './icon/user-task.svg'
+import { buildNodeStyle, buildTextStyle, NODE_THEMES } from '../theme'
 
 export class UserTaskModel extends RectNodeModel {
     static extendKey = 'UserTaskModel'
@@ -21,15 +18,32 @@ export class UserTaskModel extends RectNodeModel {
                 y: this.y
             };
         }
+    }
 
-        // 设置默认样式
-        this.style = {
-            fill: '#E6F7FF', // 浅蓝色背景
-            stroke: '#5F95FF',
-            strokeWidth: 1,
-            rx: 4,
-            ry: 4,
+    setAttributes(): void {
+        this.width = 110
+        this.height = 60
+        // 注意:不要在这里设 this.radius!
+        // LogicFlow 的 PolylineEdgeModel.updateCrossPoints -> getClosestRadiusCenter
+        // 在 radius !== 0 时会把 4 个圆角圆心当成"圆"算连线交点,
+        // 当起点离圆心距离 > radius 时 Math.sqrt(负数) = NaN,导致整条边的 points
+        // 变成 "NaN,NaN ..." → 文本背景 <rect> 抛 "y: NaN" 错。
+        // 视觉圆角通过 getNodeStyle 返回的 rx/ry 解决(SVG 渲染层),不读 model.radius。
+    }
+
+    getNodeStyle() {
+        const style = super.getNodeStyle()
+        return {
+            ...style,
+            ...buildNodeStyle(this.type, this.isSelected),
+            rx: 8,
+            ry: 8,
         }
+    }
+
+    getTextStyle() {
+        const style = super.getTextStyle()
+        return { ...style, ...buildTextStyle() }
     }
 }
 
@@ -37,51 +51,56 @@ export class UserTaskView extends RectNode {
     static extendKey = 'UserTaskNode'
 
     /**
-     * 获取图标形状 - 使用 <image> 标签加载外部 SVG
+     * 左上角的小型用户图标 (线性人形)。
+     * 直接画 SVG path,避免引用外部 SVG 文件 —— 之前那张 user-task.svg 实际是张小熊像素图。
+     * 颜色绑定到主题色,选中态不会失色。
      */
-    getIconShape(): h.JSX.Element {
-        const { model } = this.props
-        const { x, y, width, height } = model
-
-        // --- 布局配置 ---
-        const iconSize = 20       // 图标宽高
-        const padding = 8         // 图标距离边框的距离
-
-        return h(
-            'image',
-            {
-                // 核心：设置图片链接
-                href: UserIconSvg,
-
-                // 核心：计算位置 (左上角为基准)
-                x: x - width / 2 + padding,
-                y: y - height / 2 + padding,
-
-                // 核心：设置宽高
-                width: iconSize,
-                height: iconSize,
-            }
-        )
+    private renderIcon(originX: number, originY: number, color: string) {
+        const cx = originX + 8
+        const cy = originY + 8
+        return h('g', {}, [
+            // 头
+            h('circle', {
+                cx,
+                cy: cy - 2,
+                r: 2.2,
+                fill: 'none',
+                stroke: color,
+                'stroke-width': 1.3,
+            }),
+            // 肩 (上半弧)
+            h('path', {
+                d: `M ${cx - 4.5} ${cy + 6} A 4.5 4.5 0 0 1 ${cx + 4.5} ${cy + 6}`,
+                fill: 'none',
+                stroke: color,
+                'stroke-width': 1.3,
+                'stroke-linecap': 'round',
+            }),
+        ])
     }
 
     getShape(): h.JSX.Element {
         const { model } = this.props
         const { x, y, width, height } = model
         const style = model.getNodeStyle()
+        const theme = NODE_THEMES[model.type]
+        const accent = theme?.color || style.stroke
+
+        const left = x - width / 2
+        const top = y - height / 2
 
         return h('g', {}, [
-            // 1. 背景矩形
             h('rect', {
                 ...style,
-                x: x - width / 2,
-                y: y - height / 2,
-                rx: style.rx || 4,
-                ry: style.ry || 4,
+                x: left,
+                y: top,
+                rx: style.rx ?? 8,
+                ry: style.ry ?? 8,
                 width,
                 height,
             }),
-            // 2. 引入的 SVG 图片
-            this.getIconShape(),
+            // 左上角小图标作为节点类型标识
+            this.renderIcon(left + 6, top + 6, accent),
         ])
     }
 }
