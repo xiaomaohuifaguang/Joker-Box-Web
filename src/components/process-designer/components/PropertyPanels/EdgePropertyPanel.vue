@@ -1,18 +1,18 @@
 <template>
-    <el-form label-position="top" :model="data">
-        <el-form-item label="ID">
-            <el-input :model-value="data.id" disabled />
-        </el-form-item>
-        <el-form-item label="名称">
-            <el-input :model-value="elementText" @update:model-value="doUpdateElementText" :disabled="readonly" />
-        </el-form-item>
+    <div class="property-panel-inner">
+        <PropertyHeader type="bpmn:sequenceFlow" :id="data?.id"
+            :label-override="isGatewayOutgoing ? '连线 · 网关出边' : '连线'" />
 
-        <!-- 网关条件配置 -->
-        <template v-if="isGatewayOutgoing">
-            <el-divider />
-            <div class="condition-section">
-                <div class="section-label">条件配置</div>
+        <el-form label-position="top" :model="data">
+            <PropertySection title="基础信息">
+                <el-form-item label="名称">
+                    <el-input :model-value="elementText" @update:model-value="doUpdateElementText" :disabled="readonly"
+                        placeholder="请输入连线名称" />
+                </el-form-item>
+            </PropertySection>
 
+            <!-- 网关条件配置 -->
+            <PropertySection v-if="isGatewayOutgoing" title="条件配置" :hint="conditionModeLabel">
                 <!-- 模式切换 -->
                 <div class="mode-pills">
                     <span v-for="mode in conditionModes" :key="mode.value" class="mode-pill"
@@ -39,16 +39,16 @@
 
                 <!-- 默认走向 -->
                 <template v-else-if="conditionMode === 'DEFAULT'">
-                    <el-alert title="此连线已设为默认走向" description="当所有其他条件都不满足时，流程将自动走此分支" type="success" :closable="false"
+                    <el-alert title="此连线已设为默认走向" description="当所有其他条件都不满足时,流程将自动走此分支" type="success" :closable="false"
                         show-icon />
                 </template>
-            </div>
+            </PropertySection>
+        </el-form>
 
-            <!-- 弹窗 -->
-            <GatewayConditionDialog v-model="dialogVisible" :edge-data="edgeData" :initial-data="gatewayCondition"
-                :fields="fields" :readonly="readonly" @confirm="onDialogConfirm" />
-        </template>
-    </el-form>
+        <!-- 弹窗 -->
+        <GatewayConditionDialog v-if="isGatewayOutgoing" v-model="dialogVisible" :edge-data="edgeData"
+            :initial-data="gatewayCondition" :fields="fields" :readonly="readonly" @confirm="onDialogConfirm" />
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -58,6 +58,8 @@ import { http } from '@/utils'
 import ConditionSummary from '../ConditionSummary.vue'
 import GatewayConditionDialog from '../GatewayConditionDialog.vue'
 import NativeConditionEditor from '../condition-editors/NativeConditionEditor.vue'
+import PropertyHeader from './PropertyHeader.vue'
+import PropertySection from './PropertySection.vue'
 import type { GatewayConditionData } from '../../types/gateway-condition'
 
 const props = defineProps<{
@@ -105,6 +107,11 @@ const conditionModes = [
     { label: '自定义配置', value: 'CUSTOM' },
     { label: '默认走向', value: 'DEFAULT' },
 ]
+
+const conditionModeLabel = computed(() => {
+    const m = conditionModes.find(x => x.value === conditionMode.value)
+    return m?.label ?? ''
+})
 
 function setConditionMode(mode: string) {
     if (mode === 'NATIVE') {
@@ -158,13 +165,11 @@ const loadFormFields = async () => {
             version: globalForm.formVersion,
         })
         const list: { fieldId: string; title: string; groupName: string }[] = []
-        // 未分组字段
         if (data?.fields?.length) {
             data.fields.forEach((f: any) => {
                 list.push({ fieldId: f.fieldId, title: f.title, groupName: '未分组' })
             })
         }
-        // 分组字段
         if (data?.groups?.length) {
             data.groups.forEach((g: any) => {
                 const groupName = g.name || '未命名分组'
@@ -179,7 +184,6 @@ const loadFormFields = async () => {
     }
 }
 
-// 在 NATIVE 模式下也展示表单字段变量；全局表单变化时刷新
 watch(
     () => [conditionMode.value, props.nodeConfig?.globalFormBinding?.formId, props.nodeConfig?.globalFormBinding?.formVersion],
     ([mode]) => {
@@ -201,17 +205,6 @@ function onDialogConfirm(data: GatewayConditionData) {
 </script>
 
 <style scoped>
-.condition-section {
-    margin-top: 8px;
-}
-
-.section-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--el-text-color-primary);
-    margin-bottom: 10px;
-}
-
 .mode-pills {
     display: flex;
     gap: 8px;

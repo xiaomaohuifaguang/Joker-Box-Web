@@ -1,31 +1,42 @@
 <template>
-    <el-form label-position="top" :model="data">
-        <el-form-item label="流程ID">
-            <el-input v-model="data.processKey" @input="syncProcessMeta" disabled />
-        </el-form-item>
-        <el-form-item label="流程名称">
-            <el-input v-model="data.processName" @input="syncProcessMeta" :disabled="readonly" />
-        </el-form-item>
-        <el-form-item label="流程分类">
-            <el-input v-model="data.processCategory" @input="syncProcessMeta" :disabled="readonly" />
-        </el-form-item>
-        <el-form-item label="流程描述">
-            <el-input v-model="data.processDescription" type="textarea" :rows="3" @input="syncProcessMeta"
-                placeholder="请输入流程描述（导出为 bpmn:documentation）" :disabled="readonly" />
-        </el-form-item>
+    <div class="property-panel-inner">
+        <PropertyHeader type="process" :id="data?.processKey" />
 
-        <!-- 全局表单绑定 -->
-        <el-divider />
-        <el-form-item label="全局表单">
-            <FormSelector v-model="globalFormId" v-model:model-version="globalFormVersion" :disabled="readonly" @change="onFormChange" />
-        </el-form-item>
-    </el-form>
+        <el-form label-position="top" :model="data">
+            <PropertySection title="基础信息">
+                <el-form-item label="流程ID">
+                    <el-input v-model="data.processKey" @input="syncProcessMeta" disabled />
+                </el-form-item>
+                <el-form-item label="流程名称">
+                    <el-input v-model="data.processName" @input="syncProcessMeta" :disabled="readonly"
+                        placeholder="请输入流程名称" />
+                </el-form-item>
+                <el-form-item label="流程分类">
+                    <el-input v-model="data.processCategory" @input="syncProcessMeta" :disabled="readonly"
+                        placeholder="请输入流程分类" />
+                </el-form-item>
+                <el-form-item label="流程描述">
+                    <el-input v-model="data.processDescription" type="textarea" :rows="3" @input="syncProcessMeta"
+                        placeholder="请输入流程描述(导出为 bpmn:documentation)" :disabled="readonly" />
+                </el-form-item>
+            </PropertySection>
+
+            <PropertySection title="全局表单" :hint="globalFormId ? '已绑定' : ''">
+                <el-form-item label="全局表单">
+                    <FormSelector v-model="globalFormId" v-model:model-version="globalFormVersion"
+                        :disabled="readonly" @change="onFormChange" />
+                </el-form-item>
+            </PropertySection>
+        </el-form>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { setProcessMeta } from '../../core/adapter/CatBPMNAdapter'
 import FormSelector from '../FormSelector.vue'
+import PropertyHeader from './PropertyHeader.vue'
+import PropertySection from './PropertySection.vue'
 
 const props = defineProps<{
     lf: any,
